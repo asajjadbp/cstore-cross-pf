@@ -8,7 +8,7 @@ class VisitPoolScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Visit Pool"),
+        title: const Text("Journey Plan"),
       ),
       body: ListView.builder(
           itemCount: 10,
