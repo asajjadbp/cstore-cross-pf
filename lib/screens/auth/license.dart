@@ -1,4 +1,4 @@
-import 'package:cstore/Network/http_manager.dart';
+import 'package:cstore/Network/license_http_manager.dart';
 import 'package:cstore/screens/auth/login.dart';
 import 'package:flutter/material.dart';
 
@@ -25,7 +25,7 @@ class _LicenseKeyState extends State<LicenseKey> {
     setState(() {
       isLoading = true;
     });
-    await HTTPMANAGER().getLicense(licensekey).then((value) {
+    await LICENSEHTTPMANAGER().getLicense(licensekey).then((value) {
       setState(() {
         isLoading = false;
       });

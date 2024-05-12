@@ -13,7 +13,7 @@ String userResponseModelToJson(UserResponseModel data) =>
 class UserResponseModel {
   bool status;
   String msg;
-  Data data;
+  List<Datum> data;
 
   UserResponseModel({
     required this.status,
@@ -25,17 +25,17 @@ class UserResponseModel {
       UserResponseModel(
         status: json["status"],
         msg: json["msg"],
-        data: Data.fromJson(json["data"]),
+        data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
         "status": status,
         "msg": msg,
-        "data": data.toJson(),
+        "data": List<dynamic>.from(data.map((x) => x.toJson())),
       };
 }
 
-class Data {
+class Datum {
   int username;
   String userPic;
   String enWelcomeMsg;
@@ -44,7 +44,7 @@ class Data {
   String tokenId;
   int isSyncronize;
 
-  Data({
+  Datum({
     required this.username,
     required this.userPic,
     required this.enWelcomeMsg,
@@ -54,7 +54,7 @@ class Data {
     required this.isSyncronize,
   });
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
+  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
         username: json["username"],
         userPic: json["user_pic"],
         enWelcomeMsg: json["en_welcome_msg"],

@@ -13,7 +13,7 @@ String journeyPlanResponseModelToJson(JourneyPlanResponseModel data) =>
 class JourneyPlanResponseModel {
   bool status;
   String msg;
-  List<Datum> data;
+  List<JourneyPlanDetail> data;
 
   JourneyPlanResponseModel({
     required this.status,
@@ -25,7 +25,8 @@ class JourneyPlanResponseModel {
       JourneyPlanResponseModel(
         status: json["status"],
         msg: json["msg"],
-        data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
+        data: List<JourneyPlanDetail>.from(
+            json["data"].map((x) => JourneyPlanDetail.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -35,7 +36,7 @@ class JourneyPlanResponseModel {
       };
 }
 
-class Datum {
+class JourneyPlanDetail {
   int workingId;
   String workingDate;
   int storeId;
@@ -55,7 +56,7 @@ class Datum {
   String otherExclude;
   int isDrop;
 
-  Datum({
+  JourneyPlanDetail({
     required this.workingId,
     required this.workingDate,
     required this.storeId,
@@ -76,14 +77,15 @@ class Datum {
     required this.isDrop,
   });
 
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+  factory JourneyPlanDetail.fromJson(Map<String, dynamic> json) =>
+      JourneyPlanDetail(
         workingId: json["working_id"],
         workingDate: json["working_date"],
         storeId: json["store_id"],
         enStoreName: json["en_store_name"],
         arStoreName: json["ar_store_name"],
         gcode: json["gcode"],
-        clientIds: json["client_ids"],
+        clientIds: json["client_ids"].toString(),
         userId: json["user_id"],
         checkIn: json["check_in"],
         checkOut: json["check_out"],
@@ -115,6 +117,6 @@ class Datum {
         "visit_type": visitType,
         "avl_exclude": avlExclude,
         "other_exclude": otherExclude,
-        "is_drop": isDrop,
+        "is_drop": isDrop.toString(),
       };
 }
