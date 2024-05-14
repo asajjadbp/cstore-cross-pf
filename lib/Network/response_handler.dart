@@ -27,8 +27,9 @@ class ResponseHandler {
       // }
 
       // print(responseJson);
-      if (responseJson['status'] != true)
+      if (responseJson['status'] != true) {
         throw FetchDataException(responseJson['msg'].toString());
+      }
       return responseJson;
     } on TimeoutException {
       throw FetchDataException("Slow internet connection");

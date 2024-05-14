@@ -1,6 +1,6 @@
 import 'package:cstore/Model/request_model.dart/login_request_model.dart';
 import 'package:cstore/Network/authentication.dart';
-import 'package:cstore/screens/Jouney%20Plan/journey_plan_screen.dart';
+import 'package:cstore/screens/Journey%20Plan/journey_plan_screen.dart';
 import 'package:cstore/screens/utils/toast/toast.dart';
 import 'package:cstore/screens/welcome_screen/welcome.dart';
 import 'package:cstore/screens/widget/loading.dart';

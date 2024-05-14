@@ -6,11 +6,13 @@ import '../Model/database_model/client_model.dart';
 import '../Model/database_model/dashboard_model.dart';
 import '../Model/database_model/drop_reason_model.dart';
 import '../Model/database_model/trans_photo_model.dart';
-import 'dart:io' as io;
+// import 'dart:io' as io;
+
+import '../Model/response_model.dart/syncronise_response_model.dart';
 
 class DatabaseHelper {
   static var instance;
-  static Database? _database;
+  // static Database? _database;
 
   static Future<Database?> get database async {
     // Get a location using getDatabasesPath()
@@ -115,36 +117,40 @@ class DatabaseHelper {
   }
 
   // insert data arrayList
-  static Future<void> insertClientArray(List<ClientModel> modelList) async {
+  static Future<void> insertClientArray(List<SysClient> modelList) async {
     // final db = await getDatabase();
     var db = await initDataBase();
-    for (ClientModel data in modelList) {
+    for (SysClient data in modelList) {
       await db.insert(
         TableName.tbl_sys_client,
         {
-          TableName.sys_client_id: data.client_id,
-          TableName.sys_client_name: data.client_name,
+          TableName.sys_client_id: data.clientId,
+          TableName.sys_client_name: data.clientName,
           TableName.sys_client_logo: data.logo,
-          TableName.sys_client_classification: data.classification,
-          TableName.sys_client_chainSku_code: data.chain_sku_code,
-          TableName.sys_client_is_dayFreshness: data.day_freshness,
-          TableName.sys_client_order_avl: data.order_avl,
-          TableName.sys_client_is_survey: data.is_survey,
-          TableName.sys_client_geo_req: data.geo_requried
+          TableName.sys_client_classification: data.isClassification,
+          TableName.sys_client_chainSku_code: data.isChainSkuCodes,
+          TableName.sys_client_is_dayFreshness: data.isDayFreshness,
+          TableName.sys_client_order_avl: data.isSuggetedOrderAvl,
+          TableName.sys_client_is_survey: data.isSurvey,
+          TableName.sys_client_geo_req: data.isGeoRequired
         },
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     }
   }
 
-  static Future<void> insertCategoryArray(List<CategoryModel> modelList) async {
+  static Future<void> insertCategoryArray(
+      // List<CategoryModel>
+      List<Sys> modelList) async {
     var db = await initDataBase();
-    for (CategoryModel data in modelList) {
+    for (
+        // CategoryModel
+        Sys data in modelList) {
       await db.insert(
         TableName.tbl_sys_category,
         {
-          TableName.cat_client_id: data.client,
-          TableName.cat_name: data.name,
+          TableName.cat_client_id: data.clientId,
+          TableName.cat_name: data.arName,
         },
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
@@ -153,33 +159,42 @@ class DatabaseHelper {
 
   // Dashboard data insertion
   static Future<void> insertAgencyDashArray(
-      List<AgencyDashboardModel> modelList) async {
+      // List<AgencyDashboardModel>
+      List<SysAgencyDashboard> modelList) async {
     var db = await initDataBase();
-    for (AgencyDashboardModel data in modelList) {
+    for (
+        // AgencyDashboardModel
+        SysAgencyDashboard data in modelList) {
       await db.insert(
         TableName.tbl_agency_dashboard,
         {
-          TableName.agency_dash_en_name: data.en_name,
-          TableName.agency_dash_ar_name: data.ar_name,
-          TableName.agency_dash_start_date: data.start_date,
-          TableName.agency_dash_end_date: data.end_date,
-          TableName.agency_dash_icon: data.icon,
-          TableName.agency_dash_status: data.start_date,
+          // TableName.agency_dash_en_name: data.en_name,
+          // TableName.agency_dash_ar_name: data.ar_name,
+          // TableName.agency_dash_start_date: data.start_date,
+          // TableName.agency_dash_end_date: data.end_date,
+          // TableName.agency_dash_icon: data.icon,
+          // TableName.agency_dash_status: data.start_date,
+
+          TableName.agency_dash_en_name: data.enName,
+          TableName.agency_dash_ar_name: data.arName,
+          TableName.agency_dash_start_date: data.startDate,
+          TableName.agency_dash_end_date: data.endDate,
+          TableName.agency_dash_icon: data.iconSvg,
+          TableName.agency_dash_status: data.startDate,
         },
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     }
   }
 
-  static Future<void> insertDropReasonArray(
-      List<DropReasonModel> modelList) async {
+  static Future<void> insertDropReasonArray(List<Sys> modelList) async {
     var db = await initDataBase();
-    for (DropReasonModel data in modelList) {
+    for (Sys data in modelList) {
       await db.insert(
         TableName.tbl_drop_reason,
         {
-          TableName.drop_en_name: data.en_name,
-          TableName.drop_ar_name: data.ar_name,
+          TableName.drop_en_name: data.enName,
+          TableName.drop_ar_name: data.arName,
           TableName.drop_status: data.status,
         },
         conflictAlgorithm: ConflictAlgorithm.replace,
@@ -277,7 +292,7 @@ class DatabaseHelper {
   static Future<List<CategoryModel>> getCategoryList() async {
     var db = await initDataBase();
     final List<Map<String, dynamic>> categoryMaps = await db.rawQuery(
-        "SELECT sys_category.id as cat_id,sys_category.name as cat_name FROM  ${TableName.tbl_sys_category} JOIN ${TableName.tbl_sys_client} on sys_client.company_id=sys_category.client WHERE sys_category.client=2 GROUP by sys_category.client");
+        "SELECT sys_category.id as cat_id,sys_category.name as cat_name FROM  ${TableName.tbl_sys_category} JOIN ${TableName.tbl_sys_client} on sys_client.company_id=sys_category.client WHERE sys_category.client=1 GROUP by sys_category.client");
     return List.generate(categoryMaps.length, (index) {
       return CategoryModel(
         name: categoryMaps[index][TableName.cat_name] as String,
@@ -286,24 +301,27 @@ class DatabaseHelper {
     });
   }
 
+// AgencyDashboardModel
   static Future<List<AgencyDashboardModel>> getAgencyDashboard() async {
     var db = await initDataBase();
     final List<Map<String, dynamic>> agencyDashboard =
         await db.rawQuery("SELECT *from ${TableName.tbl_agency_dashboard}");
     print(agencyDashboard);
     return List.generate(agencyDashboard.length, (index) {
-      return AgencyDashboardModel(
-        en_name:
-            agencyDashboard[index][TableName.agency_dash_en_name] as String,
-        ar_name:
-            agencyDashboard[index][TableName.agency_dash_ar_name] as String,
-        icon: agencyDashboard[index]['icon_svg'] as String,
-        start_date:
-            agencyDashboard[index][TableName.agency_dash_start_date] as String,
-        end_date:
-            agencyDashboard[index][TableName.agency_dash_end_date] as String,
-        status: agencyDashboard[index][TableName.agency_dash_status] as int,
-      );
+      // return SysAgencyDashboard.fromJson(agencyDashboard[index]);
+      return AgencyDashboardModel.fromJson(agencyDashboard[index]);
+      // AgencyDashboardModel(
+      //   en_name:
+      //       agencyDashboard[index][TableName.agency_dash_en_name] as String,
+      //   ar_name:
+      //       agencyDashboard[index][TableName.agency_dash_ar_name] as String,
+      //   icon: agencyDashboard[index]['icon_svg'] as String,
+      //   start_date:
+      //       agencyDashboard[index][TableName.agency_dash_start_date] as String,
+      //   end_date:
+      //       agencyDashboard[index][TableName.agency_dash_end_date] as String,
+      //   status: agencyDashboard[index][TableName.agency_dash_status] as int,
+      // );
     });
   }
 

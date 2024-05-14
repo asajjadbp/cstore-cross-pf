@@ -1,11 +1,41 @@
+import 'package:cstore/Model/response_model.dart/syncronise_response_model.dart';
+import 'package:cstore/database/db_helper.dart';
+import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 
+import '../../Model/database_model/dashboard_model.dart';
 import '../capture_photo/capture_photo.dart';
 import 'card_widget.dart';
 
-class PriceCheck extends StatelessWidget {
+class PriceCheck extends StatefulWidget {
   static const routeName = "/proofOfSaleRoute";
   const PriceCheck({super.key});
+
+  @override
+  State<PriceCheck> createState() => _PriceCheckState();
+}
+
+class _PriceCheckState extends State<PriceCheck> {
+  bool isLoading = false;
+  bool isinit = true;
+  List<AgencyDashboardModel> agencyData = [];
+
+  @override
+  void didChangeDependencies() async {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    if (isinit) {
+      setState(() {
+        isLoading = true;
+      });
+      agencyData = await DatabaseHelper.getAgencyDashboard();
+      setState(() {
+        isLoading = false;
+      });
+    }
+    isinit = false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,21 +50,29 @@ class PriceCheck extends StatelessWidget {
     // final iconName = [];
     return Scaffold(
       appBar: AppBar(title: const Text("Price Check")),
-      body: GridView.builder(
-          itemCount: 5,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, crossAxisSpacing: 0, mainAxisSpacing: 10.0),
-          itemBuilder: (context, i) {
-            return Container(
-              margin: const EdgeInsets.only(left: 10, right: 10),
-              child: CardWidget(
-                  onTap: () {
-                    Navigator.of(context).pushNamed(CapturePhoto.routename);
-                  },
-                  imageUrl: "assets/images/camera.png",
-                  cardName: nameList[i]),
-            );
-          }),
+      body: isLoading
+          ? Container(
+              height: 60,
+              child: const MyLoadingCircle(),
+            )
+          : GridView.builder(
+              itemCount: agencyData.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 0,
+                  mainAxisSpacing: 10.0),
+              itemBuilder: (context, i) {
+                return Container(
+                  margin: const EdgeInsets.only(left: 10, right: 10),
+                  child: CardWidget(
+                      onTap: () {
+                        Navigator.of(context).pushNamed(BeforeFixing.routeName);
+                      },
+                      imageUrl: agencyData[i].icon,
+                      // "assets/images/camera.png",
+                      cardName: agencyData[i].ar_name),
+                );
+              }),
     );
   }
 }

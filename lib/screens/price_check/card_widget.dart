@@ -1,3 +1,4 @@
+import 'package:cached_network_svg_image/cached_network_svg_image.dart';
 import 'package:flutter/material.dart';
 
 class CardWidget extends StatelessWidget {
@@ -32,10 +33,22 @@ class CardWidget extends StatelessWidget {
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(
-                  imageUrl,
-                  fit: BoxFit.contain,
+                // Image.asset(
+                //   imageUrl,
+                //   fit: BoxFit.contain,
+                // ),
+                CachedNetworkSVGImage(
+                  "https://storage.googleapis.com/catalisttest-bucket/dashboard/$imageUrl",
+                  placeholder:
+                      const CircularProgressIndicator(color: Colors.green),
+                  errorWidget: const Icon(Icons.error, color: Colors.red),
+                  width: 80.0,
+                  height: 80.0,
+                  fadeDuration: const Duration(milliseconds: 500),
                 ),
+                // Image.network(
+                //     "https://storage.googleapis.com/catalisttest-bucket/dashboard/$imageUrl",
+                //     fit: BoxFit.contain),
                 Padding(
                   padding: const EdgeInsets.only(top: 15),
                   child: Text(cardName),

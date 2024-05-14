@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cstore/Model/request_model.dart/jp_request_model.dart';
 import 'package:cstore/Model/response_model.dart/syncronise_response_model.dart';
 
 import 'api.dart';
@@ -22,9 +23,11 @@ class SyncroniseHTTP {
     //   'Authorization': 'Bearer $token',
     //   'Content-Type': 'application/json', // adjust content type if needed
     // };
-
-    final response =
-        await _handler.post(Uri.parse(url), {"username": userName}, token);
+    var response;
+    await Future.delayed(const Duration(seconds: 0)).then((value) async {
+      response = await _handler.post(Uri.parse(url),
+          JourneyPlanRequestModel(username: userName).toJson(), token);
+    });
 
     // final response = await http
     //     .post(Uri.parse(url), headers: headers, body: {"username": userName});

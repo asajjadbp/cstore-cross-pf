@@ -1,5 +1,5 @@
-import 'package:cstore/screens/Jouney%20Plan/journey_plan_screen.dart';
-import 'package:cstore/screens/Jouney%20Plan/start_visit.dart';
+import 'package:cstore/screens/Journey%20Plan/journey_plan_screen.dart';
+import 'package:cstore/screens/Journey%20Plan/start_visit.dart';
 import 'package:cstore/screens/dashboard/dashboard.dart';
 import 'package:cstore/screens/welcome_screen/welcome.dart';
 import 'package:cstore/screens/widget/loading.dart';
@@ -13,7 +13,7 @@ import 'screens/capture_photo/capture_photo.dart';
 import 'screens/capture_photo/view_capture_photo.dart';
 import 'screens/price_check/price_check.dart';
 import 'screens/proof_of_sale/proof_of_sale.dart';
-import 'screens/Jouney Plan/journey_plan_2_screen.dart';
+import 'screens/Journey Plan/journey_plan_2_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -37,11 +37,14 @@ class MyApp extends StatelessWidget {
             seedColor: const Color.fromRGBO(11, 80, 112, 1)),
         // useMaterial3: true,
       ),
-      // home: const Login()
+      // home: const Login(),
       // home: TestWidget(),
-      home: WelcomeScreen(),
-      // home: const WelcomeScreen(),
-      // home: TestWidget(),
+      // home: const PriceCheck(),
+      // home: const ProofOfSale(),
+      // home: const BeforeFixing(),
+      // home: WelcomeScreen(),
+      // home: const TestWidget(),
+      home: BeforeFixing(),
       // home: const LicenseKey(),
       // home: ClockwiseAnticlockwiseRotation(),
       // home: MyLoadingCircle(),
@@ -56,7 +59,7 @@ class MyApp extends StatelessWidget {
 
       routes: {
         PriceCheck.routeName: (context) => const PriceCheck(),
-        CapturePhoto.routename: (context) => const CapturePhoto(),
+        BeforeFixing.routeName: (context) => const BeforeFixing(),
         Login.routeName: (context) => const Login(),
         WelcomeScreen.routename: (context) => const WelcomeScreen(),
         DashBoard.routeName: (context) => const DashBoard(),

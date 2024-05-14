@@ -8,7 +8,9 @@ import 'package:cstore/screens/utils/toast/toast.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
 import '../../Model/response_model.dart/syncronise_response_model.dart';
+import '../../database/table_name.dart';
 
 class WelcomeScreen extends StatefulWidget {
   static const routename = "/welcome_route";
@@ -68,13 +70,32 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     });
     // try {
     await SyncroniseHTTP().fetchSyncroniseData(userName, token).then((value) {
+      if (value.status) {
+        syncroniseData = value.data;
+        print(syncroniseData.length);
+        print(syncroniseData[0].sysAgencyDashboard);
+        print(syncroniseData[0].sysCategory);
+        print(syncroniseData[0].sysClient);
+        print(syncroniseData[0].sysDropReason);
+        DatabaseHelper.delete_table(TableName.tbl_agency_dashboard);
+        DatabaseHelper.delete_table(TableName.tbl_sys_category);
+        DatabaseHelper.delete_table(TableName.tbl_sys_client);
+        DatabaseHelper.delete_table(TableName.tbl_drop_reason);
+
+        DatabaseHelper.insertAgencyDashArray(
+            syncroniseData[0].sysAgencyDashboard);
+        DatabaseHelper.insertCategoryArray(syncroniseData[0].sysCategory);
+        DatabaseHelper.insertClientArray(syncroniseData[0].sysClient);
+        DatabaseHelper.insertDropReasonArray(syncroniseData[0].sysDropReason);
+        Future.delayed(const Duration(seconds: 5));
+        // print(syncroniseData[0].sysAgencyDashboard[0].enName);
+        // syncroniseData.forEach((element) {
+        //   print(element)
+        // });
+      }
       setState(() {
         isLoading = false;
       });
-
-      if (value.status) {
-        syncroniseData = value.data;
-      }
     });
     // } catch (error) {
     setState(() {
