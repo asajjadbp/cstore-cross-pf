@@ -1,3 +1,4 @@
+import 'package:cstore/screens/Journey%20Plan/journey_plan_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
@@ -46,19 +47,25 @@ class DashBoard extends StatelessWidget {
 
     Widget cardActivity(String label) {
       return Expanded(
-        child: Card(
-          shape: RoundedRectangleBorder(
-              side: const BorderSide(color: MyColors.appMainColor, width: 1.0),
-              borderRadius: BorderRadius.circular(4.0)),
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: Row(children: [
-              Image.asset("assets/images/universe.png"),
-              const SizedBox(
-                width: 10,
-              ),
-              Text(label)
-            ]),
+        child: InkWell(
+          onTap: () {
+            Navigator.of(context).pushNamed(JourneyPlanScreen.routename);
+          },
+          child: Card(
+            shape: RoundedRectangleBorder(
+                side:
+                    const BorderSide(color: MyColors.appMainColor, width: 1.0),
+                borderRadius: BorderRadius.circular(4.0)),
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Row(children: [
+                Image.asset("assets/images/universe.png"),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(label)
+              ]),
+            ),
           ),
         ),
       );

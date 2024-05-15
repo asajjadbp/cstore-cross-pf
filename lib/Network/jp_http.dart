@@ -38,12 +38,12 @@ class JourneyPlanHTTP {
     // final response = await http
     //     .post(Uri.parse(url), headers: headers, body: {"username": ""});
     // final responseData = jsonDecode(response.body);
-    print("some thing went");
+
     print(response);
 
     JourneyPlanResponseModel jpResponseData =
         JourneyPlanResponseModel.fromJson(response);
-    print("test 1");
+
     // StoreLicense.storeBaseUrl(licenseResponseData);
 
     // print(licenseResponseData.data[0].baseUrl);

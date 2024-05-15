@@ -40,7 +40,7 @@ class SyncroniseDetail {
   List<Sys> sysDropReason;
   List<SysAgencyDashboard> sysAgencyDashboard;
   List<SysClient> sysClient;
-  List<Sys> sysCategory;
+  List<CategoryResModel> sysCategory;
 
   SyncroniseDetail({
     required this.sysDropReason,
@@ -58,8 +58,8 @@ class SyncroniseDetail {
                 .map((x) => SysAgencyDashboard.fromJson(x))),
         sysClient: List<SysClient>.from(
             json["sys_client"].map((x) => SysClient.fromJson(x))),
-        sysCategory:
-            List<Sys>.from(json["sys_category"].map((x) => Sys.fromJson(x))),
+        sysCategory: List<CategoryResModel>.from(
+            json["sys_category"].map((x) => CategoryResModel.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -142,6 +142,39 @@ class Sys {
         "ar_name": arName,
         "client_id": clientId,
         "status": status,
+      };
+}
+
+class CategoryResModel {
+  int id;
+  String enName;
+  String? arName;
+  int? clientId;
+  // int? status;
+
+  CategoryResModel({
+    required this.id,
+    required this.enName,
+    required this.arName,
+    this.clientId,
+    // this.status,
+  });
+
+  factory CategoryResModel.fromJson(Map<String, dynamic> json) =>
+      CategoryResModel(
+        id: json["id"],
+        enName: json["en_name"],
+        arName: json["ar_name"],
+        clientId: json["client_id"],
+        // status: json["status"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "en_name": enName,
+        "ar_name": arName,
+        "client_id": clientId,
+        // "status": status,
       };
 }
 

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:cstore/screens/price_check/price_check.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -46,6 +47,7 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
         });
         if (value.status) {
           ToastMessage.succesMessage(context, value.msg);
+          Navigator.of(context).pushNamed(PriceCheck.routeName);
         } else {
           ToastMessage.errorMessage(context, value.msg);
         }

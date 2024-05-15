@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../Model/database_model/dashboard_model.dart';
-import '../capture_photo/capture_photo.dart';
+import '../before_fixing/before_fixing.dart';
 import 'card_widget.dart';
 
 class PriceCheck extends StatefulWidget {

@@ -1,5 +1,6 @@
 import 'package:cstore/Network/license_http_manager.dart';
 import 'package:cstore/screens/auth/login.dart';
+import 'package:cstore/screens/utils/toast/toast.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/appcolor.dart';
@@ -31,7 +32,9 @@ class _LicenseKeyState extends State<LicenseKey> {
       });
       if (value.status) {
         Navigator.of(context).pushReplacementNamed(Login.routeName);
-      } else {}
+      } else {
+        ToastMessage.errorMessage(context, value.msg);
+      }
     });
   }
 

@@ -38,8 +38,8 @@ class _LoginState extends State<Login> {
       });
       if (value.status) {
         ToastMessage.succesMessage(context, value.msg);
-        Navigator.of(context).pushReplacementNamed(JourneyPlanScreen.routename);
-        // Navigator.of(context).pushReplacementNamed(WelcomeScreen.routename);
+        // Navigator.of(context).pushReplacementNamed(JourneyPlanScreen.routename);
+        Navigator.of(context).pushReplacementNamed(WelcomeScreen.routename);
       } else {
         ToastMessage.errorMessage(context, value.msg);
       }

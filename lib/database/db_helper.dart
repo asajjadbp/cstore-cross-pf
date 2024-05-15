@@ -5,6 +5,7 @@ import '../Model/database_model/category_model.dart';
 import '../Model/database_model/client_model.dart';
 import '../Model/database_model/dashboard_model.dart';
 import '../Model/database_model/drop_reason_model.dart';
+import '../Model/database_model/get_trans_photo_model.dart';
 import '../Model/database_model/trans_photo_model.dart';
 // import 'dart:io' as io;
 
@@ -141,11 +142,11 @@ class DatabaseHelper {
 
   static Future<void> insertCategoryArray(
       // List<CategoryModel>
-      List<Sys> modelList) async {
+      List<CategoryResModel> modelList) async {
     var db = await initDataBase();
     for (
         // CategoryModel
-        Sys data in modelList) {
+        CategoryResModel data in modelList) {
       await db.insert(
         TableName.tbl_sys_category,
         {
@@ -292,11 +293,15 @@ class DatabaseHelper {
   static Future<List<CategoryModel>> getCategoryList() async {
     var db = await initDataBase();
     final List<Map<String, dynamic>> categoryMaps = await db.rawQuery(
-        "SELECT sys_category.id as cat_id,sys_category.name as cat_name FROM  ${TableName.tbl_sys_category} JOIN ${TableName.tbl_sys_client} on sys_client.company_id=sys_category.client WHERE sys_category.client=1 GROUP by sys_category.client");
+        "SELECT sys_category.id as cat_id, sys_category.name as cat_name FROM  sys_category JOIN sys_client on sys_client.client_id=sys_category.client WHERE sys_category.client=sys_client.client_id GROUP by sys_category.id"
+        // "SELECT sys_category.id as cat_id,sys_category.name as cat_name FROM  ${TableName.tbl_sys_category} JOIN ${TableName.tbl_sys_client} on sys_client.company_id=sys_category.client WHERE sys_category.client=1 GROUP by sys_category.client"
+        );
+
     return List.generate(categoryMaps.length, (index) {
+      print(categoryMaps[index]['cat_name']);
       return CategoryModel(
-        name: categoryMaps[index][TableName.cat_name] as String,
-        client: categoryMaps[index][TableName.cat_client_id] as int,
+        name: categoryMaps[index]["cat_name"] as String,
+        client: categoryMaps[index]["cat_id"] as int,
       );
     });
   }
@@ -325,16 +330,19 @@ class DatabaseHelper {
     });
   }
 
-  static Future<List<TransPhotoModel>> getTransPhoto() async {
+  static Future<List<GetTransPhotoModel>> getTransPhoto() async {
     var db = await initDataBase();
     final List<Map<String, dynamic>> transphoto =
         await db.rawQuery("SELECT *from ${TableName.tbl_trans_photo}");
     return List.generate(transphoto.length, (index) {
-      return TransPhotoModel(
+      // print(transphoto[index]['id']);
+      return GetTransPhotoModel(
+        id: transphoto[index]['id'],
         client_id: transphoto[index][TableName.trans_photo_client_id] as int,
         photo_type_id: transphoto[index][TableName.trans_photo_type_id] as int,
         cat_id: transphoto[index][TableName.trans_photo_cat_id] as int,
         img_name: transphoto[index][TableName.trans_photo_name] as String,
+        imageFile: null,
         gcs_status: transphoto[index][TableName.trans_photo_gcs_status] as int,
       );
     });
@@ -369,5 +377,10 @@ class DatabaseHelper {
   static Future<void> delete_table(String tbl_name) async {
     var db = await initDataBase();
     await db.rawDelete('DELETE FROM ${tbl_name}');
+  }
+
+  static Future<void> deleteOneRecord(String tblName, int id) async {
+    var db = await initDataBase();
+    await db.delete(tblName, where: 'id = ?', whereArgs: [id]);
   }
 }
