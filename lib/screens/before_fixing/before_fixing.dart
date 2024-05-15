@@ -87,7 +87,6 @@ class _BeforeFixingState extends State<BeforeFixing> {
         final String folderPath = '$dirPath/cstore';
         imageName = "${DateTime.now().millisecondsSinceEpoch}.jpg";
         final String filePath = '$folderPath/$imageName';
-        print("middle");
 
         await Directory(folderPath).create(recursive: true);
         await File(imageFile!.path).copy(filePath).then((value) {

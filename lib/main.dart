@@ -1,5 +1,5 @@
 import 'package:cstore/screens/Journey%20Plan/journey_plan_screen.dart';
-import 'package:cstore/screens/Journey%20Plan/start_visit.dart';
+import 'package:cstore/screens/Journey%20Plan/view_jp_photo.dart';
 import 'package:cstore/screens/before_fixing/view_before_fixing.dart';
 import 'package:cstore/screens/dashboard/dashboard.dart';
 import 'package:cstore/screens/welcome_screen/welcome.dart';
@@ -12,7 +12,7 @@ import 'screens/auth/license.dart';
 import 'screens/auth/login.dart';
 import 'screens/before_fixing/before_fixing.dart';
 import 'screens/before_fixing/view_capture_photo.dart';
-import 'screens/price_check/price_check.dart';
+import 'screens/grid_dashboard/grid_dashboard.dart';
 import 'screens/proof_of_sale/proof_of_sale.dart';
 import 'screens/Journey Plan/journey_plan_2_screen.dart';
 
@@ -61,7 +61,7 @@ class MyApp extends StatelessWidget {
       // home: const JourneyPlanScreen(),
 
       routes: {
-        PriceCheck.routeName: (context) => const PriceCheck(),
+        GridDashBoard.routeName: (context) => const GridDashBoard(),
         BeforeFixing.routeName: (context) => const BeforeFixing(),
         Login.routeName: (context) => const Login(),
         WelcomeScreen.routename: (context) => const WelcomeScreen(),

@@ -5,7 +5,7 @@ import 'package:cstore/Model/response_model.dart/jp_response_model.dart';
 import 'package:cstore/Network/getUserData/base_url_and_user.dart';
 import 'package:cstore/Network/jp_http.dart';
 import 'package:cstore/screens/Journey%20Plan/journey_plan.dart';
-import 'package:cstore/screens/Journey%20Plan/start_visit.dart';
+import 'package:cstore/screens/Journey%20Plan/view_jp_photo.dart';
 import 'package:cstore/screens/utils/services/image_picker.dart';
 import 'package:cstore/screens/utils/toast/toast.dart';
 import 'package:cstore/screens/widget/loading.dart';
@@ -37,12 +37,10 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
 
   getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    // prefs = await SharedPreferences.getInstance();
     final extractedUserData =
         json.decode(prefs.getString('userCred')!) as Map<String, dynamic>;
     final baseUrl =
         json.decode(prefs.getString('userLicense')!) as Map<String, dynamic>;
-    // var user = GetUserDataAndUrl().getUserData.toString();
     userName = extractedUserData["data"][0]["username"].toString();
     token = extractedUserData["data"][0]["token_id"].toString();
     // extractedUserData["data"]["username"].toString()
@@ -57,16 +55,22 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
     setState(() {
       isLoading = true;
     });
+    try {
+      await JourneyPlanHTTP().getJourneyPlan(userName, token).then((value) {
+        setState(() {
+          isLoading = false;
+        });
 
-    await JourneyPlanHTTP().getJourneyPlan(userName, token).then((value) {
+        if (value.status) {
+          jpData = value.data;
+        }
+      });
+    } catch (error) {
       setState(() {
         isLoading = false;
       });
-
-      if (value.status) {
-        jpData = value.data;
-      }
-    });
+      ToastMessage.errorMessage(context, error.toString());
+    }
   }
 
   @override
@@ -79,18 +83,22 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
           ? const Center(
               child: MyLoadingCircle(),
             )
-          : ListView.builder(
-              itemCount: jpData.length,
-              itemBuilder: (ctx, i) {
-                return JourneyPlan(
-                  jp: jpData[i],
-                  takeImageFtn: getImage,
-                  dropFtn: dropVisit,
-                  undropFtn: undropVisit,
-                  isDropLoading: isDropLoading,
-                  workingId: dropWorkingId,
-                );
-              }),
+          : jpData.isEmpty
+              ? const Center(
+                  child: Text("No journey plan found"),
+                )
+              : ListView.builder(
+                  itemCount: jpData.length,
+                  itemBuilder: (ctx, i) {
+                    return JourneyPlan(
+                      jp: jpData[i],
+                      takeImageFtn: getImage,
+                      dropFtn: dropVisit,
+                      undropFtn: undropVisit,
+                      isDropLoading: isDropLoading,
+                      workingId: dropWorkingId,
+                    );
+                  }),
     );
   }
 

@@ -23,19 +23,26 @@ class _LicenseKeyState extends State<LicenseKey> {
     }
     _formKey.currentState!.save();
     // print(licensekey);
-    setState(() {
-      isLoading = true;
-    });
-    await LICENSEHTTPMANAGER().getLicense(licensekey).then((value) {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      await LICENSEHTTPMANAGER().getLicense(licensekey).then((value) {
+        setState(() {
+          isLoading = false;
+        });
+        if (value.status) {
+          Navigator.of(context).pushReplacementNamed(Login.routeName);
+        } else {
+          ToastMessage.errorMessage(context, value.msg);
+        }
+      });
+    } catch (error) {
       setState(() {
         isLoading = false;
       });
-      if (value.status) {
-        Navigator.of(context).pushReplacementNamed(Login.routeName);
-      } else {
-        ToastMessage.errorMessage(context, value.msg);
-      }
-    });
+      ToastMessage.errorMessage(context, error.toString());
+    }
   }
 
   @override

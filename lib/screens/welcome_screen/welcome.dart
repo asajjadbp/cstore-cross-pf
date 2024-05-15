@@ -30,11 +30,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   bool isinit = true;
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     if (isinit) {
       getUserData();
+      await DatabaseHelper.database;
     }
     isinit = false;
   }
@@ -68,41 +69,41 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     setState(() {
       isLoading = true;
     });
-    // try {
-    await SyncroniseHTTP().fetchSyncroniseData(userName, token).then((value) {
-      if (value.status) {
-        syncroniseData = value.data;
-        print(syncroniseData.length);
-        print(syncroniseData[0].sysAgencyDashboard);
-        print(syncroniseData[0].sysCategory);
-        print(syncroniseData[0].sysClient);
-        print(syncroniseData[0].sysDropReason);
-        DatabaseHelper.delete_table(TableName.tbl_agency_dashboard);
-        DatabaseHelper.delete_table(TableName.tbl_sys_category);
-        DatabaseHelper.delete_table(TableName.tbl_sys_client);
-        DatabaseHelper.delete_table(TableName.tbl_drop_reason);
+    try {
+      await SyncroniseHTTP().fetchSyncroniseData(userName, token).then((value) {
+        if (value.status) {
+          syncroniseData = value.data;
+          print(syncroniseData.length);
+          print(syncroniseData[0].sysAgencyDashboard);
+          print(syncroniseData[0].sysCategory);
+          print(syncroniseData[0].sysClient);
+          print(syncroniseData[0].sysDropReason);
+          DatabaseHelper.delete_table(TableName.tbl_agency_dashboard);
+          DatabaseHelper.delete_table(TableName.tbl_sys_category);
+          DatabaseHelper.delete_table(TableName.tbl_sys_client);
+          DatabaseHelper.delete_table(TableName.tbl_drop_reason);
 
-        DatabaseHelper.insertAgencyDashArray(
-            syncroniseData[0].sysAgencyDashboard);
-        DatabaseHelper.insertCategoryArray(syncroniseData[0].sysCategory);
-        DatabaseHelper.insertClientArray(syncroniseData[0].sysClient);
-        DatabaseHelper.insertDropReasonArray(syncroniseData[0].sysDropReason);
-        Future.delayed(const Duration(seconds: 5));
-        // print(syncroniseData[0].sysAgencyDashboard[0].enName);
-        // syncroniseData.forEach((element) {
-        //   print(element)
-        // });
-      }
+          DatabaseHelper.insertAgencyDashArray(
+              syncroniseData[0].sysAgencyDashboard);
+          DatabaseHelper.insertCategoryArray(syncroniseData[0].sysCategory);
+          DatabaseHelper.insertClientArray(syncroniseData[0].sysClient);
+          DatabaseHelper.insertDropReasonArray(syncroniseData[0].sysDropReason);
+          // Future.delayed(const Duration(seconds: 5));
+          // print(syncroniseData[0].sysAgencyDashboard[0].enName);
+          // syncroniseData.forEach((element) {
+          //   print(element)
+          // });
+        }
+        setState(() {
+          isLoading = false;
+        });
+      });
+    } catch (error) {
       setState(() {
         isLoading = false;
       });
-    });
-    // } catch (error) {
-    setState(() {
-      isLoading = false;
-    });
-    // ToastMessage.errorMessage(context, error.toString());
-    // }
+      ToastMessage.errorMessage(context, error.toString());
+    }
   }
 
   @override
