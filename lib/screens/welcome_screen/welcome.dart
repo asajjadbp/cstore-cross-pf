@@ -24,6 +24,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   bool isLoading = false;
   var userName = "";
   var token = "";
+  var baseUrl = "";
 
   List<SyncroniseDetail> syncroniseData = [];
 
@@ -52,7 +53,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     // prefs = await SharedPreferences.getInstance();
     final extractedUserData =
         json.decode(prefs.getString('userCred')!) as Map<String, dynamic>;
-    final baseUrl =
+    var urlData =
         json.decode(prefs.getString('userLicense')!) as Map<String, dynamic>;
     // var user = GetUserDataAndUrl().getUserData.toString();
     userName = extractedUserData["data"][0]["username"].toString();
@@ -60,6 +61,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     // extractedUserData["data"]["username"].toString()
     print(userName);
     print(extractedUserData["data"][0]["token_id"]);
+    baseUrl = urlData["data"][0]["base_url"];
     // print(baseUrl["data"][0]["base_url"]);
     // extractedUserData["data"]["token_id"].toString()
     await getSyncronise();
@@ -69,41 +71,46 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     setState(() {
       isLoading = true;
     });
-    try {
-      await SyncroniseHTTP().fetchSyncroniseData(userName, token).then((value) {
-        if (value.status) {
-          syncroniseData = value.data;
-          print(syncroniseData.length);
-          print(syncroniseData[0].sysAgencyDashboard);
-          print(syncroniseData[0].sysCategory);
-          print(syncroniseData[0].sysClient);
-          print(syncroniseData[0].sysDropReason);
-          DatabaseHelper.delete_table(TableName.tbl_agency_dashboard);
-          DatabaseHelper.delete_table(TableName.tbl_sys_category);
-          DatabaseHelper.delete_table(TableName.tbl_sys_client);
-          DatabaseHelper.delete_table(TableName.tbl_drop_reason);
+    // try {
+    await SyncroniseHTTP()
+        .fetchSyncroniseData(userName, token, baseUrl)
+        .then((value) {
+      if (value.status) {
+        syncroniseData = value.data;
+        print(syncroniseData[0].sysCategory[0].enName);
+        print(syncroniseData.length);
+        print(syncroniseData[0].sysAgencyDashboard);
+        print(syncroniseData[0].sysCategory);
+        print(syncroniseData[0].sysClient);
+        print(syncroniseData[0].sysDropReason);
+        DatabaseHelper.delete_table(TableName.tbl_agency_dashboard);
+        DatabaseHelper.delete_table(TableName.tbl_sys_category);
+        DatabaseHelper.delete_table(TableName.tbl_sys_client);
+        DatabaseHelper.delete_table(TableName.tbl_drop_reason);
 
-          DatabaseHelper.insertAgencyDashArray(
-              syncroniseData[0].sysAgencyDashboard);
-          DatabaseHelper.insertCategoryArray(syncroniseData[0].sysCategory);
-          DatabaseHelper.insertClientArray(syncroniseData[0].sysClient);
-          DatabaseHelper.insertDropReasonArray(syncroniseData[0].sysDropReason);
-          // Future.delayed(const Duration(seconds: 5));
-          // print(syncroniseData[0].sysAgencyDashboard[0].enName);
-          // syncroniseData.forEach((element) {
-          //   print(element)
-          // });
-        }
-        setState(() {
-          isLoading = false;
-        });
-      });
-    } catch (error) {
+        DatabaseHelper.insertAgencyDashArray(
+            syncroniseData[0].sysAgencyDashboard);
+        DatabaseHelper.insertCategoryArray(syncroniseData[0].sysCategory);
+        DatabaseHelper.insertClientArray(syncroniseData[0].sysClient);
+        DatabaseHelper.insertDropReasonArray(syncroniseData[0].sysDropReason);
+        // Future.delayed(const Duration(seconds: 5));
+        // print(syncroniseData[0].sysAgencyDashboard[0].enName);
+        // syncroniseData.forEach((element) {
+        //   print(element)
+        // });
+      }
       setState(() {
         isLoading = false;
       });
-      ToastMessage.errorMessage(context, error.toString());
-    }
+    }).catchError((onError) {
+      setState(() {
+        isLoading = false;
+      });
+      ToastMessage.errorMessage(context, onError.toString());
+    });
+    // } catch (error) {
+
+    // }
   }
 
   @override
@@ -131,9 +138,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               height: 100,
             ),
             isLoading
-                ? Center(
-                    child:
-                        Container(height: 60, child: const MyLoadingCircle()),
+                ? const Center(
+                    child: SizedBox(height: 60, child: MyLoadingCircle()),
                   )
                 : ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -147,7 +153,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     },
                     child: const Text(
                       "Next",
-                      style: TextStyle(),
                     ),
                   ),
           ],

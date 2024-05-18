@@ -5,8 +5,10 @@ import 'package:cstore/database/db_helper.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../database/table_name.dart';
+import '../utils/toast/toast.dart';
 
 class ViewBeforeFixing extends StatefulWidget {
   static const routename = "view_before_route";
@@ -24,7 +26,6 @@ class _ViewBeforeFixingState extends State<ViewBeforeFixing> {
   @override
   void initState() {
     super.initState();
-
     getTransPhoto();
   }
 
@@ -43,16 +44,14 @@ class _ViewBeforeFixingState extends State<ViewBeforeFixing> {
   void setTransPhoto() {
     for (var trans in transData) {
       String imageName = trans.img_name;
-      print(imageName);
+
       for (int i = 0; i < _imageFiles.length; i++) {
         if (_imageFiles[i].path.endsWith(trans.img_name)) {
           trans.imageFile = _imageFiles[i];
         }
         print(_imageFiles[i].path.endsWith(trans.img_name));
       }
-      if (trans.imageFile != null) {
-        print("hello world");
-      }
+      // if (trans.imageFile != null) {}
       // File matchingImage = _imageFiles
       //     .firstWhere((file) => file.path.endsWith(imageName), orElse: null);
 
@@ -84,13 +83,41 @@ class _ViewBeforeFixingState extends State<ViewBeforeFixing> {
     // setState(() {});
   }
 
-  void deletePhoto(int recordId) async {
-    // print(recordId);
-    // return;
+  Future<PermissionStatus> _getPermission() async {
+    final PermissionStatus permission = await Permission.camera.request();
+    return permission;
+  }
+
+  Future<void> deleteImageFromLocal(String imgName) async {
+    try {
+      final PermissionStatus permissionStatus = await _getPermission();
+      if (permissionStatus == PermissionStatus.granted) {
+        final String dirPath = (await getExternalStorageDirectory())!.path;
+        final String folderPath = '$dirPath/cstore';
+        final file = File('$folderPath/$imgName');
+
+        if (await file.exists()) {
+          await file.delete();
+          print("File deleted: $folderPath/$imgName");
+        } else {
+          print("File not found: $folderPath/$imgName");
+        }
+      } else {
+        // print('Permission denied');
+        ToastMessage.errorMessage(context, "Permissing denied");
+      }
+    } catch (e) {
+      ToastMessage.errorMessage(context, "Permissing denied");
+    }
+  }
+
+  void deletePhoto(int recordId, String imgName) async {
     await DatabaseHelper.deleteOneRecord(TableName.tbl_trans_photo, recordId)
-        .then((_) {
-      _loadImages();
-      getTransPhoto();
+        .then((_) async {
+      await deleteImageFromLocal(imgName).then((_) {
+        _loadImages();
+        getTransPhoto();
+      });
     });
   }
 
@@ -226,7 +253,8 @@ class _ViewBeforeFixingState extends State<ViewBeforeFixing> {
                                   alignment: Alignment.topRight,
                                   child: IconButton(
                                     onPressed: () {
-                                      deletePhoto(transData[i].id);
+                                      deletePhoto(transData[i].id,
+                                          transData[i].img_name);
                                     },
                                     icon: const Icon(
                                       Icons.delete,

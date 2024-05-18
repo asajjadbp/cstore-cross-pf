@@ -27,6 +27,7 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
   bool isLoading = false;
   var userName = "";
   var token = "";
+  var baseUrl = "";
 
   @override
   void initState() {
@@ -35,11 +36,11 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
     getUserData();
   }
 
-  void submitStartVist(
-      String workingId, String storeImage, String lat, String long) async {
+  void submitStartVist(String workingId, String storeImage, String lat,
+      String long, String clientId) async {
     await JourneyPlanHTTP()
-        .startVisit(userName, workingId, storeImage, lat, long, "1,3,2",
-            commentText.text, token)
+        .startVisit(userName, workingId, storeImage, lat, long, clientId,
+            commentText.text, token, baseUrl)
         .then((value) {
       setState(() {
         isLoading = false;
@@ -77,7 +78,7 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final extractedUserData =
         json.decode(prefs.getString('userCred')!) as Map<String, dynamic>;
-    final baseUrl =
+    final urlData =
         json.decode(prefs.getString('userLicense')!) as Map<String, dynamic>;
     // var user = GetUserDataAndUrl().getUserData.toString();
     userName = extractedUserData["data"][0]["username"].toString();
@@ -86,10 +87,12 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
     print(userName);
     print(extractedUserData["data"][0]["token_id"]);
     // print(baseUrl["data"][0]["base_url"]);
+    baseUrl = urlData["data"][0]["base_url"];
     // extractedUserData["data"]["token_id"].toString()
   }
 
-  void uploadImageToCloud(File imageFile, String workingId) async {
+  void uploadImageToCloud(
+      File imageFile, String workingId, String clientId) async {
     setState(() {
       isLoading = true;
     });
@@ -130,7 +133,8 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
           final downloadUrl =
               'https://storage.googleapis.com/$bucketName/$filePath';
           print(downloadUrl);
-          submitStartVist(workingId, filename, value['lat'], value['long']);
+          submitStartVist(
+              workingId, filename, value['lat'], value['long'], clientId);
         } else {
           setState(() {
             isLoading = false;
@@ -191,17 +195,15 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
                   const SizedBox(
                     height: 15,
                   ),
-                  Container(
-                    child: Card(
-                      child: TextField(
-                          controller: commentText,
-                          decoration: const InputDecoration(
-                              hintText: "Comment",
-                              filled: true,
-                              fillColor: Color.fromARGB(255, 223, 218, 218),
-                              border: InputBorder.none),
-                          maxLines: 4),
-                    ),
+                  Card(
+                    child: TextField(
+                        controller: commentText,
+                        decoration: const InputDecoration(
+                            hintText: "Comment",
+                            filled: true,
+                            fillColor: Color.fromARGB(255, 223, 218, 218),
+                            border: InputBorder.none),
+                        maxLines: 4),
                   )
                 ],
               ),
@@ -215,7 +217,9 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
                   : RowButtons(onSaveTap: () {
                       // submitStartVist(routeArg["workingId"].toString());
                       uploadImageToCloud(
-                          routeArg["image"], routeArg["workingId"].toString());
+                          routeArg["image"],
+                          routeArg["workingId"].toString(),
+                          routeArg["clientId"].toString());
                     }, onBackTap: () {
                       Navigator.of(context).pop();
                     }),

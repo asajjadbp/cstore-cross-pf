@@ -9,14 +9,16 @@ class JourneyPlan extends StatelessWidget {
   bool isDropLoading;
   Function undropFtn;
   String workingId;
-  JourneyPlan(
-      {super.key,
-      required this.jp,
-      required this.takeImageFtn,
-      required this.dropFtn,
-      required this.isDropLoading,
-      required this.undropFtn,
-      required this.workingId});
+
+  JourneyPlan({
+    super.key,
+    required this.jp,
+    required this.takeImageFtn,
+    required this.dropFtn,
+    required this.isDropLoading,
+    required this.undropFtn,
+    required this.workingId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +118,8 @@ class JourneyPlan extends StatelessWidget {
                             ElevatedButton(
                                 onPressed: jp.isDrop == 0
                                     ? () {
-                                        takeImageFtn();
+                                        takeImageFtn(
+                                            jp.clientIds, jp.workingId);
                                       }
                                     : null,
                                 child: const Text("Start Visit")),
@@ -129,7 +132,7 @@ class JourneyPlan extends StatelessWidget {
                                     ? () {
                                         if (jp.isDrop == 0) {
                                           dropFtn(jp.workingId.toString());
-                                        } else {
+                                        } else if (jp.isDrop == 1) {
                                           undropFtn(jp.workingId.toString());
                                         }
                                       }

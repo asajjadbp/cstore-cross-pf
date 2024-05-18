@@ -1,18 +1,18 @@
-import 'dart:convert';
+// import 'dart:convert';
 
 import 'package:cstore/Model/request_model.dart/jp_request_model.dart';
 import 'package:cstore/Model/response_model.dart/syncronise_response_model.dart';
 
 import 'api.dart';
 import 'response_handler.dart';
-import 'package:http/http.dart' as http;
+// import 'package:http/http.dart' as http;
 
 class SyncroniseHTTP {
   final ResponseHandler _handler = ResponseHandler();
 
   Future<SyncroniseResponseModel> fetchSyncroniseData(
-      String userName, String token) async {
-    const url = Api.SYNCRONISEVISIT;
+      String userName, String token, String baseUrl) async {
+    final url = baseUrl + Api.SYNCRONISEVISIT;
     // print("--------------------------");
     // String token = GetUserDataAndUrl().getToken.toString();
     // print("+++++++++++++++++");

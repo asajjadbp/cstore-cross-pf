@@ -24,6 +24,7 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
   File? _pickedImage;
   var userName = "";
   var token = "";
+  var baseUrl = "";
   bool isLoading = false;
   bool isDropLoading = false;
   // This id is taking to recognize that card and start reloading
@@ -39,14 +40,16 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final extractedUserData =
         json.decode(prefs.getString('userCred')!) as Map<String, dynamic>;
-    final baseUrl =
+    final urlData =
         json.decode(prefs.getString('userLicense')!) as Map<String, dynamic>;
     userName = extractedUserData["data"][0]["username"].toString();
     token = extractedUserData["data"][0]["token_id"].toString();
     // extractedUserData["data"]["username"].toString()
     print(userName);
     print(extractedUserData["data"][0]["token_id"]);
-    // print(baseUrl["data"][0]["base_url"]);
+    print("jp screen");
+    // print(urlData["data"][0]["base_url"]);
+    baseUrl = urlData["data"][0]["base_url"];
     // extractedUserData["data"]["token_id"].toString()
     callJp();
   }
@@ -55,22 +58,26 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
     setState(() {
       isLoading = true;
     });
-    try {
-      await JourneyPlanHTTP().getJourneyPlan(userName, token).then((value) {
-        setState(() {
-          isLoading = false;
-        });
-
-        if (value.status) {
-          jpData = value.data;
-        }
-      });
-    } catch (error) {
+    // try {
+    await JourneyPlanHTTP()
+        .getJourneyPlan(userName, token, baseUrl)
+        .then((value) {
       setState(() {
         isLoading = false;
       });
-      ToastMessage.errorMessage(context, error.toString());
-    }
+
+      if (value.status) {
+        jpData = value.data;
+      }
+    }).catchError((onError) {
+      setState(() {
+        isLoading = false;
+      });
+      ToastMessage.errorMessage(context, onError.toString());
+    });
+    // } catch (error) {
+
+    // }
   }
 
   @override
@@ -102,15 +109,21 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
     );
   }
 
-  Future<void> getImage() async {
+  Future<void> getImage(String clientId, int workingId) async {
     await ImageTakingService.imageSelect().then((value) {
       if (value == null) {
         ToastMessage.errorMessage(context, "No Image Picked");
         return;
       }
+      print("working id is ");
+      print(workingId);
+      // return;
       // _pickedImage = value;
-      Navigator.of(context)
-          .pushNamed(ViewJPPhoto.routename, arguments: {"image": value});
+      Navigator.of(context).pushNamed(ViewJPPhoto.routename, arguments: {
+        "image": value,
+        "workingId": workingId,
+        "clientId": clientId
+      });
     });
   }
 
@@ -119,7 +132,7 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
       isDropLoading = true;
     });
     await JourneyPlanHTTP()
-        .dropVisit(userName, workingId, "3", token)
+        .dropVisit(userName, workingId, "3", token, baseUrl)
         .then((value) {
       callJp();
       setState(() {
@@ -146,7 +159,7 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
       dropWorkingId = "";
     });
     await JourneyPlanHTTP()
-        .unDropVisit(userName, workingId, token)
+        .unDropVisit(userName, workingId, token, baseUrl)
         .then((value) {
       callJp();
       setState(() {

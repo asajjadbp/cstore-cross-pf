@@ -30,7 +30,7 @@ class BeforeFixing extends StatefulWidget {
 
 class _BeforeFixingState extends State<BeforeFixing> {
   List<ClientModel> clientData = [];
-  List<CategoryModel> categoryData = [];
+  List<CategoryModel> categoryData = [CategoryModel(name: "", client: -1)];
   var imageName = "";
   File? imageFile;
   int selectedClientId = -1;
@@ -38,6 +38,7 @@ class _BeforeFixingState extends State<BeforeFixing> {
   bool isLoading = false;
   bool isInit = true;
   bool isBtnLoading = false;
+  bool isCategoryLoading = false;
 
   @override
   void didChangeDependencies() async {
@@ -45,7 +46,7 @@ class _BeforeFixingState extends State<BeforeFixing> {
 
     if (isInit) {
       getClientData();
-      getCategoryData();
+      // getCategoryData();
     }
     isInit = false;
   }
@@ -121,20 +122,21 @@ class _BeforeFixingState extends State<BeforeFixing> {
     print(clientData[0].client_name);
   }
 
-  void getCategoryData() async {
+  void getCategoryData(int clientId) async {
+    categoryData = [CategoryModel(name: "", client: -1)];
     setState(() {
-      isLoading = true;
+      isCategoryLoading = true;
     });
-    await DatabaseHelper.getCategoryList().then((value) {
+
+    await DatabaseHelper.getCategoryList(selectedClientId).then((value) {
       setState(() {
-        isLoading = false;
+        isCategoryLoading = false;
       });
       categoryData = value;
     });
     print(categoryData[0].name);
   }
 
-  var dropData = ["type A", "Type B"];
   Widget dropdownwidget(String hintText) {
     return DropdownButtonFormField2<CategoryModel>(
       decoration: InputDecoration(
@@ -225,10 +227,10 @@ class _BeforeFixingState extends State<BeforeFixing> {
         return null;
       },
       onChanged: (value) {
-        setState(() {
-          selectedClientId = value!.client_id;
-        });
-        // getCategoryData();
+        // setState(() {
+        selectedClientId = value!.client_id;
+        // });
+        getCategoryData(selectedCategoryId);
         print(selectedClientId);
       },
       onSaved: (value) {},
@@ -273,6 +275,9 @@ class _BeforeFixingState extends State<BeforeFixing> {
                 gcs_status: 0))
             .then((_) {
           ToastMessage.succesMessage(context, "Data store successfully");
+          selectedCategoryId = -1;
+          selectedClientId = -1;
+          imageFile = null;
         });
       });
       setState(() {
@@ -332,7 +337,9 @@ class _BeforeFixingState extends State<BeforeFixing> {
                   const SizedBox(
                     height: 10,
                   ),
-                  dropdownwidget("Category"),
+                  isCategoryLoading
+                      ? Container(height: 60, child: const MyLoadingCircle())
+                      : dropdownwidget("Category"),
                   const SizedBox(
                     height: 20,
                   ),

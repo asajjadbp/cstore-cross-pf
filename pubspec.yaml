@@ -48,7 +48,8 @@ dependencies:
   path_provider: ^2.1.3
   sqflite: any
   cached_network_svg_image: ^1.0.0
-  gallery_saver: ^2.3.2
+  # below package gallery ios setting is not done for it in info.plist file
+  gallery_saver: ^2.3.2 
   permission_handler: any
 
 

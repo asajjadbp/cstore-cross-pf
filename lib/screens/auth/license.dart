@@ -1,6 +1,7 @@
 import 'package:cstore/Network/license_http_manager.dart';
 import 'package:cstore/screens/auth/login.dart';
 import 'package:cstore/screens/utils/toast/toast.dart';
+import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/appcolor.dart';
@@ -23,26 +24,32 @@ class _LicenseKeyState extends State<LicenseKey> {
     }
     _formKey.currentState!.save();
     // print(licensekey);
-    try {
-      setState(() {
-        isLoading = true;
-      });
-      await LICENSEHTTPMANAGER().getLicense(licensekey).then((value) {
-        setState(() {
-          isLoading = false;
-        });
-        if (value.status) {
-          Navigator.of(context).pushReplacementNamed(Login.routeName);
-        } else {
-          ToastMessage.errorMessage(context, value.msg);
-        }
-      });
-    } catch (error) {
+    // try {
+    setState(() {
+      isLoading = true;
+    });
+    await LICENSEHTTPMANAGER().getLicense(licensekey).then((value) {
       setState(() {
         isLoading = false;
       });
-      ToastMessage.errorMessage(context, error.toString());
-    }
+      if (value.status) {
+        Navigator.of(context).pushReplacementNamed(Login.routeName);
+      } else {
+        ToastMessage.errorMessage(context, value.msg);
+      }
+    }).catchError((onError) {
+      setState(() {
+        isLoading = false;
+      });
+      ToastMessage.errorMessage(context, onError.toString());
+    });
+    // }
+    // catch (error) {
+    // setState(() {
+    //   isLoading = false;
+    // });
+    // ToastMessage.errorMessage(context, error.toString());
+    // }
   }
 
   @override
@@ -169,9 +176,11 @@ class _LicenseKeyState extends State<LicenseKey> {
                                 height: 80,
                               ),
                               isLoading
-                                  ? Center(
-                                      child: CircularProgressIndicator(),
-                                    )
+                                  ? const SizedBox(
+                                      height: 60, child: MyLoadingCircle())
+                                  // const Center(
+                                  //     child: CircularProgressIndicator(),
+                                  //   )
                                   : ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor:
@@ -184,7 +193,6 @@ class _LicenseKeyState extends State<LicenseKey> {
                                       onPressed: submitForm,
                                       child: const Text(
                                         "Submit",
-                                        style: TextStyle(),
                                       ),
                                     ),
                             ],

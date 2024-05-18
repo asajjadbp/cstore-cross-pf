@@ -151,7 +151,7 @@ class DatabaseHelper {
         TableName.tbl_sys_category,
         {
           TableName.cat_client_id: data.clientId,
-          TableName.cat_name: data.arName,
+          TableName.cat_name: data.enName,
         },
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
@@ -290,10 +290,10 @@ class DatabaseHelper {
     });
   }
 
-  static Future<List<CategoryModel>> getCategoryList() async {
+  static Future<List<CategoryModel>> getCategoryList(int clientID) async {
     var db = await initDataBase();
     final List<Map<String, dynamic>> categoryMaps = await db.rawQuery(
-        "SELECT sys_category.id as cat_id, sys_category.name as cat_name FROM  sys_category JOIN sys_client on sys_client.client_id=sys_category.client WHERE sys_category.client=sys_client.client_id GROUP by sys_category.id"
+        "SELECT sys_category.id as cat_id, sys_category.name as cat_name FROM  sys_category JOIN sys_client on sys_client.client_id=sys_category.client WHERE sys_category.client=$clientID"
         // "SELECT sys_category.id as cat_id,sys_category.name as cat_name FROM  ${TableName.tbl_sys_category} JOIN ${TableName.tbl_sys_client} on sys_client.company_id=sys_category.client WHERE sys_category.client=1 GROUP by sys_category.client"
         );
 

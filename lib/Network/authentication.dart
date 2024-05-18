@@ -8,8 +8,12 @@ import 'response_handler.dart';
 class Authentication {
   final ResponseHandler _handler = ResponseHandler();
 
-  Future<UserResponseModel> loginUser(UserRequestModel userResponseData) async {
-    const url = Api.LOGIN_API;
+  Future<UserResponseModel> loginUser(
+      UserRequestModel userResponseData, String baseUrl) async {
+    final url = baseUrl + Api.LOGIN_API;
+
+    // var u = baseUrl + url;
+    // print(u);
 
     final response =
         await _handler.post(Uri.parse(url), userResponseData.toJson(), "");

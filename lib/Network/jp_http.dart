@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cstore/Model/request_model.dart/drop_visit_request_model.dart';
+import 'package:cstore/Model/request_model.dart/jp_request_model.dart';
 import 'package:cstore/Model/request_model.dart/start_visit_request_model.dart';
 import 'package:cstore/Model/request_model.dart/undrop_visit_req_model.dart';
 import 'package:cstore/Model/response_model.dart/drop_visit_response_model.dart';
@@ -17,10 +18,11 @@ class JourneyPlanHTTP {
   final ResponseHandler _handler = ResponseHandler();
 
   Future<JourneyPlanResponseModel> getJourneyPlan(
-      String username, String token) async {
+      String username, String token, String baseUrl) async {
     print(token);
 
-    const url = Api.GETJOURNEYPLAN;
+    final url = baseUrl + Api.GETJOURNEYPLAN;
+
     // print("--------------------------");
     // String token = GetUserDataAndUrl().getToken.toString();
     // print("+++++++++++++++++");
@@ -32,8 +34,8 @@ class JourneyPlanHTTP {
     //   'Content-Type': 'application/json', // adjust content type if needed
     // };
 
-    final response =
-        await _handler.post(Uri.parse(url), {"username": username}, token);
+    final response = await _handler.post(Uri.parse(url),
+        JourneyPlanRequestModel(username: username).toJson(), token);
 
     // final response = await http
     //     .post(Uri.parse(url), headers: headers, body: {"username": ""});
@@ -51,8 +53,8 @@ class JourneyPlanHTTP {
   }
 
   Future<DropVisitResponseModel> dropVisit(String username, String workingID,
-      String dropReason, String token) async {
-    const url = Api.DROPVISIT;
+      String dropReason, String token, String baseUrl) async {
+    final url = baseUrl + Api.DROPVISIT;
     // Map<String, String> headers = {
     //   'Authorization': 'Bearer $bearerToken',
     //   'Content-Type': 'application/json', // adjust content type if needed
@@ -78,8 +80,8 @@ class JourneyPlanHTTP {
   }
 
   Future<UnDropVisitResponseModel> unDropVisit(
-      String username, String workingID, String token) async {
-    const url = Api.UNDROPVISIT;
+      String username, String workingID, String token, String baseUrl) async {
+    final url = baseUrl + Api.UNDROPVISIT;
     // Map<String, String> headers = {
     //   'Authorization': 'Bearer $bearerToken',
     //   'Content-Type': 'application/json', // adjust content type if needed
@@ -111,8 +113,11 @@ class JourneyPlanHTTP {
       String long,
       String clientIds,
       String commentText,
-      String token) async {
-    const url = Api.STARTVISIT;
+      String token,
+      String baseUrl) async {
+    final url = baseUrl + Api.STARTVISIT;
+    print("journey plan url");
+    print(workingID);
 
     final response = await _handler.post(
         Uri.parse(url),

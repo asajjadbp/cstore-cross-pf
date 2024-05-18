@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cstore/Model/request_model.dart/login_request_model.dart';
 import 'package:cstore/Network/authentication.dart';
 import 'package:cstore/screens/Journey%20Plan/journey_plan_screen.dart';
@@ -5,6 +7,7 @@ import 'package:cstore/screens/utils/toast/toast.dart';
 import 'package:cstore/screens/welcome_screen/welcome.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/appcolor.dart';
 
 class Login extends StatefulWidget {
@@ -18,8 +21,32 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   var userName = "";
   var password = "";
+  var baseUrl = "";
   final _formKey = GlobalKey<FormState>();
   bool isLoading = false;
+
+  @override
+  void initState() {
+    getLicense();
+    super.initState();
+  }
+
+  void getLicense() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // final extractedUserData =
+    //     json.decode(prefs.getString('userCred')!) as Map<String, dynamic>;
+    final urlData =
+        json.decode(prefs.getString('userLicense')!) as Map<String, dynamic>;
+    // userName = extractedUserData["data"][0]["username"].toString();
+    // token = extractedUserData["data"][0]["token_id"].toString();
+    // extractedUserData["data"]["username"].toString()
+    // print(urlData["data"][0]["base_url"]);
+    baseUrl = urlData["data"][0]["base_url"];
+    print(baseUrl);
+    // print(extractedUserData["data"][0]["token_id"]);
+    // print(baseUrl["data"][0]["base_url"]);
+    // extractedUserData["data"]["token_id"].toString()
+  }
 
   Future<void> submitForm() async {
     if (!_formKey.currentState!.validate()) {
@@ -31,7 +58,8 @@ class _LoginState extends State<Login> {
       isLoading = true;
     });
     await Authentication()
-        .loginUser(UserRequestModel(username: userName, password: password))
+        .loginUser(
+            UserRequestModel(username: userName, password: password), baseUrl)
         .then((value) {
       setState(() {
         isLoading = false;
