@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:cstore/Model/database_model/category_model.dart';
 import 'package:cstore/Model/database_model/client_model.dart';
-import 'package:cstore/database/db_helper.dart';
+import 'package:cstore/Database/db_helper.dart';
 import 'package:cstore/screens/before_fixing/view_before_fixing.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:cstore/database/table_name.dart';
+import 'package:cstore/Database/table_name.dart';
 
 class GetTransPhotoModel {
   late int id = 1;

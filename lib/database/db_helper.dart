@@ -1,4 +1,4 @@
-import 'package:cstore/database/table_name.dart';
+import 'package:cstore/Database/table_name.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../Model/database_model/category_model.dart';

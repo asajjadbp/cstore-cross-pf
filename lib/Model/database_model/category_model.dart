@@ -1,4 +1,4 @@
-import 'package:cstore/database/table_name.dart';
+import 'package:cstore/Database/table_name.dart';
 
 class CategoryModel {
   late int id = 0;

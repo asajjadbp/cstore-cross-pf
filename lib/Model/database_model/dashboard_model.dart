@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import '../../database/table_name.dart';
+import '../../Database/table_name.dart';
 
 class AgencyDashboardModel {
   late int id;

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:cstore/Model/response_model.dart/syncronise_response_model.dart';
 import 'package:cstore/Network/syncronise_http.dart';
-import 'package:cstore/database/db_helper.dart';
+import 'package:cstore/Database/db_helper.dart';
 import 'package:cstore/screens/dashboard/dashboard.dart';
 import 'package:cstore/screens/utils/toast/toast.dart';
 import 'package:cstore/screens/widget/loading.dart';
@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import '../../Model/response_model.dart/syncronise_response_model.dart';
-import '../../database/table_name.dart';
+import '../../Database/table_name.dart';
 
 class WelcomeScreen extends StatefulWidget {
   static const routename = "/welcome_route";

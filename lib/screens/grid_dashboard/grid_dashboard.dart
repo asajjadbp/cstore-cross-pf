@@ -1,5 +1,5 @@
 import 'package:cstore/Model/response_model.dart/syncronise_response_model.dart';
-import 'package:cstore/database/db_helper.dart';
+import 'package:cstore/Database/db_helper.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';

@@ -1,13 +1,13 @@
 import 'dart:io';
 
 import 'package:cstore/Model/database_model/get_trans_photo_model.dart';
-import 'package:cstore/database/db_helper.dart';
+import 'package:cstore/Database/db_helper.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../../database/table_name.dart';
+import '../../Database/table_name.dart';
 import '../utils/toast/toast.dart';
 
 class ViewBeforeFixing extends StatefulWidget {
