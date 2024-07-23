@@ -7,15 +7,25 @@ import 'package:cstore/Model/request_model.dart/undrop_visit_req_model.dart';
 import 'package:cstore/Model/response_model.dart/drop_visit_response_model.dart';
 import 'package:cstore/Model/response_model.dart/undrop_visit_resp_model.dart';
 import 'package:cstore/Network/api.dart';
-import 'package:cstore/Network/getUserData/base_url_and_user.dart';
 
+import '../Model/request_model.dart/finish_visit_request_model.dart';
 import '../Model/response_model.dart/jp_response_model.dart';
 import '../Model/response_model.dart/start_visit_response_model.dart';
+import '../Model/response_model.dart/user_dashboard_model.dart';
 import 'response_handler.dart';
 import 'package:http/http.dart' as http;
 
 class JourneyPlanHTTP {
   final ResponseHandler _handler = ResponseHandler();
+
+  Future<UserDashboardListResponseModel> getUserDashboard(
+      String username, String token, String baseUrl) async {
+    var url = baseUrl + Api.USER_DASHBOARD_API;
+    final response = await _handler.post(Uri.parse(url),
+        JourneyPlanRequestModel(username: username).toJson(), token);
+    UserDashboardListResponseModel userDashboardListResponseModel = UserDashboardListResponseModel.fromJson(response);
+    return userDashboardListResponseModel;
+  }
 
   Future<JourneyPlanResponseModel> getJourneyPlan(
       String username, String token, String baseUrl) async {
@@ -23,23 +33,10 @@ class JourneyPlanHTTP {
 
     final url = baseUrl + Api.GETJOURNEYPLAN;
 
-    // print("--------------------------");
-    // String token = GetUserDataAndUrl().getToken.toString();
-    // print("+++++++++++++++++");
-    // print(token);
-    // print("bbbbbbbbbbbbbbbbbbb");
-
-    // Map<String, String> headers = {
-    //   'Authorization': 'Bearer $bearerToken',
-    //   'Content-Type': 'application/json', // adjust content type if needed
-    // };
+    print(url);
 
     final response = await _handler.post(Uri.parse(url),
         JourneyPlanRequestModel(username: username).toJson(), token);
-
-    // final response = await http
-    //     .post(Uri.parse(url), headers: headers, body: {"username": ""});
-    // final responseData = jsonDecode(response.body);
 
     print(response);
 
@@ -55,10 +52,6 @@ class JourneyPlanHTTP {
   Future<DropVisitResponseModel> dropVisit(String username, String workingID,
       String dropReason, String token, String baseUrl) async {
     final url = baseUrl + Api.DROPVISIT;
-    // Map<String, String> headers = {
-    //   'Authorization': 'Bearer $bearerToken',
-    //   'Content-Type': 'application/json', // adjust content type if needed
-    // };
 
     final response = await _handler.post(
         Uri.parse(url),
@@ -69,10 +62,6 @@ class JourneyPlanHTTP {
             .toJson(),
         token);
 
-    // final response = await http
-    //     .post(Uri.parse(url), headers: headers, body: {"username": ""});
-    // final responseData = jsonDecode(response.body);
-
     DropVisitResponseModel dropVisitResponseData =
         DropVisitResponseModel.fromJson(response);
 
@@ -82,10 +71,6 @@ class JourneyPlanHTTP {
   Future<UnDropVisitResponseModel> unDropVisit(
       String username, String workingID, String token, String baseUrl) async {
     final url = baseUrl + Api.UNDROPVISIT;
-    // Map<String, String> headers = {
-    //   'Authorization': 'Bearer $bearerToken',
-    //   'Content-Type': 'application/json', // adjust content type if needed
-    // };
 
     final response = await _handler.post(
         Uri.parse(url),
@@ -139,5 +124,18 @@ class JourneyPlanHTTP {
         StartVisitResponseModel.fromJson(response);
 
     return startVisitResponseData;
+  }
+
+  Future<dynamic> finishVisit(String token, String baseUrl,FinishVisitRequestModel finishVisitRequestModel) async {
+    final url = baseUrl + Api.finishVisit;
+
+    print(jsonEncode(finishVisitRequestModel));
+    final response = await _handler.post(Uri.parse(url), finishVisitRequestModel.toJson(), token);
+
+    // final response = await http
+    //     .post(Uri.parse(url), headers: headers, body: {"username": ""});
+    // final responseData = jsonDecode(response.body);
+
+    return response;
   }
 }

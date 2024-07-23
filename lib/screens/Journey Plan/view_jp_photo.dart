@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:cstore/screens/grid_dashboard/grid_dashboard.dart';
+import 'package:cstore/screens/utils/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../Model/response_model.dart/jp_response_model.dart';
+import '../widget/app_bar_widgets.dart';
 import '/Network/jp_http.dart';
 import '../utils/services/getting_gps.dart';
 import '/screens/utils/toast/toast.dart';
@@ -28,6 +31,8 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
   var userName = "";
   var token = "";
   var baseUrl = "";
+  String bucketName = "";
+  late  JourneyPlanDetail journeyPlanDetail;
 
   @override
   void initState() {
@@ -38,15 +43,32 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
 
   void submitStartVist(String workingId, String storeImage, String lat,
       String long, String clientId) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     await JourneyPlanHTTP()
         .startVisit(userName, workingId, storeImage, lat, long, clientId,
             commentText.text, token, baseUrl)
         .then((value) {
-      setState(() {
+
+          sharedPreferences.setString(AppConstants.workingId, journeyPlanDetail.workingId.toString());
+          sharedPreferences.setString(AppConstants.storeId, journeyPlanDetail.storeId.toString());
+          sharedPreferences.setString(AppConstants.clientId, journeyPlanDetail.clientIds.toString());
+          sharedPreferences.setString(AppConstants.storeEnNAme, journeyPlanDetail.enStoreName.toString());
+          sharedPreferences.setString(AppConstants.storeArNAme, journeyPlanDetail.arStoreName.toString());
+          sharedPreferences.setString(AppConstants.gcode, journeyPlanDetail.gcode.toString());
+          sharedPreferences.setString(AppConstants.availableExclude, journeyPlanDetail.avlExclude.toString());
+          sharedPreferences.setString(AppConstants.otherExclude, journeyPlanDetail.otherExclude.toString());
+          sharedPreferences.setString(AppConstants.workingDate, journeyPlanDetail.workingDate.toString());
+          sharedPreferences.setString(AppConstants.visitCheckIn, journeyPlanDetail.checkIn.toString());
+          sharedPreferences.setString(AppConstants.visitActivity, journeyPlanDetail.visitActivity.toString());
+
+          setState(() {
         isLoading = false;
       });
       if (value.status) {
         ToastMessage.succesMessage(context, value.msg);
+
+        Navigator.of(context).pop();
+
         Navigator.of(context).pushNamed(GridDashBoard.routeName);
       } else {
         ToastMessage.errorMessage(context, value.msg);
@@ -76,19 +98,11 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
 
   getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    final extractedUserData =
-        json.decode(prefs.getString('userCred')!) as Map<String, dynamic>;
-    final urlData =
-        json.decode(prefs.getString('userLicense')!) as Map<String, dynamic>;
-    // var user = GetUserDataAndUrl().getUserData.toString();
-    userName = extractedUserData["data"][0]["username"].toString();
-    token = extractedUserData["data"][0]["token_id"].toString();
-    // extractedUserData["data"]["username"].toString()
-    print(userName);
-    print(extractedUserData["data"][0]["token_id"]);
-    // print(baseUrl["data"][0]["base_url"]);
-    baseUrl = urlData["data"][0]["base_url"];
-    // extractedUserData["data"]["token_id"].toString()
+
+    userName = prefs.getString(AppConstants.userName)!;
+    token = prefs.getString(AppConstants.tokenId)!;
+    bucketName = prefs.getString(AppConstants.bucketName)!;
+    baseUrl = prefs.getString(AppConstants.baseUrl)!;
   }
 
   void uploadImageToCloud(
@@ -113,9 +127,14 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
           // Generate a unique filename and path
           final filename =
               '${userName}_${DateTime.now().millisecondsSinceEpoch}.jpg';
-          const bucketName =
-              "catalisttest-bucket"; // Replace with your bucket name
+          // const bucketName =
+          //     "binzagr-bucket"; // Replace with your bucket name
           final filePath = 'visits/$filename';
+
+          print("Bucket Name asdwa");
+          print(bucketName);
+          print(filePath);
+
 
           final fileContent = await imageFile.readAsBytes();
           final bucketObject = Object(name: filePath);
@@ -130,9 +149,9 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
               fileContent.length,
             ),
           );
-          final downloadUrl =
-              'https://storage.googleapis.com/$bucketName/$filePath';
-          print(downloadUrl);
+          // final downloadUrl =
+          //     'https://storage.googleapis.com/$bucketName/$filePath';
+          // print(downloadUrl);
           submitStartVist(
               workingId, filename, value['lat'], value['long'], clientId);
         } else {
@@ -161,15 +180,18 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
 
   @override
   Widget build(BuildContext context) {
-    final routeArg =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final routeArg = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    journeyPlanDetail = routeArg['visitItem'];
+    print("___________JP DETILS ________________");
+    print(jsonEncode(journeyPlanDetail));
+    print("___________JP DETILS ________________");
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("carrefour - 336"),
-      ),
+      appBar: generalAppBar(context, journeyPlanDetail.enStoreName, "Start Visit", (){
+        Navigator.of(context).pop();
+      }, (){print("filter Click");}, true, false, false),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.only(left: 10, right: 10),
@@ -214,12 +236,15 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
                           height: 60,
                           child: const MyLoadingCircle()),
                     )
-                  : RowButtons(onSaveTap: () {
+                  : RowButtons(
+                isNextActive: true,
+                  buttonText: "Save",
+                  onSaveTap: () {
                       // submitStartVist(routeArg["workingId"].toString());
                       uploadImageToCloud(
                           routeArg["image"],
-                          routeArg["workingId"].toString(),
-                          routeArg["clientId"].toString());
+                          journeyPlanDetail.workingId.toString(),
+                          journeyPlanDetail.clientIds.toString());
                     }, onBackTap: () {
                       Navigator.of(context).pop();
                     }),

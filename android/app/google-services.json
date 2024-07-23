@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "490906549242",
+    "project_id": "cstore-cross",
+    "storage_bucket": "cstore-cross.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:490906549242:android:d2869d39b22ee935bd8243",
+        "android_client_info": {
+          "package_name": "com.catalist.cstoreCross.cstore_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjvC_8RLzPeUTOH-asuGl4yK7Nn4kVLX0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:490906549242:android:a542166fe6dfcd54bd8243",
+        "android_client_info": {
+          "package_name": "com.catalistme.cstore"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjvC_8RLzPeUTOH-asuGl4yK7Nn4kVLX0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

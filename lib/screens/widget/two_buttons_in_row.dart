@@ -2,13 +2,20 @@ import 'package:flutter/material.dart';
 
 import '../utils/appcolor.dart';
 
-class RowButtons extends StatelessWidget {
+class RowButtons extends StatefulWidget {
   const RowButtons(
-      {super.key, required this.onSaveTap, required this.onBackTap});
+      {super.key, required this.onSaveTap, required this.onBackTap,required this.buttonText,required this.isNextActive});
 
   final Function onSaveTap;
   final Function onBackTap;
+  final String buttonText;
+  final bool isNextActive;
 
+  @override
+  State<RowButtons> createState() => _RowButtonsState();
+}
+
+class _RowButtonsState extends State<RowButtons> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -23,47 +30,31 @@ class RowButtons extends StatelessWidget {
         children: [
           InkWell(
             onTap: () {
-              onBackTap();
+              widget.onBackTap();
             },
             child: Container(
               alignment: Alignment.center,
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               decoration: const BoxDecoration(
                   color: MyColors.backbtnColor,
-                  // gradient: LinearGradient(
-                  //   colors: [
-                  //     AppColors.gradientColor2,
-                  //     AppColors.gradientColor2
-                  //   ],
-                  // ),
                   borderRadius: BorderRadius.all(Radius.circular(5))),
-              child: Row(
+              child: const Row(
                 children: [
                   CircleAvatar(
+                    radius: 12,
                     backgroundColor: Colors.white,
                     child: Icon(
                       Icons.arrow_back,
                       color: Colors.black,
                     ),
                   ),
-                  // Container(
-                  //   padding: const EdgeInsets.all(3),
-                  //   decoration: BoxDecoration(
-                  //     color: MyColors.whiteColor,
-                  //     borderRadius: BorderRadius.circular(100),
-                  //   ),
-                  //   child: const Icon(
-                  //     Icons.arrow_back,
-                  //     size: 24,
-                  //   ),
-                  // ),
-                  const SizedBox(
+                  SizedBox(
                     width: 10,
                   ),
-                  const Text(
+                  Text(
                     "Back",
                     style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 12,
                         color: MyColors.whiteColor,
                         fontWeight: FontWeight.w400),
                   ),
@@ -72,46 +63,35 @@ class RowButtons extends StatelessWidget {
             ),
           ),
           InkWell(
-            onTap: () {
-              onSaveTap();
-            },
+            onTap: widget.isNextActive ?  () {
+              widget.onSaveTap();
+            } : null,
             child: Container(
               alignment: Alignment.center,
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
-              decoration: BoxDecoration(
-                  color: MyColors.savebtnColor,
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              decoration:  BoxDecoration(
+                  color: widget.isNextActive ? MyColors.savebtnColor : MyColors.disableColor,
                   // gradient: LinearGradient(
                   //   colors: [MyColors.primaryColor, AppColors.primaryColor],
                   // ),
-                  borderRadius: BorderRadius.all(Radius.circular(5))),
+                  borderRadius: const BorderRadius.all(Radius.circular(5))),
               child: Row(
                 children: [
-                  CircleAvatar(
+                  const CircleAvatar(
+                    radius: 12,
                     backgroundColor: Colors.white,
                     child: Icon(
                       Icons.check,
                       color: Colors.black,
                     ),
                   ),
-                  // Container(
-                  //   padding: const EdgeInsets.all(3),
-                  //   decoration: BoxDecoration(
-                  //     color: MyColors.whiteColor,
-                  //     borderRadius: BorderRadius.circular(10),
-                  //   ),
-                  //   child:  Icon(
-
-                  //     Icons.check,
-                  //     size: 24,
-                  //   ),
-                  // ),
                   const SizedBox(
                     width: 10,
                   ),
-                  const Text(
-                    "Save",
-                    style: TextStyle(
-                        fontSize: 18,
+                   Text(
+                    widget.buttonText,
+                    style: const TextStyle(
+                        fontSize: 12,
                         color: MyColors.whiteColor,
                         fontWeight: FontWeight.w400),
                   ),

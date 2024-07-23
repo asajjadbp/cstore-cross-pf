@@ -1,12 +1,18 @@
+
 import 'package:cstore/Network/license_http_manager.dart';
+import 'package:cstore/model/response_model.dart/license_response.dart';
 import 'package:cstore/screens/auth/login.dart';
+import 'package:cstore/screens/utils/app_constants.dart';
 import 'package:cstore/screens/utils/toast/toast.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../utils/appcolor.dart';
 
+
 class LicenseKey extends StatefulWidget {
+ static const routeName = "/RouteSplashScreen";
   const LicenseKey({super.key});
 
   @override
@@ -18,13 +24,15 @@ class _LicenseKeyState extends State<LicenseKey> {
   final _formKey = GlobalKey<FormState>();
   bool isLoading = false;
 
+ late LicenseResponseModel licenseResponseData;
+
   Future<void> submitForm() async {
+    SharedPreferences sharedPreferences  = await SharedPreferences.getInstance();
     if (!_formKey.currentState!.validate()) {
       return;
     }
     _formKey.currentState!.save();
-    // print(licensekey);
-    // try {
+
     setState(() {
       isLoading = true;
     });
@@ -32,6 +40,18 @@ class _LicenseKeyState extends State<LicenseKey> {
       setState(() {
         isLoading = false;
       });
+      setState(() {
+        licenseResponseData = value;
+      });
+
+      sharedPreferences.setInt(AppConstants.licenseId, licenseResponseData.data[0].id);
+      sharedPreferences.setString(AppConstants.licenseKey, licenseResponseData.data[0].licenseKey.toString());
+      sharedPreferences.setString(AppConstants.licenseAgency, licenseResponseData.data[0].agency.toString());
+      sharedPreferences.setString(AppConstants.bucketName, licenseResponseData.data[0].bucketName.toString());
+      sharedPreferences.setString(AppConstants.baseUrl, licenseResponseData.data[0].baseUrl.toString());
+      sharedPreferences.setString(AppConstants.imageBaseUrl, licenseResponseData.data[0].imageReadUrl.toString());
+      sharedPreferences.setString(AppConstants.agencyPhoto, licenseResponseData.data[0].agencyPhoto.toString());
+
       if (value.status) {
         Navigator.of(context).pushReplacementNamed(Login.routeName);
       } else {
@@ -43,13 +63,7 @@ class _LicenseKeyState extends State<LicenseKey> {
       });
       ToastMessage.errorMessage(context, onError.toString());
     });
-    // }
-    // catch (error) {
-    // setState(() {
-    //   isLoading = false;
-    // });
-    // ToastMessage.errorMessage(context, error.toString());
-    // }
+
   }
 
   @override
@@ -124,35 +138,13 @@ class _LicenseKeyState extends State<LicenseKey> {
                           ),
                           Column(
                             children: [
-                              // SizedBox(
-                              //   child: TextFormField(
-                              //     textInputAction: TextInputAction.next,
-                              //     decoration: const InputDecoration(
-                              //         prefixIcon: Icon(Icons.person),
-                              //         hintText: "username",
-                              //         filled: true,
-                              //         fillColor:
-                              //             Color.fromARGB(255, 223, 218, 218),
-                              //         border: InputBorder.none),
-                              //     validator: (value) {
-                              //       if (value!.isEmpty) {
-                              //         return "Please enter your username";
-                              //       }
-                              //       return null;
-                              //     },
-                              //     onSaved: (newValue) {},
-                              //   ),
-                              // ),
-                              // const SizedBox(
-                              //   height: 20,
-                              // ),
+
                               SizedBox(
                                 child: Form(
                                   key: _formKey,
                                   child: TextFormField(
                                     // obscureText: true,
                                     textInputAction: TextInputAction.done,
-                                    initialValue: "BZ786",
                                     decoration: const InputDecoration(
                                         prefixIcon: Icon(Icons.key),
                                         hintText: "Key",
@@ -191,8 +183,8 @@ class _LicenseKeyState extends State<LicenseKey> {
                                                 BorderRadius.circular(0)),
                                       ),
                                       onPressed: submitForm,
-                                      child: const Text(
-                                        "Submit",
+                                      child:  const Text(
+                                        "Submit",style: TextStyle(color: MyColors.whiteColor),
                                       ),
                                     ),
                             ],

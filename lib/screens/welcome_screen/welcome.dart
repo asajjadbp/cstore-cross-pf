@@ -1,16 +1,17 @@
-import 'dart:convert';
 
 import 'package:cstore/Model/response_model.dart/syncronise_response_model.dart';
 import 'package:cstore/Network/syncronise_http.dart';
 import 'package:cstore/Database/db_helper.dart';
 import 'package:cstore/screens/dashboard/dashboard.dart';
+import 'package:cstore/screens/utils/app_constants.dart';
+import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:cstore/screens/utils/toast/toast.dart';
-import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sqflite/sqflite.dart';
-import '../../Model/response_model.dart/syncronise_response_model.dart';
 import '../../Database/table_name.dart';
+import '../auth/login.dart';
+import '../widget/app_bar_widgets.dart';
+import '../widget/loading.dart';
 
 class WelcomeScreen extends StatefulWidget {
   static const routename = "/welcome_route";
@@ -20,20 +21,42 @@ class WelcomeScreen extends StatefulWidget {
   State<WelcomeScreen> createState() => _WelcomeScreenState();
 }
 
-class _WelcomeScreenState extends State<WelcomeScreen> {
+class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProviderStateMixin {
+
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
   bool isLoading = false;
   var userName = "";
   var token = "";
   var baseUrl = "";
-
+  String isSyncronize = "0";
   List<SyncroniseDetail> syncroniseData = [];
+  double currentVersion = 0.0;
+  double updatedVersion = 0.0;
 
   bool isinit = true;
+
+  bool isError = false;
+  String errorText = "";
 
   @override
   void didChangeDependencies() async {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
+
+    _controller = AnimationController(
+      duration: const Duration(seconds: 1),
+      vsync: this,
+    )..repeat(reverse: true);
+
+    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeInOut,
+      ),
+    );
+
     if (isinit) {
       getUserData();
       await DatabaseHelper.database;
@@ -50,21 +73,30 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   Future getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    // prefs = await SharedPreferences.getInstance();
-    final extractedUserData =
-        json.decode(prefs.getString('userCred')!) as Map<String, dynamic>;
-    var urlData =
-        json.decode(prefs.getString('userLicense')!) as Map<String, dynamic>;
-    // var user = GetUserDataAndUrl().getUserData.toString();
-    userName = extractedUserData["data"][0]["username"].toString();
-    token = extractedUserData["data"][0]["token_id"].toString();
-    // extractedUserData["data"]["username"].toString()
+
+    userName = prefs.getString(AppConstants.userName)!;
+    token = prefs.getString(AppConstants.tokenId)!;
+    baseUrl = prefs.getString(AppConstants.baseUrl)!;
+    isSyncronize = prefs.getString(AppConstants.isSyncronize)!;
+    if(prefs.containsKey(AppConstants.appCurrentVersion)) {
+      currentVersion = prefs.getDouble(AppConstants.appCurrentVersion)!;
+    } else {
+      currentVersion = 0.0;
+      prefs.setDouble(AppConstants.appCurrentVersion, currentVersion);
+    }
+    updatedVersion = prefs.getDouble(AppConstants.appUpdatedVersion)!;
+
+    setState(() {
+
+    });
     print(userName);
-    print(extractedUserData["data"][0]["token_id"]);
-    baseUrl = urlData["data"][0]["base_url"];
-    // print(baseUrl["data"][0]["base_url"]);
-    // extractedUserData["data"]["token_id"].toString()
-    await getSyncronise();
+    print(currentVersion);
+    print(updatedVersion);
+    print(isSyncronize);
+
+    if(isSyncronize == "0") {
+      await getSyncronise();
+    }
   }
 
   Future<void> getSyncronise() async {
@@ -74,35 +106,80 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     // try {
     await SyncroniseHTTP()
         .fetchSyncroniseData(userName, token, baseUrl)
-        .then((value) {
-      if (value.status) {
+        .then((value) async {
+       SharedPreferences prefs = await SharedPreferences.getInstance();
+          isError = false;
+          errorText = "";
+
+       ///DB Dropping
+       if(currentVersion != updatedVersion) {
+         bool isDbDrop = await DatabaseHelper.dropDb();
+         if(isDbDrop) {
+           prefs.setDouble(AppConstants.appCurrentVersion, updatedVersion);
+         }
+         await DatabaseHelper.database;
+
+       }
+
         syncroniseData = value.data;
-        print(syncroniseData[0].sysCategory[0].enName);
-        print(syncroniseData.length);
-        print(syncroniseData[0].sysAgencyDashboard);
-        print(syncroniseData[0].sysCategory);
-        print(syncroniseData[0].sysClient);
-        print(syncroniseData[0].sysDropReason);
-        DatabaseHelper.delete_table(TableName.tbl_agency_dashboard);
+        ToastMessage.succesMessage(context, "Data synchronization started now");
+
+        ///Table Deletion
+        DatabaseHelper.delete_table(TableName.tbl_sys_agency_dashboard);
         DatabaseHelper.delete_table(TableName.tbl_sys_category);
         DatabaseHelper.delete_table(TableName.tbl_sys_client);
-        DatabaseHelper.delete_table(TableName.tbl_drop_reason);
+        DatabaseHelper.delete_table(TableName.tbl_sys_drop_reason);
+        DatabaseHelper.delete_table(TableName.tbl_sys_brand);
+        DatabaseHelper.delete_table(TableName.tbl_sys_planogram_reason);
+        DatabaseHelper.delete_table(TableName.tbl_sys_rtv_reason);
+        DatabaseHelper.delete_table(TableName.tbl_sys_product);
+        DatabaseHelper.delete_table(TableName.tbl_sys_photo_type);
+        DatabaseHelper.delete_table(TableName.tbl_sys_osdc_type);
+        DatabaseHelper.delete_table(TableName.tbl_sys_osdc_reason);
 
-        DatabaseHelper.insertAgencyDashArray(
-            syncroniseData[0].sysAgencyDashboard);
-        DatabaseHelper.insertCategoryArray(syncroniseData[0].sysCategory);
-        DatabaseHelper.insertClientArray(syncroniseData[0].sysClient);
-        DatabaseHelper.insertDropReasonArray(syncroniseData[0].sysDropReason);
-        // Future.delayed(const Duration(seconds: 5));
-        // print(syncroniseData[0].sysAgencyDashboard[0].enName);
-        // syncroniseData.forEach((element) {
-        //   print(element)
-        // });
-      }
-      setState(() {
-        isLoading = false;
-      });
+        DatabaseHelper.delete_table(TableName.tbl_sys_product_placement);
+        DatabaseHelper.delete_table(TableName.tbl_sys_brand_faces);
+        DatabaseHelper.delete_table(TableName.tbl_sys_store_pog);
+        DatabaseHelper.delete_table(TableName.tbl_sys_app_setting);
+        DatabaseHelper.delete_table(TableName.tbl_sys_daily_checklist);
+        DatabaseHelper.delete_table(TableName.tbl_sys_sos_units);
+        DatabaseHelper.delete_table(TableName.tblSysVisitReqModules);
+
+
+        ///Table Insertion
+        var isAgencyDash=await DatabaseHelper.insertAgencyDashArray(syncroniseData[0].sysAgencyDashboard);
+        var isCategory=await DatabaseHelper.insertCategoryArray(syncroniseData[0].sysCategory);
+        var isSubCategory=await DatabaseHelper.insertSubCategoryArray(syncroniseData[0].sysSubCategory);
+        var isClinet=await  DatabaseHelper.insertClientArray(syncroniseData[0].sysClient);
+        var isDropReason=await  DatabaseHelper.insertDropReasonArray(syncroniseData[0].sysDropReason);
+        var isBrand=await  DatabaseHelper.insertBrandArray(syncroniseData[0].sysBrand);
+        var isPlanoReason=await  DatabaseHelper.insertSysPlanoReasonArray(syncroniseData[0].sysPlanoReason);
+       var isRtvReason=await  DatabaseHelper.insertSysRTVReasonArray(syncroniseData[0].sysRTVReason);
+       var isProduct=await   DatabaseHelper.insertProductArray(syncroniseData[0].sysProduct);
+        var isPhotoType=await  DatabaseHelper.insertSysPhotoTypeArray(syncroniseData[0].sysPhotoType);
+        var isOSDCType=await DatabaseHelper.insertOSDCTypeArray(syncroniseData[0].sysOsdcType);
+        var isOsdcReason=await DatabaseHelper.insertOSDCReasonArray(syncroniseData[0].sysOsdcReason);
+        var isStorePog=await DatabaseHelper.insertStorePogArray(syncroniseData[0].sysStorePog);
+        var isProductPlacement=await DatabaseHelper.insertProductPlacementArray(syncroniseData[0].sysProductPlacement);
+        var isBrandFace=await  DatabaseHelper.insertBrandFacesArray(syncroniseData[0].sysBrandFaces);
+        var isReqMod=await  DatabaseHelper.insertSysRequiredModuleArray(syncroniseData[0].sysReqModule);
+        var isAppSetting=await  DatabaseHelper.insertAppSettingArray(syncroniseData[0].sysAppSetting);
+        var isDailyCheckList=await  DatabaseHelper.insertDailyCheckListArray(syncroniseData[0].sysDailCheckList);
+        var isSOSUnit=await  DatabaseHelper.insertSOSUnitArray(syncroniseData[0].sysSosUnit);
+        setState(() {
+          isLoading = isAgencyDash && isCategory && isSubCategory
+              && isClinet && isPlanoReason && isRtvReason && isProduct && isPhotoType
+              && isOSDCType && isOsdcReason && isStorePog && isProductPlacement && isBrandFace;
+
+          isSyncronize = "1";
+          prefs.setString(AppConstants.isSyncronize, "1");
+
+        });
     }).catchError((onError) {
+      print(onError);
+      print("################");
+      isError = true;
+      errorText = onError.toString();
       setState(() {
         isLoading = false;
       });
@@ -114,48 +191,108 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Welcome"),
-      ),
+      appBar: generalAppBar(context, "Welcome, $userName", "", (){
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Logout'),
+              content: const Text('Are you sure you want to logout?'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    // Perform logout operation
+                    Navigator.of(context).pop();
+                    SharedPreferences sharedPreferences =
+                    await SharedPreferences.getInstance();
+                    sharedPreferences.setBool(
+                        AppConstants.userLoggedIn, false);
+                    Navigator.of(context).pushReplacementNamed(Login.routeName);
+                    ToastMessage.succesMessage(context, "Logged Out Successfully");
+                  },
+                  child: const Text('Logout'),
+                ),
+              ],
+            );
+          },
+        );
+      }, (){print("filter Click");}, false, false, true),
       body: Container(
         margin: const EdgeInsets.only(left: 15, right: 15),
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 100,
-            ),
-            Image.asset("assets/images/brandlogo.png"),
-            const SizedBox(
-              height: 50,
-            ),
-            const Text(
-                "BrandPartners is a leading Merchandising, Brand Activation, and FieldForce Management company founded in 2006 in Saudi Arabia aiming to utilize best-in-class processes and technology along with solid human competencies to successfully deliver your brand execution pillars."),
-            const SizedBox(
-              height: 100,
-            ),
-            isLoading
-                ? const Center(
-                    child: SizedBox(height: 60, child: MyLoadingCircle()),
-                  )
-                : ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromRGBO(0, 77, 145, 1),
-                      minimumSize: Size(screenWidth, 45),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(0)),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(DashBoard.routeName);
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 100,
+              ),
+              Image.asset("assets/images/brandlogo.png"),
+              const SizedBox(
+                height: 50,
+              ),
+              const Text(
+                  "BrandPartners is a leading Merchandising, Brand Activation, and FieldForce Management company founded in 2006 in Saudi Arabia aiming to utilize best-in-class processes and technology along with solid human competencies to successfully deliver your brand execution pillars."),
+              const SizedBox(
+                height: 100,
+              ),
+              isLoading
+                  ?  Center(
+                      child: Column(
+                        children: [
+                          const SizedBox(width: 60,height: 60,child: MyLoadingCircle(),),
+                          FadeTransition(opacity: _animation,child: const Text("Synchronization in Progress...",style: TextStyle(fontSize: 16,color: MyColors.appMainColor),)),
+                        ],
+                      ),
+                    )
+                  : isError ? Column(
+                children: [
+                  Text(errorText,style: const TextStyle(color: MyColors.backbtnColor,fontSize: 22),),
+                 const SizedBox(height: 10,),
+                  InkWell(
+                    onTap: () async {
+                      await getSyncronise();
                     },
-                    child: const Text(
-                      "Next",
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                      border: Border.all(color: MyColors.backbtnColor,width: 2)
+                      ),
+                      child: const Text("Retry",style: TextStyle(color: MyColors.backbtnColor,fontSize: 22),),
                     ),
-                  ),
-          ],
+                  )
+                ],
+              ) : ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromRGBO(0, 77, 145, 1),
+                        minimumSize: Size(screenWidth, 45),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(0)),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).popAndPushNamed(DashBoard.routeName);
+                      },
+                      child: const Text(
+                        "Next",style: TextStyle(color: MyColors.whiteColor),
+                      ),
+                    ),
+            ],
+          ),
         ),
       ),
     );

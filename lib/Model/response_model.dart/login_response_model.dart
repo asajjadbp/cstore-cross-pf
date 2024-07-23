@@ -42,7 +42,9 @@ class Datum {
   String arWelcomeMsg;
   String userClient;
   String tokenId;
-  int isSyncronize;
+  String isSyncronize;
+  String userRole;
+  double versionNumber;
 
   Datum({
     required this.username,
@@ -52,16 +54,20 @@ class Datum {
     required this.userClient,
     required this.tokenId,
     required this.isSyncronize,
+    required this.userRole,
+    required this.versionNumber,
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-        username: json["username"],
-        userPic: json["user_pic"],
+        username: json["username"]?? -1,
+        userPic: json["user_pic"] ?? "",
         enWelcomeMsg: json["en_welcome_msg"],
         arWelcomeMsg: json["ar_welcome_msg"],
         userClient: json["user_client"],
         tokenId: json["token_id"],
-        isSyncronize: json["is_syncronize"],
+        isSyncronize: json["is_synchronize"].toString(),
+        userRole: json['user_role'] ?? "",
+        versionNumber: json['version_number']
       );
 
   Map<String, dynamic> toJson() => {
@@ -71,6 +77,8 @@ class Datum {
         "ar_welcome_msg": arWelcomeMsg,
         "user_client": userClient,
         "token_id": tokenId,
-        "is_syncronize": isSyncronize,
+        "is_synchronize": isSyncronize,
+        "user_role": userRole,
+        "version_number" : versionNumber,
       };
 }

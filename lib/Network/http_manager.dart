@@ -12,7 +12,7 @@ class HTTPMANAGER {
     // ignore: avoid_print
 
     final response =
-        await _handler.post(Uri.parse(url), {"license_key": licenseKey});
+        await _handler.post(Uri.parse(url), {"license_key": licenseKey},"");
     LicenseResponseModel licenseResponseData =
         LicenseResponseModel.fromJson(response);
     StoreLicense.storeBaseUrl(licenseResponseData);

@@ -10,7 +10,8 @@
 
     
     <application
-        android:label="cstore"
+        android:allowBackup="false"
+        android:label="C Store Pro"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

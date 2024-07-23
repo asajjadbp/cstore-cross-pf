@@ -1,5 +1,6 @@
 import 'package:cached_network_svg_image/cached_network_svg_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class CardWidget extends StatelessWidget {
   CardWidget({
@@ -20,12 +21,10 @@ class CardWidget extends StatelessWidget {
         onTap();
       },
       child: Card(
+        color: Colors.white,
         semanticContainer: true,
-        // clipBehavior: Clip.antiAliasWithSaveLayer,
-        shadowColor: Colors.black12,
-        elevation: 10,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
+          borderRadius: BorderRadius.circular(10.0),
         ),
         child: Stack(
           alignment: Alignment.center,
@@ -33,25 +32,21 @@ class CardWidget extends StatelessWidget {
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Image.asset(
-                //   imageUrl,
-                //   fit: BoxFit.contain,
-                // ),
-                CachedNetworkSVGImage(
-                  "https://storage.googleapis.com/catalisttest-bucket/dashboard/$imageUrl",
-                  placeholder:
-                      const CircularProgressIndicator(color: Colors.green),
-                  errorWidget: const Icon(Icons.error, color: Colors.red),
+                SvgPicture.asset(
+                  "assets/grid_dashboard_icons/$imageUrl.svg",
+                  // placeholder:
+                  //     const CircularProgressIndicator(color: Colors.green),
+                  // errorWidget: const Icon(Icons.error, color: Colors.red),
                   width: 80.0,
-                  height: 80.0,
-                  fadeDuration: const Duration(milliseconds: 500),
+                  height: 70.0,
+                  // fadeDuration: const Duration(milliseconds: 500),
                 ),
-                // Image.network(
-                //     "https://storage.googleapis.com/catalisttest-bucket/dashboard/$imageUrl",
-                //     fit: BoxFit.contain),
                 Padding(
                   padding: const EdgeInsets.only(top: 15),
-                  child: Text(cardName),
+                  child: Text(cardName,style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),),
                 ),
               ],
             ),

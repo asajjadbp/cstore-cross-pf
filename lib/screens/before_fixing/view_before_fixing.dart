@@ -1,17 +1,20 @@
 import 'dart:io';
-
-import 'package:cstore/Model/database_model/get_trans_photo_model.dart';
-import 'package:cstore/Database/db_helper.dart';
-import 'package:cstore/screens/widget/loading.dart';
+import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../Database/db_helper.dart';
 import '../../Database/table_name.dart';
+import '../../Model/database_model/show_before_fixing.dart';
+import '../utils/app_constants.dart';
 import '../utils/toast/toast.dart';
+import '../widget/loading.dart';
 
 class ViewBeforeFixing extends StatefulWidget {
   static const routename = "view_before_route";
+
   const ViewBeforeFixing({super.key});
 
   @override
@@ -20,21 +23,28 @@ class ViewBeforeFixing extends StatefulWidget {
 
 class _ViewBeforeFixingState extends State<ViewBeforeFixing> {
   List<File> _imageFiles = [];
-  List<GetTransPhotoModel> transData = [];
+  List<GetTransBeforeFixing> transData = [];
   bool isLoading = false;
+  String workingId = "";
+  String storeName = '';
 
   @override
   void initState() {
     super.initState();
-    getTransPhoto();
+    getStoreDetails();
   }
 
-  Future<void> getTransPhoto() async {
-    // setState(() {
-    //   isLoading = true;
-    // });
-    await DatabaseHelper.getTransPhoto().then((value) async {
-      transData = value;
+  getStoreDetails() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
+    workingId = sharedPreferences.getString(AppConstants.workingId)!;
+    storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    getTransBeforeFixingOne();
+  }
+
+  Future<void> getTransBeforeFixingOne() async {
+    await DatabaseHelper.getTransBeforeFixing(workingId).then((value) async {
+      transData = value.cast<GetTransBeforeFixing>();
       await _loadImages().then((value) {
         setTransPhoto();
       });
@@ -51,13 +61,9 @@ class _ViewBeforeFixingState extends State<ViewBeforeFixing> {
         }
         print(_imageFiles[i].path.endsWith(trans.img_name));
       }
-      // if (trans.imageFile != null) {}
-      // File matchingImage = _imageFiles
-      //     .firstWhere((file) => file.path.endsWith(imageName), orElse: null);
-
-      // trans.imageFile = matchingImage;
-      // print(trans.imageFile!.path);
     }
+    print("TRANSASDJJJJJJJJJJJJJJJJ");
+    print(transData);
     setState(() {
       isLoading = false;
     });
@@ -69,8 +75,10 @@ class _ViewBeforeFixingState extends State<ViewBeforeFixing> {
     });
     try {
       final String dirPath = (await getExternalStorageDirectory())!.path;
-      final String folderPath = '$dirPath/cstore';
-
+      final String folderPath =
+          '$dirPath/cstore/$workingId/${AppConstants.beforeFixing}';
+      print("******************");
+      print(folderPath);
       final Directory folder = Directory(folderPath);
       if (await folder.exists()) {
         final List<FileSystemEntity> files = folder.listSync();
@@ -93,7 +101,7 @@ class _ViewBeforeFixingState extends State<ViewBeforeFixing> {
       final PermissionStatus permissionStatus = await _getPermission();
       if (permissionStatus == PermissionStatus.granted) {
         final String dirPath = (await getExternalStorageDirectory())!.path;
-        final String folderPath = '$dirPath/cstore';
+        final String folderPath = '$dirPath/cstore/$workingId/before_fixing';
         final file = File('$folderPath/$imgName');
 
         if (await file.exists()) {
@@ -112,19 +120,69 @@ class _ViewBeforeFixingState extends State<ViewBeforeFixing> {
   }
 
   void deletePhoto(int recordId, String imgName) async {
-    await DatabaseHelper.deleteOneRecord(TableName.tbl_trans_photo, recordId)
+    await DatabaseHelper.deleteOneRecord(
+            TableName.tbl_trans_before_faxing, recordId)
         .then((_) async {
-      await deleteImageFromLocal(imgName).then((_) {
-        _loadImages();
-        getTransPhoto();
-      });
+      // await deleteImageFromLocal(imgName).then((_) {
+      //   _loadImages();
+      //   getTransBeforeFixingOne();
+      // });
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text(
+              "Are you sure you want to delete this item Permanently",
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 12,
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: const Text("No"),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              ),
+              TextButton(
+                child: const Text("Yes"),
+                onPressed: () {
+                  deleteImageFromLocal(imgName).then((_) {
+                    _loadImages();
+                    getTransBeforeFixingOne();
+                    Navigator.of(context).pop(true);
+                  });
+                },
+              )
+            ],
+          );
+        },
+      );
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Nahdi Al Hamra")),
+      backgroundColor: MyColors.background,
+      appBar: AppBar(
+        title: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              storeName,
+              style: const TextStyle(fontSize: 16),
+            ),
+            const Text(
+              "View Before Fixing",
+              style: TextStyle(fontSize: 12),
+            ),
+          ],
+        ),
+      ),
       body: isLoading
           ? const Center(
               child: MyLoadingCircle(),
@@ -137,137 +195,104 @@ class _ViewBeforeFixingState extends State<ViewBeforeFixing> {
                   itemCount: transData.length,
                   itemBuilder: (ctx, i) {
                     return Container(
+                      color: MyColors.background,
                       margin:
                           const EdgeInsets.only(left: 10, right: 10, top: 10),
                       height: 120,
-                      child:
-                          // MyCardWidget(
-                          //     image: transData[i].imageFile as File,
-                          //     name: transData[i].img_name)
-                          Card(
-                        elevation: 3,
+                      child: Card(
+                        elevation: 1,
+                        color: Colors.white,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10.0)),
-                        child: Padding(
-                          padding: const EdgeInsets.all(0),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              // Stack(
-                              //   children: [
-                              //     Positioned(right: 0, child: Text("data")),
-                              //     // Positioned(
-                              //     //   right: 0,
-                              //     //   child: Container(
-                              //     //     padding: const EdgeInsets.all(5),
-                              //     //     decoration: const BoxDecoration(
-                              //     //         color: Colors.black,
-                              //     //         borderRadius: BorderRadius.only(
-                              //     //             topLeft: Radius.circular(10))),
-                              //     //     child: Text(
-                              //     //       // jp.visitType,
-                              //     //       "Special",
-                              //     //       style: const TextStyle(color: Colors.white),
-                              //     //     ),
-                              //     //   ),
-                              //     // )
-                              //   ],
-                              // ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 5, top: 5, bottom: 5.0),
-                                child: Stack(
-                                  children: [
-                                    Positioned(
-                                      child: ClipRRect(
-                                          borderRadius: const BorderRadius.only(
-                                            topLeft: Radius.circular(10.0),
-                                            bottomLeft: Radius.circular(10.0),
-                                            topRight: Radius.circular(10.0),
-                                            bottomRight: Radius.circular(10.0),
-                                          ), // Image border
-                                          child: Image.file(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              width: 96,
+                              height: 100,
+                              padding: const EdgeInsets.only(
+                                left: 5,
+                                top: 5,
+                                bottom: 5.0,
+                              ),
+                              margin: EdgeInsets.symmetric(horizontal: 5),
+                              child: ClipRRect(
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(6.0),
+                                    bottomLeft: Radius.circular(6.0),
+                                    topRight: Radius.circular(6.0),
+                                    bottomRight: Radius.circular(6.0),
+                                  ), // Image border
+                                  child: FittedBox(
+                                      fit: BoxFit.cover,
+                                      child: transData[i].imageFile != null
+                                          ? Image.file(
                                               transData[i].imageFile as File)
-                                          //   Image.asset(
-                                          //     "assets/images/cardimg.png",
-                                          //     height: 120,
-                                          //     width: 100,
-                                          //     fit: BoxFit.cover,
-                                          //   ),
-                                          ),
-                                    ),
-                                    // Positioned(
-                                    //   right: 0,
-                                    //   child: Container(
-                                    //     padding: const EdgeInsets.all(5),
-                                    //     decoration: const BoxDecoration(
-                                    //         color: Colors.black,
-                                    //         borderRadius: BorderRadius.only(
-                                    //             topLeft: Radius.circular(10))),
-                                    //     child: Text(
-                                    //       // jp.visitType,
-                                    //       "Special",
-                                    //       style: const TextStyle(color: Colors.white),
-                                    //     ),
-                                    //   ),
-                                    // )
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 0,
-                              ),
-                              Row(
+                                          : Container())),
+                            ),
+                            Expanded(
+                              child: Column(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Text("Client"),
-                                  SizedBox(
-                                    width: 6,
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                          "assets/icons/client_icon.png"),
+                                      const SizedBox(
+                                        width: 5,
+                                      ),
+                                      Expanded(
+                                          child: Text(
+                                        transData[i].clientName,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600),
+                                      ))
+                                    ],
                                   ),
-                                  Text("Nvedia")
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      SvgPicture.asset(
+                                        "assets/icons/Component 13.svg",
+                                        width: 10,
+                                        height: 12,
+                                      ),
+                                      const SizedBox(
+                                        width: 5,
+                                      ),
+                                      Expanded(
+                                          child: Text(
+                                              transData[i].categoryEnName,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w600)))
+                                    ],
+                                  ),
                                 ],
                               ),
-
-                              // Column(
-                              //   children: [
-                              //     const SizedBox(
-                              //       height: 10,
-                              //     ),
-                              //     Text(
-                              //       "Carrfour - 527 store Barka",
-                              //       style: const TextStyle(fontWeight: FontWeight.bold),
-                              //     ),
-
-                              //     // Row(
-                              //     //   children: [
-                              //     //     Align(
-                              //     //         alignment: Alignment.topRight,
-                              //     //         child: Icon(Icons.pin_drop)),
-                              //     //   ],
-                              //     // ),
-                              //   ],
-                              // ),
-                              Align(
-                                  alignment: Alignment.topRight,
-                                  child: IconButton(
-                                    onPressed: () {
-                                      deletePhoto(transData[i].id,
-                                          transData[i].img_name);
-                                    },
-                                    icon: const Icon(
-                                      Icons.delete,
-                                      color: Colors.red,
-                                    ),
-                                  )
-                                  // Icon(
-                                  //   Icons.delete,
-                                  //   color: Colors.red,
-                                  // ),
-                                  )
-                            ],
-                          ),
+                            ),
+                            Align(
+                                alignment: Alignment.topRight,
+                                child: IconButton(
+                                  onPressed: () {
+                                    deletePhoto(
+                                        transData[i].id, transData[i].img_name);
+                                  },
+                                  icon: const Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                  ),
+                                ))
+                          ],
                         ),
                       ),
                     );
@@ -279,6 +304,7 @@ class _ViewBeforeFixingState extends State<ViewBeforeFixing> {
 class MyCardWidget extends StatelessWidget {
   final File image;
   final String name;
+
   // const MyCardWidget({super.key});
   MyCardWidget({required this.image, required this.name});
 

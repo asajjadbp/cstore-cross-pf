@@ -1,24 +1,23 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:cstore/Model/database_model/category_model.dart';
 import 'package:cstore/Model/database_model/client_model.dart';
 import 'package:cstore/Database/db_helper.dart';
 import 'package:cstore/screens/before_fixing/view_before_fixing.dart';
+import 'package:cstore/screens/utils/app_constants.dart';
+import 'package:cstore/screens/widget/drop_downs.dart';
 import 'package:cstore/screens/widget/loading.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path/path.dart' as path;
 
-import 'package:gallery_saver/gallery_saver.dart';
-
-import '../../Model/database_model/trans_photo_model.dart';
+import '../../Model/database_model/trans_before_faxing.dart';
 import '../utils/appcolor.dart';
 import '../utils/services/image_picker.dart';
+import '../utils/services/take_image_and_save_to_folder.dart';
 import '../utils/toast/toast.dart';
+import '../widget/image_selection_row_button.dart';
 
 class BeforeFixing extends StatefulWidget {
   static const routeName = "/BeforeFixingroute";
@@ -30,7 +29,7 @@ class BeforeFixing extends StatefulWidget {
 
 class _BeforeFixingState extends State<BeforeFixing> {
   List<ClientModel> clientData = [];
-  List<CategoryModel> categoryData = [CategoryModel(name: "", client: -1)];
+  List<CategoryModel> categoryData = [CategoryModel( client: -1, id: -1, en_name: '', ar_name: '')];
   var imageName = "";
   File? imageFile;
   int selectedClientId = -1;
@@ -39,23 +38,30 @@ class _BeforeFixingState extends State<BeforeFixing> {
   bool isInit = true;
   bool isBtnLoading = false;
   bool isCategoryLoading = false;
-
+  final GlobalKey<FormFieldState> categoryKey = GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> clientKey = GlobalKey<FormFieldState>();
+  String clientId = "";
+  String workingId = "";
+  String storeName = "";
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
+    getUserData();
+  }
+  getUserData()async {
+    SharedPreferences sharedPreferences  = await SharedPreferences.getInstance();
+
+    clientId = sharedPreferences.getString(AppConstants.clientId)!;
+    workingId = sharedPreferences.getString(AppConstants.workingId)!;
+    storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
 
     if (isInit) {
       getClientData();
       // getCategoryData();
     }
     isInit = false;
+
   }
-  // void initState() {
-  //   // TODO: implement initState
-  //   super.initState();
-  //   getClientData();
-  //   getCategoryData();
-  // }
 
   Future<void> getImage() async {
     await ImageTakingService.imageSelect().then((value) {
@@ -63,57 +69,22 @@ class _BeforeFixingState extends State<BeforeFixing> {
         return;
       }
       imageFile = value;
+
+      final String extension = path.extension(imageFile!.path);
+      imageName = "${DateTime.now().millisecondsSinceEpoch}$extension";
+      setState(() {
+
+      });
       // _takePhoto(value);
     });
   }
 
-  // void _takePhoto(File recordedImage) async {
-  //   // if (recordedImage != null && recordedImage.path != null) {
-  //   // setState(() {
-  //   //   firstButtonText = 'saving in progress...';
-  //   // });
-  //   GallerySaver.saveImage(recordedImage.path).then((path) {
-  //     // setState(() {
-  //     //   firstButtonText = 'image saved!';
-  //     // });
-  //   });
-  //   // }
-  // }
-
-  Future<void> _takePicture() async {
-    final PermissionStatus permissionStatus = await _getPermission();
-    if (permissionStatus == PermissionStatus.granted) {
-      if (imageFile != null) {
-        final String dirPath = (await getExternalStorageDirectory())!.path;
-        final String folderPath = '$dirPath/cstore';
-        imageName = "${DateTime.now().millisecondsSinceEpoch}.jpg";
-        final String filePath = '$folderPath/$imageName';
-
-        await Directory(folderPath).create(recursive: true);
-        await File(imageFile!.path).copy(filePath).then((value) {
-          ToastMessage.succesMessage(context, "Image store successfully");
-        });
-
-        // setState(() {
-        //   imageFile = File(filePath);
-        // });
-      }
-    } else {
-      // print('Permission denied');
-      ToastMessage.errorMessage(context, "Permissing denied");
-    }
-  }
-
-  Future<PermissionStatus> _getPermission() async {
-    final PermissionStatus permission = await Permission.camera.request();
-    return permission;
-  }
-
   void getClientData() async {
+
     setState(() {
       isLoading = true;
     });
-    await DatabaseHelper.getClientList().then((value) {
+    await DatabaseHelper.getVisitClientList(clientId).then((value) {
       setState(() {
         isLoading = false;
       });
@@ -123,7 +94,9 @@ class _BeforeFixingState extends State<BeforeFixing> {
   }
 
   void getCategoryData(int clientId) async {
-    categoryData = [CategoryModel(name: "", client: -1)];
+    categoryKey.currentState!.reset();
+    selectedCategoryId = -1;
+    categoryData = [CategoryModel(en_name: "",ar_name: "",id: -1, client: -1)];
     setState(() {
       isCategoryLoading = true;
     });
@@ -134,123 +107,7 @@ class _BeforeFixingState extends State<BeforeFixing> {
       });
       categoryData = value;
     });
-    print(categoryData[0].name);
-  }
-
-  Widget dropdownwidget(String hintText) {
-    return DropdownButtonFormField2<CategoryModel>(
-      decoration: InputDecoration(
-        isDense: true,
-        filled: true,
-        // fillColor: const Color.fromARGB(255, 226, 226, 226),
-        contentPadding: EdgeInsets.zero,
-        // // fillColor: Colors.white,
-        // border: InputBorder.none
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-      isExpanded: true,
-      hint: Text(
-        hintText,
-        style: const TextStyle(fontSize: 14),
-      ),
-      items: categoryData
-          .map((item) => DropdownMenuItem<CategoryModel>(
-                value: item,
-                child: Text(
-                  item.name,
-                  style: const TextStyle(
-                    fontSize: 14,
-                  ),
-                ),
-              ))
-          .toList(),
-      validator: (value) {
-        if (value == null) {
-          return 'Please select driver name';
-        }
-        return null;
-      },
-      onChanged: (value) {
-        selectedCategoryId = value!.id;
-      },
-      onSaved: (value) {},
-      buttonStyleData: const ButtonStyleData(
-        height: 50,
-        padding: EdgeInsets.only(left: 20, right: 10),
-      ),
-      iconStyleData: const IconStyleData(
-        icon: Icon(
-          Icons.arrow_drop_down,
-          color: Colors.black45,
-        ),
-        iconSize: 30,
-      ),
-      dropdownStyleData: DropdownStyleData(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
-    );
-  }
-
-  Widget clientDropDownWidget(String hintText) {
-    return DropdownButtonFormField2<ClientModel>(
-      decoration: InputDecoration(
-        isDense: true,
-        filled: true,
-        // fillColor: const Color.fromARGB(255, 226, 226, 226),
-        contentPadding: EdgeInsets.zero,
-        // // fillColor: Colors.white,
-        // border: InputBorder.none
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-      isExpanded: true,
-      hint: Text(
-        hintText,
-        style: const TextStyle(fontSize: 14),
-      ),
-      items: clientData
-          .map((item) => DropdownMenuItem<ClientModel>(
-                value: item,
-                child: Text(
-                  item.client_name,
-                  style: const TextStyle(
-                    fontSize: 14,
-                  ),
-                ),
-              ))
-          .toList(),
-      validator: (value) {
-        if (value == null) {
-          return 'Please select driver name';
-        }
-        return null;
-      },
-      onChanged: (value) {
-        // setState(() {
-        selectedClientId = value!.client_id;
-        // });
-        getCategoryData(selectedCategoryId);
-        print(selectedClientId);
-      },
-      onSaved: (value) {},
-      buttonStyleData: const ButtonStyleData(
-        height: 50,
-        padding: EdgeInsets.only(left: 20, right: 10),
-      ),
-      iconStyleData: const IconStyleData(
-        icon: Icon(
-          Icons.arrow_drop_down,
-          color: Colors.black45,
-        ),
-        iconSize: 30,
-      ),
-      dropdownStyleData: DropdownStyleData(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
-    );
+    print(categoryData[0].en_name);
   }
 
   void saveStorePhotoData() async {
@@ -266,17 +123,20 @@ class _BeforeFixingState extends State<BeforeFixing> {
       isBtnLoading = true;
     });
     try {
-      await _takePicture().then((_) async {
-        await DatabaseHelper.insertTransPhoto(TransPhotoModel(
+      await takePicture(context,imageFile,imageName,workingId,AppConstants.beforeFixing).then((_) async {
+        var now = DateTime.now();
+        await DatabaseHelper.insertBeforeFaxing(TransBeforeFaxingModel(
                 client_id: selectedClientId,
                 photo_type_id: 1,
                 cat_id: selectedCategoryId,
                 img_name: imageName,
-                gcs_status: 0))
+                working_id: int.parse(workingId),
+                upload_status: 0,
+                gcs_status: 0,
+                date_time: now.toString()))
             .then((_) {
           ToastMessage.succesMessage(context, "Data store successfully");
-          selectedCategoryId = -1;
-          selectedClientId = -1;
+
           imageFile = null;
         });
       });
@@ -297,7 +157,14 @@ class _BeforeFixingState extends State<BeforeFixing> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Capture Photo"),
+        title: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(storeName,style: const TextStyle(fontSize: 16),),
+            const Text("Before Fixing",style: TextStyle(fontSize: 12),),
+          ],
+        ),
       ),
       body: isLoading
           ? Center(
@@ -307,7 +174,7 @@ class _BeforeFixingState extends State<BeforeFixing> {
               ),
             )
           : Container(
-              margin: const EdgeInsets.only(left: 40, right: 40),
+              margin: const EdgeInsets.only(left: 10, right: 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -321,12 +188,20 @@ class _BeforeFixingState extends State<BeforeFixing> {
                         fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(
-                    height: 10,
+                    height: 5,
                   ),
                   // dropdownwidget("Company Name"),
-                  clientDropDownWidget("Client"),
+                  ClientListDropDown(
+                      clientKey: clientKey,
+                      hintText: "Client", clientData: clientData, onChange: (value){
+                    selectedClientId = value.client_id;
+                    getCategoryData(selectedClientId);
+                    setState(() {
+
+                    });
+                  }),
                   const SizedBox(
-                    height: 20,
+                    height: 10,
                   ),
                   const Text(
                     "Category",
@@ -335,97 +210,44 @@ class _BeforeFixingState extends State<BeforeFixing> {
                         fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(
-                    height: 10,
+                    height: 5,
                   ),
                   isCategoryLoading
-                      ? Container(height: 60, child: const MyLoadingCircle())
-                      : dropdownwidget("Category"),
+                      ? Center(
+                    child: Container(
+                      height: 60,
+                      child: const MyLoadingCircle(),
+                    ),
+                  )
+                      : CategoryDropDown(categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
+                        selectedCategoryId = value.id;
+                        setState(() {
+
+                        });
+                  }),
                   const SizedBox(
                     height: 20,
                   ),
-                  // const Text(
-                  //   "Category Type",
-                  //   style: TextStyle(
-                  //       color: MyColors.appMainColor, fontWeight: FontWeight.bold),
-                  // ),
-                  // const SizedBox(
-                  //   height: 10,
-                  // ),
-                  // dropdownwidget(
-                  //   "Company Name",
-                  // ),
-                  // SizedBox(
-                  //   height: 20,
-                  // ),
-                  // Container(
-                  //   height: 100,
-                  //   width: screenWidth,
-                  //   decoration: BoxDecoration(
-                  //       borderRadius: BorderRadius.circular(10),
-                  //       border: Border.all(color: Colors.grey)),
-                  //   child: Center(child: Text("Image will show here")),
-                  // ),
+
+                  ImageRowButton(imageFile: imageFile, onSelectImage: (){
+                    getImage();
+                  }),
                   const SizedBox(
-                    height: 30,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Container(
-                        height: 100,
-                        width: 100,
-                        child: Card(
-                          elevation: 5,
-                          child: Image.asset("assets/images/gallery1.png"),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Container(
-                        height: 100,
-                        width: 100,
-                        child: InkWell(
-                          onTap: () {
-                            getImage();
-                          },
-                          child: Card(
-                            elevation: 5,
-                            child: Image.asset("assets/images/camera.png"),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  // ElevatedButton.icon(
-                  //   style: ElevatedButton.styleFrom(
-                  //       backgroundColor: MyColors.appMainColor,
-                  //       minimumSize: Size(screenWidth, 45),
-                  //       shape: RoundedRectangleBorder(
-                  //           borderRadius: BorderRadius.circular(10))),
-                  //   icon: const Icon(Icons.camera_alt),
-                  //   onPressed: () {
-                  //     // Navigator.of(context).pushNamed();
-                  //   },
-                  //   label: const Text(
-                  //     "Take Image",
-                  //     style: TextStyle(color: Colors.white),
-                  //   ),
-                  // ),
-                  const SizedBox(
-                    height: 50,
+                    height: 20,
                   ),
                   isBtnLoading
-                      ? Container(
-                          height: 60,
-                          child: const MyLoadingCircle(),
-                        )
+                      ? Center(
+                    child: Container(
+                      height: 60,
+                      child: const MyLoadingCircle(),
+                    ),
+                  )
                       : ElevatedButton(
                           style: ElevatedButton.styleFrom(
                               backgroundColor: MyColors.appMainColor,
                               minimumSize: Size(screenWidth, 45),
                               shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10))),
+                                  borderRadius: BorderRadius.circular(5))),
                           onPressed: () {
                             saveStorePhotoData();
                             // Navigator.of(context).pushNamed();
@@ -436,14 +258,14 @@ class _BeforeFixingState extends State<BeforeFixing> {
                           ),
                         ),
                   const SizedBox(
-                    height: 30,
+                    height: 15,
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: Color.fromARGB(255, 39, 136, 42),
+                        backgroundColor: const Color.fromARGB(255, 39, 136, 42),
                         minimumSize: Size(screenWidth, 45),
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10))),
+                            borderRadius: BorderRadius.circular(5))),
                     onPressed: () {
                       Navigator.of(context)
                           .pushNamed(ViewBeforeFixing.routename);

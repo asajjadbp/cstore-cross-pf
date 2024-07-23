@@ -1,39 +1,60 @@
 import 'dart:io';
 
-import 'package:cstore/Database/table_name.dart';
+import 'package:cstore/database/table_name.dart';
 
 class GetTransPhotoModel {
-  late int id = 1;
-  late int client_id = 1;
-  late int photo_type_id = 1;
-  late int cat_id = 1;
+  late String clientName = "";
+  late int trans_photo_type_id = 1;
+  late int client_id = -1;
+  late int cat_id = -1;
+  late int type_id = -1;
   late String img_name = "";
   late int gcs_status = 1;
+  late int upload_status = 1;
   File? imageFile;
+  late String categoryEnName = "";
+  late String categoryArName = "";
+  late String type_en_name = "";
+  late String type_ar_name = "";
+
 
   GetTransPhotoModel(
-      {required this.id,
-      required this.client_id,
-      required this.photo_type_id,
-      required this.cat_id,
+      {required this.clientName,
+      required this.trans_photo_type_id,
       required this.img_name,
+      required this.client_id,
+      required this.cat_id,
+      required this.type_id,
       required this.gcs_status,
-      required this.imageFile});
+      required this.upload_status,
+      required this.imageFile,
+      required this.categoryEnName,
+      required this.categoryArName,
+      required this.type_en_name,
+      required this.type_ar_name
+      });
 
   // Convert a Dog into a Map. The keys must correspond to the names of the
   // columns in the database.
   Map<String, Object?> toMap() {
     return {
-      TableName.trans_photo_client_id: client_id,
-      TableName.trans_photo_type_id: photo_type_id,
-      TableName.trans_photo_cat_id: cat_id,
+      TableName.sys_client_name: clientName,
+      TableName.trans_photo_id: trans_photo_type_id,
       TableName.trans_photo_name: img_name,
+      "cat_id": cat_id,
+      "client_id": client_id,
+      "type_id" : type_id,
       TableName.trans_photo_gcs_status: gcs_status,
+      TableName.trans_upload_status: upload_status,
+      TableName.cat_en_name: categoryEnName,
+      TableName.cat_ar_name: categoryArName,
+      TableName.sys_photo_type_en_name: type_en_name,
+      TableName.sys_photo_type_ar_name: type_ar_name,
     };
   }
 
   @override
   String toString() {
-    return 'TransPhotoModel{id: $id, client_id: $client_id, photo_type_id: $photo_type_id, cat_id: $cat_id, img_name: $img_name, gcs_status: $gcs_status}';
+    return 'GetTransPhotoModel{clientName: $clientName, trans_photo_type_id: $trans_photo_type_id, client_id: $client_id,type_id:$type_id ,cat_id: $cat_id, img_name: $img_name, gcs_status: $gcs_status, upload_status: $upload_status, imageFile: $imageFile, categoryEnName: $categoryEnName, categoryArName: $categoryArName, type_en_name: $type_en_name, type_ar_name: $type_ar_name}';
   }
 }

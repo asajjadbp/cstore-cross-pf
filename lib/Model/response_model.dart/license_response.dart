@@ -40,8 +40,9 @@ class Datum {
   String licenseKey;
   String baseUrl;
   String imageReadUrl;
-  String gcs;
+  String bucketName;
   String agency;
+  String agencyPhoto;
   String updatedAt;
 
   Datum({
@@ -49,8 +50,9 @@ class Datum {
     required this.licenseKey,
     required this.baseUrl,
     required this.imageReadUrl,
-    required this.gcs,
+    required this.bucketName,
     required this.agency,
+    required this.agencyPhoto,
     required this.updatedAt,
   });
 
@@ -58,9 +60,10 @@ class Datum {
         id: json["id"],
         licenseKey: json["license_key"],
         baseUrl: json["base_url"],
-        imageReadUrl: json["image_read_url"],
-        gcs: json["gcs"],
+        imageReadUrl: json["static_image_url"],
+        bucketName: json["bucket_name"],
         agency: json["agency"],
+        agencyPhoto: json["agancy_photo"],
         updatedAt: json["updated_at"],
       );
 
@@ -68,9 +71,10 @@ class Datum {
         "id": id,
         "license_key": licenseKey,
         "base_url": baseUrl,
-        "image_read_url": imageReadUrl,
-        "gcs": gcs,
+        "static_image_url": imageReadUrl,
+        "bucket_name": bucketName,
         "agency": agency,
+        "agancy_photo":agencyPhoto,
         "updated_at": updatedAt,
       };
 }

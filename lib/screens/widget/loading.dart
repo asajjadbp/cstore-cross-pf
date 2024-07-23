@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
+import '../utils/appcolor.dart';
+
 class MyLoadingCircle extends StatefulWidget {
   const MyLoadingCircle({super.key});
 
@@ -13,12 +15,15 @@ class _MyLoadingCircleState extends State<MyLoadingCircle> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: SizedBox(
+        child: Container(
+          height: 60,
           child: SpinKitCircle(
             // color: Colors.red,
             size: 60.0,
+            // color: MyColors.appMainColor,
             itemBuilder: (BuildContext context, int index) {
-              return const CircleAvatar();
+              return const CircleAvatar(
+              );
               // return DecoratedBox(
               //   decoration: BoxDecoration(color: Colors.red
               //       // /:

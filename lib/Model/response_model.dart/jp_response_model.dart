@@ -45,9 +45,9 @@ class JourneyPlanDetail {
   String gcode;
   String clientIds;
   int userId;
-  dynamic checkIn;
-  dynamic checkOut;
-  dynamic startVisitPhoto;
+  String checkIn;
+  String checkOut;
+  String startVisitPhoto;
   String checkinGps;
   String checkoutGps;
   String visitStatus;
@@ -55,6 +55,7 @@ class JourneyPlanDetail {
   String avlExclude;
   String otherExclude;
   int isDrop;
+  int visitActivity;
 
   JourneyPlanDetail({
     required this.workingId,
@@ -75,28 +76,30 @@ class JourneyPlanDetail {
     required this.avlExclude,
     required this.otherExclude,
     required this.isDrop,
+    required this.visitActivity,
   });
 
   factory JourneyPlanDetail.fromJson(Map<String, dynamic> json) =>
       JourneyPlanDetail(
         workingId: json["working_id"],
-        workingDate: json["working_date"],
+        workingDate: json["working_date"].toString(),
         storeId: json["store_id"],
-        enStoreName: json["en_store_name"],
-        arStoreName: json["ar_store_name"],
-        gcode: json["gcode"],
+        enStoreName: json["en_store_name"].toString(),
+        arStoreName: json["ar_store_name"].toString(),
+        gcode: json["gcode"].toString(),
         clientIds: json["client_ids"].toString(),
         userId: json["user_id"],
-        checkIn: json["check_in"],
-        checkOut: json["check_out"],
-        startVisitPhoto: json["start_visit_photo"],
-        checkinGps: json["checkin_gps"],
-        checkoutGps: json["checkout_gps"],
-        visitStatus: json["visit_status"],
-        visitType: json["visit_type"],
-        avlExclude: json["avl_exclude"],
-        otherExclude: json["other_exclude"],
+        checkIn: json["check_in"] ?? '',
+        checkOut: json["check_out"] ?? '',
+        startVisitPhoto: json["start_visit_photo"].toString() == "null" ? "" :json["start_visit_photo"].toString() ,
+        checkinGps: json["checkin_gps"].toString(),
+        checkoutGps: json["checkout_gps"].toString(),
+        visitStatus: json["visit_status"].toString(),
+        visitType: json["visit_type"].toString(),
+        avlExclude: json["avl_exclude"].toString(),
+        otherExclude: json["other_exclude"].toString(),
         isDrop: json["is_drop"],
+        visitActivity: json['visit_activity_type']
       );
 
   Map<String, dynamic> toJson() => {
@@ -118,5 +121,6 @@ class JourneyPlanDetail {
         "avl_exclude": avlExclude,
         "other_exclude": otherExclude,
         "is_drop": isDrop.toString(),
+        'visit_activity_type' : visitActivity
       };
 }
