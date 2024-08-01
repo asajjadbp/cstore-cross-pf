@@ -86,18 +86,24 @@ class PricingShowModel {
   }
 }
 class PricingCountModel {
-  late int total_pricing;
+  late int total_pricing_products;
+  late int total_regular_pricing;
+  late int total_promo_pricing;
 
-  PricingCountModel({required this.total_pricing,});
+  PricingCountModel({required this.total_pricing_products,required this.total_regular_pricing,required this.total_promo_pricing});
   Map<String, dynamic> toJson() {
     return {
-      'total_pricing': total_pricing.toString(),
+      'total_pricing_products': total_pricing_products,
+      'total_regular_pricing' : total_regular_pricing,
+      'total_promo_pricing' : total_promo_pricing,
     };
   }
   // Factory method to create an instance of AvailableCountModel from a map
   factory PricingCountModel.fromJson(Map<String, dynamic> json) {
     return PricingCountModel(
-      total_pricing: json['total_pricing']??0,
+      total_pricing_products: json['total_pricing_products'] ?? 0,
+      total_regular_pricing: json['total_regular_pricing'] ?? 0,
+      total_promo_pricing: json['total_promo_pricing'] ?? 0
     );
   }
 }

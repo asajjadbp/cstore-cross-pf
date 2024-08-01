@@ -1,48 +1,26 @@
 import '../../database/table_name.dart';
 
 class TransFreshnessModel {
-  late int id;
   late int sku_id;
-  late String year;
-  late String jan;
-  late String feb;
-  late String mar;
-  late String apr;
-  late String may;
-  late String jun;
-  late String jul;
-  late String aug;
-  late String sep;
-  late String oct;
-  late String nov;
-  late String dec;
-  late String cases;
-  late String outer;
-  late String pieces;
+  late int year;
+  late int jan;
+  late int feb;
+  late int mar;
+  late int apr;
+  late int may;
+  late int jun;
+  late int jul;
+  late int aug;
+  late int sep;
+  late int oct;
+  late int nov;
+  late int dec;
+  late String imgName;
   late String specific_date;
-  late final int working_id;
-
-  TransFreshnessModel({
-    required this.sku_id,
-    required this.year,
-    required this.jan,
-    required this.feb,
-    required this.mar,
-    required this.apr,
-    required this.may,
-    required this.jun,
-    required this.jul,
-    required this.aug,
-    required this.sep,
-    required this.oct,
-    required this.nov,
-    required this.dec,
-    required this.cases,
-    required this.outer,
-    required this.pieces,
-    required this.specific_date,
-    required this.working_id,
-  });
+  late String client_id;
+  late String sku_en_name;
+  late String sku_ar_name;
+  late int upload_status;
 
   Map<String, Object?> toMap() {
     return {
@@ -60,11 +38,12 @@ class TransFreshnessModel {
       TableName.trans_freshness_oct: oct,
       TableName.trans_freshness_nov: nov,
       TableName.trans_freshness_dec: dec,
-      TableName.trans_freshness_cases: cases,
-      TableName.trans_freshness_outer: outer,
-      TableName.trans_freshness_pieces: pieces,
       TableName.trans_freshness_specific_date: specific_date,
-      TableName.trans_freshness_working_id: working_id,
+      TableName.trans_upload_status: upload_status,
+      "sku_en_name": sku_en_name,
+      "sku_ar_name": sku_ar_name,
+      "client_id": sku_en_name,
+      "img_name": imgName,
     };
   }
 
@@ -84,11 +63,34 @@ class TransFreshnessModel {
     sep = json[TableName.trans_freshness_sep];
     nov = json[TableName.trans_freshness_nov];
     dec = json[TableName.trans_freshness_dec];
-    cases = json[TableName.trans_freshness_cases];
-    outer = json[TableName.trans_freshness_outer];
-    pieces = json[TableName.trans_freshness_pieces];
     specific_date = json[TableName.trans_freshness_specific_date];
-    working_id = json[TableName.trans_freshness_working_id];
-
+    upload_status = json[TableName.trans_upload_status];
+    sku_en_name = json['sku_en_name'];
+    sku_ar_name = json['sku_ar_name'];
+    client_id = json['client_id'];
+    imgName = json['img_name'];
   }
+
+  TransFreshnessModel({
+    required this.sku_id,
+    required this.year,
+    required this.jan,
+    required this.feb,
+    required this.mar,
+    required this.apr,
+    required this.may,
+    required this.jun,
+    required this.jul,
+    required this.aug,
+    required this.sep,
+    required this.oct,
+    required this.nov,
+    required this.dec,
+    required this.specific_date,
+    required this.client_id,
+    required this.sku_en_name,
+    required this.sku_ar_name,
+    required this.upload_status,
+    required this.imgName,
+  });
 }

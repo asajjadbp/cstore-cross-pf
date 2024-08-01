@@ -129,6 +129,7 @@ class CustomDetailsDialogue extends StatefulWidget {
     required this.vFacings,
     required this.dFacings,
     required this.pog,
+    required this.pogOnTap,
   });
 
   final String title;
@@ -139,6 +140,7 @@ class CustomDetailsDialogue extends StatefulWidget {
   final String vFacings;
   final String dFacings;
   final String pog;
+  final Function pogOnTap;
 
   @override
   State<CustomDetailsDialogue> createState() => _CustomDetailsDialogueState();
@@ -154,7 +156,7 @@ class _CustomDetailsDialogueState extends State<CustomDetailsDialogue> {
       elevation: 0,
       backgroundColor: Colors.transparent,
       child: Container(
-        height: MediaQuery.of(context).size.height/4,
+        height: MediaQuery.of(context).size.height/3.5,
         width: MediaQuery.of(context).size.width,
         decoration: const BoxDecoration(
           color: MyColors.whiteColor,
@@ -262,7 +264,11 @@ class _CustomDetailsDialogueState extends State<CustomDetailsDialogue> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             const Text("POG:",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w400),),
-                          Text(widget.pog,maxLines:2,overflow:TextOverflow.ellipsis,style:const TextStyle(fontSize: 12,fontWeight: FontWeight.w400),)
+                          InkWell(
+                              onTap: () {
+                                widget.pogOnTap();
+                              },
+                              child: Text(widget.pog,maxLines:2,overflow:TextOverflow.ellipsis,style:const TextStyle(fontSize: 12,fontWeight: FontWeight.w400),))
                         ],),
                       ),
                     ],

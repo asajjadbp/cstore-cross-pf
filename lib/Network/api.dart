@@ -61,4 +61,12 @@ class Api {
 
   static const uploadPricingData = "macroapis/BpIntel/savePricing";
 
+  static const getPromoPlanData = "macroapis/BpIntel/getPromoPlan";
+
+  static const postPromoPlanData = "macroapis/BpIntel/savePromoPlan";
+
+  static const postFreshnessData = "macroapis/BpIntel/saveFreshness";
+
+  static const postStockData = "macroapis/BpIntel/saveStock";
+
 }

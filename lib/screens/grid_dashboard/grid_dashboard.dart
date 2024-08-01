@@ -5,9 +5,9 @@ import 'dart:math';
 import 'package:cstore/Database/db_helper.dart';
 import 'package:cstore/Database/table_name.dart';
 import 'package:cstore/Model/database_model/required_module_model.dart';
-import 'package:cstore/Model/database_model/show_trans_osdc_model.dart';
 import 'package:cstore/Network/sql_data_http_manager.dart';
 import 'package:cstore/screens/availability/availablity_screen.dart';
+import 'package:cstore/screens/freshness/Freshness.dart';
 import 'package:cstore/screens/planogram/planogram_screen.dart';
 import 'package:cstore/screens/utils/app_constants.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
@@ -44,8 +44,10 @@ import '../other_photo/add_other_photo.dart';
 import '../pick_list/pick_list.dart';
 import '../plano_guide/Planoguides.dart';
 import '../price_check/Pricecheck.dart';
+import '../promoplane/PromoPlan.dart';
 import '../rtv_screen/rtv_list_screen.dart';
 import '../share_of_shelf/add_share_of_shelf.dart';
+import '../stock/stock_list_screen.dart';
 import '../utils/services/getting_gps.dart';
 import '../utils/services/take_image_and_save_to_folder.dart';
 import '../utils/toast/toast.dart';
@@ -204,7 +206,7 @@ class _GridDashBoardState extends State<GridDashBoard> {
   insertDataToSql(List<PickListModel> valuePickList) async {
     String valueQuery = "";
     for(int i=0; i < valuePickList.length; i++) {
-      valueQuery = "$valueQuery(${valuePickList[i].picklist_id},${valuePickList[i].store_id},${valuePickList[i].category_id},${valuePickList[i].tmr_id},${wrapIfString(valuePickList[i].tmr_name)},${valuePickList[i].stocker_id},${wrapIfString(valuePickList[i].stocker_name)},${wrapIfString(valuePickList[i].shift_time)},${wrapIfString(valuePickList[i].en_cat_name)},${wrapIfString(valuePickList[i].ar_cat_name)},${wrapIfString(valuePickList[i].sku_picture)},${wrapIfString(valuePickList[i].en_sku_name)},${wrapIfString(valuePickList[i].ar_sku_name)},${valuePickList[i].req_pickList},${valuePickList[i].act_pickList},${valuePickList[i].pickList_ready},0),";
+      valueQuery = "$valueQuery(${valuePickList[i].picklist_id},${valuePickList[i].store_id},${valuePickList[i].category_id},${valuePickList[i].tmr_id},${wrapIfString(valuePickList[i].tmr_name)},${valuePickList[i].stocker_id},${wrapIfString(valuePickList[i].stocker_name)},${wrapIfString(valuePickList[i].shift_time)},${wrapIfString(valuePickList[i].en_cat_name)},${wrapIfString(valuePickList[i].ar_cat_name)},${wrapIfString(valuePickList[i].sku_picture)},${wrapIfString(valuePickList[i].en_sku_name)},${wrapIfString(valuePickList[i].ar_sku_name)},${valuePickList[i].req_pickList},${valuePickList[i].act_pickList},${valuePickList[i].pickList_ready},0,'',${wrapIfString(valuePickList[i].pick_list_receive_time)},${wrapIfString(valuePickList[i].pick_list_reason)}),";
     }
     if (valueQuery.endsWith(",")) {
       valueQuery = valueQuery.substring(0, valueQuery.length - 1);
@@ -1383,6 +1385,9 @@ class _GridDashBoardState extends State<GridDashBoard> {
                                      else if(agencyData[i].en_name=="OffShelf Display"){
                                        Navigator.of(context).pushNamed(AddOSDC.routeName);
                                      }
+                                     else if(agencyData[i].en_name=="Stock Count"){
+                                       Navigator.of(context).pushNamed(StockListScreen.routeName);
+                                     }
                                      else if(agencyData[i].en_name=="Price Check"){
                                        Navigator.of(context).pushNamed(PriceCheck_Screen.routeName);
                                      }else if(agencyData[i].en_name=="Planoguide"){
@@ -1395,8 +1400,7 @@ class _GridDashBoardState extends State<GridDashBoard> {
                                          ToastMessage.errorMessage(context, e.toString());
                                          setState(() {});
                                        });
-                                     }
-                                     else if(agencyData[i].en_name=="Shelf Shares"){
+                                     } else if(agencyData[i].en_name=="Shelf Shares"){
                                        await DatabaseHelper.insertTransBrandShares(workingId).then((value) {
                                          Navigator.of(context).pushNamed(BrandShares_Screen.routename);
                                        }).catchError((e) {
@@ -1406,6 +1410,16 @@ class _GridDashBoardState extends State<GridDashBoard> {
                                        });
                                      } else if(agencyData[i].en_name == "Pick List") {
                                        Navigator.of(context).pushNamed(PickListScreen.routename);
+                                     } else if(agencyData[i].en_name == "Promo") {
+                                       await DatabaseHelper.insertTransPromoPlan(workingId,int.parse(storeId)).then((value) {
+                                         Navigator.of(context).pushNamed(PromoPlan_scrren.routeName);
+                                       }).catchError((e) {
+                                         print(e.toString());
+                                         ToastMessage.errorMessage(context, e.toString());
+                                         setState(() {});
+                                       });
+                                     } else if(agencyData[i].en_name == "Freshness") {
+                                       Navigator.of(context).pushNamed(Freshness_Screen.routeName);
                                      }
                                       // Navigator.of(context).pushNamed(BeforeFixing.routeName);
                                     },
@@ -1433,7 +1447,7 @@ class _GridDashBoardState extends State<GridDashBoard> {
 
                         },
                         child: const Text(
-                          "Finish Visit",style: TextStyle(color: MyColors.whiteColor),
+                          "View Visit Summary",style: TextStyle(color: MyColors.whiteColor),
                         ),
                       )
                     ],

@@ -1,41 +1,67 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cstore/screens/utils/app_constants.dart';
+import 'package:cstore/screens/utils/appcolor.dart';
+import 'package:cstore/screens/utils/toast/toast.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
+import '../widget/app_bar_widgets.dart';
 import '../widget/loading.dart';
 
-class ImageScreen extends StatefulWidget {
-  const ImageScreen({super.key,required this.imageUrl});
+class PdfScreen extends StatefulWidget {
+  const PdfScreen({super.key,required this.pdfUrl});
 
-  final String imageUrl;
+  final String pdfUrl;
 
   @override
-  State<ImageScreen> createState() => _ImageScreenState();
+  State<PdfScreen> createState() => _PdfScreenState();
 }
 
-class _ImageScreenState extends State<ImageScreen> {
+class _PdfScreenState extends State<PdfScreen> {
+
+  final GlobalKey<SfPdfViewerState> _pdfViewerKey = GlobalKey();
+  String storeName = "";
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    getUserData();
+    super.initState();
+  }
+
+  getUserData() async {
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
+    storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    setState(() {
+
+    });
+
+  }
+
   @override
   Widget build(BuildContext context) {
+    print("PDF Viewer List");
+    print(widget.pdfUrl);
     return Scaffold(
-      appBar: AppBar(),
+      appBar: generalAppBar(context, storeName, "Pdf Viewer" , (){
+        Navigator.of(context).pop();
+      }, (){
+      }, true, false, false),
       body: Container(
-        margin: EdgeInsets.all(5),
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        child: CachedNetworkImage(
-          imageUrl: widget.imageUrl,
-          fit: BoxFit.fitHeight,
-          imageBuilder: (context, imageProvider) {
-            return Container(
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: imageProvider, fit: BoxFit.fitWidth)));
-          },
-          placeholder: (context, url) => const SizedBox(
-              width: 20, height: 10, child: MyLoadingCircle()),
-          errorWidget: (context, url, error) => Container(
-              alignment: Alignment.center,
-              child: const Icon(Icons.error)),
-        ),
+        margin: const EdgeInsets.all(5),
+        color: MyColors.whiteColor,
+        child: SfPdfViewer.network(
+            widget.pdfUrl,
+          key: _pdfViewerKey,
+        onDocumentLoadFailed: (PdfDocumentLoadFailedDetails pdfDocumentLoadFailedDetails) {
+          Navigator.of(context).pop();
+          print(pdfDocumentLoadFailedDetails.error.toString());
+          ToastMessage.errorMessage(context, "Pdf Not Found");
+        },
+        )
       ),
     );
   }

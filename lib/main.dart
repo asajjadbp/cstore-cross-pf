@@ -4,6 +4,8 @@ import 'package:cstore/screens/availability/availablity_screen.dart';
 import 'package:cstore/screens/before_fixing/view_before_fixing.dart';
 import 'package:cstore/screens/brand_share/AddBrandShares.dart';
 import 'package:cstore/screens/dashboard/dashboard.dart';
+import 'package:cstore/screens/freshness/Freshness.dart';
+import 'package:cstore/screens/freshness/ViewFreshness.dart';
 import 'package:cstore/screens/osdc/add_osdc.dart';
 import 'package:cstore/screens/osdc/view_osdc.dart';
 import 'package:cstore/screens/other_photo/add_other_photo.dart';
@@ -13,10 +15,12 @@ import 'package:cstore/screens/plano_guide/Planoguides.dart';
 import 'package:cstore/screens/planogram/planogram_screen.dart';
 import 'package:cstore/screens/planogram/view_planogram_sreen.dart';
 import 'package:cstore/screens/price_check/Pricecheck.dart';
+import 'package:cstore/screens/promoplane/PromoPlan.dart';
 import 'package:cstore/screens/rtv_screen/rtv_list_screen.dart';
 import 'package:cstore/screens/share_of_shelf/add_share_of_shelf.dart';
 import 'package:cstore/screens/share_of_shelf/view_share_of_shelf.dart';
 import 'package:cstore/screens/splash_screen.dart';
+import 'package:cstore/screens/stock/stock_list_screen.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:cstore/screens/visit_upload/visitUploadScreen.dart';
 import 'package:cstore/screens/welcome_screen/welcome.dart';
@@ -130,7 +134,11 @@ class _MyAppState extends State<MyApp> {
         BrandShares_Screen.routename:(context)=>const BrandShares_Screen(),
         PickListScreen.routename:(context)=>const PickListScreen(),
         VisitUploadScreen.routeName:(context)=>const VisitUploadScreen(),
-        PriceCheck_Screen.routeName:(context)=>const PriceCheck_Screen()
+        PriceCheck_Screen.routeName:(context)=>const PriceCheck_Screen(),
+        Freshness_Screen.routeName:(context)=>const Freshness_Screen(),
+        PromoPlan_scrren.routeName:(context)=> const PromoPlan_scrren(),
+        ViewFreshness_Screen.routeName:(context)=>const ViewFreshness_Screen(),
+        StockListScreen.routeName:(context)=>const StockListScreen(),
       },
     );
   }

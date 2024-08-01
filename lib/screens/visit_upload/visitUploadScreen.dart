@@ -14,12 +14,15 @@ import '../../Database/db_helper.dart';
 import '../../Database/table_name.dart';
 import '../../Model/database_model/availability_show_model.dart';
 import '../../Model/database_model/dashboard_model.dart';
+import '../../Model/database_model/freshness_graph_count.dart';
 import '../../Model/database_model/planoguide_gcs_images_list_model.dart';
+import '../../Model/database_model/promo_plan_graph_api_count_model.dart';
 import '../../Model/database_model/required_module_model.dart';
 import '../../Model/database_model/show_trans_rtv_model.dart';
 import '../../Model/database_model/total_count_response_model.dart';
 import '../../Model/database_model/trans_brand_shares_model.dart';
 import '../../Model/database_model/trans_planoguide_model.dart';
+import '../../Model/database_model/trans_stock_model.dart';
 import '../../Model/request_model.dart/availability_api_request_model.dart';
 import '../../Model/request_model.dart/brand_share_request.dart';
 import '../../Model/request_model.dart/finish_visit_request_model.dart';
@@ -27,6 +30,9 @@ import '../../Model/request_model.dart/planoguide_request_model.dart';
 import '../../Model/request_model.dart/ready_pick_list_request.dart';
 import '../../Model/request_model.dart/save_api_pricing_data_request.dart';
 import '../../Model/request_model.dart/save_api_rtv_data_request.dart';
+import '../../Model/request_model.dart/save_freshness_request_model.dart';
+import '../../Model/request_model.dart/save_promo_plan_request_model.dart';
+import '../../Model/request_model.dart/save_stock_request_model.dart';
 import '../../Network/jp_http.dart';
 import '../../Network/sql_data_http_manager.dart';
 import '../utils/app_constants.dart';
@@ -86,14 +92,23 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
   List<ShowTransRTVShowModel> rtvData = [];
   List<SaveRtvDataListData> rtvImageList = [];
   List<TransPlanoGuideGcsImagesListModel> rtvGcsImagesList=[];
-  RtvCountModel rtvCountModel = RtvCountModel(totalRtv: 0, totalNotUpload: 0, totalUpload: 0);
+  RtvCountModel rtvCountModel = RtvCountModel(totalRtv: 0, totalNotUpload: 0, totalUpload: 0,totalVolume: 0,totalValue: 0);
 
   List<TransBransShareModel> priceCheckData = <TransBransShareModel>[];
   List<SavePricingDataListData> priceCheckImageList = [];
-  PriceCheckCountModel priceCheckCountModel = PriceCheckCountModel(totalPriceCheck: 0, totalNotUpload: 0, totalUpload: 0);
-
+  PriceCheckCountModel priceCheckCountModel = PriceCheckCountModel(totalPriceCheck: 0, totalNotUpload: 0, totalUpload: 0,totalRegularSku: 0,totalPromoSku: 0);
 
   List<ReadyPickListData> pickListDataForApi = [];
+
+  FreshnessGraphCountShowModel freshnessGraphCountShowModel = FreshnessGraphCountShowModel(totalFreshnessTaken: 0,totalVolume: 0,totalNotUploadCount: 0,totalUploadCount: 0);
+  List<SaveFreshnessListData> saveFreshnessList = [];
+
+  List<TransPlanoGuideGcsImagesListModel> promoPlanGcsImagesList=[];
+  List<SavePromoPlanDataListData> savePromoPlanList = [];
+  PromoPlanGraphAndApiCountShowModel promoPlanGraphAndApiCountShowModel = PromoPlanGraphAndApiCountShowModel(totalPromoPLan: 0, totalDeployed: 0, totalNotDeployed: 0, totalPending: 0, totalUploadCount: 0, totalNotUploadCount: 0);
+
+  List<SaveStockListData> saveStockList = [];
+  TotalStockCountData totalStockCountData = TotalStockCountData(total_uploaded: 0,total_not_upload: 0,total_stock_taken: 0,total_pieces: 0,total_outers: 0,total_cases: 0);
 
   List<AgencyDashboardModel> allAgencyData = [];
   List<AgencyDashboardModel> agencyData = [];
@@ -107,14 +122,16 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
   bool isShelfShareFinishLoading = false;
   bool isRtvFinishLoading = false;
   bool isPriceCheckFinishLoading = false;
-
+  bool isFreshnessFinishLoading = false;
+  bool isPromoPlanFinishLoading = false;
+  bool isStockFinishLoading = false;
 
   @override
   void initState() {
     super.initState();
     getStoreDetails();
     setState(() {
-      getStoreDetails();
+
     });
   }
 
@@ -135,7 +152,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
     visitActivity = sharedPreferences.getString(AppConstants.visitActivity)!;
 
     print("USER ROLE");
-    print(userRole);
+    print(token);
 
     allAgencyData = await DatabaseHelper.getAgencyDashboard();
 
@@ -181,114 +198,161 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         children: [
           Expanded(
             child: Stack(
-              alignment: Alignment.center,
+              alignment: Alignment.topCenter,
               children: [
                 Card(
                   elevation:5,
                   color: MyColors.dropBorderColor,
                   margin: const EdgeInsets.all(6),
-                  child: Column(
-                    children: [
-                      if (availabilityCountModel.totalSku > 0 )
-                        VisitAvlUploadScreenCard(
-                          onUploadTap: (){
-                            availabilityUploadToAPI();
-                          },
-                          isUploaded: availabilityCountModel.totalNotUploaded == 0,
-                          isUploadData: isAvlFinishLoading,
-                          storeName:storeName,
-                          moduleName: "Total sku",
-                          screenName: "Availability",
-                          checkinTime:checkInTime,
-                          avlSkus:availabilityCountModel.totalAvl,
-                          notAvlSkus: availabilityCountModel.totalNotAvl,
-                          notMarkedSkus: availabilityCountModel.totalNotMarked,
-                          totalSkus: availabilityCountModel.totalSku,),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (availabilityCountModel.totalSku > 0 )
+                          VisitAvlUploadScreenCard(
+                            onUploadTap: (){
+                              availabilityUploadToAPI();
+                            },
+                            isUploaded: availabilityCountModel.totalNotUploaded == 0,
+                            isUploadData: isAvlFinishLoading,
+                            storeName:storeName,
+                            moduleName: "Total Sku's",
+                            screenName: "Availability",
+                            checkinTime:checkInTime,
+                            avlSkus:availabilityCountModel.totalAvl,
+                            notAvlSkus: availabilityCountModel.totalNotAvl,
+                            notMarkedSkus: availabilityCountModel.totalNotMarked,
+                            totalSkus: availabilityCountModel.totalSku,),
 
-                      if (tmrPickListCountModel.totalPickListItems > 0 )
-                        VisitPickListUploadScreenCard(
-                          onUploadTap: (){
-                            tmrUploadPickList();
-                          },
-                          isUploadData: isPickListFinishLoading,
-                          isUploaded: tmrPickListCountModel.totalPickNotUpload == 0,
-                          moduleName: "Requests",
-                          screenName: "Picklist",
-                          readyPickList:tmrPickListCountModel.totalPickReady,
-                          notReadyPickList: tmrPickListCountModel.totalPickNotReady,
-                          totalPickList: tmrPickListCountModel.totalPickListItems,),
+                        if (tmrPickListCountModel.totalPickListItems > 0 )
+                          VisitPickListUploadScreenCard(
+                            onUploadTap: (){
+                              tmrUploadPickList();
+                            },
+                            isUploadData: isPickListFinishLoading,
+                            isUploaded: tmrPickListCountModel.totalPickNotUpload == 0,
+                            moduleName: "Requests",
+                            screenName: "Picklist",
+                            readyPickList:tmrPickListCountModel.totalPickReady,
+                            notReadyPickList: tmrPickListCountModel.totalPickNotReady,
+                            totalPickList: tmrPickListCountModel.totalPickListItems,),
 
-                      if (planoguideCountModel.totalPlano > 0 )
-                        VisitPlanoguideUploadScreenCard(
-                          onUploadTap: () async {
-                            await uploadImagesToGcs(AppConstants.planoguide);
+                        if (planoguideCountModel.totalPlano > 0 )
+                          VisitPlanoguideUploadScreenCard(
+                            onUploadTap: () async {
+                              await uploadImagesToGcs(AppConstants.planoguide);
 
-                            planoguideUploadApi();
-                          },
-                          isUploaded: planoguideCountModel.totalNotUploaded == 0,
-                          isUploadData: isPlanoguideFinishLoading,
-                          moduleName: "Pog",
-                          screenName: "Planoguide",
-                          totalAdhere:planoguideCountModel.totalAdhere,
-                          totalNotAdhere: planoguideCountModel.totalNotAdhere,
-                          notMarkedPlanoguide: planoguideCountModel.totalNotMarkedPlano,
-                          totalPlanoguide: planoguideCountModel.totalPlano,),
+                              planoguideUploadApi();
+                            },
+                            isUploaded: planoguideCountModel.totalNotUploaded == 0,
+                            isUploadData: isPlanoguideFinishLoading,
+                            moduleName: "Pog",
+                            screenName: "Planoguide",
+                            totalAdhere:planoguideCountModel.totalAdhere,
+                            totalNotAdhere: planoguideCountModel.totalNotAdhere,
+                            notMarkedPlanoguide: planoguideCountModel.totalNotMarkedPlano,
+                            totalPlanoguide: planoguideCountModel.totalPlano,),
 
-                      if (brandShareCountModel.totalBrandShare > 0 )
-                        VisitBrandShareUploadScreenCard(
-                          onUploadTap: (){
-                            shareShelfUploadToApi();
-                          },
-                          isUploaded: brandShareCountModel.totalNotUpload == 0,
-                          isUploadData: isShelfShareFinishLoading,
-                          moduleName: "Brands",
-                          screenName: "Shelf Share",
-                          readyBrandList:brandShareCountModel.totalReadyBrands,
-                          notReadyBrandList: brandShareCountModel.totalNotReadyBrands,
-                          totalBrands: brandShareCountModel.totalBrandShare,),
+                        if (brandShareCountModel.totalBrandShare > 0 )
+                          VisitBrandShareUploadScreenCard(
+                            onUploadTap: (){
+                              shareShelfUploadToApi();
+                            },
+                            isUploaded: brandShareCountModel.totalNotUpload == 0,
+                            isUploadData: isShelfShareFinishLoading,
+                            moduleName: "Brands",
+                            screenName: "Shelf Share",
+                            readyBrandList:brandShareCountModel.totalReadyBrands,
+                            notReadyBrandList: brandShareCountModel.totalNotReadyBrands,
+                            totalBrands: brandShareCountModel.totalBrandShare,),
 
-                      if (pickListCountModel.totalPickListItems > 0 )
-                        VisitPickListUploadScreenCard(
-                          onUploadTap: (){
-                            pickListUploadAPi();
-                          },
-                          isUploaded: pickListCountModel.totalNotUpload == 0,
-                          isUploadData: isPickListFinishLoading,
-                          moduleName: "Requests",
-                          screenName: "Picklist",
-                          readyPickList:pickListCountModel.totalPickReady,
-                          notReadyPickList: pickListCountModel.totalPickNotReady,
-                          totalPickList: pickListCountModel.totalPickListItems,),
+                        if (pickListCountModel.totalPickListItems > 0 )
+                          VisitPickListUploadScreenCard(
+                            onUploadTap: (){
+                              pickListUploadAPi();
+                            },
+                            isUploaded: pickListCountModel.totalNotUpload == 0,
+                            isUploadData: isPickListFinishLoading,
+                            moduleName: "Requests",
+                            screenName: "Picklist",
+                            readyPickList:pickListCountModel.totalPickReady,
+                            notReadyPickList: pickListCountModel.totalPickNotReady,
+                            totalPickList: pickListCountModel.totalPickListItems,),
 
-                      if (rtvCountModel.totalRtv > 0 )
-                        VisitRtvUploadScreenCard(
-                          onUploadTap: () async {
-                            await uploadImagesToGcs(AppConstants.rtv);
+                        if (rtvCountModel.totalRtv > 0 )
+                          VisitRtvUploadScreenCard(
+                            onUploadTap: () async {
+                              await uploadImagesToGcs(AppConstants.rtv);
 
-                            rtvUploadApi();
-                          },
-                          isUploaded: rtvCountModel.totalNotUpload == 0,
-                          isUploadData: isRtvFinishLoading,
-                          moduleName: "Items",
-                          screenName: "RTV",
-                          uploadedData:rtvCountModel.totalUpload,
-                          notUploadedData: rtvCountModel.totalNotUpload,
-                          totalRtv: rtvCountModel.totalRtv,),
+                              rtvUploadApi();
+                            },
+                            isUploaded: rtvCountModel.totalNotUpload == 0,
+                            isUploadData: isRtvFinishLoading,
+                            moduleName: "Sku's",
+                            screenName: "RTV",
+                            uploadedData:rtvCountModel.totalVolume,
+                            notUploadedData: rtvCountModel.totalValue,
+                            totalRtv: rtvCountModel.totalRtv,),
 
-                      if(priceCheckCountModel.totalPriceCheck > 0)
-                        VisitRtvUploadScreenCard(
-                          onUploadTap: () {
-                            priceCheckUploadApi();
-                          },
-                          isUploaded: priceCheckCountModel.totalNotUpload == 0,
-                          isUploadData: isPriceCheckFinishLoading,
-                          moduleName: "Items",
-                          screenName: "Price Check",
-                          uploadedData:priceCheckCountModel.totalUpload,
-                          notUploadedData: priceCheckCountModel.totalNotUpload,
-                          totalRtv: priceCheckCountModel.totalPriceCheck,),
+                        if(priceCheckCountModel.totalPriceCheck > 0)
+                          VisitPriceCheckUploadScreenCard(
+                            onUploadTap: () {
+                              priceCheckUploadApi();
+                            },
+                            isUploaded: priceCheckCountModel.totalNotUpload == 0,
+                            isUploadData: isPriceCheckFinishLoading,
+                            moduleName: "Sku's",
+                            screenName: "Price Check",
+                            uploadedData:priceCheckCountModel.totalRegularSku,
+                            notUploadedData: priceCheckCountModel.totalPromoSku,
+                            totalPriceCheck: priceCheckCountModel.totalPriceCheck,),
 
-                    ],
+                        if (freshnessGraphCountShowModel.totalFreshnessTaken > 0 )
+                          VisitFreshnessUploadScreenCard(
+                            onUploadTap: () async {
+                              freshnessUploadApi();
+                            },
+                            isUploaded: freshnessGraphCountShowModel.totalNotUploadCount == 0,
+                            isUploadData: isFreshnessFinishLoading,
+                            moduleName: "Sku's",
+                            screenName: "Freshness",
+                            uploadedData:freshnessGraphCountShowModel.totalVolume,
+                            totalRtv: freshnessGraphCountShowModel.totalFreshnessTaken,),
+
+                        if (promoPlanGraphAndApiCountShowModel.totalPromoPLan > 0 )
+                          VisitPlanoguideUploadScreenCard(
+                            onUploadTap: () async {
+                              await uploadImagesToGcs(AppConstants.promoPlan);
+
+                              promoPlanUploadApi();
+                            },
+                            isUploaded: promoPlanGraphAndApiCountShowModel.totalNotUploadCount == 0,
+                            isUploadData: isPromoPlanFinishLoading,
+                            moduleName: "Plan",
+                            screenName: "Promotions",
+                            totalAdhere:promoPlanGraphAndApiCountShowModel.totalDeployed,
+                            totalNotAdhere: promoPlanGraphAndApiCountShowModel.totalDeployed,
+                            notMarkedPlanoguide: promoPlanGraphAndApiCountShowModel.totalPending,
+                            totalPlanoguide: promoPlanGraphAndApiCountShowModel.totalPromoPLan,),
+
+                        if (totalStockCountData.total_stock_taken > 0 )
+                          VisitStockUploadScreenCard(
+                            onUploadTap: ()  {
+                              stockUploadApi();
+                            },
+                            isUploaded: totalStockCountData.total_not_upload == 0,
+                            isUploadData: isStockFinishLoading,
+                            moduleName: "Sku's",
+                            screenName: "Stock",
+                            totalCases: totalStockCountData.total_cases,
+                            totalOuters: totalStockCountData.total_outers,
+                            totalPieces: totalStockCountData.total_pieces,
+                            totalStock: totalStockCountData.total_stock_taken,
+                          ),
+
+                      ],
+                    ),
                   ),
                 ),
                 if(isDataUploading)
@@ -461,7 +525,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       setState((){});
     });
 
-    await DatabaseHelper.getRtvCountData(workingId).then((value) {
+    await DatabaseHelper.getRtvCountDataServices(workingId).then((value) {
       rtvCountModel = value;
 
       setState(() {
@@ -476,6 +540,31 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
       setState(() {
 
+      });
+    });
+
+    await DatabaseHelper.getFreshnessGraphCount(workingId,"-1",clientId.toString(),"-1","-1","-1").then((value) {
+      setState(() {
+        freshnessGraphCountShowModel = value;
+      });
+    });
+
+    await DatabaseHelper.getPromoGraphAndApiCount(workingId).then((value) {
+
+      promoPlanGraphAndApiCountShowModel = value;
+
+      setState(() {
+
+      });
+    });
+
+    await DatabaseHelper.getStockCount(workingId,
+        "-1",
+        "-1",
+        "-1",
+       "-1").then((value) {
+      totalStockCountData = value;
+      setState(() {
       });
     });
 
@@ -507,44 +596,17 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         isFinishButton = false;
       }
 
-      // if(moduleIdList.contains("3")) {
-      //   print("Module 3 ");
-      //   if((availabilityCountModel.totalSku != availabilityCountModel.totalUploaded) || availabilityCountModel.totalSku == 0 || availabilityCountModel.totalUploaded.toString() == "null") {
-      //     isFinishButton = false;
-      //
-      //     print("Module 3 isAvlFinishLoading : $isFinishButton");
-      //   } else {
-      //     isFinishButton = true;
-      //
-      //     print("Module 3 isAvlFinishLoading : $isFinishButton");
-      //   }
-      // }
+      if(freshnessGraphCountShowModel.totalNotUploadCount > 0) {
+        isFinishButton = false;
+      }
 
-      // if(moduleIdList.contains("15")) {
-      //   print("Module 15 ");
-      //   if((planoguideCountModel.totalPlano != planoguideCountModel.totalUploaded) || planoguideCountModel.totalPlano == 0 || planoguideCountModel.totalUploaded.toString() == "null" ) {
-      //     isFinishButton = false;
-      //
-      //     print("Module 15 isAvlFinishLoading : $isFinishButton");
-      //   } else {
-      //     isFinishButton = true;
-      //
-      //     print("Module 15 isAvlFinishLoading : $isFinishButton");
-      //   }
-      // }
+      if(promoPlanGraphAndApiCountShowModel.totalNotUploadCount > 0) {
+        isFinishButton = false;
+      }
 
-      // if(moduleIdList.contains("16")) {
-      //   print("Module 16 ");
-      //   if((brandShareCountModel.totalBrandShare != brandShareCountModel.totalUpload) || brandShareCountModel.totalBrandShare == 0 || brandShareCountModel.totalUpload.toString() == "null" ) {
-      //     isFinishButton = false;
-      //
-      //     print("Module 16 isAvlFinishLoading : $isFinishButton");
-      //   } else {
-      //     isFinishButton = true;
-      //
-      //     print("Module 16 isAvlFinishLoading : $isFinishButton");
-      //   }
-      // }
+      if(totalStockCountData.total_not_upload > 0) {
+        isFinishButton = false;
+      }
 
     });
     print("isFinishButtonisFinishButton");
@@ -577,6 +639,20 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
           {
             if (_imageFiles[i].path.endsWith(rtvGcsImagesList[j].imageName)) {
               rtvGcsImagesList[j].imageFile = _imageFiles[i];
+            }
+          }
+        }
+      }
+    }
+
+    if(module == AppConstants.promoPlan) {
+
+      for (int j=0;j<promoPlanGcsImagesList.length; j++) {
+        for (int i = 0; i < _imageFiles.length; i++) {
+          if(promoPlanGcsImagesList[j].imageName.isNotEmpty)
+          {
+            if (_imageFiles[i].path.endsWith(promoPlanGcsImagesList[j].imageName)) {
+              promoPlanGcsImagesList[j].imageFile = _imageFiles[i];
             }
           }
         }
@@ -689,6 +765,52 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
           isRtvFinishLoading = false;
         });
       }
+
+      if(moduleName == AppConstants.promoPlan) {
+
+        setState(() {
+          isPromoPlanFinishLoading = true;
+        });
+
+        await DatabaseHelper.getPromoPlanGcsImagesList(workingId).then((value) async {
+
+          promoPlanGcsImagesList = value.cast<TransPlanoGuideGcsImagesListModel>();
+
+          await _getImages(AppConstants.promoPlan).then((value) {
+            setTransPhotoInList(AppConstants.promoPlan);
+
+            setState(() {});
+          });
+
+        });
+
+        print("------Promo Plan Image Upload -------- ");
+        for(int j = 0; j < promoPlanGcsImagesList.length; j++) {
+
+          final filename =  promoPlanGcsImagesList[j].imageName;
+          final filePath = 'capture_photo/$filename';
+          final fileContent = await promoPlanGcsImagesList[j].imageFile!.readAsBytes();
+          final bucketObject = Object(name: filePath);
+
+          final resp = await storage.objects.insert(
+            bucketObject,
+            bucketName,
+            predefinedAcl: 'publicRead',
+            uploadMedia: Media(
+              Stream<List<int>>.fromIterable([fileContent]),
+              fileContent.length,
+            ),
+          );
+          print("Image Uploaded successfully");
+
+          await updatePromoPlanAfterGcs1(promoPlanGcsImagesList[j].id);
+
+        }
+        setState(() {
+          isPromoPlanFinishLoading = false;
+        });
+      }
+
       return true;
     } catch (e) {
       // Handle any errors that occur during the upload
@@ -696,6 +818,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       setState(() {
         isPlanoguideFinishLoading = false;
         isRtvFinishLoading = false;
+        isPromoPlanFinishLoading = false;
       });
       ToastMessage.errorMessage(context, "Something went wrong please try again later");
       return false;
@@ -714,6 +837,15 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
   Future<bool> updateRtvAfterGcs1(int rtvId) async {
     print("UPLOAD Rtv AFTER GCS");
     await DatabaseHelper.updateRtvAfterGcsAfterFinish(rtvId,workingId).then((value) {
+
+    });
+
+    return true;
+  }
+
+  Future<bool> updatePromoPlanAfterGcs1(int promoId) async {
+    print("UPLOAD Rtv AFTER GCS");
+    await DatabaseHelper.updatePromoPlanAfterGcsImageUpload(workingId,promoId.toString()).then((value) {
 
     });
 
@@ -1176,6 +1308,200 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
     return true;
   }
 
+  freshnessUploadApi() async {
+
+    await DatabaseHelper.getFreshnessDataListFromApi(workingId).then((value) {
+
+      saveFreshnessList = value.cast<SaveFreshnessListData>();
+
+      setState(() {
+
+      });
+    });
+
+    SaveFreshnessData saveFreshnessData = SaveFreshnessData(
+        username: userName,
+        workingId: workingId,
+        storeId: storeId,
+        workingDate: workingDate,
+        freshnessList: saveFreshnessList);
+
+    print("************ Freshness Upload in Api **********************");
+    print(jsonEncode(saveFreshnessData));
+
+    setState((){
+      isFreshnessFinishLoading = true;
+    });
+
+    SqlHttpManager().saveFreshness(token, baseUrl, saveFreshnessData).then((value) async => {
+
+
+      print("************ Freshness Values **********************"),
+
+      await updateTransFreshnessAfterApi(),
+
+      await getAllCountData(),
+
+      setState((){
+        isFreshnessFinishLoading = false;
+      }),
+
+      ToastMessage.succesMessage(context, "Freshness Data Uploaded Successfully"),
+
+    }).catchError((e) =>{
+      print(e.toString()),
+      setState((){
+        isFreshnessFinishLoading = false;
+      }),
+    });
+  }
+
+  Future<bool> updateTransFreshnessAfterApi() async {
+    String ids = "";
+    for(int i=0;i<saveFreshnessList.length;i++) {
+      ids = "${wrapIfString(saveFreshnessList[i].dateTime.toString())},$ids";
+    }
+    ids = removeLastComma(ids);
+    print(ids);
+    await DatabaseHelper.updateFresshnessAfterApi(workingId,ids).then((value) {
+
+    });
+
+    return true;
+  }
+
+  stockUploadApi() async {
+
+    await DatabaseHelper.getStockDataListFromApi(workingId).then((value) {
+
+      saveStockList = value.cast<SaveStockListData>();
+
+      setState(() {
+
+      });
+    });
+
+    SaveStockData saveStockData = SaveStockData(
+        username: userName,
+        workingId: workingId,
+        storeId: storeId,
+        workingDate: workingDate,
+        stockList: saveStockList);
+
+    print("************ Stock Upload in Api **********************");
+    print(jsonEncode(saveStockData));
+
+    setState((){
+      isStockFinishLoading = true;
+    });
+
+    SqlHttpManager().saveStock(token, baseUrl, saveStockData).then((value) async => {
+
+      print("************ Stock Values **********************"),
+
+      await updateTransStockAfterApi(),
+
+      await getAllCountData(),
+
+      setState((){
+        isStockFinishLoading = false;
+      }),
+
+      ToastMessage.succesMessage(context, "Stock Data Uploaded Successfully"),
+
+    }).catchError((e)=> {
+      print(e.toString()),
+      setState((){
+        isStockFinishLoading = false;
+      }),
+    });
+
+
+  }
+
+  Future<bool> updateTransStockAfterApi() async {
+    String ids = "";
+    for(int i=0;i<saveStockList.length;i++) {
+      ids = "${wrapIfString(saveStockList[i].dateTime.toString())},$ids";
+    }
+    ids = removeLastComma(ids);
+    print(ids);
+    await DatabaseHelper.updateStockAfterApi(workingId,ids).then((value) {
+
+    });
+
+    return true;
+  }
+
+  promoPlanUploadApi() async {
+
+    await DatabaseHelper.getPromoPlansListDataForAPi(workingId).then((value) {
+
+      savePromoPlanList = value.cast<SavePromoPlanDataListData>();
+
+      setState(() {
+
+      });
+    });
+
+    SavePromoPlanData savePromoPlanData = SavePromoPlanData(
+        username: userName,
+        workingId: workingId,
+        storeId: storeId,
+        workingDate: workingDate,
+        promoPlanList: savePromoPlanList);
+
+    print("************ Promo Plan Upload in Api **********************");
+    print(jsonEncode(savePromoPlanData));
+
+    String ids = "";
+    for(int i=0;i<savePromoPlanList.length;i++) {
+      ids = "${wrapIfString(savePromoPlanList[i].promoId.toString())},$ids";
+    }
+    ids = removeLastComma(ids);
+    print(ids);
+
+    setState((){
+      isPromoPlanFinishLoading = true;
+    });
+
+    SqlHttpManager().savePromoPlan(token, baseUrl, savePromoPlanData).then((value) async => {
+
+
+      print("************ Promo Plan Values **********************"),
+
+      await updateTransPromoPlanAfterApi(),
+
+      await getAllCountData(),
+
+      setState((){
+        isPromoPlanFinishLoading = false;
+      }),
+
+      ToastMessage.succesMessage(context, "Promotions Data Uploaded Successfully"),
+
+    }).catchError((e) =>{
+      print(e.toString()),
+      setState((){
+        isPromoPlanFinishLoading = false;
+      }),
+    });
+  }
+
+  Future<bool> updateTransPromoPlanAfterApi() async {
+    String ids = "";
+    for(int i=0;i<savePromoPlanList.length;i++) {
+      ids = "${wrapIfString(savePromoPlanList[i].promoId.toString())},$ids";
+    }
+    ids = removeLastComma(ids);
+    print(ids);
+    await DatabaseHelper.updatePromoPlanAfterApi(workingId,ids).then((value) {
+
+    });
+
+    return true;
+  }
+
   finishVisit() async {
     setState(() {
       isDataUploading = true;
@@ -1228,6 +1554,12 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
     await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_availability,workingId);
     await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_planoguide,workingId);
     await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_BrandShare,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_rtv,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_pricing,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbTransPromoPlan,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_freshness,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_stock,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_picklist,workingId);
 
     await deleteFolder(workingId);
 

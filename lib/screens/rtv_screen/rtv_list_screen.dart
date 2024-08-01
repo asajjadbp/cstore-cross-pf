@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cstore/screens/rtv_screen/rtv_list_card.dart';
 import 'package:cstore/screens/rtv_screen/view_rtv_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -30,9 +31,12 @@ class Rtv_List_Screen extends StatefulWidget {
 class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
   List<File> _imageFiles = [];
   List<RTVShowModel> transData = [];
+  List<RTVShowModel> filterTransData = [];
   bool isLoading = false;
+  bool isFilter = false;
   String workingId = "";
   String clientId = "";
+  String otherExcludes = "";
   String storeName = '';
   int totalPieces = 0;
   bool isCategoryLoading = false;
@@ -148,13 +152,15 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
       workingId = sharedPreferences.getString(AppConstants.workingId)!;
       storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
       clientId = sharedPreferences.getString(AppConstants.clientId)!;
+      otherExcludes = sharedPreferences.getString(AppConstants.otherExclude)!;
     });
     getClientData();
     getTransRTVOne();
     getRtvCount();
   }
   Future<void> getTransRTVOne() async {
-    await DatabaseHelper.getDataListRTV(workingId,selectedClientId.toString(),selectedBrandId.toString(),selectedCategoryId.toString(),selectedSubCategoryId.toString()).then((value) async {
+
+    await DatabaseHelper.getDataListRTV(workingId,selectedClientId.toString(),clientId,otherExcludes,selectedBrandId.toString(),selectedCategoryId.toString(),selectedSubCategoryId.toString()).then((value) async {
       transData = value;
       await _loadImages().then((value) {
         setTransRTV();
@@ -242,6 +248,14 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
         _loadImages();
         getTransRTVOne();
       });
+    });
+  }
+
+  searchFilter() {
+    setState(() {
+      isFilter = true;
+
+      filterTransData = transData.where((element) => element.act_status == 1).toList();
     });
   }
 
@@ -459,58 +473,89 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: MyColors.appMainColor
-                      ),
-                      alignment: Alignment.center,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                         Text("${rtvCountModel.total_rtv_pro}",style: TextStyle(color: MyColors.whiteColor),),
-                          const Text("Rtv products",style: TextStyle(color: MyColors.whiteColor),),
-                        ],
+                    child: InkWell(
+                      onTap: (){
+                        searchFilter();
+                      },
+                      child: Card(
+                        elevation: 5,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                          ),
+                          alignment: Alignment.center,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Text("RTV Sku's"),
+                             Container(
+                                 margin: const EdgeInsets.symmetric(vertical: 5),
+                                 child: const FaIcon(FontAwesomeIcons.layerGroup,color: MyColors.greenColor,)),
+                             Text("${rtvCountModel.total_rtv_pro}"),
+                            ],
+                          ),
+                        ),
                       ),
                     )
                   ),
                   const SizedBox(width: 5,),
                   Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: MyColors.appMainColor
-                        ),
-                        alignment: Alignment.center,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text("${rtvCountModel.total_volume}",style: TextStyle(color: MyColors.whiteColor),),
-                            const Text("Rtv pieces",style: TextStyle(color: MyColors.whiteColor),),
-                          ],
+                      child: InkWell(
+                        onTap: (){
+                          searchFilter();
+                        },
+                        child: Card(
+                          elevation: 5,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                            ),
+                            alignment: Alignment.center,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Text("RTV Pieces"),
+                                Container(
+                                    margin: const EdgeInsets.symmetric(vertical: 5),
+                                    child: const FaIcon(FontAwesomeIcons.cubesStacked,color: MyColors.savebtnColor,)),
+                                Text("${rtvCountModel.total_volume}"),
+                              ],
+                            ),
+                          ),
                         ),
                       )
                   ),
                   const SizedBox(width: 5,),
                   Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: MyColors.appMainColor
-                        ),
-                        alignment: Alignment.center,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text("${rtvCountModel.total_value}",style: TextStyle(color: MyColors.whiteColor),),
-                            const Text("Rtv values",style: TextStyle(color: MyColors.whiteColor),),
-                          ],
+                      child: InkWell(
+                        onTap: (){
+                          searchFilter();
+                        },
+                        child: Card(
+                          elevation: 5,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                            ),
+                            alignment: Alignment.center,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Text("RTV Values"),
+                                Container(
+                                    margin: const EdgeInsets.symmetric(vertical: 5),
+                                    child: const FaIcon(FontAwesomeIcons.circleDollarToSlot,color: MyColors.savebtnColor,)),
+                                Text("${rtvCountModel.total_value}"),
+
+                              ],
+                            ),
+                          ),
                         ),
                       )
                   ),
@@ -522,7 +567,54 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
                   ? const Center(
                     child: MyLoadingCircle(),
                   )
-                  : transData.isEmpty
+                  : isFilter
+                  ? filterTransData.isEmpty ? const Center(
+                child: Text("No data found"),
+              ) : ListView.builder(
+                shrinkWrap: true,
+                itemCount: filterTransData.length,
+                itemBuilder: (ctx, i) {
+                  return InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => addnewrtvscreen(
+                            sku_id: filterTransData[i].pro_id,
+                            imageName:
+                            "https://storage.googleapis.com/panda-static/sku_pictures/${filterTransData[i].img_name}",
+                            SkuName: filterTransData[i].pro_en_name,
+                          ),
+                        ),
+                      ).then((value) {
+                        if(isFilter) {
+                          searchFilter();
+                        }
+                        getStoreDetails();
+                        getRtvCount();
+                      });
+                    },
+                    child: Rtvcard(
+                      imageName:
+                      "https://storage.googleapis.com/panda-static/sku_pictures/${filterTransData[i].img_name}",
+                      productName: filterTransData[i].pro_en_name,
+                      icon1: const Icon(
+                        Icons.category_rounded,
+                        color: MyColors.appMainColor,
+                      ),
+                      category: filterTransData[i].cat_en_name,
+                      icon2: const Icon(
+                        Icons.account_tree,
+                        color: MyColors.appMainColor,
+                      ),
+                      brandName: filterTransData[i].brand_en_name,
+                      rsp: filterTransData[i].rsp,
+                      skuId: filterTransData[i].pro_id,
+                      activityStatus: filterTransData[i].act_status,
+                    ),
+                  );
+                },
+              )  : transData.isEmpty
                   ? const Center(
                 child: Text("No data found"),
               )

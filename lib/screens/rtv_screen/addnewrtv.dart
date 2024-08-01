@@ -334,37 +334,42 @@ class _addnewrtvscreenState extends State<addnewrtvscreen> {
                 child: MyLoadingCircle(),)  : Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                      margin: const EdgeInsets.only(
-                        left: 15,
-                      ),
-                      height: screenHeight / 18,
-                      width: screenWidth / 3,
-                      decoration: BoxDecoration(
-                          color: const Color.fromRGBO(234, 70, 86, 1),
-                          borderRadius: BorderRadius.circular(5)),
-                      child: const Row(
-                        children: [
-                          SizedBox(
-                            width: 15,
-                          ),
-                          Icon(
-                            Icons.arrow_circle_left,
-                            size: 35,
-                            color: Colors.white,
-                          ),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Text(
-                            "Back",
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.white),
-                          )
-                        ],
-                      )),
+                  InkWell(
+                    onTap: () {
+                    Navigator.of(context).pop();
+                    },
+                    child: Container(
+                        margin: const EdgeInsets.only(
+                          left: 15,
+                        ),
+                        height: screenHeight / 18,
+                        width: screenWidth / 3,
+                        decoration: BoxDecoration(
+                            color: const Color.fromRGBO(234, 70, 86, 1),
+                            borderRadius: BorderRadius.circular(5)),
+                        child: const Row(
+                          children: [
+                            SizedBox(
+                              width: 15,
+                            ),
+                            Icon(
+                              Icons.arrow_circle_left,
+                              size: 35,
+                              color: Colors.white,
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              "Back",
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.white),
+                            )
+                          ],
+                        )),
+                  ),
                   InkWell(
                     onTap: () {
                       saveStorePhotoData();

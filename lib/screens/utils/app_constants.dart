@@ -45,6 +45,7 @@ class AppConstants {
   static String  otherPhoto = "other_photo";
   static String  planogram = "planogram";
   static String  planoguide = "planoguide";
+  static String  promoPlan = "promoPlan";
   static String  shelfShare = "shelf_share";
   static String  availability = "availability";
 

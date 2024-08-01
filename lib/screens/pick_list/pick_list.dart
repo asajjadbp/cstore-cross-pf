@@ -43,6 +43,8 @@ class _PickListScreenState extends State<PickListScreen> {
   List<PickListModel> pickerPickList = <PickListModel>[];
   List<PickListModel> pickerFilterPickList = <PickListModel>[];
 
+  String imageBaseUrl = "";
+
   List<String> reasonList = const ["Damage","Expired","Near Expiry","Out Of Stock"];
 
 
@@ -75,6 +77,7 @@ class _PickListScreenState extends State<PickListScreen> {
     storeId = sharedPreferences.getString(AppConstants.storeId)!;
     token = sharedPreferences.getString(AppConstants.tokenId)!;
     baseUrl = sharedPreferences.getString(AppConstants.baseUrl)!;
+    imageBaseUrl = sharedPreferences.getString(AppConstants.imageBaseUrl)!;
 
     getPickerPickList();
 
@@ -115,7 +118,7 @@ class _PickListScreenState extends State<PickListScreen> {
   insertDataToSql(List<PickListModel> valuePickList) async {
     String valueQuery = "";
     for(int i=0; i < valuePickList.length; i++) {
-      valueQuery = "$valueQuery(${valuePickList[i].picklist_id},${valuePickList[i].store_id},${valuePickList[i].category_id},${valuePickList[i].tmr_id},${wrapIfString(valuePickList[i].tmr_name)},${valuePickList[i].stocker_id},${wrapIfString(valuePickList[i].stocker_name)},${wrapIfString(valuePickList[i].shift_time)},${wrapIfString(valuePickList[i].en_cat_name)},${wrapIfString(valuePickList[i].ar_cat_name)},${wrapIfString(valuePickList[i].sku_picture)},${wrapIfString(valuePickList[i].en_sku_name)},${wrapIfString(valuePickList[i].ar_sku_name)},${valuePickList[i].req_pickList},${valuePickList[i].act_pickList},${valuePickList[i].pickList_ready},0,'',${wrapIfString(valuePickList[i].pick_list_receive_time)}),";
+      valueQuery = "$valueQuery(${valuePickList[i].picklist_id},${valuePickList[i].store_id},${valuePickList[i].category_id},${valuePickList[i].tmr_id},${wrapIfString(valuePickList[i].tmr_name)},${valuePickList[i].stocker_id},${wrapIfString(valuePickList[i].stocker_name)},${wrapIfString(valuePickList[i].shift_time)},${wrapIfString(valuePickList[i].en_cat_name)},${wrapIfString(valuePickList[i].ar_cat_name)},${wrapIfString(valuePickList[i].sku_picture)},${wrapIfString(valuePickList[i].en_sku_name)},${wrapIfString(valuePickList[i].ar_sku_name)},${valuePickList[i].req_pickList},${valuePickList[i].act_pickList},${valuePickList[i].pickList_ready},0,'',${wrapIfString(valuePickList[i].pick_list_receive_time)},${wrapIfString(valuePickList[i].pick_list_reason)}),";
     }
     if (valueQuery.endsWith(",")) {
       valueQuery = valueQuery.substring(0, valueQuery.length - 1);
@@ -131,6 +134,9 @@ class _PickListScreenState extends State<PickListScreen> {
 
   getPickListFromQuery() async {
 
+    String pickListReasonValue = "";
+    var splitPickListReason;
+
    await DatabaseHelper.getPickListData().then((value) => {
      pickerPickList = value,
 
@@ -141,6 +147,25 @@ class _PickListScreenState extends State<PickListScreen> {
      isNextButton = pickerPickList.where((element) => element.upload_status == 0).toList().isNotEmpty,
 
      for(int i=0; i<pickerPickList.length; i++) {
+
+       pickListReasonValue = pickerPickList[i].pick_list_reason,
+
+       if(pickListReasonValue.isNotEmpty) {
+         splitPickListReason = pickListReasonValue.split(","),
+        for(int j = 0; j < splitPickListReason.length; j++) {
+          setState(() {
+             pickerPickList[i].reasonValue?.add(splitPickListReason[j].toString().trim());
+          }),
+        }
+       } else {
+         setState(() {
+           pickerPickList[i].reasonValue = [];
+         }),
+       },
+
+       print(pickListReasonValue),
+       print(pickerPickList[i].reasonValue),
+
        if(int.parse(pickerPickList[i].act_pickList) == int.parse(pickerPickList[i].req_pickList)) {
          pickerPickList[i].isReasonShow = false,
        } else {
@@ -292,7 +317,7 @@ class _PickListScreenState extends State<PickListScreen> {
                     return PickListCardItem(
                         isButtonActive: true,
                         reasonValue: pickerFilterPickList[index].reasonValue!,
-                        imageName: pickerFilterPickList[index].sku_picture,
+                        imageName: "${imageBaseUrl}sku_pictures/${pickerFilterPickList[index].sku_picture}",
                         brandName: pickerFilterPickList[index].en_cat_name,
                         skuName: pickerFilterPickList[index].en_sku_name,
                         pickerName: pickerFilterPickList[index].tmr_name ?? "",
@@ -381,11 +406,11 @@ class _PickListScreenState extends State<PickListScreen> {
                   itemBuilder: (context,index) {
                     controllerList.add(TextEditingController());
                     controllerList[index].text =  pickerPickList[index].act_pickList;
-
+                    print("${imageBaseUrl}sku_pictures/${pickerPickList[index].sku_picture}");
                     return PickListCardItem(
                         isButtonActive: true,
                         reasonValue: pickerPickList[index].reasonValue!,
-                        imageName: pickerPickList[index].sku_picture,
+                        imageName: "${imageBaseUrl}sku_pictures/${pickerPickList[index].sku_picture}",
                         brandName: pickerPickList[index].en_cat_name,
                         skuName: pickerPickList[index].en_sku_name,
                         pickerName: pickerPickList[index].tmr_name ?? "",
@@ -525,8 +550,12 @@ class _PickListScreenState extends State<PickListScreen> {
     } else {
       await DatabaseHelper.updateTransPicklist(
           pickerPickList[index].picklist_id, pickerPickList[index].act_pickList,
-          pickerPickList[index].pickList_ready).then((value) {
+          pickerPickList[index].pickList_ready,reason).then((value) {
         print(jsonEncode(pickerPickList[index]));
+
+        setState(() {
+          pickerPickList[index].upload_status = 0;
+        });
 
         requestsItems = pickerPickList.length;
         doneItems = pickerPickList

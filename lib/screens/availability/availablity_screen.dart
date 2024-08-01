@@ -20,6 +20,7 @@ import '../../Model/request_model.dart/availability_api_request_model.dart';
 import '../../Model/response_model.dart/adherence_response_model.dart';
 import '../../Model/response_model.dart/tmr_pick_list_response_model.dart';
 import '../../Network/sql_data_http_manager.dart';
+import '../ImageScreen/image_screen.dart';
 import '../utils/app_constants.dart';
 import '../utils/toast/toast.dart';
 import '../widget/app_bar_widgets.dart';
@@ -468,6 +469,9 @@ class _AvailabilityState extends State<Availability> {
           context: context,
           builder: (BuildContext context) {
             return CustomDetailsDialogue(
+              pogOnTap: (){
+                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PdfScreen(pdfUrl: "${imageBaseUrl}pog/${avlProductPlacementModel.pog}.pdf")));
+              },
               title: availabilityShowModel.pro_en_name,
               shelfNo: avlProductPlacementModel.shelfNo,
               bayNo: avlProductPlacementModel.buyNo,

@@ -6,6 +6,7 @@ import 'dart:convert';
 
 import '../database_model/PlanogramReasonModel.dart';
 import '../database_model/app_setting_model.dart';
+import '../database_model/pomo_plan_model.dart';
 import '../database_model/required_module_model.dart';
 import '../database_model/sys_brand_faces_model.dart';
 import '../database_model/sys_osdc_reason_model.dart';
@@ -69,6 +70,7 @@ class SyncroniseDetail {
   List<Sys_OSDCTypeModel> sysDailCheckList;
   List<Sys_OSDCTypeModel> sysSosUnit;
   List<RequiredModuleModel> sysReqModule;
+  List<PromoPlanModel> sysPromoPlan;
 
   SyncroniseDetail({
     required this.sysDropReason,
@@ -90,6 +92,7 @@ class SyncroniseDetail {
     required this.sysDailCheckList,
     required this.sysSosUnit,
     required this.sysReqModule,
+    required this.sysPromoPlan,
   });
 
   factory SyncroniseDetail.fromJson(Map<String, dynamic> json) =>
@@ -135,6 +138,8 @@ class SyncroniseDetail {
             json["sys_sos_units"].map((x) => Sys_OSDCTypeModel.fromJson(x))),
           sysReqModule: List<RequiredModuleModel>.from(
               json["sys_visit_required_modules"].map((x) => RequiredModuleModel.fromJson(x))),
+        sysPromoPlan: List<PromoPlanModel>.from(
+            json["sys_promo_plan"].map((x) => PromoPlanModel.fromJson(x))),
 
       );
 
@@ -152,16 +157,15 @@ class SyncroniseDetail {
       "sys_photo_type": List<dynamic>.from(sysPhotoType.map((x) => x.toJson())),
       "sys_osdc_type": List<dynamic>.from(sysOsdcType.map((x) => x.toJson())),
       "sys_osdc_reason": List<dynamic>.from(sysOsdcReason.map((x) => x.toJson())),
-    "sys_app_setting":
-    List<dynamic>.from(sysOsdcType.map((x) => x.toJson())),
-    "sys_daily_checklist":
-    List<dynamic>.from(sysOsdcType.map((x) => x.toJson())),
-    "sys_sos_units": List<dynamic>.from(sysOsdcType.map((x) => x.toJson())),
-    "sys_store_pog": List<dynamic>.from(sysStorePog.map((x) => x.toJson())),
-    "sys_product_placement": List<dynamic>.from(sysProductPlacement.map((x) => x.toJson())),
-    "sys_brand_faces": List<dynamic>.from(sysBrandFaces.map((x) => x.toJson())),
-    "sys_visit_required_modules": List<dynamic>.from(sysReqModule.map((x) => x.toJson())),
-      };
+      "sys_app_setting": List<dynamic>.from(sysOsdcType.map((x) => x.toJson())),
+      "sys_daily_checklist": List<dynamic>.from(sysOsdcType.map((x) => x.toJson())),
+      "sys_sos_units": List<dynamic>.from(sysOsdcType.map((x) => x.toJson())),
+      "sys_store_pog": List<dynamic>.from(sysStorePog.map((x) => x.toJson())),
+      "sys_product_placement": List<dynamic>.from(sysProductPlacement.map((x) => x.toJson())),
+      "sys_brand_faces": List<dynamic>.from(sysBrandFaces.map((x) => x.toJson())),
+      "sys_visit_required_modules": List<dynamic>.from(sysReqModule.map((x) => x.toJson())),
+      "sys_promo_plan":  List<dynamic>.from(sysPromoPlan.map((x) => x.toJson())),
+  };
 }
 
 class SysAgencyDashboard {

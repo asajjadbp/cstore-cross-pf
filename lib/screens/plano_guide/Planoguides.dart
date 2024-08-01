@@ -5,6 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Database/db_helper.dart';
 import '../../Model/database_model/trans_planoguide_model.dart';
+import '../ImageScreen/image_screen.dart';
 import '../utils/app_constants.dart';
 import '../utils/appcolor.dart';
 import '../utils/services/image_picker.dart';
@@ -314,10 +315,11 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
                     itemCount: filteredData.length,
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
+
                       return PlanoguidesCard(
                         onImageTap: (){
-                          launchUrlOpen("${imageBaseUrl}pog/${filteredData[index].imageName}");
-                          // Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ImageScreen(imageUrl: "${imageBaseUrl}pog/${filteredData[index].imageName}")));
+                          // launchUrlOpen("${imageBaseUrl}pog/${filteredData[index].imageName}");
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PdfScreen(pdfUrl: "${imageBaseUrl}pog/${filteredData[index].imageName}")));
                         },
                         isActivity: filteredData[index].activity_status == 1,
                         fieldValue1: filteredData[index].cat_en_name,
@@ -355,11 +357,12 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
           itemCount: transData.length,
           shrinkWrap: true,
           itemBuilder: (context, index) {
+
                   return PlanoguidesCard(
                     onImageTap: (){
 
-                      launchUrlOpen("${imageBaseUrl}pog/${transData[index].imageName}");
-                      // Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ImageScreen(imageUrl: "${imageBaseUrl}pog/${transData[index].imageName}")));
+                      // launchUrlOpen("${imageBaseUrl}pog/${transData[index].imageName}");
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PdfScreen(pdfUrl: "${imageBaseUrl}pog/${transData[index].imageName}")));
                     },
                     isActivity: transData[index].activity_status == 1,
                     fieldValue1: transData[index].cat_en_name,

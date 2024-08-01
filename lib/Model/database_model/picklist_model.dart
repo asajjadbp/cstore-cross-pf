@@ -22,6 +22,7 @@ class PickListModel {
   late int upload_status;
   late String pick_list_send_time;
   late String pick_list_receive_time;
+  late String pick_list_reason;
   bool? isReasonShow;
   List<String>? reasonValue;
 
@@ -45,6 +46,7 @@ class PickListModel {
     upload_status = json[TableName.trans_upload_status];
     pick_list_send_time = json[TableName.trans_avl_receive_time] ?? "";
     pick_list_receive_time = json['tmr_send_time'] ?? "";
+    pick_list_reason = json['picklist_reason'] ?? "";
   }
   Map<String, dynamic> toJson() => {
     'picklist_id': this.picklist_id,
@@ -65,7 +67,8 @@ class PickListModel {
     'picklist_ready': this.pickList_ready,
     'upload_status': this.upload_status,
     'pick_list_receive_time' : this.pick_list_send_time,
-    'tmr_send_time' : this.pick_list_receive_time
+    'tmr_send_time' : this.pick_list_receive_time,
+    'picklist_reason' : this.pick_list_reason,
   };
 
   PickListModel({
@@ -90,6 +93,7 @@ class PickListModel {
     required this.pick_list_receive_time,
     required this.isReasonShow,
     required this.reasonValue,
+    required this.pick_list_reason,
   });
 
   Map<String, dynamic> toMap() {
@@ -113,6 +117,7 @@ class PickListModel {
       'upload_status': this.upload_status,
       'pick_list_receive_time': this.pick_list_send_time,
       'tmr_send_time' : this.pick_list_receive_time,
+      'picklist_reason' : this.pick_list_reason,
     };
   }
 
@@ -138,7 +143,8 @@ class PickListModel {
       pick_list_send_time: map['pick_list_send_time'] ?? "",
       pick_list_receive_time: map['tmr_send_time']  ?? "",
       isReasonShow: true,
-      reasonValue:[]
+      reasonValue:[],
+      pick_list_reason: map['picklist_reason'] ?? "",
     );
   }
 }

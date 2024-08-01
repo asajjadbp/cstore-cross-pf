@@ -7,6 +7,7 @@ import 'package:cstore/screens/utils/app_constants.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:cstore/screens/utils/toast/toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Database/table_name.dart';
 import '../auth/login.dart';
@@ -34,6 +35,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
   List<SyncroniseDetail> syncroniseData = [];
   double currentVersion = 0.0;
   double updatedVersion = 0.0;
+  String agencyPhoto = "";
+  String welcomeMessage = "";
 
   bool isinit = true;
 
@@ -78,6 +81,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
     token = prefs.getString(AppConstants.tokenId)!;
     baseUrl = prefs.getString(AppConstants.baseUrl)!;
     isSyncronize = prefs.getString(AppConstants.isSyncronize)!;
+    agencyPhoto = prefs.getString(AppConstants.agencyPhoto)!;
+    welcomeMessage = prefs.getString(AppConstants.userEnMessage)!;
+
     if(prefs.containsKey(AppConstants.appCurrentVersion)) {
       currentVersion = prefs.getDouble(AppConstants.appCurrentVersion)!;
     } else {
@@ -144,7 +150,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
         DatabaseHelper.delete_table(TableName.tbl_sys_daily_checklist);
         DatabaseHelper.delete_table(TableName.tbl_sys_sos_units);
         DatabaseHelper.delete_table(TableName.tblSysVisitReqModules);
-
+        DatabaseHelper.delete_table(TableName.tblSysPromoPlan);
 
         ///Table Insertion
         var isAgencyDash=await DatabaseHelper.insertAgencyDashArray(syncroniseData[0].sysAgencyDashboard);
@@ -166,10 +172,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
         var isAppSetting=await  DatabaseHelper.insertAppSettingArray(syncroniseData[0].sysAppSetting);
         var isDailyCheckList=await  DatabaseHelper.insertDailyCheckListArray(syncroniseData[0].sysDailCheckList);
         var isSOSUnit=await  DatabaseHelper.insertSOSUnitArray(syncroniseData[0].sysSosUnit);
+        var isPromoPlan = await DatabaseHelper.insertSysPromoPlanArray(syncroniseData[0].sysPromoPlan);
+
         setState(() {
           isLoading = isAgencyDash && isCategory && isSubCategory
               && isClinet && isPlanoReason && isRtvReason && isProduct && isPhotoType
-              && isOSDCType && isOsdcReason && isStorePog && isProductPlacement && isBrandFace;
+              && isOSDCType && isOsdcReason && isStorePog && isProductPlacement && isBrandFace && isPromoPlan;
 
           isSyncronize = "1";
           prefs.setString(AppConstants.isSyncronize, "1");
@@ -235,64 +243,76 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
       }, (){print("filter Click");}, false, false, true),
       body: Container(
         margin: const EdgeInsets.only(left: 15, right: 15),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 100,
-              ),
-              Image.asset("assets/images/brandlogo.png"),
-              const SizedBox(
-                height: 50,
-              ),
-              const Text(
-                  "BrandPartners is a leading Merchandising, Brand Activation, and FieldForce Management company founded in 2006 in Saudi Arabia aiming to utilize best-in-class processes and technology along with solid human competencies to successfully deliver your brand execution pillars."),
-              const SizedBox(
-                height: 100,
-              ),
-              isLoading
-                  ?  Center(
-                      child: Column(
-                        children: [
-                          const SizedBox(width: 60,height: 60,child: MyLoadingCircle(),),
-                          FadeTransition(opacity: _animation,child: const Text("Synchronization in Progress...",style: TextStyle(fontSize: 16,color: MyColors.appMainColor),)),
-                        ],
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height*0.15,
+                    child: Image.asset("assets/images/brandlogo.png")),
+                Container(
+                    constraints:  BoxConstraints(maxHeight: MediaQuery.of(context).size.height/3.5),
+                    margin: const EdgeInsets.symmetric(vertical: 10 ),
+                    child:  SingleChildScrollView(child: Text(welcomeMessage,style: const TextStyle(fontSize: 17),))),
+                Container(
+                    margin:const EdgeInsets.symmetric(vertical: 20),
+                    child: SvgPicture.network(agencyPhoto)),
+              ],
+            )),
+            SingleChildScrollView(
+              child: Container(
+                alignment: Alignment.topCenter,
+                height:MediaQuery.of(context).size.height/4,
+                child: isLoading
+                    ?  Center(
+                  child: Column(
+                    children: [
+                      const SizedBox(width: 60,height: 60,child: MyLoadingCircle(),),
+                      FadeTransition(opacity: _animation,child: const Text("Synchronization in Progress...",style: TextStyle(fontSize: 16,color: MyColors.appMainColor),)),
+                    ],
+                  ),
+                )
+                    : isError ? Column(
+                  children: [
+                    Text(errorText,style: const TextStyle(color: MyColors.backbtnColor,fontSize: 22),),
+                    const SizedBox(height: 10,),
+                    InkWell(
+                      onTap: () async {
+                        await getSyncronise();
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                            border: Border.all(color: MyColors.backbtnColor,width: 2)
+                        ),
+                        child: const Text("Retry",style: TextStyle(color: MyColors.backbtnColor,fontSize: 22),),
                       ),
                     )
-                  : isError ? Column(
-                children: [
-                  Text(errorText,style: const TextStyle(color: MyColors.backbtnColor,fontSize: 22),),
-                 const SizedBox(height: 10,),
-                  InkWell(
-                    onTap: () async {
-                      await getSyncronise();
-                    },
-                    child: Container(
-                      alignment: Alignment.center,
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                      border: Border.all(color: MyColors.backbtnColor,width: 2)
-                      ),
-                      child: const Text("Retry",style: TextStyle(color: MyColors.backbtnColor,fontSize: 22),),
-                    ),
-                  )
-                ],
-              ) : ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromRGBO(0, 77, 145, 1),
-                        minimumSize: Size(screenWidth, 45),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(0)),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).popAndPushNamed(DashBoard.routeName);
-                      },
-                      child: const Text(
-                        "Next",style: TextStyle(color: MyColors.whiteColor),
-                      ),
-                    ),
-            ],
-          ),
+                  ],
+                ) : ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromRGBO(0, 77, 145, 1),
+                    minimumSize: Size(screenWidth, 45),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0)),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).popAndPushNamed(DashBoard.routeName);
+                  },
+                  child: const Text(
+                    "Next",style: TextStyle(color: MyColors.whiteColor),
+                  ),
+                ),
+              ),
+            )
+          ],
         ),
       ),
     );

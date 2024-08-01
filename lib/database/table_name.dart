@@ -112,27 +112,6 @@ class TableName {
   static const String trans_pricing_promo="promo_price";
   static const String trans_pricing_working_id="working_id";
 
-  static const String trans_freshness_id="id";
-  static const String trans_freshness_sku_id="sku_id";
-  static const String trans_freshness_year="year";
-  static const String trans_freshness_jan="jan";
-  static const String trans_freshness_feb="feb";
-  static const String trans_freshness_mar="mar";
-  static const String trans_freshness_apr="apr";
-  static const String trans_freshness_may="may";
-  static const String trans_freshness_jun="jun";
-  static const String trans_freshness_jul="jul";
-  static const String trans_freshness_aug="aug";
-  static const String trans_freshness_sep="sep";
-  static const String trans_freshness_oct="oct";
-  static const String trans_freshness_nov="nov";
-  static const String trans_freshness_dec="dec";
-  static const String trans_freshness_cases="cases";
-  static const String trans_freshness_outer="outer";
-  static const String trans_freshness_pieces="pieces";
-  static const String trans_freshness_specific_date="specific_date";
-  static const String trans_freshness_working_id="working_id";
-
   static const String trans_stock_id="id";
   static const String trans_stock_sku_id="sku_id";
   static const String trans_stock_cases="cases";
@@ -321,6 +300,50 @@ class TableName {
   static const String picklist_req_picklist = "req_picklist";
   static const String picklist_act_picklist = "act_picklist";
   static const String picklist_picklist_ready = "picklist_ready";
+  static const String picklist_reason = "picklist_reason";
   static const String tbl_picklist="picklist";
+
+
+  static const String trans_freshness_id="id";
+  static const String trans_freshness_sku_id="sku_id";
+  static const String trans_freshness_year="year";
+  static const String trans_freshness_jan="jan";
+  static const String trans_freshness_feb="feb";
+  static const String trans_freshness_mar="mar";
+  static const String trans_freshness_apr="apr";
+  static const String trans_freshness_may="may";
+  static const String trans_freshness_jun="jun";
+  static const String trans_freshness_jul="jul";
+  static const String trans_freshness_aug="aug";
+  static const String trans_freshness_sep="sep";
+  static const String trans_freshness_oct="oct";
+  static const String trans_freshness_nov="nov";
+  static const String trans_freshness_dec="dec";
+  static const String trans_freshness_specific_date="specific_date";
+  static const String trans_freshness_date_time="date_time";
+  static const String trans_freshness_working_id="working_id";
+
+  static const String tblSysPromoPlan = "sys_promoplan";
+  static const String tbTransPromoPlan = "trans_promoplan";
+  static const String promoId = "promo_id";
+  static const String storeId = "store_id";
+  static const String skuId = "sku_id";
+  static const String from = "promo_from";
+  static const String to = "promo_to";
+  static const String osdType = "osd_type";
+  static const String quantity = "qty";
+  static const String promoScope = "promo_Scope";
+  static const String promoPrice = "promo_price";
+  static const String leftOverAction = "left_over_action";
+  static const String dateTime = "date_time";
+  static const String workingId = "working_id";
+  static const String activityStatus = "act_status";
+  static const String uploadStatus = "upload_status";
+  static const String gcsStatus = "gcs_status";
+  static const String imageName = "image_name";
+  static const String promoReason = "promo_reason";
+  static const String promoStatus = "promo_status";
+  static const String modalImage = "modal_image";
+
 
 }

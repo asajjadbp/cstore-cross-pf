@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cstore/Model/database_model/picklist_model.dart';
+import 'package:cstore/Model/database_model/pomo_plan_model.dart';
 import 'package:cstore/Model/database_model/sys_osdc_reason_model.dart';
 import 'package:cstore/Model/database_model/sys_osdc_type_model.dart';
 import 'package:cstore/Model/database_model/sys_rtv_reason_model.dart';
@@ -15,11 +16,14 @@ import 'package:path/path.dart';
 import '../Model/database_model/app_setting_model.dart';
 import '../Model/database_model/availability_show_model.dart';
 import '../Model/database_model/avl_product_placement_model.dart';
+import '../Model/database_model/freshness_graph_count.dart';
 import '../Model/database_model/planoguide_gcs_images_list_model.dart';
 import '../Model/database_model/pricing_show_model.dart';
+import '../Model/database_model/promo_plan_graph_api_count_model.dart';
 import '../Model/database_model/required_module_model.dart';
 import '../Model/database_model/rtv_show_model.dart';
 import '../Model/database_model/show_before_fixing.dart';
+import '../Model/database_model/show_freshness_list_model.dart';
 import '../Model/database_model/show_planogram_model.dart';
 import '../Model/database_model/show_trans_osdc_model.dart';
 import '../Model/database_model/show_trans_rtv_model.dart';
@@ -46,6 +50,7 @@ import '../Model/database_model/trans_photo_model.dart';
 import '../Model/database_model/trans_planoguide_model.dart';
 import '../Model/database_model/trans_pricing_model.dart';
 import '../Model/database_model/trans_promo_model.dart';
+import '../Model/database_model/trans_promo_plan_list_model.dart';
 import '../Model/database_model/trans_rtv_model.dart';
 import '../Model/request_model.dart/availability_api_request_model.dart';
 import '../Model/request_model.dart/brand_share_request.dart';
@@ -53,6 +58,9 @@ import '../Model/request_model.dart/planoguide_request_model.dart';
 import '../Model/request_model.dart/ready_pick_list_request.dart';
 import '../Model/request_model.dart/save_api_pricing_data_request.dart';
 import '../Model/request_model.dart/save_api_rtv_data_request.dart';
+import '../Model/request_model.dart/save_freshness_request_model.dart';
+import '../Model/request_model.dart/save_promo_plan_request_model.dart';
+import '../Model/request_model.dart/save_stock_request_model.dart';
 import '../Model/response_model.dart/adherence_response_model.dart';
 import '../Model/response_model.dart/syncronise_response_model.dart';
 
@@ -350,6 +358,38 @@ class DatabaseHelper {
           " TEXT" +
           ")");
 
+      ///Promo plan System Table
+      await db.execute('CREATE TABLE ' +
+          TableName.tblSysPromoPlan+
+          "(" +
+          TableName.promoId +
+          " INTEGER ," +
+          TableName.skuId +
+          " INTEGER, " +
+          TableName.storeId +
+          " INTEGER, " +
+          TableName.from +
+          " TEXT, " +
+          TableName.to +
+          " TEXT, " +
+          TableName.osdType +
+          " TEXT, " +
+          TableName.quantity +
+          " INTEGER, " +
+          TableName.promoScope +
+          " TEXT, " +
+          TableName.promoPrice +
+          " INTEGER, " +
+          TableName.modalImage +
+          " TEXT, " +
+          TableName.leftOverAction +
+          " TEXT, " +
+          'CONSTRAINT unique_key UNIQUE (' +
+          TableName.skuId + ', ' +
+          TableName.storeId +
+          ')' +
+          ")");
+
       //---------***********create trans table here*************---------
       await db.execute('CREATE TABLE ' +
           TableName.tbl_trans_before_faxing +
@@ -539,76 +579,111 @@ class DatabaseHelper {
           ')' +
           ')');
 
+      await db.execute('CREATE TABLE ' +
+          TableName.tbTransPromoPlan +
+          "(" +
+          TableName.promoId +
+          " INTEGER, " +
+          TableName.skuId +
+          " INTEGER, " +
+          TableName.imageName +
+          " TEXT, " +
+          TableName.promoReason +
+          " TEXT, " +
+          TableName.promoStatus +
+          " TEXT, " +
+          TableName.dateTime +
+          " TEXT, " +
+          TableName.activityStatus +
+          " INTEGER, " +
+          TableName.gcsStatus +
+          " INTEGER, " +
+          TableName.uploadStatus +
+          " INTEGER, " +
+          TableName.workingId +
+          " INTEGER, " +
+          'CONSTRAINT unique_key UNIQUE (' +
+          TableName.workingId +
+          ', ' +
+          TableName.skuId +
+          ')' +
+          ")");
 
       await db.execute('CREATE TABLE ' +
           TableName.tbl_trans_freshness +
           "(" +
-          TableName.trans_freshness_id+
-          " INTEGER PRIMARY KEY AUTOINCREMENT," +
-          TableName.trans_freshness_sku_id +
-          " INTEGER, " +
+          TableName.trans_pricing_sku_id +
+          " INTEGER , " +
+          TableName.trans_osdc_client_id +
+          " INTEGER , " +
           TableName.trans_freshness_year +
           " INTEGER, " +
           TableName.trans_freshness_jan +
-          " TEXT, " +
-          TableName.trans_freshness_feb+
-          " TEXT, " +
+          " INTEGER, " +
+          TableName.trans_freshness_feb +
+          " INTEGER, " +
           TableName.trans_freshness_mar +
-          " TEXT, " +
+          " INTEGER, " +
           TableName.trans_freshness_apr +
-          " TEXT, " +
+          " INTEGER, " +
           TableName.trans_freshness_may +
-          " TEXT, " +
-          TableName.trans_freshness_jun+
-          " TEXT, " +
+          " INTEGER, " +
+          TableName.trans_freshness_jun +
+          " INTEGER, " +
           TableName.trans_freshness_jul +
-          " TEXT, " +
+          " INTEGER, " +
           TableName.trans_freshness_aug +
-          " TEXT, " +
+          " INTEGER, " +
           TableName.trans_freshness_sep +
-          " TEXT, " +
-          TableName.trans_freshness_oct+
-          " TEXT, " +
+          " INTEGER, " +
+          TableName.trans_freshness_oct +
+          " INTEGER, " +
           TableName.trans_freshness_nov +
-          " TEXT, " +
+          " INTEGER, " +
           TableName.trans_freshness_dec +
-          " TEXT, " +
-          TableName.trans_freshness_cases+
-          " TEXT, " +
-          TableName.trans_freshness_outer+
-          " TEXT, " +
-          TableName.trans_freshness_pieces +
           " INTEGER, " +
           TableName.trans_freshness_specific_date +
+          " INTEGER, " +
+          TableName.trans_freshness_date_time +
           " TEXT, " +
-          TableName.trans_date_time +
-          " TEXT, " +
-          TableName.trans_upload_status+
+          TableName.trans_upload_status +
           " INTEGER, " +
           TableName.trans_freshness_working_id +
-          " INTEGER" +
-          ")");
+          " INTEGER, " +
+          'CONSTRAINT unique_key UNIQUE (' +
+          TableName.trans_freshness_date_time +
+          ', ' +
+          TableName.trans_freshness_working_id +
+          ')' +
+          ')');
 
       await db.execute('CREATE TABLE ' +
           TableName.tbl_trans_stock +
           "(" +
-          TableName.trans_stock_id+
-          " INTEGER PRIMARY KEY AUTOINCREMENT," +
           TableName.trans_stock_sku_id +
           " INTEGER, " +
           TableName.trans_stock_cases +
-          " TEXT, " +
-          TableName.trans_stock_outer+
-          " TEXT, " +
-          TableName.trans_stock_pieces+
+          " INTEGER, " +
+          TableName.trans_avl_client_id +
+          " INTEGER, " +
+          TableName.trans_stock_outer +
+          " INTEGER, " +
+          TableName.trans_stock_pieces +
+          " INTEGER, " +
+          TableName.trans_upload_status +
+          " INTEGER, " +
+          TableName.trans_rtv_activity_status +
           " INTEGER, " +
           TableName.trans_date_time +
-          " TEXT, " +
-          TableName.trans_upload_status+
           " INTEGER, " +
-          TableName.trans_stock_working_id +
-          " INTEGER" +
-          ")");
+          TableName.trans_pricing_working_id +
+          " INTEGER, " +
+          'CONSTRAINT unique_key UNIQUE (' +
+          TableName.trans_date_time +
+          ', ' +
+          TableName.trans_pricing_working_id +
+          ')' +
+          ')');
 
       await db.execute('CREATE TABLE ' +
           TableName.tbl_trans_osdc +
@@ -673,28 +748,28 @@ class DatabaseHelper {
           " INTEGER" +
           ")");
 
-      await db.execute('CREATE TABLE ' +
-          TableName.tbl_trans_promoplan +
-          "(" +
-          TableName.trans_promo_id+
-          " INTEGER PRIMARY KEY AUTOINCREMENT," +
-          TableName.trans_promo_db_id +
-          " INTEGER, " +
-          TableName.trans_promo_plan_id +
-          " INTEGER, " +
-          TableName.trans_promo_status+
-          " INTEGER, " +
-          TableName.trans_promo_reason+
-          " TEXT, " +
-          TableName.trans_promo_image_name+
-          " TEXT, " +
-          TableName.trans_date_time +
-          " TEXT, " +
-          TableName.trans_upload_status+
-          " INTEGER, " +
-          TableName.trans_promo_working_id +
-          " INTEGER" +
-          ")");
+      // await db.execute('CREATE TABLE ' +
+      //     TableName.tbl_trans_promoplan +
+      //     "(" +
+      //     TableName.trans_promo_id+
+      //     " INTEGER PRIMARY KEY AUTOINCREMENT," +
+      //     TableName.trans_promo_db_id +
+      //     " INTEGER, " +
+      //     TableName.trans_promo_plan_id +
+      //     " INTEGER, " +
+      //     TableName.trans_promo_status+
+      //     " INTEGER, " +
+      //     TableName.trans_promo_reason+
+      //     " TEXT, " +
+      //     TableName.trans_promo_image_name+
+      //     " TEXT, " +
+      //     TableName.trans_date_time +
+      //     " TEXT, " +
+      //     TableName.trans_upload_status+
+      //     " INTEGER, " +
+      //     TableName.trans_promo_working_id +
+      //     " INTEGER" +
+      //     ")");
 
 
       await db.execute('CREATE TABLE ' +
@@ -809,6 +884,8 @@ class DatabaseHelper {
           " INTEGER, "+
           TableName.trans_avl_send_time +
           " TEXT, " +
+          TableName.picklist_reason   +
+          " TEXT," +
           TableName.trans_avl_receive_time +
           " TEXT " +")");
 
@@ -909,7 +986,54 @@ class DatabaseHelper {
     return false;
   }
 
+  ///Insert Promo Plan to system table
+  static Future<bool> insertSysPromoPlanArray(List<PromoPlanModel> modelList) async {
+    var db = await initDataBase();
 
+    for (PromoPlanModel data in modelList) {
+      Map<String, dynamic> fields = {
+        TableName.promoId: data.promoId,
+        TableName.skuId: data.skuId,
+        TableName.from: data.from,
+        TableName.to: data.to,
+        TableName.osdType: data.osdType,
+        TableName.quantity: data.quantity,
+        TableName.promoScope: data.promoScope,
+        TableName.promoPrice: data.promoPrice,
+        TableName.leftOverAction: data.leftOverAction,
+      };
+
+      bool isDuplicate = await hasDuplicateEntry(
+          db, TableName.tblSysPromoPlan, fields);
+
+      if (isDuplicate) {
+        print("Error: Duplicate entry sys Promo PLan");
+      } else {
+
+        await db.insert(
+          TableName.tblSysPromoPlan,
+          {
+            TableName.modalImage: data.modalImage,
+            TableName.promoId: data.promoId,
+            TableName.storeId: data.storeId,
+            TableName.skuId: data.skuId,
+            TableName.from: data.from,
+            TableName.to: data.to,
+            TableName.osdType: data.osdType,
+            TableName.quantity: data.quantity,
+            TableName.promoScope: data.promoScope,
+            TableName.promoPrice: data.promoPrice,
+            TableName.leftOverAction: data.leftOverAction,
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+
+        print("Sys Promo Plan Item");
+        print(jsonEncode(data));
+      }
+    }
+    return false;
+  }
 
 
   static Future<bool> insertDailyCheckListArray(List<Sys_OSDCTypeModel> modelList) async {
@@ -1973,17 +2097,17 @@ class DatabaseHelper {
 
   static Future<List<ShowTransRTVShowModel>> getTransRTVDataList(String workingId,String clienId) async {
     final db = await initDataBase();
-    final List<Map<String, dynamic>> rtvMap = await db.rawQuery("SELECT trans_rtv.id as trans_id,sys_product.en_name"
-        " as pro_en_name,trans_rtv.date_time,trans_rtv.gcs_status,trans_rtv.upload_status,"
-        " sys_product.ar_name as pro_ar_name,trans_rtv.image_name as rtv_image_name,trans_rtv.date_time as dateTime,trans_rtv.expire_date,trans_rtv.pieces,"
-        " trans_rtv.sku_id,sys_product.image as pro_image,sys_rtv_reason.en_name as reason_en_name,sys_rtv_reason.ar_name as reason_ar_name"
-        " from sys_product"
-        " JOIN sys_subcategory on sys_subcategory.id=sys_product.subcategory_id"
-        " JOIN sys_brand on sys_brand.id=sys_product.brand_id "
-        " JOIN sys_rtv_reason on sys_rtv_reason.id=trans_rtv.reason"
-        " left join trans_rtv on trans_rtv.sku_id = sys_product.id"
-        " WHERE sys_product.client_id IN($clienId) AND sys_product.id NOT IN(1,2,3)"
-        " ORDER BY sys_subcategory.en_name");
+
+    String query = "SELECT trans_rtv.id as trans_id,sys_product.en_name as pro_en_name,trans_rtv.date_time,trans_rtv.gcs_status,trans_rtv.upload_status, sys_product.ar_name as pro_ar_name,trans_rtv.image_name as rtv_image_name,trans_rtv.date_time as dateTime,trans_rtv.expire_date,trans_rtv.pieces, trans_rtv.sku_id,sys_product.image as pro_image,sys_rtv_reason.en_name as reason_en_name,sys_rtv_reason.ar_name as reason_ar_name "
+        "from trans_rtv "
+        "JOIN sys_rtv_reason on sys_rtv_reason.id= trans_rtv.reason "
+        "Join sys_product on sys_product.id  = trans_rtv.sku_id "
+        "WHERE working_id=$workingId ORDER BY date_time DESC ";
+
+    print(query);
+
+    final List<Map<String, dynamic>> rtvMap = await db.rawQuery(query);
+
 
     print(jsonEncode(rtvMap.length));
     print("___RTV Data List _______");
@@ -2305,14 +2429,14 @@ class DatabaseHelper {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
-  static Future<void> insertTransFreshness(TransFreshnessModel transFreshnessModel) async {
-    var db = await initDataBase();
-    await db.insert(
-      TableName.tbl_trans_freshness,
-      transFreshnessModel.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-  }
+  // static Future<void> insertTransFreshness(TransFreshnessModel transFreshnessModel) async {
+  //   var db = await initDataBase();
+  //   await db.insert(
+  //     TableName.tbl_trans_freshness,
+  //     transFreshnessModel.toMap(),
+  //     conflictAlgorithm: ConflictAlgorithm.replace,
+  //   );
+  // }
   static Future<void> insertTransStock(TransStockModel transStockModel) async {
     var db = await initDataBase();
     await db.insert(
@@ -2345,14 +2469,14 @@ class DatabaseHelper {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
-  static Future<void> insertTransPromoPlan(TransPromoPlanModel transPromoPlanModel) async {
-    var db = await initDataBase();
-    await db.insert(
-      TableName.tbl_trans_promoplan,
-      transPromoPlanModel.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-  }
+  // static Future<void> insertTransPromoPlan(TransPromoPlanModel transPromoPlanModel) async {
+  //   var db = await initDataBase();
+  //   await db.insert(
+  //     TableName.tbl_trans_promoplan,
+  //     transPromoPlanModel.toMap(),
+  //     conflictAlgorithm: ConflictAlgorithm.replace,
+  //   );
+  // }
   static Future<int>  insertTransPlanoguide(String workingID) async {
     String insertQuery = "INSERT OR IGNORE INTO trans_planoguide (client_id,store_id, cat_id, pog, isAdherence, imageName, date_time,activity_status, gcs_status, upload_status, working_id) "
         " SELECT client_id,store_id, category_id, pog,-1, pog_image, CURRENT_TIMESTAMP,0,0, 0,$workingID"
@@ -2630,7 +2754,8 @@ class DatabaseHelper {
         pick_list_send_time: picklist[index]['pick_list_send_time'] ?? "",
         pick_list_receive_time: picklist[index]['pick_list_receive_time'] ?? "",
         isReasonShow: true,
-        reasonValue: []
+        reasonValue: [],
+        pick_list_reason: picklist[index]['picklist_reason'] ?? "",
       );
     });
   }
@@ -2638,7 +2763,7 @@ class DatabaseHelper {
   //int pickListId,int storeId,int catId,int tmrId,String tmrName,int stockerId,String stockerName,String shiftTime,String enCatName,String arCatName,String skuPicture,String enSkuName,String arSkuName,int reqPickList, int actPickList, int pickListReady
 
   static Future<int> insertPickListByQuery (String queryBulkInsertion) async {
-  String insertQuery = "INSERT OR IGNORE INTO picklist (picklist_id,store_id, category_id, tmr_id,tmr_name,stocker_id,stocker_name,shift_time,en_cat_name,ar_cat_name,sku_picture,en_sku_name,ar_sku_name,req_picklist,act_picklist,picklist_ready,upload_status,pick_list_send_time,pick_list_receive_time)"
+  String insertQuery = "INSERT OR IGNORE INTO picklist (picklist_id,store_id, category_id, tmr_id,tmr_name,stocker_id,stocker_name,shift_time,en_cat_name,ar_cat_name,sku_picture,en_sku_name,ar_sku_name,req_picklist,act_picklist,picklist_ready,upload_status,pick_list_send_time,pick_list_receive_time,picklist_reason)"
                         "VALUES $queryBulkInsertion";
                         // "VALUES($pickListId,$storeId,$catId,$tmrId,$tmrName,$stockerId, $stockerName,$shiftTime,$enCatName,$arCatName,$skuPicture,$enSkuName,$arSkuName,$reqPickList,$actPickList,$pickListReady)";
   var db = await initDataBase();
@@ -2717,8 +2842,8 @@ class DatabaseHelper {
   }
 
   ///Trans Pick list update Sql
-  static Future<int> updateTransPicklist(String picklistId,String actPicklist,String picklistReady) async {
-    String writeQuery = "update picklist set act_picklist=?,picklist_ready=? where picklist_id=?";
+  static Future<int> updateTransPicklist(String picklistId,String actPicklist,String picklistReady,String reason) async {
+    String writeQuery = "update picklist set act_picklist=?,upload_status=0,picklist_ready=?,picklist_reason=${wrapIfString(reason)} where picklist_id=?";
     var db = await initDataBase();
     print("_______________UpdATE________________");
     print(writeQuery);
@@ -2824,18 +2949,25 @@ class DatabaseHelper {
   }
 
   ///Get Rtv COUNT RECORDS FOR API UPLOAD
-  static Future<RtvCountModel> getRtvCountData(String workingId) async {
+  static Future<RtvCountModel> getRtvCountDataServices(String workingId) async {
     final db = await initDataBase();
-    final List<Map<String, dynamic>> result = (await db.rawQuery("SELECT count(id) AS total_rtv, "
-        "sum(CASE WHEN upload_status = 0 THEN 1 ELSE 0 END) As total_not_uploaded, "
-        "sum(CASE WHEN upload_status = 1 THEN 1 ELSE 0 END) As total_uploaded "
-        "FROM trans_rtv WHERE working_id=$workingId"));
+    final List<Map<String, dynamic>> result = (await db.rawQuery("SELECT COUNT(DISTINCT sku_id) as total_rtv_pro,"
+        " sum(pieces) as total_volume, SUM(total_value) as total_value, sum(total_not_uploaded) as total_not_uploaded, sum(total_uploaded) as total_uploaded FROM "
+        " (SELECT sku_id, trans_rtv.pieces as pieces ,SUM(trans_rtv.pieces * sys_product.rsp) as total_value, "
+        " sum(CASE WHEN upload_status = 0 THEN 1 ELSE 0 END) As total_not_uploaded, "
+        " sum(CASE WHEN upload_status = 1 THEN 1 ELSE 0 END) As total_uploaded "
+        " from trans_rtv"
+        " join sys_product on sys_product.id=trans_rtv.sku_id"
+        " WHERE working_id=$workingId GROUP by trans_rtv.id  ) A"));
+
     print(jsonEncode(result));
     print("____________RTV Cont_______________");
     return  RtvCountModel(
-      totalRtv: result[0]['total_rtv'] ?? 0,
+      totalRtv: result[0]['total_rtv_pro'] ?? 0,
       totalNotUpload: result[0]['total_not_uploaded'] ?? 0,
       totalUpload: result[0]['total_uploaded'] ?? 0,
+      totalValue: result[0]['total_value'] ?? 0,
+      totalVolume: result[0]['total_volume'] ?? 0,
     );
   }
 
@@ -2915,8 +3047,10 @@ class DatabaseHelper {
   ///Get Rtv Data List For API
   static Future<List<SaveRtvDataListData>> getActivityStatusRtvDataList(String workingId) async {
     final db = await initDataBase();
-    String rawQuery = "SELECT sku_id,pieces,image_name,expire_date,reason "
-        " FROM trans_rtv WHERE working_id=$workingId AND upload_status=0 AND gcs_status=1";
+    String rawQuery = "SELECT sys_product.client_id as client_sku_id sku_id,pieces,image_name,expire_date,reason "
+        " FROM trans_rtv "
+        " join sys_product on sys_product.id=trans_rtv.sku_id "
+        "WHERE working_id=$workingId AND upload_status=0 AND gcs_status=1";
 
     print("RTV QUERY");
     print(rawQuery);
@@ -2926,7 +3060,7 @@ class DatabaseHelper {
     return List.generate(rtvMap.length, (index) {
       return SaveRtvDataListData(
         skuId: rtvMap[index]['sku_id'],
-        clientId: 1,
+        clientId: rtvMap[index]['client_sku_id'],
         pieces: rtvMap[index]['pieces'],
         rtvImageName: rtvMap[index]['image_name'].toString(),
         expireDate: rtvMap[index]['expire_date'].toString(),
@@ -3064,38 +3198,50 @@ class DatabaseHelper {
 
   ///Pricing Database Functions
 
-  static Future<List<PricingShowModel>> getDataListPriceCheck(String workingId, String clientId, String brandId,String categoryId,String subCategoryId) async {
-    final db = await initDataBase();
-    String query = "SELECT sys_product.id as pro_id,"
-        " sys_product.en_name as pro_en_name,"
-        " trans_pricing.promo_price,trans_pricing.act_status,trans_pricing.upload_status, trans_pricing.regular_price, sys_product.ar_name as pro_ar_name,sys_category.en_name  ||  '  ' ||  sys_subcategory.en_name as cat_en_name,"
-        " sys_category.ar_name as cat_ar_name,"
-        " sys_brand.en_name as brand_en_name,sys_brand.ar_name as brand_ar_name,sys_product.image,"
-        " sys_product.rsp,"
-        " CASE WHEN trans_pricing.sku_id IS NULL then 0 ELSE trans_pricing.sku_id END as pricing_taken"
-        " from sys_product"
-        " JOIN sys_category on sys_category.id=sys_product.category_id"
-        "  JOIN sys_subcategory on sys_subcategory.id=sys_product.subcategory_id"
-        "  JOIN sys_brand on sys_brand.id=sys_product.brand_id"
-        " left join trans_pricing on trans_pricing.sku_id = sys_product.id"
-        " WHERE sys_category.id=sys_product.category_id ";
-    List<String> conditions = [];
+  static Future<List<PricingShowModel>> getDataListPriceCheck(String workingId, String clientId,String jpSessionClientIds, String brandId,String categoryId,String subCategoryId) async {
+
+    String searchWhere = "";
+
+    String clientIds = "";
+
     if (clientId != "-1") {
-      conditions.add("sys_product.client_id = '$clientId'");
+      clientIds = clientId;
+    } else {
+      clientIds  = jpSessionClientIds;
     }
+
     if (brandId != "-1") {
-      conditions.add("sys_product.brand_id = '$brandId'");
+      searchWhere = "$searchWhere And sys_product.brand_id = '$brandId'";
     }
     if (subCategoryId != "-1") {
-      conditions.add("sys_product.subcategory_id = '$subCategoryId'");
+      searchWhere = "$searchWhere And sys_product.subcategory_id = '$subCategoryId'";
     }
     if (categoryId != "-1") {
-      conditions.add("sys_product.category_id = '$categoryId'");
+      searchWhere = "$searchWhere And sys_product.category_id = '$categoryId'";
     }
-    if (conditions.isNotEmpty) {
-      query += " AND " + conditions.join(" AND ");
-    }
-    query += " ORDER BY sys_subcategory.en_name,sys_brand.en_name ASC";
+    print("Sub Category FIlter");
+    print(searchWhere);
+
+    final db = await initDataBase();
+    String query = "SELECT SystemTable.*,TransTable.act_status,TransTable.regular_price,TransTable.promo_price From (SELECT sys_product.id as pro_id, "
+        "sys_product.en_name as pro_en_name, "
+        "sys_product.ar_name as pro_ar_name,sys_category.en_name  ||  '  ' ||  sys_subcategory.en_name as cat_en_name, "
+        "sys_category.ar_name as cat_ar_name, "
+        "sys_brand.en_name as brand_en_name,sys_brand.ar_name as brand_ar_name,sys_product.image, "
+        "sys_product.rsp, sys_subcategory.en_name as sub_category,sys_brand.en_name as brand "
+        "from sys_product "
+        "JOIN sys_category on sys_category.id=sys_product.category_id "
+        "JOIN sys_subcategory on sys_subcategory.id=sys_product.subcategory_id "
+        "JOIN sys_brand on sys_brand.id=sys_product.brand_id "
+        "WHERE 1=1 And sys_product.client_id in ($clientIds) And sys_product.id not in (11000,11001,11002) $searchWhere) SystemTable "
+        "LEFT JOIN ( SELECT sku_id,act_status,regular_price,promo_price FROM trans_pricing WHERE working_id=$workingId ) TransTable "
+        "on SystemTable.pro_id = TransTable.sku_id "
+        "GROUP BY SystemTable.pro_id ORDER BY sub_category,brand ASC";
+
+    print("++++++++++++++++++++");
+    print(query);
+    print("+++++++++++++++++++++");
+
     final List<Map<String, dynamic>> pricingMap = await db.rawQuery(query);
     return List.generate(pricingMap.length, (index) {
       return PricingShowModel(
@@ -3120,8 +3266,10 @@ class DatabaseHelper {
   ///Get Price Check COUNT RECORDS FOR API UPLOAD
   static Future<PriceCheckCountModel> getPriceCheckCountData(String workingId) async {
     final db = await initDataBase();
-    final List<Map<String, dynamic>> result = (await db.rawQuery("SELECT count(sku_id) AS total_price_check, "
+    final List<Map<String, dynamic>> result = (await db.rawQuery("SELECT count(Distinct sku_id) AS total_price_check, "
         "sum(CASE WHEN act_status=1 AND upload_status = 0 THEN 1 ELSE 0 END) As total_not_uploaded, "
+        "sum(case when regular_price != '' Then 1 else 0 end) as total_regular_products, "
+        "sum(case when promo_price != '' Then 1 else 0 end) as total_promo_products, "
         "sum(CASE WHEN act_status=1 AND upload_status = 1 THEN 1 ELSE 0 END) As total_uploaded "
         "FROM trans_pricing WHERE working_id=$workingId"));
     print(jsonEncode(result));
@@ -3130,16 +3278,20 @@ class DatabaseHelper {
       totalPriceCheck: result[0]['total_price_check'] ?? 0,
       totalNotUpload: result[0]['total_not_uploaded'] ?? 0,
       totalUpload: result[0]['total_uploaded'] ?? 0,
+      totalPromoSku: result[0]['total_promo_products'] ?? 0,
+      totalRegularSku: result[0]['total_regular_products'] ?? 0,
     );
   }
 
   ///Get Price Check Data List For API
   static Future<List<SavePricingDataListData>> getActivityStatusPriceCheckDataList(String workingId) async {
     final db = await initDataBase();
-    String rawQuery = "SELECT sku_id,regular_price,promo_price "
-        " FROM trans_pricing WHERE working_id=$workingId AND upload_status=0";
+    String rawQuery = "SELECT sys_product.client_id as client_product_id,sku_id,regular_price,promo_price "
+        " FROM trans_pricing "
+        " join sys_product on sys_product.id=trans_pricing.sku_id "
+        "WHERE working_id=$workingId AND upload_status=0";
 
-    print("RTV QUERY");
+    print("Price Check QUERY");
     print(rawQuery);
 
     final List<Map<String, dynamic>> priceCheckMap = await db.rawQuery(rawQuery);
@@ -3147,7 +3299,7 @@ class DatabaseHelper {
     return List.generate(priceCheckMap.length, (index) {
       return SavePricingDataListData(
         skuId: priceCheckMap[index]['sku_id'],
-        clientId: 1,
+        clientId: priceCheckMap[index]['client_product_id'],
         regularPrice: priceCheckMap[index]['regular_price'].toString(),
         promoPrice: priceCheckMap[index]['promo_price'].toString(),
 
@@ -3174,8 +3326,6 @@ class DatabaseHelper {
     print(writeQuery);
     return await db.rawUpdate(writeQuery);
   }
-
-
 
   ///RTV Database Functions
 
@@ -3207,38 +3357,43 @@ class DatabaseHelper {
     });
   }
 
-  static Future<List<RTVShowModel>> getDataListRTV(String workingId, String clientId, String brandId,String categoryId,String subCategoryId) async {
-    final db = await initDataBase();
-    String query = "SELECT sys_product.id as pro_id,"
-        " sys_product.en_name as pro_en_name,"
-        " trans_rtv.act_status, trans_rtv.pieces, sys_product.ar_name as pro_ar_name,sys_category.en_name  ||  '  ' ||  sys_subcategory.en_name as cat_en_name,"
-        " sys_category.ar_name as cat_ar_name, "
-        " sys_brand.en_name as brand_en_name,sys_brand.ar_name as brand_ar_name,sys_product.image,"
-        "sys_product.rsp,"
-        " CASE WHEN trans_rtv.sku_id IS NULL then 0 ELSE trans_rtv.sku_id END as rtv_taken"
-        " from sys_product"
-        " JOIN sys_category on sys_category.id=sys_product.category_id"
-        " JOIN sys_subcategory on sys_subcategory.id=sys_product.subcategory_id"
-        " JOIN sys_brand on sys_brand.id=sys_product.brand_id "
-        " left join trans_rtv on trans_rtv.sku_id = sys_product.id"
-        " WHERE 1=1";
-    List<String> conditions = [];
+  static Future<List<RTVShowModel>> getDataListRTV(String workingId, String clientId,String jpSessionClientIds,String otherExcludes,String brandId,String categoryId,String subCategoryId) async {
+
+    String searchWhere = "";
+
+    String clientIds = "";
+
     if (clientId != "-1") {
-      conditions.add("sys_product.client_id = '$clientId'");
+      clientIds = clientId;
+    } else {
+      clientIds  = jpSessionClientIds;
     }
+
     if (brandId != "-1") {
-      conditions.add("sys_product.brand_id = '$brandId'");
+      searchWhere = "$searchWhere And sys_product.brand_id = '$brandId'";
     }
     if (subCategoryId != "-1") {
-      conditions.add("sys_product.subcategory_id = '$subCategoryId'");
+      searchWhere = "$searchWhere And sys_product.subcategory_id = '$subCategoryId'";
     }
     if (categoryId != "-1") {
-      conditions.add("sys_product.category_id = '$categoryId'");
+      searchWhere = "$searchWhere And sys_product.category_id = '$categoryId'";
     }
-    if (conditions.isNotEmpty) {
-      query += " AND " + conditions.join(" AND ");
-    }
-    query += " GROUP BY sys_product.id ORDER BY sys_subcategory.en_name,sys_brand.en_name ASC";
+
+
+    final db = await initDataBase();
+    String query = "SELECT SystemTable.*,TransTable.act_status From (SELECT sys_product.id as pro_id, "
+        "sys_product.en_name as pro_en_name, sys_product.ar_name as pro_ar_name, "
+        "sys_category.en_name  ||  '  ' ||  sys_subcategory.en_name as cat_en_name, sys_category.ar_name as cat_ar_name, "
+        "sys_brand.en_name as brand_en_name,sys_brand.ar_name as brand_ar_name,sys_product.image, sys_product.rsp, sys_subcategory.en_name as sub_category,sys_brand.en_name as brand "
+        "from sys_product "
+        "JOIN sys_category on sys_category.id=sys_product.category_id "
+        "JOIN sys_subcategory on sys_subcategory.id=sys_product.subcategory_id "
+        "JOIN sys_brand on sys_brand.id=sys_product.brand_id "
+        "WHERE 1=1 And sys_product.client_id in ($clientIds) And sys_product.id "
+        "not in (11000,11001,11002) $searchWhere ) SystemTable "
+        "LEFT JOIN ( SELECT sku_id,act_status FROM trans_rtv WHERE working_id=$workingId ) TransTable "
+        "on SystemTable.pro_id = TransTable.sku_id GROUP BY SystemTable.pro_id ORDER BY SystemTable.sub_category,SystemTable.brand ASC";
+    print(query);
     final List<Map<String, dynamic>> rtvMap = await db.rawQuery(query);
     print(rtvMap);
     return List.generate(rtvMap.length, (index) {
@@ -3260,29 +3415,29 @@ class DatabaseHelper {
     });
   }
   static Future<RTVCountModel>  getRTVCountData(String workingId, String clientId, String brandId,String categoryId,String subCategoryId) async {
+
+    String searchWhere = "";
+
+    if (clientId != "-1") {
+      searchWhere = "$searchWhere And sys_product.client_id = '$clientId'";
+    }
+
+    if (brandId != "-1") {
+      searchWhere = "$searchWhere And sys_product.brand_id = '$brandId'";
+    }
+    if (subCategoryId != "-1") {
+      searchWhere = "$searchWhere And sys_product.subcategory_id = '$subCategoryId'";
+    }
+    if (categoryId != "-1") {
+      searchWhere = "$searchWhere And sys_product.category_id = '$categoryId'";
+    }
+
     final db = await initDataBase();
     String query = "SELECT COUNT(DISTINCT sku_id) as total_rtv_pro, sum(pieces ) as total_volume, SUM(total_value) as total_value FROM "
         " (SELECT sku_id, trans_rtv.pieces as pieces ,SUM(trans_rtv.pieces * sys_product.rsp) as total_value"
         " from trans_rtv"
         " join sys_product on sys_product.id=trans_rtv.sku_id"
-        " WHERE working_id=$workingId ";
-    List<String> conditions = [];
-    if (clientId != "-1") {
-      conditions.add("sys_product.client_id = '$clientId'");
-    }
-    if (brandId != "-1") {
-      conditions.add("sys_product.brand_id = '$brandId'");
-    }
-    if (subCategoryId != "-1") {
-      conditions.add("sys_product.subcategory_id = '$subCategoryId'");
-    }
-    if (categoryId != "-1") {
-      conditions.add("sys_product.category_id = '$categoryId'");
-    }
-    if (conditions.isNotEmpty) {
-      query += " AND " + conditions.join(" AND ");
-    }
-    query += "  GROUP by trans_rtv.id  ) A";
+        " WHERE working_id=$workingId $searchWhere GROUP by trans_rtv.id ) A";
     final List<Map<String, dynamic>> result = await db.rawQuery(query);
     print("rtv count data....");
     print(result);
@@ -3293,16 +3448,605 @@ class DatabaseHelper {
     );
   }
 
-  static Future<PricingCountModel> getPricingCountData(String workingId) async {
+  static Future<PricingCountModel> getPricingCountData(String workingId, String clientId, String brandId,String categoryId,String subCategoryId) async {
+
+    String searchWhere = "";
+
+    if (clientId != "-1") {
+      searchWhere = "$searchWhere And sys_product.client_id = '$clientId'";
+    }
+
+    if (brandId != "-1") {
+      searchWhere = "$searchWhere And sys_product.brand_id = '$brandId'";
+    }
+    if (subCategoryId != "-1") {
+      searchWhere = "$searchWhere And sys_product.subcategory_id = '$subCategoryId'";
+    }
+    if (categoryId != "-1") {
+      searchWhere = "$searchWhere And sys_product.category_id = '$categoryId'";
+    }
+
+
     final db = await initDataBase();
-    final List<Map<String, dynamic>> result = (await db.rawQuery("SELECT sum(trans_pricing.act_status) as total_pricing FROM trans_pricing WHERE trans_pricing.working_id=$workingId"));
+    final List<Map<String, dynamic>> result = (await db.rawQuery("SELECT count(sku_id) as total_pricing_products, "
+        "sum(case when regular_price != '' Then 1 else 0 end) as total_regular_products, "
+        "sum(case when promo_price != '' Then 1 else 0 end) as total_promo_products "
+        "From trans_pricing "
+        "join sys_product on sys_product.id=trans_pricing.sku_id "
+        "WHERE working_id=$workingId $searchWhere " ));
     print(jsonEncode(result));
     print("____________Pricing Cont_______________");
     return  PricingCountModel(
-      total_pricing: result[0]['total_pricing'] ?? 0,
+      total_pricing_products : result[0]['total_pricing_products'] ?? 0,
+      total_regular_pricing :  result[0]['total_regular_products'] ?? 0,
+      total_promo_pricing :  result[0]['total_promo_products'] ?? 0,
     );
   }
 
+
+  ///Freshness Queries
+
+  static Future<List<FreshnessListShowModel>> getDataListFreshness(
+      String workingId,
+      String clientId,
+      String jpSessionClientIds,
+      String brandId,
+      String categoryId,
+      String subCategoryId) async {
+
+    String searchWhere = "";
+
+    String clientIds = "";
+
+    if (clientId != "-1") {
+      clientIds = clientId;
+    } else {
+      clientIds  = jpSessionClientIds;
+    }
+
+    if (brandId != "-1") {
+      searchWhere = "$searchWhere And sys_product.brand_id = '$brandId'";
+    }
+    if (subCategoryId != "-1") {
+      searchWhere = "$searchWhere And sys_product.subcategory_id = '$subCategoryId'";
+    }
+    if (categoryId != "-1") {
+      searchWhere = "$searchWhere And sys_product.category_id = '$categoryId'";
+    }
+
+    final db = await initDataBase();
+    String query = "SELECT SystemTable.*,CASE WHEN TransTable.sku_id is NOT NULL THEN 1 ELSE 0 End as act_status From (SELECT sys_product.id as pro_id,"
+        " sys_product.en_name as pro_en_name,"
+        " sys_product.ar_name as pro_ar_name,sys_category.en_name  ||  '  ' ||  sys_subcategory.en_name as cat_en_name,"
+        " sys_category.ar_name as cat_ar_name,"
+        " sys_brand.en_name as brand_en_name,sys_brand.ar_name as brand_ar_name,sys_product.image,"
+        " sys_product.rsp, sys_subcategory.en_name as sub_category,sys_brand.en_name as brand"
+        " from sys_product"
+        " JOIN sys_category on sys_category.id=sys_product.category_id"
+        " JOIN sys_subcategory on sys_subcategory.id=sys_product.subcategory_id"
+        " JOIN sys_brand on sys_brand.id=sys_product.brand_id"
+        " WHERE 1=1 And sys_product.client_id in ($clientIds) And sys_product.id "
+        " not in (11000,11001,11002) $searchWhere ) SystemTable"
+        " LEFT JOIN ( SELECT sku_id FROM trans_freshness WHERE working_id=$workingId ) TransTable"
+        " on SystemTable.pro_id = TransTable.sku_id"
+        " GROUP BY SystemTable.pro_id"
+        " ORDER BY SystemTable.sub_category,SystemTable.brand ASC";
+
+    print(query);
+
+    final List<Map<String, dynamic>> pricingMap = await db.rawQuery(query);
+    return List.generate(pricingMap.length, (index) {
+      return FreshnessListShowModel(
+        pro_id: pricingMap[index]['pro_id'] as int,
+        cat_en_name: pricingMap[index]['cat_en_name'] ?? "",
+        cat_ar_name: pricingMap[index]['cat_ar_name'] ?? "",
+        pro_en_name: pricingMap[index]['pro_en_name'] ?? "",
+        pro_ar_name: pricingMap[index]['pro_ar_name'] ?? "",
+        img_name: pricingMap[index]['image'] ?? "",
+        rsp: pricingMap[index]['rsp'] ?? "",
+        brand_en_name: pricingMap[index]['brand_en_name'] ?? "",
+        brand_ar_name: pricingMap[index]['brand_ar_name'] ?? "",
+        upload_status: pricingMap[index]['upload_status'] ?? 0,
+        activity_status: pricingMap[index]['act_status'] ?? 0,
+        freshness_taken: pricingMap[index]['freshness_taken'] ?? 0,
+      );
+    });
+  }
+
+  static Future<int> insertTransFreshness(String month, String clientId,String currentTime,
+      int year, int skuId, String workingID, int pieces) async {
+    String insertQuery = " INSERT INTO trans_freshness (sku_id, client_id,date_time, year,$month, upload_status, working_id) "
+        "VALUES ($skuId,${wrapIfString(clientId)},${wrapIfString(currentTime)},$year,$pieces,0,${wrapIfString(workingID)})";
+
+    var db = await initDataBase();
+    print("_______________INSERT Trans Freshness________________");
+    print(insertQuery);
+    return await db.rawInsert(insertQuery);
+  }
+
+  static Future<List<TransFreshnessModel>> getTransFreshnessDataList(
+      String workingId,
+      String clientId,
+      String brandId,
+      String categoryId,
+      String subCategoryId) async {
+
+    String searchWhere = "";
+
+    if (clientId != "-1") {
+      searchWhere = "$searchWhere And sys_product.client_id = '$clientId'";
+    }
+
+    if (brandId != "-1") {
+      searchWhere = "$searchWhere And sys_product.brand_id = '$brandId'";
+    }
+    if (subCategoryId != "-1") {
+      searchWhere = "$searchWhere And sys_product.subcategory_id = '$subCategoryId'";
+    }
+    if (categoryId != "-1") {
+      searchWhere = "$searchWhere And sys_product.category_id = '$categoryId'";
+    }
+
+    final db = await initDataBase();
+    String query =  " SELECT sys_product.image as img_name, sys_product.en_name as sku_en_name, sys_product.ar_name as sku_ar_name, sys_product.client_id, "
+        " trans_freshness.sku_id, trans_freshness.year,trans_freshness.specific_date,trans_freshness.upload_status, "
+        " IFNULL(sum(trans_freshness.jan),0) as jan,"
+        " IFNULL(sum(trans_freshness.feb),0) as feb,"
+        " IFNULL(sum(trans_freshness.mar),0) as mar,"
+        " IFNULL(sum(trans_freshness.apr),0) as apr,"
+        " IFNULL(sum(trans_freshness.may),0) as may,"
+        " IFNULL(sum(trans_freshness.jun),0) as jun,"
+        " IFNULL(sum(trans_freshness.jul),0) as jul,"
+        " IFNULL(sum(trans_freshness.aug),0) as aug,"
+        " IFNULL(sum(trans_freshness.sep),0) as sep,"
+        " IFNULL(sum(trans_freshness.oct),0) as oct,"
+        " IFNULL(sum(trans_freshness.nov),0) as nov,"
+        " IFNULL(sum(trans_freshness.dec),0) as dec "
+        " FROM trans_freshness"
+        " JOIN sys_product"
+        " ON trans_freshness.sku_id = sys_product.id"
+        " WHERE trans_freshness.working_id = $workingId $searchWhere"
+        " GROUP BY trans_freshness.year, trans_freshness.sku_id ORDER BY sys_product.subcategory_id,sys_product.brand_id";
+
+    final List<Map<String, dynamic>> freshnessMap = await db.rawQuery(query);
+
+    print(query);
+    print("___ Freshness Data List _______");
+    return List.generate(freshnessMap.length, (index) {
+      print(jsonEncode(freshnessMap[index]));
+      return TransFreshnessModel(
+          sku_id:freshnessMap[index]['sku_id'],
+          year:freshnessMap[index]['year'] ?? 0,
+          jan:freshnessMap[index]['jan'] ?? 0,
+          feb:freshnessMap[index]['feb'] ?? 0,
+          mar:freshnessMap[index]['mar'] ?? 0,
+          apr:freshnessMap[index]['apr'] ?? 0,
+          may:freshnessMap[index]['may'] ?? 0,
+          jun:freshnessMap[index]['jun'] ?? 0,
+          jul:freshnessMap[index]['jul'] ?? 0,
+          aug:freshnessMap[index]['aug'] ?? 0,
+          sep:freshnessMap[index]['sep'] ?? 0,
+          oct:freshnessMap[index]['oct'] ?? 0,
+          nov:freshnessMap[index]['nov'] ?? 0,
+          dec:freshnessMap[index]['dec'] ?? 0,
+          specific_date:freshnessMap[index]['specific_date'] ?? "",
+          client_id:freshnessMap[index]['client_id'].toString(),
+          sku_en_name:freshnessMap[index]['sku_en_name'].toString(),
+          sku_ar_name:freshnessMap[index]['sku_ar_name'].toString(),
+          upload_status:freshnessMap[index]['upload_status'],
+          imgName: freshnessMap[index]['img_name']);
+    });
+  }
+
+  static Future<FreshnessGraphCountShowModel> getFreshnessGraphCount(
+      String workingId,
+      String clientId,
+      String jpSessionClientIds,
+      String brandId,
+      String categoryId,
+      String subCategoryId) async {
+
+    String searchWhere = "";
+
+    if (clientId != "-1") {
+      searchWhere = "$searchWhere And sys_product.client_id = '$clientId'";
+    } else {
+      // searchWhere  = "$searchWhere And sys_product.client_id = '$clientId'";
+    }
+
+    if (brandId != "-1") {
+      searchWhere = "$searchWhere And sys_product.brand_id = '$brandId'";
+    }
+    if (subCategoryId != "-1") {
+      searchWhere = "$searchWhere And sys_product.subcategory_id = '$subCategoryId'";
+    }
+    if (categoryId != "-1") {
+      searchWhere = "$searchWhere And sys_product.category_id = '$categoryId'";
+    }
+
+    final db = await initDataBase();
+    String query = "SELECT count(DISTINCT sku_id) as total_freshness_taken, "
+        " (ifnull(Sum(jan),0) + ifnull(Sum(feb),0) + ifnull(Sum(mar),0) + ifnull(Sum(apr),0) + "
+        " ifnull(Sum(may),0) + ifnull(Sum(jun),0) + ifnull(Sum(jul),0) + ifnull(Sum(aug),0) + "
+        " ifnull(Sum(sep),0) + ifnull(Sum(oct),0) + ifnull(Sum(nov),0) + ifnull(Sum(dec),0 )) as total_volume, "
+        "sum(CASE WHEN upload_status = 0 THEN 1 ELSE 0 END) As total_not_uploaded, "
+        "sum(CASE WHEN upload_status = 1 THEN 1 ELSE 0 END) As total_uploaded "
+        " FROM trans_freshness "
+        " join sys_product on sys_product.id=trans_freshness.sku_id "
+        " WHERE working_id=$workingId $searchWhere";
+
+    print(query);
+
+    final List<Map<String, dynamic>> freshnessGraphCount = await db.rawQuery(query);
+    print(jsonEncode(freshnessGraphCount));
+      return FreshnessGraphCountShowModel(
+        totalFreshnessTaken: freshnessGraphCount[0]['total_freshness_taken'] ?? 0,
+        totalVolume: freshnessGraphCount[0]['total_volume'] ?? 0,
+        totalUploadCount: freshnessGraphCount[0]['total_uploaded'] ?? 0,
+        totalNotUploadCount: freshnessGraphCount[0]['total_not_uploaded'] ?? 0
+      );
+  }
+
+  static Future<List<SaveFreshnessListData>> getFreshnessDataListFromApi(String workingId) async {
+
+    final db = await initDataBase();
+
+    String rawQuery = "SELECT sys_product.client_id as api_client_id,trans_freshness.*"
+        " FROM trans_freshness "
+        " join sys_product on sys_product.id=trans_freshness.sku_id "
+        " WHERE working_id=$workingId AND upload_status=0 ";
+
+    print("Freshness QUERY");
+    print(rawQuery);
+
+    final List<Map<String, dynamic>> freshnessMap = await db.rawQuery(rawQuery);
+    print(freshnessMap);
+    return List.generate(freshnessMap.length, (index) {
+      return SaveFreshnessListData(
+        skuId: freshnessMap[index]['sku_id'],
+        clientId: freshnessMap[index]['api_client_id'],
+        year: int.parse(freshnessMap[index]['year'].toString()),
+        dateTime: freshnessMap[index]['date_time'] ?? "",
+        jan: freshnessMap[index]['jan'] ?? 0,
+        feb: freshnessMap[index]['feb'] ?? 0,
+        mar: freshnessMap[index]['mar'] ?? 0,
+        apr: freshnessMap[index]['apr'] ?? 0,
+        may: freshnessMap[index]['may'] ?? 0,
+        jun: freshnessMap[index]['jun'] ?? 0,
+        jul: freshnessMap[index]['jul'] ?? 0,
+        aug: freshnessMap[index]['aug'] ?? 0,
+        sep: freshnessMap[index]['sep'] ?? 0,
+        oct: freshnessMap[index]['oct'] ?? 0,
+        nov: freshnessMap[index]['nov'] ?? 0,
+        dec: freshnessMap[index]['dec'] ?? 0
+      );
+    });
+  }
+
+  static Future<int> updateFresshnessAfterApi(String workingId,String ids) async {
+    String writeQuery = "UPDATE trans_freshness SET upload_status=1 WHERE working_id=$workingId AND date_time in ($ids)";
+
+    var db = await initDataBase();
+    print("_______________UpdATE Planoguide________________");
+    print(writeQuery);
+
+    return await db.rawUpdate(writeQuery);
+  }
+
+  ///Promo Plan Database Queries
+  static Future<int>  insertTransPromoPlan(String workingID,int storeId) async {
+    String insertQuery = "INSERT OR IGNORE INTO trans_promoplan (promo_id,sku_id, image_name, promo_reason, promo_status,date_time,act_status,gcs_status,upload_status, working_id) "
+        " SELECT promo_id,sku_id,'','','', CURRENT_TIMESTAMP,0,0, 0,$workingID"
+        " FROM sys_promoplan WHERE store_id=$storeId";
+    var db = await initDataBase();
+    print("_______________INSERT TransPromoPlan________________");
+    print(insertQuery);
+    return await db.rawInsert(insertQuery);
+  }
+
+  static Future<List<TransPromoPlanListModel>> getTransPromoPlanList(String workingId) async {
+    final db = await initDataBase();
+    String query = "Select sys_product.en_name as pro_en_name, sys_product.ar_name as pro_ar_name, "
+        " sys_category.en_name as cat_en_name, sys_category.ar_name as cat_ar_name, "
+        " sys_brand.en_name as brand_en_name,sys_brand.ar_name as brand_ar_name, sys_product.image as pro_image_name,"
+        " trans_promoplan.*, "
+        " promo_from, promo_to, osd_type, qty, promo_price, promo_scope, modal_image,left_over_action "
+        " From trans_promoplan "
+        " JOIN sys_product on sys_product.id = trans_promoplan.sku_id "
+        " JOIN sys_category on sys_category.id = sys_product.category_id "
+        " JOIN sys_brand on sys_brand.id = sys_product.brand_id "
+        " JOIN sys_promoplan on sys_promoplan.promo_id = trans_promoplan.promo_id AND  sys_promoplan.sku_id = trans_promoplan.sku_id "
+        " WHERE working_id=$workingId";
+
+    final List<Map<String, dynamic>> transPromoPlanMap = await db.rawQuery(query);
+
+    print(query);
+    print(jsonEncode(transPromoPlanMap));
+    print("___ Trans Promo Plan Data List _______");
+    return List.generate(transPromoPlanMap.length, (index) {
+
+      return TransPromoPlanListModel(
+          promoId : transPromoPlanMap[index]['promo_id'],
+          skuEnName : transPromoPlanMap[index]['pro_en_name'] ?? "",
+          skuArName : transPromoPlanMap[index]['pro_ar_name'] ?? "",
+          skuImageName : transPromoPlanMap[index]['pro_image_name'] ?? "",
+          catEnName : transPromoPlanMap[index]['cat_en_name'] ?? "",
+          catArName : transPromoPlanMap[index]['car_ar_name'] ?? "",
+          brandEnName : transPromoPlanMap[index]['brand_en_name'] ?? "",
+          brandArName : transPromoPlanMap[index]['brand_ar_name'] ?? "",
+          skuId : transPromoPlanMap[index]['sku_id'] ?? 0,
+          promoFrom : transPromoPlanMap[index]['promo_from'] ?? "",
+          promoTo : transPromoPlanMap[index]['promo_to'] ?? "",
+          osdType : transPromoPlanMap[index]['osd_type'] ?? "",
+          quantity : transPromoPlanMap[index]['qty'] ?? "",
+          promoPrice : transPromoPlanMap[index]['promo_price'] ?? 0,
+          promoScope : transPromoPlanMap[index]['promo_Scope'] ?? "",
+          imageName : transPromoPlanMap[index]['image_name'] ?? "",
+          modalImage: transPromoPlanMap[index]['modal_image'] ?? "",
+          leftOverAction : transPromoPlanMap[index]['left_over_action'] ?? "",
+          promoReason : transPromoPlanMap[index]['promo_reason'] ?? "",
+          promoStatus : transPromoPlanMap[index]['promo_status'] ?? "",
+          actStatus : transPromoPlanMap[index]['act_status'] ?? 0,
+          uploadStatus : transPromoPlanMap[index]['upload_status'] ?? 0,
+          gcsStatus : transPromoPlanMap[index]['gcs_status'] ?? 0,
+          imageFile: null,
+      );
+    });
+  }
+
+  static Future<int> updateTransPromoPlan(int gcsStatus,int promoId,String workingId,String imageName,String promoStatus,String promoReason) async {
+
+    String writeQuery = "UPDATE trans_promoplan SET act_status=1,gcs_status=$gcsStatus, image_name=${wrapIfString(imageName)},promo_reason=${wrapIfString(promoReason)},promo_status=${wrapIfString(promoStatus)},upload_status=0 WHERE promo_id=$promoId and working_id=$workingId";
+    var db = await initDataBase();
+    print("_______________UpdATE Promo Plan________________");
+    print(writeQuery);
+    return await db.rawUpdate(writeQuery);
+  }
+
+  static Future<PromoPlanGraphAndApiCountShowModel> getPromoGraphAndApiCount(String workingId,) async {
+
+    final db = await initDataBase();
+    String query = "SELECT count(DISTINCT sku_id) as total_promo, "
+        "sum(CASE WHEN act_status = 1 AND promo_status='Yes' THEN 1 ELSE 0 END) As total_deployed, "
+        "sum(CASE WHEN act_status = 1 AND promo_status='No' THEN 1 ELSE 0 END) As total_not_deployed, "
+        "sum(CASE WHEN act_status = 0 THEN 1 ELSE 0 END) As total_pending, "
+        "sum(CASE WHEN act_status = 1 AND upload_status = 0 THEN 1 ELSE 0 END) As total_not_uploaded, "
+        "sum(CASE WHEN act_status=1 AND upload_status = 1 THEN 1 ELSE 0 END) As total_uploaded "
+        " FROM trans_promoplan "
+        " WHERE working_id=$workingId ";
+
+    print(query);
+
+    final List<Map<String, dynamic>> promoGraphAndApiCount = await db.rawQuery(query);
+    print(jsonEncode(promoGraphAndApiCount));
+    return PromoPlanGraphAndApiCountShowModel(
+        totalPromoPLan: promoGraphAndApiCount[0]['total_promo'] ?? 0,
+        totalDeployed: promoGraphAndApiCount[0]['total_deployed'] ?? 0,
+        totalNotDeployed: promoGraphAndApiCount[0]['total_not_deployed'] ?? 0,
+        totalPending: promoGraphAndApiCount[0]['total_pending'] ?? 0,
+        totalUploadCount: promoGraphAndApiCount[0]['total_uploaded'] ?? 0,
+        totalNotUploadCount: promoGraphAndApiCount[0]['total_not_uploaded'] ?? 0
+    );
+  }
+
+  static Future<List<SavePromoPlanDataListData>> getPromoPlansListDataForAPi(String workingId) async {
+    final db = await initDataBase();
+
+    String rawQuery = "SELECT sys_product.client_id as api_client_id,trans_promoplan.*"
+        " FROM trans_promoplan "
+        " join sys_product on sys_product.id=trans_promoplan.sku_id "
+        " WHERE working_id=$workingId AND upload_status=0 ";
+
+    print("Freshness QUERY");
+    print(rawQuery);
+
+    final List<Map<String, dynamic>> freshnessMap = await db.rawQuery(rawQuery);
+    print(freshnessMap);
+    return List.generate(freshnessMap.length, (index) {
+      return SavePromoPlanDataListData(
+          skuId: freshnessMap[index]['sku_id'],
+          clientId: freshnessMap[index]['api_client_id'],
+          promoId: freshnessMap[index]['promo_id'],
+          deployed: freshnessMap[index]['promo_status'],
+          reason: freshnessMap[index]['promo_reason'],
+          imageName: freshnessMap[index]['image_name'],
+
+      );
+    });
+  }
+
+  static Future<int> updatePromoPlanAfterGcsImageUpload(String workingId,String promoId) async {
+    String writeQuery = "UPDATE trans_promoplan SET gcs_status=1 WHERE working_id=$workingId AND promo_id = $promoId";
+
+    var db = await initDataBase();
+    print("_______________UpdATE GCS Planoguide________________");
+    print(writeQuery);
+
+    return await db.rawUpdate(writeQuery);
+  }
+
+  //trans stock list
+  static Future<List<TransStockModel>> getDataListStock(String workingId,
+      String clientId, String jpSessionClientIds, String brandId,
+      String categoryId, String subCategoryId) async {
+    String searchWhere = "";
+    String clientIds = "";
+    if (clientId != "-1") {
+      clientIds = clientId;
+    } else {
+      clientIds = jpSessionClientIds;
+    }
+    if (brandId != "-1") {
+      searchWhere = "$searchWhere And sys_product.brand_id = '$brandId'";
+    }
+    if (subCategoryId != "-1") {
+      searchWhere =
+      "$searchWhere And sys_product.subcategory_id = '$subCategoryId'";
+    }
+    if (categoryId != "-1") {
+      searchWhere = "$searchWhere And sys_product.category_id = '$categoryId'";
+    }
+    print("Sub Category FIlter");
+    print(searchWhere);
+    final db = await initDataBase();
+    String query = "SELECT IFNULL(SUM(outer),0) as total_outer,IFNULL(SUM(cases),0) as total_cases,IFNULL(SUM(pieces),0) as total_pieces, SystemTable.*,TransTable.act_status From (SELECT sys_product.id as pro_id,"
+        " sys_product.en_name as pro_en_name,sys_product.client_id,"
+        " sys_product.ar_name as pro_ar_name,sys_category.en_name  ||  '  ' ||  sys_subcategory.en_name as cat_en_name,"
+        " sys_category.ar_name as cat_ar_name,"
+        " sys_brand.en_name as brand_en_name,sys_brand.ar_name as brand_ar_name,sys_product.image,"
+        " sys_product.rsp, sys_subcategory.en_name as sub_category,sys_brand.en_name as brand"
+        " from sys_product"
+        " JOIN sys_category on sys_category.id=sys_product.category_id"
+        " JOIN sys_subcategory on sys_subcategory.id=sys_product.subcategory_id"
+        " JOIN sys_brand on sys_brand.id=sys_product.brand_id"
+        " WHERE 1=1 And sys_product.client_id in ($clientIds) And sys_product.id not in (11000,11001,11002) $searchWhere) SystemTable"
+        " LEFT JOIN (SELECT sku_id,act_status,cases,outer,pieces FROM trans_stock WHERE working_id=$workingId) TransTable "
+        " on SystemTable.pro_id = TransTable.sku_id"
+        " GROUP BY SystemTable.pro_id ORDER BY sub_category,brand ASC";
+    final List<Map<String, dynamic>> pricingMap = await db.rawQuery(query);
+    return List.generate(pricingMap.length, (index) {
+      return TransStockModel(
+          pro_id: pricingMap[index]['pro_id'] as int,
+          cat_en_name: pricingMap[index]['cat_en_name'] ?? "",
+          cat_ar_name: pricingMap[index]['cat_ar_name'] ?? "",
+          pro_en_name: pricingMap[index]['pro_en_name'] ?? "",
+          pro_ar_name: pricingMap[index]['pro_ar_name'] ?? "",
+          img_name: pricingMap[index]['image'] ?? "",
+          rsp: pricingMap[index]['rsp'] ?? "",
+          brand_en_name: pricingMap[index]['brand_en_name'] ?? "",
+          brand_ar_name: pricingMap[index]['brand_ar_name'] ?? "",
+          upload_status: pricingMap[index]['upload_status'] ?? 0,
+          act_status: pricingMap[index]['act_status'] ?? 0,
+          cases: pricingMap[index]['total_cases'] ?? 0,
+          outer: pricingMap[index]['total_outer'] ?? 0,
+          pieces: int.parse(pricingMap[index]['total_pieces'].toString()),
+          client_id: pricingMap[index]['client_id'] ?? "");
+    });
+  }
+
+  static Future<TotalStockCountData> getStockCount(
+      String workingId,
+      String clientId,
+      String brandId,
+      String categoryId,
+      String subCategoryId) async {
+
+    String searchWhere = "";
+
+    if (clientId != "-1") {
+      searchWhere = "$searchWhere And sys_product.client_id = '$clientId'";
+    } else {
+    }
+
+    if (brandId != "-1") {
+      searchWhere = "$searchWhere And sys_product.brand_id = '$brandId'";
+    }
+    if (subCategoryId != "-1") {
+      searchWhere = "$searchWhere And sys_product.subcategory_id = '$subCategoryId'";
+    }
+    if (categoryId != "-1") {
+      searchWhere = "$searchWhere And sys_product.category_id = '$categoryId'";
+    }
+
+    final db = await initDataBase();
+    String query = "SELECT count(DISTINCT sku_id) as total_stock_taken,"
+        " sum(cases) As total_cases,"
+        " sum(outer) As total_outer,"
+        " sum(pieces) As total_pieces,"
+        " sum(CASE WHEN upload_status = 0 THEN 1 ELSE 0 END) As total_not_uploaded,"
+        " sum(CASE WHEN upload_status = 1 THEN 1 ELSE 0 END) As total_uploaded"
+        " FROM trans_stock"
+        " join sys_product on sys_product.id=trans_stock.sku_id"
+        " WHERE working_id=$workingId $searchWhere";
+    print(query);
+    final List<Map<String, dynamic>> stockGraphCount = await db.rawQuery(query);
+    print(jsonEncode(stockGraphCount));
+    return TotalStockCountData(
+        total_stock_taken: stockGraphCount[0]['total_stock_taken'] ?? 0,
+        total_cases: stockGraphCount[0]['total_cases'] ?? 0,
+        total_outers: stockGraphCount[0]['total_outer'] ?? 0,
+        total_pieces: stockGraphCount[0]['total_pieces'] ?? 0,
+        total_not_upload: stockGraphCount[0]['total_not_uploaded'] ?? 0,
+        total_uploaded: stockGraphCount[0]['total_uploaded'] ?? 0);
+  }
+
+  static Future<int> insertTransStockeCheck(int skuId, int cases, int outer,int pieces, String workingID,String dateTime,String clientId) async {
+    String insertQuery = '''
+  INSERT INTO trans_stock (sku_id, cases,client_id, outer,pieces,upload_status,act_status, date_time, working_id)
+  VALUES ($skuId, $cases, 0,$outer, $pieces,0,1,${wrapIfString(dateTime)},$workingID)
+''';
+
+    var db = await initDataBase();
+    print("_______________INSERT Trans stock________________");
+    print(insertQuery);
+    return await db.rawInsert(insertQuery);
+  }
+
+  static Future<List<SaveStockListData>> getStockDataListFromApi(String workingId) async {
+
+    final db = await initDataBase();
+
+    String rawQuery = "SELECT sys_product.client_id as api_client_id,trans_stock.*"
+        " FROM trans_stock "
+        " join sys_product on sys_product.id=trans_stock.sku_id "
+        " WHERE working_id=$workingId AND upload_status=0 ";
+
+    print("Stock QUERY");
+    print(rawQuery);
+
+    final List<Map<String, dynamic>> freshnessMap = await db.rawQuery(rawQuery);
+    print(freshnessMap);
+    return List.generate(freshnessMap.length, (index) {
+      return SaveStockListData(
+          skuId: freshnessMap[index]['sku_id'],
+          clientId: freshnessMap[index]['api_client_id'],
+          dateTime: freshnessMap[index]['date_time'] ?? "",
+          cases: freshnessMap[index]['cases'],
+          outer: freshnessMap[index]['outer'],
+          pieces: freshnessMap[index]['pieces']
+      );
+    });
+  }
+
+  static Future<int> updateStockAfterApi(String workingId,String ids) async {
+    String writeQuery = "UPDATE trans_stock SET upload_status=1 WHERE working_id=$workingId AND date_time in ($ids)";
+
+    var db = await initDataBase();
+    print("_______________UpdATE Stock________________");
+    print(writeQuery);
+
+    return await db.rawUpdate(writeQuery);
+  }
+
+  static Future<int> updatePromoPlanAfterApi(String workingId,String ids) async {
+    String writeQuery = "UPDATE trans_promoplan SET upload_status = 1 WHERE working_id=$workingId AND promo_id in ($ids)";
+
+    var db = await initDataBase();
+    print("_______________UpdATE API Planoguide________________");
+    print(writeQuery);
+
+    return await db.rawUpdate(writeQuery);
+  }
+
+  static Future<List<TransPlanoGuideGcsImagesListModel>> getPromoPlanGcsImagesList(String workingId) async {
+    final db = await initDataBase();
+    String rawQuery = "SELECT promo_id, image_name"
+        " FROM trans_promoplan WHERE working_id=$workingId AND gcs_status=0";
+
+    print("Promo Plan QUERY");
+    print(rawQuery);
+
+    final List<Map<String, dynamic>> rtvMap = await db.rawQuery(rawQuery);
+    print(rtvMap);
+    print("Promo Plan Images List");
+    return List.generate(rtvMap.length, (index) {
+      return TransPlanoGuideGcsImagesListModel(
+          id: rtvMap[index]['promo_id'],
+          imageName: rtvMap[index]['image_name'],
+          imageFile: null
+      );
+    });
+  }
 
   ///Delete Data from tabkle with workingId
   static Future<void> deleteTransTableByWorkingId(String tblName, String workingId) async {

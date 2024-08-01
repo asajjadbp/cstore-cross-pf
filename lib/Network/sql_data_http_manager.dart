@@ -16,6 +16,9 @@ import '../Model/request_model.dart/planoguide_request_model.dart';
 import '../Model/request_model.dart/ready_pick_list_request.dart';
 import '../Model/request_model.dart/save_api_pricing_data_request.dart';
 import '../Model/request_model.dart/save_api_rtv_data_request.dart';
+import '../Model/request_model.dart/save_freshness_request_model.dart';
+import '../Model/request_model.dart/save_promo_plan_request_model.dart';
+import '../Model/request_model.dart/save_stock_request_model.dart';
 import '../Model/request_model.dart/sos_end_api_request_model.dart';
 import '../Model/response_model.dart/tmr_pick_list_response_model.dart';
 import 'api.dart';
@@ -134,7 +137,8 @@ class SqlHttpManager {
         pick_list_send_time: pickList[index]['pick_list_send_time'] ?? "",
         pick_list_receive_time: pickList[index]['tmr_send_time'] ?? "",
         isReasonShow: true,
-        reasonValue: []
+        reasonValue: [],
+        pick_list_reason: pickList[index]['picklist_reason'] ?? ""
       );
     });
   }
@@ -164,6 +168,29 @@ class SqlHttpManager {
     return response;
   }
 
+  Future<dynamic> saveFreshness(String token, String baseUrl,SaveFreshnessData saveFreshnessData) async {
+    final url = baseUrl + Api.postFreshnessData;
+    print(url);
+    print(jsonEncode(saveFreshnessData));
+    var response = await _handler.postWithJson(Uri.parse(url), saveFreshnessData.toJson(), token);
+    return response;
+  }
+
+  Future<dynamic> savePromoPlan(String token, String baseUrl,SavePromoPlanData savePromoPlanData) async {
+    final url = baseUrl + Api.postPromoPlanData;
+    print(url);
+    print(jsonEncode(savePromoPlanData));
+    var response = await _handler.postWithJson(Uri.parse(url), savePromoPlanData.toJson(), token);
+    return response;
+  }
+
+  Future<dynamic> saveStock(String token, String baseUrl,SaveStockData saveStockData) async {
+    final url = baseUrl + Api.postStockData;
+    print(url);
+    print(jsonEncode(saveStockData));
+    var response = await _handler.postWithJson(Uri.parse(url), saveStockData.toJson(), token);
+    return response;
+  }
 
 
 }

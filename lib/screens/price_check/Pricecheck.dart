@@ -1,5 +1,6 @@
 import 'package:cstore/screens/price_check/pricecheckcad.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Database/db_helper.dart';
 import '../../Model/database_model/category_model.dart';
@@ -24,6 +25,7 @@ class PriceCheck_Screen extends StatefulWidget {
 
 class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
   List<PricingShowModel> transData = [];
+  List<PricingShowModel> filterTransData = [];
   List<TextEditingController> promoController = [];
   List<TextEditingController> regularController = [];
   bool isLoading = false;
@@ -31,6 +33,7 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
   String clientId = "";
   String storeName = "";
   bool isBtnLoading = false;
+  bool isFilter = false;
   int promoPrice=0;
   int regularPrice=0;
   int skuId=0;
@@ -45,7 +48,7 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
   late CategoryModel initialCategoryItem;
   late CategoryModel initialSubCategoryItem;
   late SYS_BrandModel initialBrandItem;
-   PricingCountModel countPricing=PricingCountModel(total_pricing: 0);
+   PricingCountModel countPricing=PricingCountModel(total_pricing_products: 0,total_regular_pricing: 0,total_promo_pricing: 0);
   final GlobalKey<FormFieldState> clientKey = GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> categoryKey = GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> subCategoryKey = GlobalKey<FormFieldState>();
@@ -72,18 +75,20 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
     getPricingCount();
   }
   getPricingCount()async {
-    await DatabaseHelper.getPricingCountData(workingId).then((value) {
+    await DatabaseHelper.getPricingCountData(workingId,selectedClientId.toString(),selectedBrandId.toString(),selectedCategoryId.toString(),selectedSubCategoryId.toString()).then((value) {
       countPricing = value;
       print("TOTAL total_pricing");
-      print(countPricing.total_pricing);
+      print(countPricing.total_pricing_products);
       setState(() {
       });
     });
   }
   Future<void> getTransPricingOne() async {
-    await DatabaseHelper.getDataListPriceCheck(workingId,selectedClientId.toString(),selectedBrandId.toString(),selectedCategoryId.toString(),selectedSubCategoryId.toString())
+    await DatabaseHelper.getDataListPriceCheck(workingId,selectedClientId.toString(),clientId,selectedBrandId.toString(),selectedCategoryId.toString(),selectedSubCategoryId.toString())
         .then((value) async {
         transData = value;
+
+        getPricingCount();
         setState(() {});
     });
   }
@@ -208,6 +213,14 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
       menuState(() {
         isBrandLoading = false;
       });
+    });
+  }
+
+  searchFilter() {
+    setState(() {
+      isFilter = true;
+
+      filterTransData = transData.where((element) => element.act_status == 1).toList();
     });
   }
 
@@ -468,26 +481,93 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: PercentIndicator(
-                  isSelected: false,
-                  titleText: "Total Sku's",
-                  isIcon: false,
-                  iconData: Icons.add_circle,
-                  percentValue: transData.length/transData.length,
-                  percentText: transData.length.toString(),
-                  percentColor: MyColors.appMainColor,
-                ),
+                  child: InkWell(
+                    onTap: (){
+                      searchFilter();
+                    },
+                    child: Card(
+                      elevation: 5,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        alignment: Alignment.center,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Text("Price Sku's"),
+                            Container(
+                                margin: const EdgeInsets.symmetric(vertical: 5),
+                                child: const FaIcon(FontAwesomeIcons.layerGroup,color: MyColors.savebtnColor,)),
+                            Text("${countPricing.total_pricing_products}"),
+
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
               ),
+              const SizedBox(width: 5,),
               Expanded(
-                child: PercentIndicator(
-                  isSelected: false,
-                  titleText: "Total Values",
-                  isIcon: false,
-                  iconData: Icons.add_circle,
-                  percentValue: countPricing.total_pricing / 100,
-                  percentText:countPricing.total_pricing.toString(),
-                  percentColor: MyColors.appMainColor,
-                ),
+                  child: InkWell(
+                    onTap: (){
+                      searchFilter();
+                    },
+                    child: Card(
+                      elevation: 5,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        alignment: Alignment.center,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Text("Regular Sku's"),
+                            Container(
+                                margin: const EdgeInsets.symmetric(vertical: 5),
+                                child: const FaIcon(FontAwesomeIcons.circleDollarToSlot,color: MyColors.savebtnColor,)),
+                            Text("${countPricing.total_regular_pricing}"),
+
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+              ),
+              const SizedBox(width: 5,),
+              Expanded(
+                  child: InkWell(
+                    onTap: (){
+                      searchFilter();
+                    },
+                    child: Card(
+                      elevation: 5,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        alignment: Alignment.center,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Text("Promo Sku's",),
+                            Container(
+                                margin: const EdgeInsets.symmetric(vertical: 5),
+                                child: const FaIcon(FontAwesomeIcons.bullhorn,color: MyColors.savebtnColor,)),
+                            Text("${countPricing.total_promo_pricing}"),
+
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
               ),
             ],
           ),
@@ -496,8 +576,46 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
             child: Center(
               child: MyLoadingCircle(),
             ),
-          )
-              : transData.isEmpty
+          ) : isFilter ? filterTransData.isEmpty ? const Center(
+            child: Text("No data found"),
+          ) : Expanded(
+            child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: filterTransData.length,
+                itemBuilder: (ctx, i) {
+                  promoController.insert(i, TextEditingController());
+                  regularController.insert(i, TextEditingController());
+
+                  promoController[i].text = filterTransData[i].promo_price;
+                  regularController[i].text = filterTransData[i].regular_price;
+
+                  return pricecheckcard(
+                    valueControllerPromo: promoController[i],
+                    valueControllerRegular: regularController[i],
+                    image:
+                    "https://storage.googleapis.com/panda-static/sku_pictures/${filterTransData[i].img_name}",
+                    proName: filterTransData[i].pro_en_name,
+                    regular: filterTransData[i].regular_price,
+                    promo:filterTransData[i].promo_price,
+                    rsp: filterTransData[i].rsp,
+                    pricingValues: (String regular, String promo) {
+                      promoController[i].text = promo;
+                      regularController[i].text = regular;
+
+                      print(regular);
+                      print(promo);
+
+
+                      if(filterTransData[i].act_status!=1){
+                        InsertTransPromoPrice(regular,promo,filterTransData[i].pro_id);
+                      } else{
+                        UpdateTransPromoPrice(regular,promo,filterTransData[i].pro_id);}
+
+                    }, actStatus: filterTransData[i].act_status,
+                  );
+                }),
+          ) :
+          transData.isEmpty
               ? const Center(
             child: Text("No data found"),
           )

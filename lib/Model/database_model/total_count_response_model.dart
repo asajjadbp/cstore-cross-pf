@@ -174,8 +174,10 @@ class RtvCountModel {
   int totalRtv;
   int totalNotUpload;
   int totalUpload;
+  int totalVolume;
+  int totalValue;
 
-  RtvCountModel({required this.totalRtv,required this.totalNotUpload ,required this.totalUpload});
+  RtvCountModel({required this.totalRtv,required this.totalNotUpload ,required this.totalUpload,required this.totalVolume,required this.totalValue});
 
   // Method to convert an instance of AvailableCountModel to a map
   Map<String, dynamic> toJson() {
@@ -183,6 +185,8 @@ class RtvCountModel {
       'total_rtv': totalRtv,
       'total_not_uploaded': totalNotUpload,
       'total_uploaded' : totalUpload,
+      'total_volume': totalVolume,
+      'total_value' : totalValue,
     };
   }
 
@@ -192,6 +196,8 @@ class RtvCountModel {
       totalRtv: json['total_rtv'],
       totalNotUpload: json['total_not_uploaded'],
       totalUpload: json['total_uploaded'],
+      totalVolume: json['total_volume'],
+      totalValue: json['total_value'],
     );
   }
 }
@@ -200,8 +206,10 @@ class PriceCheckCountModel {
   int totalPriceCheck;
   int totalNotUpload;
   int totalUpload;
+  int totalRegularSku;
+  int totalPromoSku;
 
-  PriceCheckCountModel({required this.totalPriceCheck,required this.totalNotUpload ,required this.totalUpload});
+  PriceCheckCountModel({required this.totalPriceCheck,required this.totalNotUpload ,required this.totalUpload, required this.totalRegularSku,required this.totalPromoSku});
 
   // Method to convert an instance of AvailableCountModel to a map
   Map<String, dynamic> toJson() {
@@ -209,6 +217,8 @@ class PriceCheckCountModel {
       'total_price_check': totalPriceCheck,
       'total_not_uploaded': totalNotUpload,
       'total_uploaded' : totalUpload,
+      'total_regular_products': totalRegularSku,
+      'total_promo_products' : totalPromoSku,
     };
   }
 
@@ -218,6 +228,8 @@ class PriceCheckCountModel {
       totalPriceCheck: json['total_price_check'],
       totalNotUpload: json['total_not_uploaded'],
       totalUpload: json['total_uploaded'],
+      totalRegularSku: json['total_regular_products'],
+      totalPromoSku: json['total_promo_products'],
     );
   }
 }
