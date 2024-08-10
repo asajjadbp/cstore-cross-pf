@@ -4247,17 +4247,16 @@ class DatabaseHelper {
     return await db.rawUpdate(writeQuery);
   }
 
+  static Future<int> updateFreshnessAfterResetLocalData(String workingId,int skuId,String month,String year) async {
 
-  // static Future<int> updateFreshnessAfterDeleteLocalData(String workingId,String dateTime,String month) async {
-  //   String monthSubString = month.replaceAll(" ", "").substring(0,3).toLowerCase();
-  //   String writeQuery = "UPDATE trans_freshness SET $monthSubString = 0 WHERE working_id=$workingId AND date_time in ($ids)";
-  //
-  //   var db = await initDataBase();
-  //   print("_______________UpdATE Freshness________________");
-  //   print(writeQuery);
-  //
-  //   return await db.rawUpdate(writeQuery);
-  // }
+    String writeQuery = "UPDATE trans_freshness SET $month = 0 WHERE working_id=$workingId AND sku_id = $skuId AND year = $year";
+
+    var db = await initDataBase();
+    print("_______________UpdATE Freshness After Local Reset________________");
+    print(writeQuery);
+
+    return await db.rawUpdate(writeQuery);
+  }
 
   ///Promo Plan Database Queries
   static Future<int>  insertTransPromoPlan(String workingID,int storeId) async {

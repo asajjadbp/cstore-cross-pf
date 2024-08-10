@@ -218,6 +218,37 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 12, top: 3),
+                              child: Text(
+                                storeName,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                                style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 12, top: 3),
+                              child: Text(
+                                "CheckIn : $checkInTime",
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                                style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color:MyColors.darkGreyColor),
+                              ),
+                            )
+                          ],
+
+                        ),
                         if (availabilityCountModel.totalSku > 0 )
                           VisitAvlUploadScreenCard(
                             onUploadTap: (){
@@ -466,25 +497,42 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
                     showDialog(
                       context: context,
+                      barrierDismissible: false,
                       builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('Visit'),
-                          content: const Text('Are you sure you want to finish this visit?'),
-                          actions: <Widget>[
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop(); // Close the dialog
-                              },
-                              child: const Text('Cancel'),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                // Perform logout operation
-                                finishVisit();
-                              },
-                              child: const Text('Continue'),
-                            ),
-                          ],
+                        return StatefulBuilder(
+                            builder: (BuildContext context1, StateSetter menuState) {
+                              return AlertDialog(
+                                title: const Text('Visit'),
+                                content: const Text('Are you sure you want to finish this visit?'),
+                                actions: <Widget>[
+                                  isDataUploading ? const Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                       CircularProgressIndicator(color: MyColors.appMainColor2,),
+                                    ],
+                                  ) : Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop(); // Close the dialog
+                                        },
+                                        child: const Text('No'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          // Perform logout operation
+                                          finishVisit(menuState);
+                                        },
+                                        child: const Text('Yes'),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              );
+                            }
                         );
                       },
                     );
@@ -498,26 +546,42 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                   } else {
                     showDialog(
                       context: context,
+                      barrierDismissible: false,
                       builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('Visit'),
-                          content: const Text(
-                              'Are you sure you want to finish this visit?'),
-                          actions: <Widget>[
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop(); // Close the dialog
-                              },
-                              child: const Text('Cancel'),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                // Perform logout operation
-                                finishVisit();
-                              },
-                              child: const Text('Continue'),
-                            ),
-                          ],
+                        return StatefulBuilder(
+                            builder: (BuildContext context1, StateSetter menuState) {
+                              return AlertDialog(
+                                title: const Text('Visit'),
+                                content: const Text('Are you sure you want to finish this visit?'),
+                                actions: <Widget>[
+                                  isDataUploading ? const Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      CircularProgressIndicator(color: MyColors.appMainColor2,),
+                                    ],
+                                  ) : Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop(); // Close the dialog
+                                        },
+                                        child: const Text('No'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          // Perform logout operation
+                                          finishVisit(menuState);
+                                        },
+                                        child: const Text('Yes'),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              );
+                            }
                         );
                       },
                     );
@@ -2065,8 +2129,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
     return true;
   }
 
-  finishVisit() async {
-    setState(() {
+  finishVisit(StateSetter menuState) async {
+    menuState(() {
       isDataUploading = true;
     });
     await LocationService.getLocation().then((value) async {
@@ -2089,14 +2153,15 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
           await deleteVisitData(),
 
-          setState(() {
+          menuState(() {
             isDataUploading = false;
           }),
+
           ToastMessage.succesMessage(context, "Visit Ended Successfully"),
           Navigator.popUntil(context, (route) => count++ == 3),
         }).catchError((e) =>{
           print(e.toString()),
-          setState(() {
+          menuState(() {
             isDataUploading = false;
           }),
           ToastMessage.errorMessage(context, e.toString()),

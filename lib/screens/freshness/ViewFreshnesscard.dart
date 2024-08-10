@@ -23,6 +23,18 @@ class ExpiryCard extends StatelessWidget {
     required this.sku_en_name,
     required this.sku_ar_name,
     required this.imageName,
+    required this.onJanTap,
+    required this.onFebTap,
+    required this.onMarTap,
+    required this.onAprTap,
+    required this.onMayTap,
+    required this.onJunTap,
+    required this.onJulTap,
+    required this.onAugTap,
+    required this.onSepTap,
+    required this.onOctTap,
+    required this.onNovTap,
+    required this.onDecTap,
   });
 
   final int sku_id;
@@ -42,6 +54,18 @@ class ExpiryCard extends StatelessWidget {
   final String sku_en_name;
   final String sku_ar_name;
   final String imageName;
+  final Function onJanTap;
+  final Function onFebTap;
+  final Function onMarTap;
+  final Function onAprTap;
+  final Function onMayTap;
+  final Function onJunTap;
+  final Function onJulTap;
+  final Function onAugTap;
+  final Function onSepTap;
+  final Function onOctTap;
+  final Function onNovTap;
+  final Function onDecTap;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +89,7 @@ class ExpiryCard extends StatelessWidget {
                   decoration: const BoxDecoration(
                       borderRadius: BorderRadius.only(bottomRight: Radius.circular(10)),
                       color: MyColors.appMainColor),
-                  child: Text(year,style: TextStyle(color: MyColors.whiteColor),),
+                  child: Text(year,style: const TextStyle(color: MyColors.whiteColor),),
                 ),
                 Expanded(
                   child: Container(
@@ -119,26 +143,26 @@ class ExpiryCard extends StatelessWidget {
                       children: [
                         Row(
                             children: [
-                              CardWidget(title: "Jan",data: jan,),
-                              CardWidget(title: "Feb",data: feb,),
-                              CardWidget(title: "Mar",data: mar,),
-                              CardWidget(title: "Apr",data: apr,),
+                              CardWidget(title: "Jan",data: jan,onCardTap: (){onJanTap();},),
+                              CardWidget(title: "Feb",data: feb,onCardTap: (){onFebTap();},),
+                              CardWidget(title: "Mar",data: mar,onCardTap: (){onMarTap();},),
+                              CardWidget(title: "Apr",data: apr,onCardTap: (){onAprTap();},),
                             ],
                         ),
                         Row(
                           children: [
-                            CardWidget(title: "May",data: may,),
-                            CardWidget(title: "Jun",data: jun,),
-                            CardWidget(title: "Jul",data: jul,),
-                            CardWidget(title: "Aug",data: aug,),
+                            CardWidget(title: "May",data: may,onCardTap: (){onMayTap();},),
+                            CardWidget(title: "Jun",data: jun,onCardTap: (){onJunTap();},),
+                            CardWidget(title: "Jul",data: jul,onCardTap: (){onJulTap();},),
+                            CardWidget(title: "Aug",data: aug,onCardTap: (){onAugTap();},),
                           ],
                         ),
                         Row(
                           children: [
-                            CardWidget(title: "Sep",data: sep,),
-                            CardWidget(title: "Oct",data: oct,),
-                            CardWidget(title: "Nov",data: nov,),
-                            CardWidget(title: "Dec",data: dec,),
+                            CardWidget(title: "Sep",data: sep,onCardTap: (){onSepTap();},),
+                            CardWidget(title: "Oct",data: oct,onCardTap: (){onOctTap();},),
+                            CardWidget(title: "Nov",data: nov,onCardTap: (){onNovTap();},),
+                            CardWidget(title: "Dec",data: dec,onCardTap: (){onDecTap();},),
                           ],
                         ),
                       ],
@@ -154,56 +178,62 @@ class ExpiryCard extends StatelessWidget {
 class CardWidget extends StatelessWidget {
   final String title;
   final String data;
-  CardWidget({super.key, required this.title, required this.data});
+  final Function onCardTap;
+  CardWidget({super.key, required this.title, required this.data,required this.onCardTap});
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border(top: BorderSide(color: data !="" ? MyColors.appMainColor : Colors.grey.withOpacity(0.2),width: 3),
-            bottom: BorderSide(color: data !="" ? Colors.grey.withOpacity(0.2) : Colors.grey.withOpacity(0.2),width: 3),
-            left: BorderSide(color: data !="" ? Colors.grey.withOpacity(0.2) : Colors.grey.withOpacity(0.2),width: 3),
-            right: BorderSide(color: data !="" ? Colors.grey.withOpacity(0.2) : Colors.grey.withOpacity(0.2),width: 3)
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              spreadRadius: 0.3,
-              blurRadius: 1,
-              offset: const Offset(1, 1),
+      child: InkWell(
+        onLongPress: () {
+          onCardTap();
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border(top: BorderSide(color: data !="" ? MyColors.appMainColor : Colors.grey.withOpacity(0.2),width: 3),
+              bottom: BorderSide(color: data !="" ? Colors.grey.withOpacity(0.2) : Colors.grey.withOpacity(0.2),width: 3),
+              left: BorderSide(color: data !="" ? Colors.grey.withOpacity(0.2) : Colors.grey.withOpacity(0.2),width: 3),
+              right: BorderSide(color: data !="" ? Colors.grey.withOpacity(0.2) : Colors.grey.withOpacity(0.2),width: 3)
             ),
-          ],
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                spreadRadius: 0.3,
+                blurRadius: 1,
+                offset: const Offset(1, 1),
+              ),
+            ],
 
-        ),
-        margin: const EdgeInsets.symmetric(horizontal: 3,vertical: 3),
-        child: Column(
-          children: [
-            Text(
-             title,
-             style: const TextStyle(
-               fontSize: 10.0,
-               fontWeight: FontWeight.w600,
-               color: MyColors.appMainColor,
-             ),
-                ),
-                const SizedBox(height: 5,),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-             child: Container(
-               padding:const EdgeInsets.all(5),
-               child: Text(
-                 data!="" ? data: '--',
-                 maxLines: 1,
-                 style: const TextStyle(
-                   fontSize: 11.0,
-                   color: Colors.black,
-                   fontFamily: 'lato',
-                   fontWeight: FontWeight.w500,
+          ),
+          margin: const EdgeInsets.symmetric(horizontal: 3,vertical: 3),
+          child: Column(
+            children: [
+              Text(
+               title,
+               style: const TextStyle(
+                 fontSize: 10.0,
+                 fontWeight: FontWeight.w600,
+                 color: MyColors.appMainColor,
+               ),
+                  ),
+                  const SizedBox(height: 5,),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+               child: Container(
+                 padding:const EdgeInsets.all(5),
+                 child: Text(
+                   data!="" ? data: '--',
+                   maxLines: 1,
+                   style: const TextStyle(
+                     fontSize: 11.0,
+                     color: Colors.black,
+                     fontFamily: 'lato',
+                     fontWeight: FontWeight.w500,
+                   ),
                  ),
                ),
-             ),
-                ),
-          ],
+                  ),
+            ],
+          ),
         ),
       ),
     );

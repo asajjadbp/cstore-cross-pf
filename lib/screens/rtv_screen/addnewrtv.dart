@@ -137,6 +137,7 @@ class _addnewrtvscreenState extends State<addnewrtvscreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.imageName);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(

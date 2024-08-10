@@ -25,6 +25,7 @@ class ViewFreshness_Screen extends StatefulWidget {
 class _ViewFreshness_ScreenState extends State<ViewFreshness_Screen> {
   String storeName = "";
   String userName = "";
+  String imageBaseUrl = "";
   List<TransFreshnessModel> transData = [];
   bool isLoading = true;
   String workingId = "";
@@ -152,6 +153,7 @@ class _ViewFreshness_ScreenState extends State<ViewFreshness_Screen> {
     userName = sharedPreferences.getString(AppConstants.userName)!;
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
     clientId = sharedPreferences.getString(AppConstants.clientId)!;
+    imageBaseUrl = sharedPreferences.getString(AppConstants.imageBaseUrl)!;
     getClientData();
 
     getTransFreshnessOne();
@@ -377,6 +379,112 @@ class _ViewFreshness_ScreenState extends State<ViewFreshness_Screen> {
             return  Padding(
               padding: const EdgeInsets.all(10),
               child: ExpiryCard(
+                  onJanTap: (){
+                    if(transData[i].jan >0) {
+                      resetMonthEntry(
+                          transData[i].sku_id, transData[i].year.toString(),
+                          "Jan".toString(), transData[i].sku_en_name);
+                    }
+                    },
+                  onFebTap: (){
+                    if(transData[i].feb >0){
+                            resetMonthEntry(
+                                transData[i].sku_id,
+                                transData[i].year.toString(),
+                                "Feb".toString(),
+                                transData[i].sku_en_name);
+                          }
+                        },
+                  onMarTap: (){
+                    if(transData[i].mar >0){
+                            resetMonthEntry(
+                                transData[i].sku_id,
+                                transData[i].year.toString(),
+                                "Mar".toString(),
+                                transData[i].sku_en_name);
+                          }
+                        },
+                  onAprTap: (){
+                    if(transData[i].apr >0){
+                            resetMonthEntry(
+                                transData[i].sku_id,
+                                transData[i].year.toString(),
+                                "Apr".toString(),
+                                transData[i].sku_en_name);
+                          }
+                        },
+                  onMayTap: (){
+                    if(transData[i].may >0){
+                            resetMonthEntry(
+                                transData[i].sku_id,
+                                transData[i].year.toString(),
+                                "May".toString(),
+                                transData[i].sku_en_name);
+                          }
+                        },
+                  onJunTap: (){
+                    if(transData[i].jun >0) {
+                            resetMonthEntry(
+                                transData[i].sku_id,
+                                transData[i].year.toString(),
+                                "Jun".toString(),
+                                transData[i].sku_en_name);
+                          }
+                        },
+                  onJulTap: (){
+                    if(transData[i].jul >0){
+                            resetMonthEntry(
+                                transData[i].sku_id,
+                                transData[i].year.toString(),
+                                "Jul".toString(),
+                                transData[i].sku_en_name);
+                          }
+                        },
+                  onAugTap: (){
+                    if(transData[i].aug >0){
+                            resetMonthEntry(
+                                transData[i].sku_id,
+                                transData[i].year.toString(),
+                                "Aug".toString(),
+                                transData[i].sku_en_name);
+                          }
+                        },
+                  onSepTap: (){
+                    if(transData[i].sep >0){
+                            resetMonthEntry(
+                                transData[i].sku_id,
+                                transData[i].year.toString(),
+                                "Sep".toString(),
+                                transData[i].sku_en_name);
+                          }
+                        },
+                  onOctTap: (){
+                    if(transData[i].oct >0){
+                            resetMonthEntry(
+                                transData[i].sku_id,
+                                transData[i].year.toString(),
+                                "Oct".toString(),
+                                transData[i].sku_en_name);
+                          }
+                        },
+                  onNovTap: (){
+                    if(transData[i].nov >0){
+                            resetMonthEntry(
+                                transData[i].sku_id,
+                                transData[i].year.toString(),
+                                "Nov".toString(),
+                                transData[i].sku_en_name);
+                          }
+                        },
+                  onDecTap: (){
+                    if(transData[i].dec >0){
+                            resetMonthEntry(
+                                transData[i].sku_id,
+                                transData[i].year.toString(),
+                                "Dec".toString(),
+                                transData[i].sku_en_name);
+                          }
+                        },
                   sku_id: transData[i].sku_id,
                   year:  transData[i].year.toString(),
                   jan:  transData[i].jan.toString(),
@@ -393,9 +501,41 @@ class _ViewFreshness_ScreenState extends State<ViewFreshness_Screen> {
                   dec:  transData[i].dec.toString(),
                   sku_en_name:  transData[i].sku_en_name,
                   sku_ar_name:  transData[i].sku_ar_name,
-                   imageName:  "https://storage.googleapis.com/panda-static/sku_pictures/${transData[i].imgName}",),
+                   imageName:  "${imageBaseUrl}sku_pictures/${transData[i].imgName}",),
             );
           }),
     );
   }
+
+  resetMonthEntry(int skuId,String year,String month,String skuName) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Reset Freshness"),
+          content:  Text('Are you sure you want to reset $month $year for $skuName?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('No'),
+            ),
+            TextButton(
+              onPressed: ()async {
+                  await DatabaseHelper.updateFreshnessAfterResetLocalData(workingId,skuId,month,year).then((value) {
+                    Navigator.of(context).pop();
+                    getTransFreshnessOne();
+
+                  });
+              },
+              child: const Text('Yes'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
 }

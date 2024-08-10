@@ -32,6 +32,7 @@ class _StockListScreenState extends State<StockListScreen> {
   bool isFilter = false;
   String workingId = "";
   String clientId = "";
+  String imageBaseUrl = "";
   late String pro_client_id = "0";
   String storeName = "";
   String UserId = "";
@@ -80,6 +81,7 @@ class _StockListScreenState extends State<StockListScreen> {
        storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
        clientId = sharedPreferences.getString(AppConstants.clientId)!;
        UserId = sharedPreferences.getString(AppConstants.userName)!;
+       imageBaseUrl = sharedPreferences.getString(AppConstants.imageBaseUrl)!;
        getTransStockOne();
 
      });
@@ -642,7 +644,7 @@ class _StockListScreenState extends State<StockListScreen> {
                       onDeleteTap: () {
                         deleteStockData(filterTransData[i].pro_id);
                       },
-                      image:"https://storage.googleapis.com/panda-static/sku_pictures/${filterTransData[i].img_name}",
+                      image:"${imageBaseUrl}sku_pictures/${filterTransData[i].img_name}",
                       proName:filterTransData[i].pro_en_name,
                       pieces: filterTransData[i].pieces,
                       actStatus: filterTransData[i].act_status,
@@ -671,7 +673,7 @@ class _StockListScreenState extends State<StockListScreen> {
                                 onDeleteTap: (){
                                   deleteStockData(transData[i].pro_id);
                                 },
-                                image:"https://storage.googleapis.com/panda-static/sku_pictures/${transData[i].img_name}",
+                                image:"${imageBaseUrl}sku_pictures/${transData[i].img_name}",
                                 proName:transData[i].pro_en_name,
                                 pieces: transData[i].pieces,
                                 actStatus: transData[i].act_status,

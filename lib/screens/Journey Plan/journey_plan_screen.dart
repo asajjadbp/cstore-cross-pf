@@ -194,7 +194,7 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
           : SmartRefresher(
         controller: _refreshController,
         enablePullDown: true,
-        enablePullUp: true,
+        enablePullUp: false,
         onRefresh: _onRefresh,
         child: ListView.builder(
             itemCount: jpData.length,
@@ -313,7 +313,7 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
 
     Navigator.of(context).pushNamed(GridDashBoard.routeName).then((value) {
       print("JP SCREEN LOADING");
-      getJpDataFromSqlDb();
+      callJp();
     });
   }
 
@@ -332,7 +332,7 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
         "visitItem": journeyPlanDetail
       }).then((value) {
         print("JP SCREEN LOADING");
-        getJpDataFromSqlDb();
+        callJp();
       });
     });
   }
@@ -349,7 +349,7 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
         .dropVisit(
         userName, workingId, selectedReasonId.toString(), token, baseUrl)
         .then((value) {
-      getJpDataFromSqlDb();
+      callJp();
       setState(() {
         isDropLoading = false;
         dropWorkingId = workingId;

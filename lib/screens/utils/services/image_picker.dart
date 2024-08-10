@@ -9,10 +9,7 @@ class ImageTakingService {
     if (image == null) {
       return null;
     }
-    XFile waterMarkFile = await addWatermark(XFile(image.path),DateTime.now().toString());
-    print(waterMarkFile.path);
-    print(waterMarkFile.name);
-    File imageFile = File(waterMarkFile.path);
-    return imageFile;
+
+    return File(image.path);
   }
 }

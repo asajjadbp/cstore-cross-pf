@@ -32,6 +32,7 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
   bool isLoading = false;
   String workingId = "";
   String clientId = "";
+  String imageBaseUrl = "";
   String storeName = "";
   String userName = "";
   bool isBtnLoading = false;
@@ -72,6 +73,7 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
       storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
       userName = sharedPreferences.getString(AppConstants.userName)!;
       clientId = sharedPreferences.getString(AppConstants.clientId)!;
+      imageBaseUrl = sharedPreferences.getString(AppConstants.imageBaseUrl)!;
     });
     getTransPricingOne();
     getClientData();
@@ -603,7 +605,7 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
                     valueControllerPromo: promoController[i],
                     valueControllerRegular: regularController[i],
                     image:
-                    "https://storage.googleapis.com/panda-static/sku_pictures/${filterTransData[i].img_name}",
+                    "${imageBaseUrl}sku_pictures/${filterTransData[i].img_name}",
                     proName: filterTransData[i].pro_en_name,
                     regular: filterTransData[i].regular_price,
                     promo:filterTransData[i].promo_price,
@@ -644,7 +646,7 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
                     valueControllerPromo: promoController[i],
                     valueControllerRegular: regularController[i],
                     image:
-                        "https://storage.googleapis.com/panda-static/sku_pictures/${transData[i].img_name}",
+                        "${imageBaseUrl}sku_pictures/${transData[i].img_name}",
                     proName: transData[i].pro_en_name,
                     regular: transData[i].regular_price,
                     promo:transData[i].promo_price,

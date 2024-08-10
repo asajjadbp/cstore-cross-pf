@@ -214,9 +214,9 @@ class _DashBoardState extends State<DashBoard> {
                   radius: 29.0,
                   lineWidth: 6.0,
                   animation: true,
-                  percent: percentValue / 100,
+                  percent: percentValue.toInt() >= 100 ? 1 : percentValue / 100,
                   center: Text(
-                    "$percentValue%",
+                    "${percentValue.toInt()}%",
                     style: const TextStyle(
                         fontWeight: FontWeight.w500,
                         fontSize: 14,
@@ -313,7 +313,7 @@ class _DashBoardState extends State<DashBoard> {
               animation: true,
               lineHeight: 20.0,
               animationDuration: 2500,
-              percent: percentValue / 100,
+              percent: percentValue.toInt() >= 100 ? 1 : percentValue / 100,
               center: Text(
                 barname,
                 style: const TextStyle(color: Colors.white),
@@ -322,7 +322,7 @@ class _DashBoardState extends State<DashBoard> {
               progressColor: MyColors.appMainColor,
             ),
           ),
-          Text("$percentValue%")
+          Text("${percentValue.toInt()}%")
         ],
       );
     }
@@ -367,7 +367,7 @@ class _DashBoardState extends State<DashBoard> {
         ) : SmartRefresher(
           controller: _refreshController,
           enablePullDown: true,
-          enablePullUp: true,
+          enablePullUp: false,
           onRefresh: _onRefresh,
           child: SingleChildScrollView(
             child: Container(

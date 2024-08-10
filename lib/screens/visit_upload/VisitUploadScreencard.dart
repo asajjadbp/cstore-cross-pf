@@ -41,43 +41,6 @@ class VisitAvlUploadScreenCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: screenWidth / 1.7,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 12, top: 3),
-                  child: Text(
-                    storeName,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
-                    style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black),
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: screenWidth /3,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 12, top: 3),
-                  child: Text(
-                    "CheckIn : $checkinTime",
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
-                    style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color:MyColors.darkGreyColor),
-                  ),
-                ),
-              )
-            ],
-
-          ),
           Padding(
             padding: const EdgeInsets.only(left:12,top: 8),
             child: Text(

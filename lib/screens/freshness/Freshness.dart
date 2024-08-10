@@ -45,6 +45,7 @@ class _Freshness_ScreenState extends State<Freshness_Screen> {
   bool isSubCategoryLoading = false;
   bool isBrandLoading = false;
   String month = "";
+  String imageBaseUrl = "";
   int year = 0;
   String pieces = "";
   final GlobalKey<FormFieldState> clientKey = GlobalKey<FormFieldState>();
@@ -234,6 +235,8 @@ class _Freshness_ScreenState extends State<Freshness_Screen> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
     storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    imageBaseUrl = sharedPreferences.getString(AppConstants.imageBaseUrl)!;
+
     setState(() {});
     print(storeName);
   }
@@ -625,7 +628,7 @@ class _Freshness_ScreenState extends State<Freshness_Screen> {
                 itemBuilder: (ctx, i) {
                   return FreshnessListCard(
                     image:
-                    "https://storage.googleapis.com/panda-static/sku_pictures/${transData[i].img_name}",
+                    "${imageBaseUrl}sku_pictures/${transData[i].img_name}",
                     proName: filterTransData[i].pro_en_name,
                     catName: filterTransData[i].cat_en_name,
                     rsp: filterTransData[i].rsp,
@@ -644,7 +647,7 @@ class _Freshness_ScreenState extends State<Freshness_Screen> {
                 itemBuilder: (ctx, i) {
                   return FreshnessListCard(
                     image:
-                        "https://storage.googleapis.com/panda-static/sku_pictures/${transData[i].img_name}",
+                        "${imageBaseUrl}sku_pictures/${transData[i].img_name}",
                     proName: transData[i].pro_en_name,
                     catName: transData[i].cat_en_name,
                     rsp: transData[i].rsp,

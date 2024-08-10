@@ -14,7 +14,7 @@ Future<void> takePicture(BuildContext context, File? imageFile,
     String imageName, String visitId, String moduleName) async {
   final PermissionStatus permissionStatus = await _getPermission();
   XFile compressedImageFile;
-  // XFile compressedWaterMarkImageFile;
+  XFile compressedWaterMarkImageFile;
   if (permissionStatus == PermissionStatus.granted) {
     if (imageFile != null) {
       final String dirPath = (await getExternalStorageDirectory())!.path;
@@ -42,25 +42,25 @@ Future<void> takePicture(BuildContext context, File? imageFile,
       }
 
       //Image Compress Function call
-      // compressedWaterMarkImageFile = await addWatermark(compressedImageFile, DateTime.now().toString());
+      compressedWaterMarkImageFile = await addWatermark(compressedImageFile, DateTime.now().toString());
 
       print("__________________FIle Details________________");
       print(mb);
       print(dirPath);
       print(filePath);
       print(imageName);
-      print(compressedImageFile.path);
+      print(compressedWaterMarkImageFile.path);
       print(imageFile.lengthSync());
-      print(await compressedImageFile.length());
+      print(await compressedWaterMarkImageFile.length());
       print("__________________FIle Details________________");
 
       if (await folder.exists()) {
-        await File(compressedImageFile.path).copy(filePath).then((value) {
+        await File(compressedWaterMarkImageFile.path).copy(filePath).then((value) {
           // ToastMessage.succesMessage(context, "Image store successfully");
         });
       } else {
         await Directory(folderPath).create(recursive: true);
-        await File(compressedImageFile.path).copy(filePath).then((value) {
+        await File(compressedWaterMarkImageFile.path).copy(filePath).then((value) {
           // ToastMessage.succesMessage(context, "Image store successfully");
         });
       }

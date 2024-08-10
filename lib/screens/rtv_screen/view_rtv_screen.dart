@@ -30,6 +30,7 @@ class _viewrtvScreenState extends State<viewrtvScreen> {
   String storeName = '';
   String userName = '';
   String clientId = '';
+  String imageBaseUrl = '';
 
   @override
   void initState() {
@@ -43,6 +44,7 @@ class _viewrtvScreenState extends State<viewrtvScreen> {
     storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
     userName = sharedPreferences.getString(AppConstants.userName)!;
     clientId = sharedPreferences.getString(AppConstants.clientId)!;
+    imageBaseUrl = sharedPreferences.getString(AppConstants.imageBaseUrl)!;
     getTransRTVOne();
   }
 
@@ -159,7 +161,7 @@ class _viewrtvScreenState extends State<viewrtvScreen> {
                       time: transData[i].dateTime,
                       title: transData[i].pro_en_name,
                       proImage:
-                          "https://storage.googleapis.com/panda-static/sku_pictures/${transData[i].pro_image}",
+                          "${imageBaseUrl}sku_pictures/${transData[i].pro_image}",
                       rtvImage:transData[i].imageFile as File,
                       type: transData[i].reason_en_name,
                       piece: transData[i].pieces.toString(),

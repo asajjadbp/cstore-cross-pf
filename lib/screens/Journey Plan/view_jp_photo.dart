@@ -4,8 +4,10 @@ import 'package:cstore/screens/grid_dashboard/grid_dashboard.dart';
 import 'package:cstore/screens/utils/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 import '../../Model/response_model.dart/jp_response_model.dart';
+import '../utils/services/take_image_and_save_to_folder.dart';
 import '../widget/app_bar_widgets.dart';
 import '/Network/jp_http.dart';
 import '../utils/services/getting_gps.dart';
@@ -49,7 +51,7 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
             commentText.text, token, baseUrl)
         .then((value) {
           print("CHECKING TIME");
-          print(value['data'][0]['check_in']);
+          print(value['data']);
 
           sharedPreferences.setString(AppConstants.workingId, journeyPlanDetail.workingId.toString());
           sharedPreferences.setString(AppConstants.storeId, journeyPlanDetail.storeId.toString());
@@ -66,11 +68,12 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
           setState(() {
         isLoading = false;
       });
-        Navigator.of(context).pop();
 
         ToastMessage.succesMessage(context, value['msg']);
 
-        Navigator.of(context).pushNamed(GridDashBoard.routeName);
+        Navigator.of(context).pushNamed(GridDashBoard.routeName).then((value) => {
+          Navigator.of(context).pop(),
+        });
     }).catchError((error) {
       setState(() {
         isLoading = false;
@@ -133,9 +136,12 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
           print("Bucket Name asdwa");
           print(bucketName);
           print(filePath);
+          XFile waterMarkFile = await addWatermark(XFile(imageFile.path),DateTime.now().toString());
+          print(waterMarkFile.path);
+          print(waterMarkFile.name);
+          File waterMarkImageFile = File(waterMarkFile.path);
 
-
-          final fileContent = await imageFile.readAsBytes();
+          final fileContent = await waterMarkImageFile.readAsBytes();
           final bucketObject = Object(name: filePath);
 
           // Upload the image

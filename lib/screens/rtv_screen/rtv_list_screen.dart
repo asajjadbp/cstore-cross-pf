@@ -36,6 +36,7 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
   bool isLoading = false;
   bool isFilter = false;
   String workingId = "";
+  String imageBaseUrl = "";
   String clientId = "";
   String otherExcludes = "";
   String storeName = '';
@@ -156,6 +157,7 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
       userName = sharedPreferences.getString(AppConstants.userName)!;
       clientId = sharedPreferences.getString(AppConstants.clientId)!;
       otherExcludes = sharedPreferences.getString(AppConstants.otherExclude)!;
+      imageBaseUrl = sharedPreferences.getString(AppConstants.imageBaseUrl)!;
     });
     getClientData();
     getTransRTVOne();
@@ -277,30 +279,7 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
     return Scaffold(
       backgroundColor:MyColors.background,
       appBar: generalAppBar(context, storeName, userName, (){
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text("Visit"),
-              content: const Text('Are you sure you want to quit this visit?'),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
-                  },
-                  child: const Text('No'),
-                ),
-                TextButton(
-                  onPressed: ()async {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Yes'),
-                ),
-              ],
-            );
-          },
-        );
+        Navigator.of(context).pop();
       }, (){
         setState(() {
           isFilter = false;
@@ -615,7 +594,7 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
                           builder: (context) => addnewrtvscreen(
                             sku_id: filterTransData[i].pro_id,
                             imageName:
-                            "https://storage.googleapis.com/panda-static/sku_pictures/${filterTransData[i].img_name}",
+                            "${imageBaseUrl}sku_pictures/${filterTransData[i].img_name}",
                             SkuName: filterTransData[i].pro_en_name,
                           ),
                         ),
@@ -629,7 +608,7 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
                     },
                     child: Rtvcard(
                       imageName:
-                      "https://storage.googleapis.com/panda-static/sku_pictures/${filterTransData[i].img_name}",
+                      "${imageBaseUrl}sku_pictures/${filterTransData[i].img_name}",
                       productName: filterTransData[i].pro_en_name,
                       icon1: const Icon(
                         Icons.category_rounded,
@@ -655,6 +634,7 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
                     shrinkWrap: true,
                     itemCount: transData.length,
                     itemBuilder: (ctx, i) {
+                      print( "${imageBaseUrl}sku_pictures/${transData[i].img_name}");
                       return InkWell(
                         onTap: () {
                           Navigator.push(
@@ -663,7 +643,7 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
                               builder: (context) => addnewrtvscreen(
                                 sku_id: transData[i].pro_id,
                                 imageName:
-                                "https://storage.googleapis.com/panda-static/sku_pictures/${transData[i].img_name}",
+                                "${imageBaseUrl}sku_pictures/${transData[i].img_name}",
                                 SkuName: transData[i].pro_en_name,
                               ),
                             ),
@@ -674,7 +654,7 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
                         },
                         child: Rtvcard(
                           imageName:
-                          "https://storage.googleapis.com/panda-static/sku_pictures/${transData[i].img_name}",
+                          "${imageBaseUrl}sku_pictures/${transData[i].img_name}",
                           productName: transData[i].pro_en_name,
                           icon1: const Icon(
                             Icons.category_rounded,
