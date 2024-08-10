@@ -8,6 +8,7 @@ import '../../Database/db_helper.dart';
 import '../../Database/table_name.dart';
 import '../../Model/database_model/show_trans_sos.dart';
 import '../utils/app_constants.dart';
+import '../widget/app_bar_widgets.dart';
 import '../widget/shareofshellshow.dart';
 
 class ViewShareOfShelf extends StatefulWidget {
@@ -24,6 +25,7 @@ class _ViewShareOfShelfState extends State<ViewShareOfShelf> {
   bool isLoading = false;
   String workingId = "";
   String storeName = '';
+  String userName = '';
 
   @override
   void initState() {
@@ -36,6 +38,7 @@ class _ViewShareOfShelfState extends State<ViewShareOfShelf> {
 
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
     storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    userName = sharedPreferences.getString(AppConstants.userName)!;
     getTransSOSOne();
   }
 
@@ -79,70 +82,9 @@ class _ViewShareOfShelfState extends State<ViewShareOfShelf> {
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: const Color(0xFFF4F7FD),
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: const Color.fromRGBO(0, 77, 145, 1),
-        title: Container(
-          padding: EdgeInsets.only(
-            top: screenHeight / 70,
-          ),
-          height: screenHeight / 6,
-          width: screenWidth,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.only(bottom: screenHeight / 110),
-                      child: const Icon(
-                        Icons.arrow_back,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(left: 20),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Panda 251 King Road",
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        ),
-                        SizedBox(
-                          height: screenHeight / 200,
-                        ),
-                        const Text("Share Of shelf Show",
-                            style: TextStyle(color: Colors.white, fontSize: 12))
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Icon(
-                    Icons.search,
-                    size: 20,
-                    color: Colors.white,
-                  ),
-                  Text("09 May 2024",
-                      style: TextStyle(color: Colors.white, fontSize: 10))
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
+      appBar: generalAppBar(context, storeName, userName, (){
+        Navigator.of(context).pop();
+      }, (){print("filter Click");}, true, false, false),
       body: transData.isEmpty ? const Center(child: Text("No Data Available"),) : ListView.builder(
           padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
           shrinkWrap: true,

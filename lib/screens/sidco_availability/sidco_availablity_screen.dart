@@ -5,6 +5,7 @@ import 'package:cstore/Model/request_model.dart/get_tmr_pick_list_request.dart';
 import 'package:cstore/screens/availability/widgets/availability_card_item.dart';
 import 'package:cstore/screens/availability/widgets/custom_dialogue.dart';
 import 'package:cstore/screens/availability/widgets/pick_list_card_item.dart';
+import 'package:cstore/screens/sidco_availability/widgets/sidco_availability_card_item.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
@@ -29,15 +30,15 @@ import 'package:badges/badges.dart' as badges;
 import '../widget/percent_indicator.dart';
 import 'package:intl/intl.dart';
 
-class Availability extends StatefulWidget {
-  static const routename = "view_availability_route";
-  const Availability({super.key});
+class SidcoAvailability extends StatefulWidget {
+  static const routename = "view_sidco_availability_route";
+  const SidcoAvailability({super.key});
 
   @override
-  State<Availability> createState() => _AvailabilityState();
+  State<SidcoAvailability> createState() => _SidcoAvailabilityState();
 }
 
-class _AvailabilityState extends State<Availability> {
+class _SidcoAvailabilityState extends State<SidcoAvailability> {
 
   String workingId = "";
   String storeName = "";
@@ -712,20 +713,20 @@ class _AvailabilityState extends State<Availability> {
       //   }, icon: const Icon(Icons.filter_alt_outlined,color: MyColors.whiteColor,))
       // ],
       // ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: selectedIndex,
-        onTap: (index) => changeIndex(index),
-        selectedItemColor: MyColors.appMainColor,
-        unselectedItemColor: Colors.grey,
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
-        items: [
-          BottomNavigationBarItem(
-              icon: selectedIndex == 0 ? Image.asset("assets/icons/home_icon_blue.png") : Image.asset("assets/icons/home_icon_grey.png"), label: "Home"),
-          BottomNavigationBarItem(
-              icon: selectedIndex == 1 ? Image.asset("assets/icons/pick_list_icon_blue.png") : Image.asset("assets/icons/pick_list_icon_grey.png"),  label: "Pick List"),
-        ],
-      ),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   currentIndex: selectedIndex,
+      //   onTap: (index) => changeIndex(index),
+      //   selectedItemColor: MyColors.appMainColor,
+      //   unselectedItemColor: Colors.grey,
+      //   showSelectedLabels: true,
+      //   showUnselectedLabels: true,
+      //   items: [
+      //     BottomNavigationBarItem(
+      //         icon: selectedIndex == 0 ? Image.asset("assets/icons/home_icon_blue.png") : Image.asset("assets/icons/home_icon_grey.png"), label: "Home"),
+      //     BottomNavigationBarItem(
+      //         icon: selectedIndex == 1 ? Image.asset("assets/icons/pick_list_icon_blue.png") : Image.asset("assets/icons/pick_list_icon_grey.png"),  label: "Pick List"),
+      //   ],
+      // ),
       body: Container(
         margin:const EdgeInsets.symmetric(horizontal: 10),
         child: isLoading || isCountLoading ? const MyLoadingCircle() : Column(
@@ -1076,9 +1077,9 @@ class _AvailabilityState extends State<Availability> {
                           itemCount: filteredList.length,
                           shrinkWrap: true,
                           itemBuilder: (context,index) {
-                            return AvailabilityItem(
+                            return SidcoAvailabilityItem(
                                 onImageTap: (){
-                                  getDetailsDialogue(filteredList[index]);
+                                  // getDetailsDialogue(filteredList[index]);
                                 },
                                 imageName: "${imageBaseUrl}sku_pictures/${filteredList[index].image}",
                                 isAvailable: filteredList[index].avl_status,
@@ -1086,7 +1087,7 @@ class _AvailabilityState extends State<Availability> {
                                 categoryName: filteredList[index].cat_en_name,
                                 pickListText: filteredList[index].requried_picklist.toString(),
                                 onTapPickList: (){
-                                  if(filteredList[index].avl_status != -1) {
+
                                     textEditingController.text =
                                         filteredList[index].requried_picklist
                                             .toString();
@@ -1128,9 +1129,7 @@ class _AvailabilityState extends State<Availability> {
                                           );
                                         }
                                     );
-                                  } else {
-                                    ToastMessage.errorMessage(context, "Please mark item status first");
-                                  }
+
                                 },
                                 onAvailable: (){
                                   setState(() {
@@ -1147,29 +1146,39 @@ class _AvailabilityState extends State<Availability> {
                                 },
                                 onNotAvailable: (){
                                   setState(() {
-                                    textEditingController.text = filteredList[index].requried_picklist.toString();
-                                    showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return CustomDialog(
-                                            isButtonActive: filteredList[index].requried_picklist == 0,
-                                            badgeNumber: 0,
-                                            textEditingController: textEditingController,
-                                            title: filteredList[index].pro_en_name,
-                                            pickListValue: (value) {
-                                              setState(() {
-                                                filteredList[index].requried_picklist = int.parse(value);
-                                                filteredList[index].pick_upload_status=0;
-                                                int ind = availableData.indexWhere((element) => element.pro_id == filteredList[index].pro_id);
-                                                availableData[ind].requried_picklist = int.parse(value);
-                                                availableData[ind].pick_upload_status=0;
 
-                                                updatePickListAfterSave(index,true,filteredList[index].requried_picklist.toString(),filteredList[index].pro_id.toString());
-                                              });
-                                            },
-                                          );
-                                        }
-                                    );
+                                    filteredList[index].avl_status = 0;
+                                    filteredList[index].activity_status = 1;
+                                    int ind = availableData.indexWhere(
+                                            (element) => element.pro_id == filteredList[index].pro_id);
+                                    availableData[ind].avl_status = 0;
+                                    availableData[ind].activity_status = 1;
+                                    updateAvailableItem(false, filteredList[index].pro_id,
+                                        filteredList[index].avl_status);
+                                    isEdit = true;
+                                    // textEditingController.text = filteredList[index].requried_picklist.toString();
+                                    // // showDialog(
+                                    // //     context: context,
+                                    // //     builder: (BuildContext context) {
+                                    // //       return CustomDialog(
+                                    // //         isButtonActive: filteredList[index].requried_picklist == 0,
+                                    // //         badgeNumber: 0,
+                                    // //         textEditingController: textEditingController,
+                                    // //         title: filteredList[index].pro_en_name,
+                                    // //         pickListValue: (value) {
+                                    // //           setState(() {
+                                    // //             filteredList[index].requried_picklist = int.parse(value);
+                                    // //             filteredList[index].pick_upload_status=0;
+                                    // //             int ind = availableData.indexWhere((element) => element.pro_id == filteredList[index].pro_id);
+                                    // //             availableData[ind].requried_picklist = int.parse(value);
+                                    // //             availableData[ind].pick_upload_status=0;
+                                    // //
+                                    // //             updatePickListAfterSave(index,true,filteredList[index].requried_picklist.toString(),filteredList[index].pro_id.toString());
+                                    // //           });
+                                    // //         },
+                                    // //       );
+                                    // //     }
+                                    // // );
                                   });
                                   // updateAvailableItem(index, 0, "reason");
                                 });
@@ -1179,7 +1188,8 @@ class _AvailabilityState extends State<Availability> {
                           itemCount: availableData.length,
                           shrinkWrap: true,
                           itemBuilder: (context,index) {
-                            return AvailabilityItem(
+                            print( "${imageBaseUrl}sku_pictures/${availableData[index].image}");
+                            return SidcoAvailabilityItem(
                               onImageTap: (){
                                 getDetailsDialogue(availableData[index]);
                               },
@@ -1189,7 +1199,7 @@ class _AvailabilityState extends State<Availability> {
                                 categoryName: availableData[index].cat_en_name,
                                 pickListText: availableData[index].requried_picklist.toString(),
                                 onTapPickList: (){
-                                if(availableData[index].avl_status != -1) {
+
                                   textEditingController.text =
                                       availableData[index].requried_picklist
                                           .toString();
@@ -1222,9 +1232,7 @@ class _AvailabilityState extends State<Availability> {
                                         );
                                       }
                                   );
-                                } else {
-                                  ToastMessage.errorMessage(context, "Please mark item status first");
-                                }
+
                                 },
                                 onAvailable: (){
                                   setState(() {
@@ -1239,31 +1247,35 @@ class _AvailabilityState extends State<Availability> {
                                 onNotAvailable: (){
                                   setState(() {
 
-
-                                    textEditingController.text = availableData[index].requried_picklist.toString();
-
-                                    print(availableData[index].requried_picklist.toString());
-                                    print(textEditingController.text);
-                                    print("Required PickList Value");
-
-                                    showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return CustomDialog(
-                                            badgeNumber: 0,
-                                            isButtonActive: availableData[index].requried_picklist == 0,
-                                            textEditingController: textEditingController,
-                                            title: availableData[index].pro_en_name,
-                                            pickListValue: (value) {
-                                              setState(() {
-                                                availableData[index].requried_picklist = int.parse(value);
-                                                availableData[index].activity_status = 1;
-                                                updatePickListAfterSave(index,true,availableData[index].requried_picklist.toString(),availableData[index].pro_id.toString());
-                                              });
-                                            },
-                                          );
-                                        }
-                                    );
+                                    availableData[index].avl_status = 0;
+                                    availableData[index].activity_status = 1;
+                                    updateAvailableItem(false, availableData[index].pro_id,
+                                        availableData[index].avl_status);
+                                    isEdit = true;
+                                    // textEditingController.text = availableData[index].requried_picklist.toString();
+                                    //
+                                    // print(availableData[index].requried_picklist.toString());
+                                    // print(textEditingController.text);
+                                    // print("Required PickList Value");
+                                    //
+                                    // showDialog(
+                                    //     context: context,
+                                    //     builder: (BuildContext context) {
+                                    //       return CustomDialog(
+                                    //         badgeNumber: 0,
+                                    //         isButtonActive: availableData[index].requried_picklist == 0,
+                                    //         textEditingController: textEditingController,
+                                    //         title: availableData[index].pro_en_name,
+                                    //         pickListValue: (value) {
+                                    //           setState(() {
+                                    //             availableData[index].requried_picklist = int.parse(value);
+                                    //             availableData[index].activity_status = 1;
+                                    //             updatePickListAfterSave(index,true,availableData[index].requried_picklist.toString(),availableData[index].pro_id.toString());
+                                    //           });
+                                    //         },
+                                    //       );
+                                    //     }
+                                    // );
                                   });
                                   // updateAvailableItem(index, 0, "reason");
                                 });

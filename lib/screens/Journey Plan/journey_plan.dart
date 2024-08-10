@@ -61,7 +61,7 @@ class JourneyPlan extends StatelessWidget {
                                 bottomRight:
                                     Radius.circular(10.0)), // Image border
                             child: jp.startVisitPhoto.isNotEmpty && jp.startVisitPhoto != "null" ? CachedNetworkImage(
-                              imageUrl: "https://storage.googleapis.com/pandaimage-bucket/visits/${jp.startVisitPhoto}",
+                              imageUrl: "https://storage.googleapis.com/$imageBaseUrl/visits/${jp.startVisitPhoto}",
                               imageBuilder: (context, imageProvider) => Container(
                                 decoration: BoxDecoration(
                                   image: DecorationImage(

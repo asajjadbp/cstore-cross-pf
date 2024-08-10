@@ -10,6 +10,7 @@ class ShowPlanogramModel {
   late String brand_en_name;
   late String brand_ar_name;
   late String image_name;
+  late String dateTime;
   late int gcs_status = 1;
   late int upload_status = 0;
   File? imageFile;
@@ -29,6 +30,7 @@ class ShowPlanogramModel {
     required this.brand_ar_name,
     required this.image_name,
     required this.gcs_status,
+    required this.dateTime,
     required this.upload_status,
     required this.imageFile,
     required this.is_adherence,
@@ -47,6 +49,7 @@ class ShowPlanogramModel {
       'cat_id': cat_id,
       'reason_id': reason_id,
       'brand_id': brand_id,
+      'date_time': dateTime,
       TableName.cat_en_name: cat_en_name,
       TableName.cat_ar_name: cat_ar_name,
      TableName.sys_client_name:client_name,
@@ -66,6 +69,7 @@ class ShowPlanogramModel {
     cat_id = json['cat_id'];
     brand_id = json['brand_id'];
     reason_id = json['reason_id'];
+    dateTime = json['date_time'];
     cat_en_name = json[TableName.cat_en_name];
     cat_ar_name = json[TableName.cat_ar_name];
     client_name = json[TableName.sys_client_name];
@@ -80,6 +84,6 @@ class ShowPlanogramModel {
 
   @override
   String toString() {
-    return 'ShowPlanogramModel{id: $id,client_id: $client_id,cat_id: $cat_id,brand_id: $brand_id,reason_id: $reason_id, cat_en_name: $cat_en_name, client_name: $client_name, cat_ar_name: $cat_ar_name, brand_en_name: $brand_en_name, brand_ar_name: $brand_ar_name, image_name: $image_name, gcs_status: $gcs_status, upload_status: $upload_status, imageFile: $imageFile, is_adherence: $is_adherence, not_adherence_reason: $not_adherence_reason}';
+    return 'ShowPlanogramModel{id: $id,client_id: $client_id,date_time:$dateTime,cat_id: $cat_id,brand_id: $brand_id,reason_id: $reason_id, cat_en_name: $cat_en_name, client_name: $client_name, cat_ar_name: $cat_ar_name, brand_en_name: $brand_en_name, brand_ar_name: $brand_ar_name, image_name: $image_name, gcs_status: $gcs_status, upload_status: $upload_status, imageFile: $imageFile, is_adherence: $is_adherence, not_adherence_reason: $not_adherence_reason}';
   }
 }

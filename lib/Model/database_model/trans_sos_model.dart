@@ -10,6 +10,7 @@ class TransSOSModel {
   late String unit;
   late String date_time = "";
   late int working_id;
+  late int uploadStatus;
 
   TransSOSModel({
     required this.client_id,
@@ -19,6 +20,7 @@ class TransSOSModel {
     required this.actual_space,
     required this.unit,
     required this.date_time,
+    required this.uploadStatus,
     required this.working_id,});
 
   Map<String, Object?> toMap() {
@@ -31,6 +33,7 @@ class TransSOSModel {
       TableName.trans_sos_unit: unit,
       TableName.trans_date_time: date_time,
       TableName.trans_sos_working_id:working_id,
+      'upload_status':uploadStatus,
     };
   }
 
@@ -43,6 +46,7 @@ class TransSOSModel {
     unit = json[TableName.trans_sos_unit];
     date_time = json[TableName.trans_date_time];
     working_id = json[TableName.trans_sos_working_id];
+    uploadStatus = json[TableName.uploadStatus];
 
   }
 }

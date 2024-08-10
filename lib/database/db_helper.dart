@@ -54,6 +54,8 @@ import '../Model/database_model/trans_promo_plan_list_model.dart';
 import '../Model/database_model/trans_rtv_model.dart';
 import '../Model/request_model.dart/availability_api_request_model.dart';
 import '../Model/request_model.dart/brand_share_request.dart';
+import '../Model/request_model.dart/other_images_end_Api_request.dart';
+import '../Model/request_model.dart/planogram_end_api_request_model.dart';
 import '../Model/request_model.dart/planoguide_request_model.dart';
 import '../Model/request_model.dart/ready_pick_list_request.dart';
 import '../Model/request_model.dart/save_api_pricing_data_request.dart';
@@ -61,8 +63,11 @@ import '../Model/request_model.dart/save_api_rtv_data_request.dart';
 import '../Model/request_model.dart/save_freshness_request_model.dart';
 import '../Model/request_model.dart/save_promo_plan_request_model.dart';
 import '../Model/request_model.dart/save_stock_request_model.dart';
+import '../Model/request_model.dart/sos_end_api_request_model.dart';
 import '../Model/response_model.dart/adherence_response_model.dart';
+import '../Model/response_model.dart/jp_response_model.dart';
 import '../Model/response_model.dart/syncronise_response_model.dart';
+import '../Model/response_model.dart/user_dashboard_model.dart';
 
 class DatabaseHelper {
   static var instance;
@@ -886,6 +891,8 @@ class DatabaseHelper {
           " TEXT, " +
           TableName.picklist_reason   +
           " TEXT," +
+          TableName.workingId +
+          " INTEGER, " +
           TableName.trans_avl_receive_time +
           " TEXT " +")");
 
@@ -902,11 +909,90 @@ class DatabaseHelper {
           TableName.tblSysVisitActivityType + ')' + ")"
       );
 
+      ///JourneyPlanListAddition
+      await db.execute('CREATE TABLE ' +
+          TableName.tblSysJourneyPlan+
+          "(" +
+          TableName.workingId +
+          " INTEGER PRIMARY KEY UNIQUE," +
+          TableName.workingDate +
+          " TEXT, " +
+          TableName.storeId +
+          " INTEGER, " +
+          TableName.enStoreName +
+          " TEXT, " +
+          TableName.arStoreName +
+          " TEXT," +
+          TableName.storeGCode +
+          " TEXT," +
+          TableName.clientIds +
+          " TEXT," +
+          TableName.userId +
+          " INTEGER," +
+          TableName.checkInTime +
+          " TEXT," +
+          TableName.checkOutTime +
+          " TEXT," +
+          TableName.startVisitPhoto +
+          " TEXT," +
+          TableName.checkInGps +
+          " TEXT," +
+          TableName.checkOutGps +
+          " TEXT," +
+          TableName.visitStatus +
+          " INTEGER," +
+          TableName.visitType +
+          " TEXT," +
+          TableName.isDrop +
+          " INTEGER," +
+          TableName.visitActivityType +
+          " INTEGER," +
+          TableName.avlExclude +
+          " TEXT," +
+          TableName.otherExclude +
+          " TEXT" +
+          ")");
+
+
+      ///Dashboard Data Addition
+      await db.execute('CREATE TABLE ' +
+          TableName.tblSysDashboard+
+          "(" +
+          TableName.userId +
+          " INTEGER PRIMARY KEY UNIQUE," +
+          TableName.jpPlanned +
+          " INTEGER, " +
+          TableName.jpVisited +
+          " INTEGER, " +
+          TableName.outOfPlanned +
+          " INTEGER, " +
+          TableName.outOfPlannedVisited +
+          " INTEGER," +
+          TableName.jpc +
+          " INTEGER," +
+          TableName.pro +
+          " INTEGER," +
+          TableName.workingHrs +
+          " INTEGER," +
+          TableName.eff +
+          " INTEGER," +
+          TableName.monthlyAttend +
+          " INTEGER," +
+          TableName.monthlyPro +
+          " INTEGER," +
+          TableName.monthlyEff +
+          " INTEGER," +
+          TableName.monthlyIncentives +
+          " INTEGER," +
+          TableName.monthlyDeduction +
+          " INTEGER" +
+          ")");
 
     });
 
   }
   static Future<Database> initDataBase() async {
+
     return await openDatabase('cstore_pro.db');
   }
   //   ---****** Check Duplicate Data In List-----********
@@ -1035,6 +1121,129 @@ class DatabaseHelper {
     return false;
   }
 
+  ///Insert Journey Plan to system table
+  static Future<bool> insertSysJourneyPlanArray(List<JourneyPlanDetail> modelList) async {
+    var db = await initDataBase();
+
+    for (JourneyPlanDetail data in modelList) {
+      Map<String, dynamic> fields = {
+        TableName.workingId: data.workingId,
+        TableName.workingDate: data.workingDate,
+        TableName.storeId: data.storeId,
+        TableName.enStoreName: data.enStoreName,
+        TableName.arStoreName: data.arStoreName,
+        TableName.storeGCode: data.gcode,
+        TableName.clientIds: data.clientIds,
+        TableName.userId: data.userId,
+        TableName.checkInTime: data.checkIn,
+        TableName.checkOutTime: data.checkOut,
+        TableName.startVisitPhoto: data.startVisitPhoto,
+        TableName.checkInGps: data.checkinGps,
+        TableName.checkOutGps: data.checkoutGps,
+        TableName.visitStatus: data.visitStatus,
+        TableName.visitType: data.visitType,
+        TableName.isDrop: data.isDrop,
+        TableName.visitActivityType: data.visitActivity,
+        TableName.avlExclude: data.avlExclude,
+        TableName.otherExclude: data.otherExclude,
+      };
+
+      bool isDuplicate = await hasDuplicateEntry(
+          db, TableName.tblSysJourneyPlan, fields);
+
+      if (isDuplicate) {
+        print("Error: Duplicate entry sys Journey PLan");
+      } else {
+
+        await db.insert(
+          TableName.tblSysJourneyPlan,
+          {
+            TableName.workingId: data.workingId,
+            TableName.workingDate: data.workingDate,
+            TableName.storeId: data.storeId,
+            TableName.enStoreName: data.enStoreName,
+            TableName.arStoreName: data.arStoreName,
+            TableName.storeGCode: data.gcode,
+            TableName.clientIds: data.clientIds,
+            TableName.userId: data.userId,
+            TableName.checkInTime: data.checkIn,
+            TableName.checkOutTime: data.checkOut,
+            TableName.startVisitPhoto: data.startVisitPhoto,
+            TableName.checkInGps: data.checkinGps,
+            TableName.checkOutGps: data.checkoutGps,
+            TableName.visitStatus: data.visitStatus,
+            TableName.visitType: data.visitType,
+            TableName.isDrop: data.isDrop,
+            TableName.visitActivityType: data.visitActivity,
+            TableName.avlExclude: data.avlExclude,
+            TableName.otherExclude: data.otherExclude,
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+
+        print("Sys Journey Plan Item");
+        print(jsonEncode(data));
+      }
+    }
+    return false;
+  }
+
+  ///Insert Dashboard to system table
+  static Future<bool> insertSysDashboardArray(List<UserDashboardModel> modelList) async {
+    var db = await initDataBase();
+
+    for (UserDashboardModel data in modelList) {
+      Map<String, dynamic> fields = {
+        TableName.userId: data.user_id,
+        TableName.jpPlanned: data.jp_planned,
+        TableName.jpVisited: data.jp_visited,
+        TableName.outOfPlanned: data.out_of_planned,
+        TableName.outOfPlannedVisited: data.out_of_planned_visited,
+        TableName.jpc: data.jpc,
+        TableName.pro: data.pro,
+        TableName.workingHrs: data.working_hrs,
+        TableName.eff: data.eff,
+        TableName.monthlyAttend: data.monthly_attend,
+        TableName.monthlyPro: data.monthly_pro,
+        TableName.monthlyEff: data.monthly_eff,
+        TableName.monthlyIncentives: data.monthly_incentives,
+        TableName.monthlyDeduction: data.monthly_deduction,
+      };
+
+      bool isDuplicate = await hasDuplicateEntry(
+          db, TableName.tblSysDashboard, fields);
+
+      if (isDuplicate) {
+        print("Error: Duplicate entry sys Dashboard");
+      } else {
+
+        await db.insert(
+          TableName.tblSysDashboard,
+          {
+            TableName.userId: data.user_id,
+            TableName.jpPlanned: data.jp_planned,
+            TableName.jpVisited: data.jp_visited,
+            TableName.outOfPlanned: data.out_of_planned,
+            TableName.outOfPlannedVisited: data.out_of_planned_visited,
+            TableName.jpc: data.jpc,
+            TableName.pro: data.pro,
+            TableName.workingHrs: data.working_hrs,
+            TableName.eff: data.eff,
+            TableName.monthlyAttend: data.monthly_attend,
+            TableName.monthlyPro: data.monthly_pro,
+            TableName.monthlyEff: data.monthly_eff,
+            TableName.monthlyIncentives: data.monthly_incentives,
+            TableName.monthlyDeduction: data.monthly_deduction,
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+
+        print("Sys Dashboard Item");
+        print(jsonEncode(data));
+      }
+    }
+    return false;
+  }
 
   static Future<bool> insertDailyCheckListArray(List<Sys_OSDCTypeModel> modelList) async {
     var db = await initDataBase();
@@ -1919,16 +2128,17 @@ class DatabaseHelper {
     var db = await initDataBase();
     final List<Map<String, dynamic>> transphoto =
     await db.rawQuery(
-        "SELECT  trans_photo.id,trans_photo.client_id,trans_photo.cat_id,trans_photo.type_id,trans_photo.upload_status,sys_client.client_name ,sys_category.en_name as cat_en_name ,sys_category.ar_name as cat_ar_name ,trans_photo.gcs_status,sys_photo_type.en_name as type_en_name,sys_photo_type.ar_name as type_ar_name,"
+        "SELECT  trans_photo.id,trans_photo.client_id,trans_photo.cat_id,trans_photo.date_time,trans_photo.type_id,trans_photo.upload_status,sys_client.client_name ,sys_category.en_name as cat_en_name ,sys_category.ar_name as cat_ar_name ,trans_photo.gcs_status,sys_photo_type.en_name as type_en_name,sys_photo_type.ar_name as type_ar_name,"
             "trans_photo.image_name FROM trans_photo "
             "JOIN sys_client on sys_client.client_id=trans_photo.client_id "
             "JOIN sys_category on sys_category.id=trans_photo.cat_id "
             " JOIN sys_photo_type on sys_photo_type.id=trans_photo.type_id "
-            "WHERE trans_photo.photo_type_id=1 AND trans_photo.working_id=${workingId}");
+            "WHERE trans_photo.photo_type_id=1 AND trans_photo.working_id=$workingId ORDER BY sys_category.en_name,sys_photo_type.en_name ASC");
 
     return List.generate(transphoto.length, (index) {
       return GetTransPhotoModel(
         trans_photo_type_id: transphoto[index]['id'],
+        dateTime: transphoto[index]['date_time']??"",
         clientName: transphoto[index][TableName.sys_client_name] as String,
         img_name: transphoto[index][TableName.trans_photo_name] as String,
         imageFile: null,
@@ -1944,6 +2154,87 @@ class DatabaseHelper {
       );
     });
   }
+
+  ///Other Photo count for API
+  static Future<OtherPhotoCountModel> getOtherPhotoCountData(String workingId) async {
+    final db = await initDataBase();
+    final List<Map<String, dynamic>> result = (await db.rawQuery("SELECT count(id) AS total_photo_items, "
+        "COUNT(DISTINCT cat_id) as total_categories, "
+        "sum(CASE WHEN upload_status = 0 THEN 1 ELSE 0 END) As total_not_uploaded, "
+        "sum(CASE WHEN upload_status = 1 THEN 1 ELSE 0 END) As total_uploaded "
+        "FROM trans_photo WHERE working_id=$workingId"));
+    print(jsonEncode(result));
+    print("____________Other Photo Cont_______________");
+    return  OtherPhotoCountModel(
+      totalOtherPhotos: result[0]['total_photo_items'] ?? 0,
+      totalNotUpload: result[0]['total_not_uploaded'] ?? 0,
+      totalUpload: result[0]['total_uploaded'] ?? 0,
+      totalCategories: result[0]['total_categories'] ?? 0,
+    );
+  }
+
+  ///Other Photo List For GCS Upload
+  static Future<List<TransPlanoGuideGcsImagesListModel>> getOtherPhotoGcsImagesList(String workingId) async {
+    final db = await initDataBase();
+    String rawQuery = "SELECT id, image_name"
+        " FROM trans_photo WHERE working_id=$workingId AND gcs_status=0";
+
+    print("Other Photo QUERY");
+    print(rawQuery);
+
+    final List<Map<String, dynamic>> otherPhotoMap = await db.rawQuery(rawQuery);
+    print(otherPhotoMap);
+    print("Other Photo Images List");
+    return List.generate(otherPhotoMap.length, (index) {
+      return TransPlanoGuideGcsImagesListModel(
+          id: otherPhotoMap[index]['id'],
+          imageName: otherPhotoMap[index]['image_name'],
+          imageFile: null
+      );
+    });
+  }
+
+  static Future<int> updateOtherPhotoAfterGcsImageUpload(String workingId,String promoId) async {
+    String writeQuery = "UPDATE trans_photo SET gcs_status=1 WHERE working_id=$workingId AND id = $promoId";
+
+    var db = await initDataBase();
+    print("_______________UpdATE GCS Other Photo________________");
+    print(writeQuery);
+
+    return await db.rawUpdate(writeQuery);
+  }
+
+  static Future<List<SaveOtherPhotoData>> getOtherPhotoApiUploadDataList(String workingId) async {
+    final db = await initDataBase();
+    String rawQuery = "SELECT id,client_id,cat_id As category_id,photo_type_id, image_name "
+        " FROM trans_photo WHERE working_id=$workingId AND upload_status=0";
+
+    print("Other Photo QUERY");
+    print(rawQuery);
+
+    final List<Map<String, dynamic>> beforeFixingMap = await db.rawQuery(rawQuery);
+    print(beforeFixingMap);
+    return List.generate(beforeFixingMap.length, (index) {
+      return SaveOtherPhotoData(
+          transPhotoId: beforeFixingMap[index]['id'],
+          typeId: beforeFixingMap[index]['photo_type_id'],
+          categoryId: beforeFixingMap[index]['category_id'],
+          clientId: beforeFixingMap[index]['client_id'],
+          imageName: beforeFixingMap[index]['image_name']
+      );
+    });
+  }
+
+  static Future<int> updateOtherPhotoAfterApi(String workingId,String ids) async {
+    String writeQuery = "UPDATE trans_photo SET upload_status=1 WHERE working_id=$workingId AND id in ($ids)";
+
+    var db = await initDataBase();
+    print("_______________UpdATE Before Fixing________________");
+    print(writeQuery);
+
+    return await db.rawUpdate(writeQuery);
+  }
+
 
   static Future<List<GetTransOSDCModel>> getTransOSDC(String workingId) async {
     var db = await initDataBase();
@@ -2021,19 +2312,20 @@ class DatabaseHelper {
 
     final db = await initDataBase();
     final List<Map<String, dynamic>> planogram = await db.rawQuery(
-        "SELECT trans_planogram.id,trans_planogram.client_id,trans_planogram.cat_id,trans_planogram.brand_id,trans_planogram.reason_id,trans_planogram.gcs_status,trans_planogram.upload_status,sys_client.client_name,sys_category.en_name as cat_en_name,sys_category.ar_name as cat_ar_name, sys_brand.en_name as brand_en_name, sys_brand.ar_name as brand_ar_name,is_adherence,image_name, "
+        "SELECT trans_planogram.id,trans_planogram.client_id,trans_planogram.date_time,trans_planogram.cat_id,trans_planogram.brand_id,trans_planogram.reason_id,trans_planogram.gcs_status,trans_planogram.upload_status,sys_client.client_name,sys_category.en_name as cat_en_name,sys_category.ar_name as cat_ar_name, sys_brand.en_name as brand_en_name, sys_brand.ar_name as brand_ar_name,is_adherence,image_name, "
             "CASE WHEN sys_planogram_reason.id >0 then sys_planogram_reason.en_name  else 0 END as not_adh_reason "
             "FROM trans_planogram "
             "JOIN sys_client on sys_client.client_id=trans_planogram.client_id "
             "JOIN sys_category on sys_category.id=trans_planogram.cat_id "
             "JOIN sys_brand on sys_brand.id=trans_planogram.brand_id "
             "LEFT JOIN sys_planogram_reason on sys_planogram_reason.id=trans_planogram.reason_id "
-            "WHERE trans_planogram.working_id=$workingId");
+            "WHERE trans_planogram.working_id=$workingId ORDER BY sys_category.en_name,sys_brand.en_name ASC");
     print(jsonEncode(planogram));
 
     return List.generate(planogram.length, (index) {
       return ShowPlanogramModel(
         id:planogram[index]['id'] as int,
+        dateTime:planogram[index]['date_time'] ?? "",
         client_id: planogram[index]['client_id'] as int,
         cat_id: planogram[index]['cat_id'] as int,
         reason_id: planogram[index]['reason_id'] as int,
@@ -2054,6 +2346,92 @@ class DatabaseHelper {
       );
     });
   }
+
+  ///Trans Planogram count for API
+  static Future<PlanogramCountModel> getTransPlanogramCountData(String workingId) async {
+    final db = await initDataBase();
+    final List<Map<String, dynamic>> result = (await db.rawQuery("SELECT count(id) AS total_palnogram_items, "
+        "COUNT(DISTINCT cat_id) as total_categories, "
+        "SUM(CASE WHEN is_adherence = 1 THEN 1 ELSE 0 END) AS total_adhere, "
+        "SUM(CASE WHEN is_adherence = 0 THEN 1 ELSE 0 END) AS total_not_adhere, "
+        "sum(CASE WHEN upload_status = 0 THEN 1 ELSE 0 END) As total_not_uploaded, "
+        "sum(CASE WHEN upload_status = 1 THEN 1 ELSE 0 END) As total_uploaded "
+        "FROM trans_planogram WHERE working_id=$workingId"));
+    print(jsonEncode(result));
+    print("____________Planogram Count_______________");
+    return  PlanogramCountModel(
+      totalPlanogramItems: result[0]['total_palnogram_items'] ?? 0,
+      totalNotUpload: result[0]['total_not_uploaded'] ?? 0,
+      totalUpload: result[0]['total_uploaded'] ?? 0,
+      totalAdhere: result[0]['total_adhere'] ?? 0,
+      totalNotAdhere: result[0]['total_not_adhere'] ?? 0,
+    );
+  }
+
+  ///Trans Planogram Image List For GCS Upload
+  static Future<List<TransPlanoGuideGcsImagesListModel>> getTransPlanogramGcsImagesList(String workingId) async {
+    final db = await initDataBase();
+    String rawQuery = "SELECT id, image_name"
+        " FROM trans_planogram WHERE working_id=$workingId AND gcs_status=0";
+
+    print("Planogram QUERY");
+    print(rawQuery);
+
+    final List<Map<String, dynamic>> rtvMap = await db.rawQuery(rawQuery);
+    print(rtvMap);
+    print("Trans planogram Images List");
+    return List.generate(rtvMap.length, (index) {
+      return TransPlanoGuideGcsImagesListModel(
+          id: rtvMap[index]['id'],
+          imageName: rtvMap[index]['image_name'],
+          imageFile: null
+      );
+    });
+  }
+
+  static Future<int> updateTransPlanogramAfterGcsImageUpload(String workingId,String promoId) async {
+    String writeQuery = "UPDATE trans_planogram SET gcs_status=1 WHERE working_id=$workingId AND id = $promoId";
+
+    var db = await initDataBase();
+    print("_______________UpdATE GCS Trans Planogram________________");
+    print(writeQuery);
+
+    return await db.rawUpdate(writeQuery);
+  }
+
+  static Future<List<SavePlanogramPhotoData>> getTransPlanogramApiUploadDataList(String workingId) async {
+    final db = await initDataBase();
+    String rawQuery = "SELECT id,is_adherence,reason_id,brand_id,cat_id As category_id, image_name,client_id "
+        " FROM trans_planogram WHERE working_id=$workingId AND upload_status=0";
+
+    print("Trans Planogram QUERY");
+    print(rawQuery);
+
+    final List<Map<String, dynamic>> planogramMap = await db.rawQuery(rawQuery);
+    print(planogramMap);
+    return List.generate(planogramMap.length, (index) {
+      return SavePlanogramPhotoData(
+          id: planogramMap[index]['id'],
+          isAdherence: planogramMap[index]['is_adherence'].toString(),
+          reasonId: planogramMap[index]['reason_id'],
+          brandId: planogramMap[index]['brand_id'],
+          categoryId: planogramMap[index]['category_id'],
+          clientId: planogramMap[index]['client_id'],
+          imageName: planogramMap[index]['image_name']
+      );
+    });
+  }
+
+  static Future<int> updateTransPlanogramAfterApi(String workingId,String ids) async {
+    String writeQuery = "UPDATE trans_planogram SET upload_status=1 WHERE working_id=$workingId AND id in ($ids)";
+
+    var db = await initDataBase();
+    print("_______________UpdATE Trans Planogram________________");
+    print(writeQuery);
+
+    return await db.rawUpdate(writeQuery);
+  }
+
 
   static Future<bool> dataExists(int id) async {
     var db = await initDataBase();
@@ -2141,7 +2519,7 @@ class DatabaseHelper {
             "JOIN sys_client on sys_client.client_id=trans_sos.client_id "
             "JOIN sys_category on sys_category.id=trans_sos.cat_id "
             "JOIN sys_brand on sys_brand.id=trans_sos.brand_id "
-            "WHERE trans_sos.working_id=$workingId");
+            "WHERE trans_sos.working_id=$workingId ORDER BY sys_category.en_name,sys_brand.en_name ASC");
     print(jsonEncode(sos));
 
     return List.generate(sos.length, (index) {
@@ -2159,21 +2537,74 @@ class DatabaseHelper {
       );
     });
   }
+
+  ///Trans Share of Shelf count for API
+  static Future<SosCountModel> getSosCountData(String workingId) async {
+    final db = await initDataBase();
+    final List<Map<String, dynamic>> result = (await db.rawQuery("SELECT count(id) AS total_sos_items, "
+        "COUNT(DISTINCT cat_id) as total_categories, "
+        "sum(CASE WHEN upload_status = 0 THEN 1 ELSE 0 END) As total_not_uploaded, "
+        "sum(CASE WHEN upload_status = 1 THEN 1 ELSE 0 END) As total_uploaded "
+        "FROM trans_sos WHERE working_id=$workingId"));
+    print(jsonEncode(result));
+    print("____________SoS Cont_______________");
+    return  SosCountModel(
+      totalSosItems: result[0]['total_sos_items'] ?? 0,
+      totalNotUpload: result[0]['total_not_uploaded'] ?? 0,
+      totalUpload: result[0]['total_uploaded'] ?? 0,
+      totalCategories: result[0]['total_categories'] ?? 0,
+    );
+  }
+
+  static Future<List<SaveSosData>> getSosApiUploadDataList(String workingId) async {
+    final db = await initDataBase();
+    String rawQuery = "SELECT id, client_id, cat_id As category_id, brand_id ,unit,cat_space ,actual_space "
+        " FROM trans_sos WHERE working_id=$workingId AND upload_status=0";
+
+    print("SOS QUERY");
+    print(rawQuery);
+
+    final List<Map<String, dynamic>> beforeFixingMap = await db.rawQuery(rawQuery);
+    print(beforeFixingMap);
+    return List.generate(beforeFixingMap.length, (index) {
+      return SaveSosData(
+          id: beforeFixingMap[index]['id'],
+          categoryId: beforeFixingMap[index]['category_id'],
+          clientId: beforeFixingMap[index]['client_id'],
+          brandId: beforeFixingMap[index]['brand_id'],
+          catSpace: beforeFixingMap[index]['cat_space'].toString(),
+          actualSpace: beforeFixingMap[index]['actual_space'].toString(),
+          unit: beforeFixingMap[index]['unit'].toString(),
+      );
+    });
+  }
+
+  static Future<int> updateSosAfterApi(String workingId,String ids) async {
+    String writeQuery = "UPDATE trans_sos SET upload_status=1 WHERE working_id=$workingId AND id in ($ids)";
+
+    var db = await initDataBase();
+    print("_______________UpdATE SOS ________________");
+    print(writeQuery);
+
+    return await db.rawUpdate(writeQuery);
+  }
+
   static Future<List<GetTransBeforeFixing>> getTransBeforeFixing(String workingId) async {
     var db = await initDataBase();
     final List<Map<String, dynamic>> transbefore =
     await db.rawQuery(
         "SELECT  trans_before_fixing.id ,sys_client.client_name ,sys_category.en_name ,sys_category.ar_name,sys_category.id as cat_id,sys_category.client_id,"
-            " trans_before_fixing.gcs_status,trans_before_fixing.upload_status,trans_before_fixing.photo_type_id, trans_before_fixing.image_name FROM trans_before_fixing "
+            " trans_before_fixing.gcs_status,trans_before_fixing.upload_status,trans_before_fixing.photo_type_id,trans_before_fixing.date_time ,trans_before_fixing.image_name FROM trans_before_fixing "
             "JOIN sys_client on sys_client.client_id=trans_before_fixing.client_id "
             "JOIN sys_category on sys_category.id=trans_before_fixing.cat_id "
-            "WHERE trans_before_fixing.photo_type_id=1 AND trans_before_fixing.working_id=$workingId");
+            "WHERE trans_before_fixing.photo_type_id=1 AND trans_before_fixing.working_id=$workingId ORDER BY sys_category.en_name ASC");
 
     return List.generate(transbefore.length, (index) {
       // print(transphoto[index]['id']);
       print(transbefore[index]);
       return GetTransBeforeFixing(
           id: transbefore[index]['id'],
+          dateTime: transbefore[index]['date_time'] ?? "",
           trans_photo_type_id: transbefore[index]['photo_type_id'],
           clientName: transbefore[index][TableName.sys_client_name] as String,
           img_name: transbefore[index][TableName.trans_photo_name] as String,
@@ -2186,6 +2617,86 @@ class DatabaseHelper {
           upload_status: transbefore[index][TableName.trans_upload_status] as int
       );
     });
+  }
+
+///Before Fixing count for API
+  static Future<BeforeFixingCountModel> getBeforeFixingCountData(String workingId) async {
+    final db = await initDataBase();
+    final List<Map<String, dynamic>> result = (await db.rawQuery("SELECT count(id) AS total_before_fixing, "
+        "COUNT(DISTINCT cat_id) as total_categories, "
+        "sum(CASE WHEN upload_status = 0 THEN 1 ELSE 0 END) As total_not_uploaded, "
+        "sum(CASE WHEN upload_status = 1 THEN 1 ELSE 0 END) As total_uploaded "
+        "FROM trans_before_fixing WHERE working_id=$workingId"));
+    print(jsonEncode(result));
+    print("____________Before Share Count_______________");
+    return  BeforeFixingCountModel(
+      totalBeforeFixing: result[0]['total_before_fixing'] ?? 0,
+      totalNotUpload: result[0]['total_not_uploaded'] ?? 0,
+      totalUpload: result[0]['total_uploaded'] ?? 0,
+      totalCategories: result[0]['total_categories'] ?? 0,
+    );
+  }
+
+  ///Before Fixing Image List For GCS Upload
+  static Future<List<TransPlanoGuideGcsImagesListModel>> geBeforeFixingGcsImagesList(String workingId) async {
+    final db = await initDataBase();
+    String rawQuery = "SELECT id, image_name"
+        " FROM trans_before_fixing WHERE working_id=$workingId AND gcs_status=0";
+
+    print("Before Fixing QUERY");
+    print(rawQuery);
+
+    final List<Map<String, dynamic>> rtvMap = await db.rawQuery(rawQuery);
+    print(rtvMap);
+    print("Promo Plan Images List");
+    return List.generate(rtvMap.length, (index) {
+      return TransPlanoGuideGcsImagesListModel(
+          id: rtvMap[index]['id'],
+          imageName: rtvMap[index]['image_name'],
+          imageFile: null
+      );
+    });
+  }
+
+  static Future<int> updateBeforeFixingAfterGcsImageUpload(String workingId,String promoId) async {
+    String writeQuery = "UPDATE trans_before_fixing SET gcs_status=1 WHERE working_id=$workingId AND id = $promoId";
+
+    var db = await initDataBase();
+    print("_______________UpdATE GCS Before Fixing________________");
+    print(writeQuery);
+
+    return await db.rawUpdate(writeQuery);
+  }
+
+  static Future<List<SaveOtherPhotoData>> getBeforeFixingApiUploadDataList(String workingId) async {
+    final db = await initDataBase();
+    String rawQuery = "SELECT id,client_id,cat_id As category_id,photo_type_id, image_name "
+        " FROM trans_before_fixing WHERE working_id=$workingId AND upload_status=0";
+
+    print("Before Fixing QUERY");
+    print(rawQuery);
+
+    final List<Map<String, dynamic>> beforeFixingMap = await db.rawQuery(rawQuery);
+    print(beforeFixingMap);
+    return List.generate(beforeFixingMap.length, (index) {
+      return SaveOtherPhotoData(
+        transPhotoId: beforeFixingMap[index]['id'],
+        typeId: beforeFixingMap[index]['photo_type_id'],
+        categoryId: beforeFixingMap[index]['category_id'],
+        clientId: beforeFixingMap[index]['client_id'],
+          imageName: beforeFixingMap[index]['image_name']
+      );
+    });
+  }
+
+  static Future<int> updateBeforeFixingAfterApi(String workingId,String ids) async {
+    String writeQuery = "UPDATE trans_before_fixing SET upload_status=1 WHERE working_id=$workingId AND id in ($ids)";
+
+    var db = await initDataBase();
+    print("_______________UpdATE Before Fixing________________");
+    print(writeQuery);
+
+    return await db.rawUpdate(writeQuery);
   }
 
   // ----********* Update Data-----************
@@ -2538,7 +3049,7 @@ class DatabaseHelper {
     final List<Map<String, dynamic>> categoryMaps = await db.rawQuery(
         "SELECT sys_category.id as cat_id,sys_category.en_name as cat_en_name,sys_category.client_id,"
             "sys_category.ar_name as cat_ar_name FROM  sys_category JOIN sys_client "
-            "on sys_client.client_id=sys_category.client_id WHERE sys_category.client_id=($client_ids)");
+            "on sys_client.client_id=sys_category.client_id WHERE sys_category.client_id=($client_ids) ORDER BY sys_category.en_name ASC");
 
 
     return List.generate(categoryMaps.length, (index) {
@@ -2555,7 +3066,7 @@ class DatabaseHelper {
     final List<Map<String, dynamic>> categoryMaps = await db.rawQuery(
         "SELECT sys_subcategory.id as cat_id,sys_subcategory.en_name as cat_en_name,sys_subcategory.client_id,"
             "sys_subcategory.ar_name as cat_ar_name FROM  sys_subcategory JOIN sys_client "
-            "on sys_client.client_id=sys_subcategory.client_id WHERE sys_subcategory.client_id=($client_ids)");
+            "on sys_client.client_id=sys_subcategory.client_id WHERE sys_subcategory.client_id=($client_ids) ORDER BY sys_subcategory.en_name ASC");
 //AND sys_subcategory.category_id=($categoryId)
 
     return List.generate(categoryMaps.length, (index) {
@@ -2586,7 +3097,7 @@ class DatabaseHelper {
     final List<Map<String, dynamic>> brandMaps = await db.rawQuery(
         "SELECT sys_brand.id,sys_brand.en_name ,sys_brand.ar_name,sys_brand.client_id "
             "FROM sys_brand JOIN sys_client on sys_client.client_id=sys_brand.client_id "
-            "WHERE sys_brand.client_id = ${client_id}");
+            "WHERE sys_brand.client_id = ${client_id} ORDER BY sys_brand.en_name ASC");
 
     print(jsonEncode(brandMaps));
     print("________BRAND List ________________");
@@ -2617,11 +3128,11 @@ class DatabaseHelper {
     });
   }
 //------*******Show  praph data********--------
-  static Future<AdherenceModel> getAdherenceData() async {
+  static Future<AdherenceModel> getAdherenceData(String workingId) async {
     final db = await initDataBase();
     final List<Map<String, dynamic>> adhereMaps = (await db.rawQuery(
         "SELECT SUM(CASE WHEN is_adherence = 1 THEN 1 ELSE 0 END) AS total_adhere,"
-            " SUM(CASE WHEN is_adherence = 0 THEN 1 ELSE 0 END) AS total_not_adhere FROM trans_planogram")) ;
+            " SUM(CASE WHEN is_adherence = 0 THEN 1 ELSE 0 END) AS total_not_adhere FROM trans_planogram WHERE working_id=$workingId")) ;
     print(jsonEncode(adhereMaps));
     print("____________Adhere Cont_______________");
     return  AdherenceModel(
@@ -2763,7 +3274,7 @@ class DatabaseHelper {
   //int pickListId,int storeId,int catId,int tmrId,String tmrName,int stockerId,String stockerName,String shiftTime,String enCatName,String arCatName,String skuPicture,String enSkuName,String arSkuName,int reqPickList, int actPickList, int pickListReady
 
   static Future<int> insertPickListByQuery (String queryBulkInsertion) async {
-  String insertQuery = "INSERT OR IGNORE INTO picklist (picklist_id,store_id, category_id, tmr_id,tmr_name,stocker_id,stocker_name,shift_time,en_cat_name,ar_cat_name,sku_picture,en_sku_name,ar_sku_name,req_picklist,act_picklist,picklist_ready,upload_status,pick_list_send_time,pick_list_receive_time,picklist_reason)"
+  String insertQuery = "INSERT OR IGNORE INTO picklist (working_id,picklist_id,store_id, category_id, tmr_id,tmr_name,stocker_id,stocker_name,shift_time,en_cat_name,ar_cat_name,sku_picture,en_sku_name,ar_sku_name,req_picklist,act_picklist,picklist_ready,upload_status,pick_list_send_time,pick_list_receive_time,picklist_reason)"
                         "VALUES $queryBulkInsertion";
                         // "VALUES($pickListId,$storeId,$catId,$tmrId,$tmrName,$stockerId, $stockerName,$shiftTime,$enCatName,$arCatName,$skuPicture,$enSkuName,$arSkuName,$reqPickList,$actPickList,$pickListReady)";
   var db = await initDataBase();
@@ -2966,8 +3477,8 @@ class DatabaseHelper {
       totalRtv: result[0]['total_rtv_pro'] ?? 0,
       totalNotUpload: result[0]['total_not_uploaded'] ?? 0,
       totalUpload: result[0]['total_uploaded'] ?? 0,
-      totalValue: result[0]['total_value'] ?? 0,
-      totalVolume: result[0]['total_volume'] ?? 0,
+      totalValue: result[0]['total_value'] == null ? 0 : result[0]['total_value'].round(),
+      totalVolume: result[0]['total_volume'] == null ? 0 : result[0]['total_volume'].round(),
     );
   }
 
@@ -3047,7 +3558,7 @@ class DatabaseHelper {
   ///Get Rtv Data List For API
   static Future<List<SaveRtvDataListData>> getActivityStatusRtvDataList(String workingId) async {
     final db = await initDataBase();
-    String rawQuery = "SELECT sys_product.client_id as client_sku_id sku_id,pieces,image_name,expire_date,reason "
+    String rawQuery = "SELECT sys_product.client_id as client_sku_id, sku_id,pieces,image_name,expire_date,reason "
         " FROM trans_rtv "
         " join sys_product on sys_product.id=trans_rtv.sku_id "
         "WHERE working_id=$workingId AND upload_status=0 AND gcs_status=1";
@@ -3443,8 +3954,8 @@ class DatabaseHelper {
     print(result);
     return RTVCountModel(
       total_rtv_pro: result[0]['total_rtv_pro'] ?? 0,
-      total_value: result[0]['total_value'] ?? 0,
-      total_volume: result[0]['total_volume']?? 0,
+      total_value: result[0]['total_value'] != null ? result[0]['total_value'].round() : 0,
+      total_volume: result[0]['total_volume'] != null ? result[0]['total_volume'].round() : 0,
     );
   }
 
@@ -3555,7 +4066,10 @@ class DatabaseHelper {
 
   static Future<int> insertTransFreshness(String month, String clientId,String currentTime,
       int year, int skuId, String workingID, int pieces) async {
-    String insertQuery = " INSERT INTO trans_freshness (sku_id, client_id,date_time, year,$month, upload_status, working_id) "
+
+    String monthSubString = month.replaceAll(" ", "").substring(0,3).toLowerCase();
+
+    String insertQuery = " INSERT INTO trans_freshness (sku_id, client_id,date_time, year,$monthSubString, upload_status, working_id) "
         "VALUES ($skuId,${wrapIfString(clientId)},${wrapIfString(currentTime)},$year,$pieces,0,${wrapIfString(workingID)})";
 
     var db = await initDataBase();
@@ -3727,11 +4241,23 @@ class DatabaseHelper {
     String writeQuery = "UPDATE trans_freshness SET upload_status=1 WHERE working_id=$workingId AND date_time in ($ids)";
 
     var db = await initDataBase();
-    print("_______________UpdATE Planoguide________________");
+    print("_______________UpdATE Freshness________________");
     print(writeQuery);
 
     return await db.rawUpdate(writeQuery);
   }
+
+
+  // static Future<int> updateFreshnessAfterDeleteLocalData(String workingId,String dateTime,String month) async {
+  //   String monthSubString = month.replaceAll(" ", "").substring(0,3).toLowerCase();
+  //   String writeQuery = "UPDATE trans_freshness SET $monthSubString = 0 WHERE working_id=$workingId AND date_time in ($ids)";
+  //
+  //   var db = await initDataBase();
+  //   print("_______________UpdATE Freshness________________");
+  //   print(writeQuery);
+  //
+  //   return await db.rawUpdate(writeQuery);
+  // }
 
   ///Promo Plan Database Queries
   static Future<int>  insertTransPromoPlan(String workingID,int storeId) async {
@@ -3744,8 +4270,20 @@ class DatabaseHelper {
     return await db.rawInsert(insertQuery);
   }
 
-  static Future<List<TransPromoPlanListModel>> getTransPromoPlanList(String workingId) async {
+  static Future<List<TransPromoPlanListModel>> getTransPromoPlanList(String workingId,String promoReason) async {
     final db = await initDataBase();
+
+    String searchWhere = "";
+
+    if (promoReason != "" && promoReason != "Pending") {
+      searchWhere = "$searchWhere And promo_status = '$promoReason'";
+    }
+
+    if (promoReason == "Pending") {
+      searchWhere = "$searchWhere And act_status = 0";
+    }
+
+
     String query = "Select sys_product.en_name as pro_en_name, sys_product.ar_name as pro_ar_name, "
         " sys_category.en_name as cat_en_name, sys_category.ar_name as cat_ar_name, "
         " sys_brand.en_name as brand_en_name,sys_brand.ar_name as brand_ar_name, sys_product.image as pro_image_name,"
@@ -3756,7 +4294,7 @@ class DatabaseHelper {
         " JOIN sys_category on sys_category.id = sys_product.category_id "
         " JOIN sys_brand on sys_brand.id = sys_product.brand_id "
         " JOIN sys_promoplan on sys_promoplan.promo_id = trans_promoplan.promo_id AND  sys_promoplan.sku_id = trans_promoplan.sku_id "
-        " WHERE working_id=$workingId";
+        " WHERE working_id=$workingId $searchWhere";
 
     final List<Map<String, dynamic>> transPromoPlanMap = await db.rawQuery(query);
 
@@ -3924,6 +4462,16 @@ class DatabaseHelper {
     });
   }
 
+  static Future<int> updateTransStockAfterDeleteOneSkuRecord(String workingId,String promoId) async {
+    String writeQuery = "UPDATE trans_stock SET act_status=0, cases=0,outer=0,pieces=0 WHERE working_id=$workingId AND sku_id = $promoId";
+
+    var db = await initDataBase();
+    print("_______________UpdATE Stock Sku After Delete on record________________");
+    print(writeQuery);
+
+    return await db.rawUpdate(writeQuery);
+  }
+
   static Future<TotalStockCountData> getStockCount(
       String workingId,
       String clientId,
@@ -4044,6 +4592,69 @@ class DatabaseHelper {
           id: rtvMap[index]['promo_id'],
           imageName: rtvMap[index]['image_name'],
           imageFile: null
+      );
+    });
+  }
+
+
+  ///Dashboard Data List
+
+  static Future<UserDashboardModel> getMainDashboardData(String userId) async {
+    final db = await initDataBase();
+    final List<Map<String, dynamic>> dashboardMap = await db.rawQuery(
+        "SELECT * FROM sys_dashboard WHERE user_id=$userId");
+
+    print(jsonEncode(dashboardMap));
+    print("________ Dashboard Data Getting ________________");
+      return UserDashboardModel(
+        user_id: dashboardMap[0]['user_id'] ?? 0,
+        jp_planned: dashboardMap[0]['jp_planned'] ?? 0,
+        jp_visited: dashboardMap[0]['jp_visited'] ?? 0,
+        out_of_planned: dashboardMap[0]['out_of_planned'] ?? 0,
+        out_of_planned_visited: dashboardMap[0]['out_of_planned_visited'] ?? 0,
+        jpc: dashboardMap[0]['jpc'] ?? 0,
+        pro: dashboardMap[0]['pro'] ?? 0,
+        working_hrs: dashboardMap[0]['working_hrs'] ?? 0,
+        eff: dashboardMap[0]['eff'] ?? 0,
+        monthly_attend: dashboardMap[0]['monthly_attend'] ?? 0,
+        monthly_pro: dashboardMap[0]['monthly_pro'] ?? 0,
+        monthly_eff: dashboardMap[0]['monthly_eff'] ?? 0,
+        monthly_incentives: dashboardMap[0]['monthly_incentives'] ?? 0,
+        monthly_deduction: dashboardMap[0]['monthly_deduction'] ?? 0,
+      );
+  }
+
+  ///Journey Plan Data List
+
+  static Future<List<JourneyPlanDetail>> getJourneyPlanData(String userId) async {
+    final db = await initDataBase();
+    final List<Map<String, dynamic>> journeyPlanMap = await db.rawQuery(
+        "SELECT * FROM sys_journey_plan WHERE user_id=$userId");
+
+    print(jsonEncode(journeyPlanMap));
+    print("________ Journey Plan Data Getting ________________");
+
+    return List.generate(journeyPlanMap.length, (index) {
+      return JourneyPlanDetail(
+          workingId: journeyPlanMap[index]["working_id"] ?? 0,
+          workingDate: journeyPlanMap[index]["working_date"].toString(),
+          storeId: journeyPlanMap[index]["store_id"] ?? 0,
+          enStoreName: journeyPlanMap[index]["en_store_name"].toString(),
+          arStoreName: journeyPlanMap[index]["ar_store_name"].toString(),
+          gcode: journeyPlanMap[index]["gcode"].toString(),
+          clientIds: journeyPlanMap[index]["client_ids"].toString(),
+          userId: journeyPlanMap[index]["user_id"] ?? 0,
+          checkIn: journeyPlanMap[index]["check_in"] ?? '',
+          checkOut: journeyPlanMap[index]["check_out"] ?? '',
+          startVisitPhoto: journeyPlanMap[index]["start_visit_photo"].toString() == "null" ? "" :journeyPlanMap[index]["start_visit_photo"].toString() ,
+          checkinGps: journeyPlanMap[index]["checkin_gps"].toString(),
+          checkoutGps: journeyPlanMap[index]["checkout_gps"].toString(),
+          visitStatus: journeyPlanMap[index]["visit_status"].toString(),
+          visitType: journeyPlanMap[index]["visit_type"].toString(),
+          avlExclude: journeyPlanMap[index]["avl_exclude"].toString(),
+          otherExclude: journeyPlanMap[index]["other_exclude"].toString(),
+          isDrop: journeyPlanMap[index]["is_drop"] ?? 0,
+          visitActivity: journeyPlanMap[index]['visit_activity_type'] ?? 0
       );
     });
   }

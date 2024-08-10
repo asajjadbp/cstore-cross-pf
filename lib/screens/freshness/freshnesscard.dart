@@ -29,7 +29,7 @@ class FreshnessListCard extends StatelessWidget {
   AutovalidateMode _autovalidate = AutovalidateMode.disabled;
   String _selectedMonth = "";
   String _selectedYear = "";
-  List<String> unitList = ['jan', 'feb', 'mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+  List<String> unitList = ['Jan - 01', 'Feb - 02', 'Mar - 03','Apr - 04','May - 05','Jun - 06','Jul - 07','Aug - 08','Sep - 09','Oct - 10','Nov - 11','Dec - 12'];
 
   @override
   Widget build(BuildContext context) {
@@ -236,7 +236,7 @@ class FreshnessListCard extends StatelessWidget {
                                                 ),
                                                 border: OutlineInputBorder(
                                                     borderRadius: BorderRadius.circular(10))), // optional
-                                            isDropdownHideUnderline: true, // optional
+                                            isDropdownHideUnderline: false, // optional
                                             isFormValidator: true, // optional
                                             startYear: DateTime.now().year, // optional
                                             endYear: DateTime.now().year + 5, // optional
@@ -254,7 +254,7 @@ class FreshnessListCard extends StatelessWidget {
                                       ),
                                       const SizedBox(width: 5,),
                                       Expanded(
-                                        child: UnitDropDown(hintText: "Select Month", unitData: unitList, onChange: (value){
+                                        child: UnitDropDown(hintText: "Month", unitData: unitList, onChange: (value){
                                           _selectedMonth = value;
                                           print("Month is $_selectedMonth");
                                         }),

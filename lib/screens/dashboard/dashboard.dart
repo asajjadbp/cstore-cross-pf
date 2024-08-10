@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../Database/db_helper.dart';
+import '../../Database/table_name.dart';
 import '../../Model/response_model.dart/user_dashboard_model.dart';
 import '../../Network/jp_http.dart';
 import '../auth/login.dart';
@@ -65,7 +67,36 @@ class _DashBoardState extends State<DashBoard> {
     userName = sharedPreferences.getString(AppConstants.userName)!;
     baseUrl = sharedPreferences.getString(AppConstants.baseUrl)!;
     token = sharedPreferences.getString(AppConstants.tokenId)!;
-    getApiUserDashboard();
+    getSqlUserDashboard();
+  }
+
+  Future<void> getSqlUserDashboard() async {
+    setState(() {
+      isLoading = true;
+    });
+    await DatabaseHelper
+        .getMainDashboardData(userName)
+        .then((value) async {
+      setState(() {
+        userDashboardModel = value;
+      });
+      totalPlanned =
+          userDashboardModel.jp_planned + userDashboardModel.out_of_planned;
+      totalJP = userDashboardModel.jp_visited +
+          userDashboardModel.out_of_planned_visited;
+      isLoading = false;
+
+      setState(() {});
+    }).catchError((onError) {
+      print(onError);
+      isError = true;
+      errorText = onError.toString();
+      setState(() {
+        isLoading = false;
+      });
+      ToastMessage.errorMessage(context, onError.toString());
+      print("error is $onError");
+    });
   }
 
   Future<void> getApiUserDashboard() async {
@@ -78,7 +109,15 @@ class _DashBoardState extends State<DashBoard> {
       isError = false;
       errorText = "";
       if(value.data!.isNotEmpty) {
-        userDashboardModel = value.data![0];
+        // userDashboardModel = value.data![0];
+        DatabaseHelper.delete_table(TableName.tblSysDashboard);
+        await DatabaseHelper.insertSysDashboardArray(value.data!)
+            .then((_) async {
+          ToastMessage.succesMessage(context, "Data updated successfully");
+          getSqlUserDashboard();
+
+          // isError=false;
+        });
       } else {
         userDashboardModel = UserDashboardModel(
             user_id: 0,
@@ -104,27 +143,6 @@ class _DashBoardState extends State<DashBoard> {
           userDashboardModel.out_of_planned_visited;
       // setState(() {
       //
-      // });
-      // await DatabaseHelper.insertUserDashboard(UserDashboardModel(
-      //         user_id: userDashboardModel.user_id,
-      //         jp_planned: userDashboardModel.jp_planned,
-      //         jp_visited: userDashboardModel.jp_visited,
-      //         out_of_planned: userDashboardModel.out_of_planned,
-      //         out_of_planned_visited: userDashboardModel.out_of_planned_visited,
-      //         jpc: userDashboardModel.jpc,
-      //         pro: userDashboardModel.pro,
-      //         working_hrs: userDashboardModel.working_hrs,
-      //         eff: userDashboardModel.eff,
-      //         monthly_attend: userDashboardModel.monthly_attend,
-      //         monthly_pro: userDashboardModel.monthly_pro,
-      //         monthly_eff: userDashboardModel.monthly_eff,
-      //         monthly_deduction: userDashboardModel.monthly_deduction,
-      //         monthly_incentives: userDashboardModel.monthly_incentives,))
-      //     .then((_) async {
-      //   ToastMessage.succesMessage(context, "Data store successfully");
-      //   // await getUserDashboardList();
-      //
-      //   isError=false;
       // });
       setState(() {});
     }).catchError((onError) {

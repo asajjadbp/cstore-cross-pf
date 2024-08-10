@@ -11,6 +11,7 @@ class GetTransBeforeFixing {
   late int client_id = -1;
   late int cat_id = -1;
   late int upload_status = 0;
+  late String dateTime = "";
   File? imageFile;
   late String categoryEnName = "";
   late String categoryArName = "";
@@ -25,6 +26,7 @@ class GetTransBeforeFixing {
         required this.client_id,
         required this.cat_id,
         required this.upload_status,
+        required this.dateTime,
         required this.imageFile,
         required this.categoryEnName,
         required this.categoryArName});
@@ -39,6 +41,7 @@ class GetTransBeforeFixing {
       TableName.trans_photo_name: img_name,
       "client_id": client_id,
       "cat_id": cat_id,
+      'date_time':dateTime,
       TableName.trans_photo_gcs_status: gcs_status,
       TableName.trans_upload_status: upload_status,
       TableName.cat_en_name: categoryEnName,
@@ -48,6 +51,6 @@ class GetTransBeforeFixing {
 
   @override
   String toString() {
-    return 'GetTransBeforeFixing{clientName: $clientName, trans_photo_type_id: $trans_photo_type_id, img_name: $img_name, gcs_status: $gcs_status, client_id: $client_id, cat_id: $cat_id, upload_status: $upload_status, imageFile: $imageFile, categoryEnName: $categoryEnName, categoryArName: $categoryArName}';
+    return 'GetTransBeforeFixing{clientName: $clientName,date_time: $dateTime, trans_photo_type_id: $trans_photo_type_id, img_name: $img_name, gcs_status: $gcs_status, client_id: $client_id, cat_id: $cat_id, upload_status: $upload_status, imageFile: $imageFile, categoryEnName: $categoryEnName, categoryArName: $categoryArName}';
   }
 }

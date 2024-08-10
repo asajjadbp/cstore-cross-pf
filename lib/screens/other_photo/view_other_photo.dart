@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,6 +15,7 @@ import '../../Database/table_name.dart';
 import '../../Model/database_model/get_trans_photo_model.dart';
 import '../utils/app_constants.dart';
 import '../utils/toast/toast.dart';
+import '../widget/app_bar_widgets.dart';
 import '../widget/loading.dart';
 
 class ViewOtherPhoto extends StatefulWidget {
@@ -30,6 +32,7 @@ class _ViewOtherPhotoState extends State<ViewOtherPhoto> {
   bool isLoading = false;
   String workingId = "";
   String storeName = '';
+  String userName = '';
 
   @override
   void initState() {
@@ -42,6 +45,8 @@ class _ViewOtherPhotoState extends State<ViewOtherPhoto> {
 
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
     storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    userName = sharedPreferences.getString(AppConstants.userName)!;
+
     getTransPhotoOne();
   }
 
@@ -137,14 +142,9 @@ class _ViewOtherPhotoState extends State<ViewOtherPhoto> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor:MyColors.background ,
-      appBar: AppBar(title: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(storeName,style: const TextStyle(fontSize: 16),),
-          const Text("View Other Photo",style: TextStyle(fontSize: 12),),
-        ],
-      ),),
+      appBar: generalAppBar(context, storeName, userName, (){
+        Navigator.of(context).pop();
+      }, (){print("filter Click");}, true, false, false),
       body: isLoading
           ? const Center(
         child: MyLoadingCircle(),
@@ -157,131 +157,141 @@ class _ViewOtherPhotoState extends State<ViewOtherPhoto> {
           itemCount: transData.length,
           itemBuilder: (ctx, i) {
             return Container(
-              margin:
-              const EdgeInsets.only(left: 10, right: 10, top: 5),
-              height: 120,
-              child:
-              // MyCardWidget(
-              //     image: transData[i].imageFile as File,
-              //     name: transData[i].img_name)
-              Card(
+              margin: const EdgeInsets.only(left: 10, right: 10, top: 5),
+              child: Card(
                 color: Colors.white,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0)),
-                child: Padding(
-                  padding: const EdgeInsets.all(0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        width: 96,
-                        height: 100,
-                        padding: const EdgeInsets.all(6),
-                        margin: const EdgeInsets.symmetric(horizontal: 5),
-                        child: ClipRRect(
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(6.0),
-                              bottomLeft: Radius.circular(6.0),
-                              topRight: Radius.circular(6.0),
-                              bottomRight: Radius.circular(6.0),
-                            ), // Image border
-                            child: FittedBox(
-                                fit: BoxFit.cover, child: Image.file(transData[i].imageFile as File))),
-                      ),
-                      const SizedBox(width: 5,),
-                      Expanded(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Row(
-                              mainAxisAlignment:
-                              MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Image.asset("assets/icons/client_icon.png"),
-                                const SizedBox(width: 10,),
-                                Expanded(child: Text(transData[i].clientName,overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(fontSize: 12,fontWeight: FontWeight.w500)))
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset(
-                                  "assets/icons/Component 13.svg",
-                                  width: 10,
-                                  height: 12,
-                                ),
-                                const SizedBox(width: 5,),
-                                Expanded(child: Text(transData[i].categoryEnName,overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(fontSize: 12,fontWeight: FontWeight.w500)))
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Image.asset("assets/icons/pick_list_icon_blue.png",width: 14,height: 14,),
-                                const SizedBox(width: 5,),
-                                Expanded(child: Text(transData[i].type_en_name,overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(fontSize: 12,fontWeight: FontWeight.w500),))
-                              ],
-                            ),
-                          ],
+                child: Stack(
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          width: 96,
+                          height: 100,
+                          padding: const EdgeInsets.all(6),
+                          margin: const EdgeInsets.symmetric(horizontal: 5),
+                          child: ClipRRect(
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(6.0),
+                                bottomLeft: Radius.circular(6.0),
+                                topRight: Radius.circular(6.0),
+                                bottomRight: Radius.circular(6.0),
+                              ), // Image border
+                              child: FittedBox(
+                                  fit: BoxFit.cover, child: Image.file(transData[i].imageFile as File))),
+                        ),
+                        const SizedBox(width: 5,),
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset("assets/icons/client_icon.png"),
+                                  const SizedBox(width: 10,),
+                                  Expanded(child: Text(transData[i].clientName,overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(fontSize: 12,fontWeight: FontWeight.w500)))
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SvgPicture.asset(
+                                    "assets/icons/Component 13.svg",
+                                    width: 10,
+                                    height: 12,
+                                  ),
+                                  const SizedBox(width: 5,),
+                                  Expanded(child: Text(transData[i].categoryEnName,overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(fontSize: 12,fontWeight: FontWeight.w500)))
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset("assets/icons/pick_list_icon_blue.png",width: 14,height: 14,),
+                                  const SizedBox(width: 5,),
+                                  Expanded(child: Text(transData[i].type_en_name,overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(fontSize: 12,fontWeight: FontWeight.w500),))
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        Align(
+                            alignment: Alignment.topRight,
+                            child: IconButton(
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text(
+                                        "Are you sure you want to delete this item Permanently",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          child: const Text("No"),
+                                          onPressed: () {
+                                            Navigator.of(context).pop(true);
+                                          },
+                                        ),
+                                        TextButton(
+                                          child: const Text("Yes"),
+                                          onPressed: () {
+                                            deletePhoto(transData[i].trans_photo_type_id,
+                                                transData[i].img_name);
+                                            Navigator.of(context).pop(true);
+                                          },
+                                        )
+                                      ],
+                                    );
+                                  },
+                                );
+
+                              },
+                              icon: const Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                              ),
+                            )
+                          // Icon(
+                          //   Icons.delete,
+                          //   color: Colors.red,
+                          // ),
+                        )
+                      ],
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(5),
+                        decoration: const BoxDecoration(
+                            color: MyColors.appMainColor,
+                            borderRadius:
+                            BorderRadius.only(bottomRight: Radius.circular(10))),
+                        child: Text(
+                          DateFormat('hh:mm aa').format(DateTime.parse(transData[i].dateTime)),
+                          style: const TextStyle(color: MyColors.whiteColor),
                         ),
                       ),
-
-                      Align(
-                          alignment: Alignment.topRight,
-                          child: IconButton(
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text(
-                                      "Are you sure you want to delete this item Permanently",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        child: const Text("No"),
-                                        onPressed: () {
-                                          Navigator.of(context).pop(true);
-                                        },
-                                      ),
-                                      TextButton(
-                                        child: const Text("Yes"),
-                                        onPressed: () {
-                                          deletePhoto(transData[i].trans_photo_type_id,
-                                              transData[i].img_name);
-                                          Navigator.of(context).pop(true);
-                                        },
-                                      )
-                                    ],
-                                  );
-                                },
-                              );
-
-                            },
-                            icon: const Icon(
-                              Icons.delete,
-                              color: Colors.red,
-                            ),
-                          )
-                        // Icon(
-                        //   Icons.delete,
-                        //   color: Colors.red,
-                        // ),
-                      )
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             );

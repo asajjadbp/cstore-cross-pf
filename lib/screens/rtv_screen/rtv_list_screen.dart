@@ -16,6 +16,7 @@ import '../../Model/database_model/sys_brand_model.dart';
 import '../utils/app_constants.dart';
 import '../utils/appcolor.dart';
 import '../utils/toast/toast.dart';
+import '../widget/app_bar_widgets.dart';
 import '../widget/drop_downs.dart';
 import '../widget/loading.dart';
 import '../widget/percent_indicator.dart';
@@ -38,6 +39,7 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
   String clientId = "";
   String otherExcludes = "";
   String storeName = '';
+  String userName = '';
   int totalPieces = 0;
   bool isCategoryLoading = false;
   bool isSubCategoryLoading = false;
@@ -151,6 +153,7 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
     setState(() {
       workingId = sharedPreferences.getString(AppConstants.workingId)!;
       storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+      userName = sharedPreferences.getString(AppConstants.userName)!;
       clientId = sharedPreferences.getString(AppConstants.clientId)!;
       otherExcludes = sharedPreferences.getString(AppConstants.otherExclude)!;
     });
@@ -252,11 +255,19 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
   }
 
   searchFilter() {
-    setState(() {
-      isFilter = true;
+    if(isFilter) {
+      setState(() {
+        isFilter = false;
+      });
+    } else {
+      setState(() {
+        isFilter = true;
 
-      filterTransData = transData.where((element) => element.act_status == 1).toList();
-    });
+
+        filterTransData =
+            transData.where((element) => element.act_status == 1).toList();
+      });
+    }
   }
 
   @override
@@ -265,204 +276,220 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor:MyColors.background,
-      appBar: AppBar(title: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(storeName,style: const TextStyle(fontSize: 13),),
-          const Text("RTV",style: TextStyle(fontSize: 12),),
-        ],
-      ),
-        actions: [
-            IconButton(onPressed: (){
-              showModalBottomSheet<void>(
-                isDismissible: false,
-                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topRight: Radius.circular(10),topLeft: Radius.circular(10))),
-                context: context,
-                builder: (BuildContext context) {
-                  return WillPopScope(
-                      onWillPop: () async {
-                        return false;
-                      },
-                      child: StatefulBuilder(
-                          builder: (BuildContext context1, StateSetter menuState) {
+      appBar: generalAppBar(context, storeName, userName, (){
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Visit"),
+              content: const Text('Are you sure you want to quit this visit?'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                  child: const Text('No'),
+                ),
+                TextButton(
+                  onPressed: ()async {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Yes'),
+                ),
+              ],
+            );
+          },
+        );
+      }, (){
+        setState(() {
+          isFilter = false;
+        });
+        showModalBottomSheet<void>(
+          isDismissible: false,
+          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topRight: Radius.circular(10),topLeft: Radius.circular(10))),
+          context: context,
+          builder: (BuildContext context) {
+            return WillPopScope(
+                onWillPop: () async {
+                  return false;
+                },
+                child: StatefulBuilder(
+                    builder: (BuildContext context1, StateSetter menuState) {
 
-                            return Container(
-                              height: MediaQuery.of(context).size.height * 0.90,
-                              decoration: const BoxDecoration(borderRadius: BorderRadius.only(topRight: Radius.circular(10),topLeft: Radius.circular(10))),
-                              margin: const EdgeInsets.only(right: 10,left: 10,bottom: 10),
-                              child: SingleChildScrollView(
+                      return Container(
+                        height: MediaQuery.of(context).size.height * 0.90,
+                        decoration: const BoxDecoration(borderRadius: BorderRadius.only(topRight: Radius.circular(10),topLeft: Radius.circular(10))),
+                        margin: const EdgeInsets.only(right: 10,left: 10,bottom: 10),
+                        child: SingleChildScrollView(
 
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Row(
-                                      children: [
-                                        const Expanded(
-                                          child: Text(
-                                            "Filter",
-                                            style: TextStyle(
-                                                color: MyColors.appMainColor,
-                                                fontSize: 25,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                        ElevatedButton(onPressed: (){
-                                          menuState(() {
-                                            clientKey.currentState!.reset();
-                                            categoryKey.currentState!.reset();
-                                            subCategoryKey.currentState!.reset();
-                                            brandKey.currentState!.reset();
-
-                                            selectedClientId = -1;
-                                            selectedCategoryId = -1;
-                                            selectedSubCategoryId = -1;
-                                            selectedBrandId = -1;
-
-                                            initialClientItem = clientData[0];
-                                            initialCategoryItem = categoryData[0];
-                                            initialSubCategoryItem = subCategoryData[0];
-                                            initialBrandItem = brandData[0];
-                                          });
-                                        }, child: const Text("Reset Filter",style: TextStyle(color: MyColors.whiteColor),))
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    const Text(
-                                      "Client",
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Row(
+                                children: [
+                                  const Expanded(
+                                    child: Text(
+                                      "Filter",
                                       style: TextStyle(
                                           color: MyColors.appMainColor,
+                                          fontSize: 25,
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    // dropdownwidget("Company Name"),
-                                    ClientListDropDownWithInitialValue(
-                                        clientKey: clientKey,
-                                        initialValue: initialClientItem,
-                                        hintText: "Client", clientData: clientData, onChange: (value){
-                                      selectedClientId = value.client_id;
-                                      initialClientItem = value;
-                                      getCategoryData(selectedClientId,menuState);
-                                      getSubCategoryData(selectedClientId,menuState);
-                                      getBrandData(selectedClientId,menuState);
-                                      menuState(() {
+                                  ),
+                                  ElevatedButton(onPressed: (){
+                                    menuState(() {
+                                      clientKey.currentState!.reset();
+                                      categoryKey.currentState!.reset();
+                                      subCategoryKey.currentState!.reset();
+                                      brandKey.currentState!.reset();
 
-                                      });
-                                    }),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    const Text(
-                                      "Category",
-                                      style: TextStyle(
-                                          color: MyColors.appMainColor,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    isCategoryLoading
-                                        ? Center(
-                                      child: Container(
-                                        height: 60,
-                                        child: const MyLoadingCircle(),
-                                      ),
-                                    )
-                                        : CategoryDropDownWithInitialValue(
-                                        initialValue: initialCategoryItem,
-                                        categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
-                                      selectedCategoryId = value.id;
-                                      initialCategoryItem = value;
-                                      menuState(() {
+                                      selectedClientId = -1;
+                                      selectedCategoryId = -1;
+                                      selectedSubCategoryId = -1;
+                                      selectedBrandId = -1;
 
-                                      });
-                                    }),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    const Text(
-                                      "Sub Category",
-                                      style: TextStyle(
-                                          color: MyColors.appMainColor,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    isSubCategoryLoading
-                                        ? Center(
-                                      child: Container(
-                                        height: 60,
-                                        child: const MyLoadingCircle(),
-                                      ),
-                                    )
-                                        : CategoryDropDownWithInitialValue(
-                                        initialValue: initialSubCategoryItem,
-                                        categoryKey:subCategoryKey,hintText: "Sub Category", categoryData: subCategoryData, onChange: (value){
-                                      selectedSubCategoryId = value.id;
-                                      initialSubCategoryItem = value;
-                                      menuState(() {
+                                      initialClientItem = clientData[0];
+                                      initialCategoryItem = categoryData[0];
+                                      initialSubCategoryItem = subCategoryData[0];
+                                      initialBrandItem = brandData[0];
+                                    });
+                                  }, child: const Text("Reset Filter",style: TextStyle(color: MyColors.whiteColor),))
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              const Text(
+                                "Client",
+                                style: TextStyle(
+                                    color: MyColors.appMainColor,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              // dropdownwidget("Company Name"),
+                              ClientListDropDownWithInitialValue(
+                                  clientKey: clientKey,
+                                  initialValue: initialClientItem,
+                                  hintText: "Client", clientData: clientData, onChange: (value){
+                                selectedClientId = value.client_id;
+                                initialClientItem = value;
+                                getCategoryData(selectedClientId,menuState);
+                                getSubCategoryData(selectedClientId,menuState);
+                                getBrandData(selectedClientId,menuState);
+                                menuState(() {
 
-                                      });
-                                    }),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    const Text(
-                                      "Brand",
-                                      style: TextStyle(
-                                          color: MyColors.appMainColor,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    SysBrandDropDownWithInitialValue(
-                                        initialValue: initialBrandItem,
-                                        brandKey:brandKey,hintText: "Brand", brandData: brandData, onChange: (value){
-                                      selectedBrandId = value.id;
-                                      initialBrandItem = value;
-                                      menuState(() {
+                                });
+                              }),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              const Text(
+                                "Category",
+                                style: TextStyle(
+                                    color: MyColors.appMainColor,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              isCategoryLoading
+                                  ? Center(
+                                child: Container(
+                                  height: 60,
+                                  child: const MyLoadingCircle(),
+                                ),
+                              )
+                                  : CategoryDropDownWithInitialValue(
+                                  initialValue: initialCategoryItem,
+                                  categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
+                                selectedCategoryId = value.id;
+                                initialCategoryItem = value;
+                                menuState(() {
 
-                                      });
-                                    }),
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                    ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                          backgroundColor: MyColors.appMainColor,
-                                          minimumSize: Size(screenWidth, 45),
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(5))),
-                                      onPressed: () {
-                                        getTransRTVOne();
-                                        getRtvCount();
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text(
-                                        "Search",
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    ),
-                                  ],
+                                });
+                              }),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              const Text(
+                                "Sub Category",
+                                style: TextStyle(
+                                    color: MyColors.appMainColor,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              isSubCategoryLoading
+                                  ? Center(
+                                child: Container(
+                                  height: 60,
+                                  child: const MyLoadingCircle(),
+                                ),
+                              )
+                                  : CategoryDropDownWithInitialValue(
+                                  initialValue: initialSubCategoryItem,
+                                  categoryKey:subCategoryKey,hintText: "Sub Category", categoryData: subCategoryData, onChange: (value){
+                                selectedSubCategoryId = value.id;
+                                initialSubCategoryItem = value;
+                                menuState(() {
+
+                                });
+                              }),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              const Text(
+                                "Brand",
+                                style: TextStyle(
+                                    color: MyColors.appMainColor,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              SysBrandDropDownWithInitialValue(
+                                  initialValue: initialBrandItem,
+                                  brandKey:brandKey,hintText: "Brand", brandData: brandData, onChange: (value){
+                                selectedBrandId = value.id;
+                                initialBrandItem = value;
+                                menuState(() {
+
+                                });
+                              }),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: MyColors.appMainColor,
+                                    minimumSize: Size(screenWidth, 45),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5))),
+                                onPressed: () {
+                                  getTransRTVOne();
+                                  getRtvCount();
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text(
+                                  "Search",
+                                  style: TextStyle(color: Colors.white),
                                 ),
                               ),
-                            );
-                          }
-                      )
-                  );
-                },
-              );
-            },
-                icon: const Icon(Icons.filter_alt_outlined,color: MyColors.whiteColor,))
-        ],
-      ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                )
+            );
+          },
+        );
+      }, true, true, false),
       body: Padding(
         padding: const EdgeInsets.all(5),
         child: Column(
@@ -479,9 +506,11 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
                       },
                       child: Card(
                         elevation: 5,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
                           decoration: BoxDecoration(
+                            border: Border.all( color: isFilter ? MyColors.appMainColor2 : MyColors.whiteColor,width: 3),
                               borderRadius: BorderRadius.circular(10),
                           ),
                           alignment: Alignment.center,
@@ -508,10 +537,12 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
                         },
                         child: Card(
                           elevation: 5,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                           child: Container(
                             padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
                             decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
+                              border: Border.all( color: isFilter ? MyColors.appMainColor2 : MyColors.whiteColor,width: 3),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                             alignment: Alignment.center,
                             child: Column(
@@ -537,10 +568,12 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
                         },
                         child: Card(
                           elevation: 5,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                           child: Container(
                             padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
                             decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
+                              border: Border.all( color: isFilter ? MyColors.appMainColor2 : MyColors.whiteColor,width: 3),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                             alignment: Alignment.center,
                             child: Column(

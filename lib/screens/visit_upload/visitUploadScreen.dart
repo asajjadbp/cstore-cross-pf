@@ -26,6 +26,8 @@ import '../../Model/database_model/trans_stock_model.dart';
 import '../../Model/request_model.dart/availability_api_request_model.dart';
 import '../../Model/request_model.dart/brand_share_request.dart';
 import '../../Model/request_model.dart/finish_visit_request_model.dart';
+import '../../Model/request_model.dart/other_images_end_Api_request.dart';
+import '../../Model/request_model.dart/planogram_end_api_request_model.dart';
 import '../../Model/request_model.dart/planoguide_request_model.dart';
 import '../../Model/request_model.dart/ready_pick_list_request.dart';
 import '../../Model/request_model.dart/save_api_pricing_data_request.dart';
@@ -33,6 +35,7 @@ import '../../Model/request_model.dart/save_api_rtv_data_request.dart';
 import '../../Model/request_model.dart/save_freshness_request_model.dart';
 import '../../Model/request_model.dart/save_promo_plan_request_model.dart';
 import '../../Model/request_model.dart/save_stock_request_model.dart';
+import '../../Model/request_model.dart/sos_end_api_request_model.dart';
 import '../../Network/jp_http.dart';
 import '../../Network/sql_data_http_manager.dart';
 import '../utils/app_constants.dart';
@@ -40,6 +43,7 @@ import '../utils/appcolor.dart';
 import '../utils/services/getting_gps.dart';
 import '../utils/services/take_image_and_save_to_folder.dart';
 import '../utils/toast/toast.dart';
+import '../widget/app_bar_widgets.dart';
 import 'VisitUploadScreencard.dart';
 
 class VisitUploadScreen extends StatefulWidget {
@@ -78,7 +82,6 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
   AvailabilityCountModel availabilityCountModel = AvailabilityCountModel(totalSku: 0,totalAvl: 0,totalNotAvl: 0,totalUploaded: 0,totalNotUploaded: 0,totalNotMarked: 0);
   TmrPickListCountModel tmrPickListCountModel = TmrPickListCountModel(totalPickListItems: 0,totalPickNotUpload: 0,totalPickUpload: 0,totalPickReady: 0,totalPickNotReady: 0);
 
-  List<TransPlanoGuideModel> planoguidData = <TransPlanoGuideModel>[];
   List<SavePlanoguideListData> planoguideImageList = [];
   List<TransPlanoGuideGcsImagesListModel> planoguideGcsImagesList=[];
   PlanoguideCountModel planoguideCountModel = PlanoguideCountModel(totalPlano: 0,totalAdhere: 0,totalNotAdhere: 0,totalUploaded: 0,totalNotUploaded: 0,totalImagesUploaded: 0,totalImagesNotUploaded: 0,totalNotMarkedPlano: 0);
@@ -110,6 +113,21 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
   List<SaveStockListData> saveStockList = [];
   TotalStockCountData totalStockCountData = TotalStockCountData(total_uploaded: 0,total_not_upload: 0,total_stock_taken: 0,total_pieces: 0,total_outers: 0,total_cases: 0);
 
+  List<SaveOtherPhotoData> beforeFixingImageList = [];
+  List<TransPlanoGuideGcsImagesListModel> beforeFixingGcsImagesList=[];
+  BeforeFixingCountModel beforeFixingCountModel = BeforeFixingCountModel(totalBeforeFixing: 0,totalUpload: 0,totalNotUpload: 0,totalCategories: 0);
+
+  List<SaveOtherPhotoData> otherPhotoImageList = [];
+  List<TransPlanoGuideGcsImagesListModel> otherPhotoGcsImagesList=[];
+  OtherPhotoCountModel otherPhotoCountModel = OtherPhotoCountModel(totalOtherPhotos: 0,totalUpload: 0,totalNotUpload: 0,totalCategories: 0);
+
+  List<SavePlanogramPhotoData> planogramImageList = [];
+  List<TransPlanoGuideGcsImagesListModel> planogramGcsImagesList=[];
+  PlanogramCountModel planogramCountModel = PlanogramCountModel(totalPlanogramItems: 0,totalUpload: 0,totalNotUpload: 0,totalAdhere: 0,totalNotAdhere: 0);
+
+  SosCountModel sosCountModel = SosCountModel(totalNotUpload: 0,totalUpload: 0,totalSosItems: 0,totalCategories: 0);
+  List<SaveSosData> sosDataForApi = [];
+
   List<AgencyDashboardModel> allAgencyData = [];
   List<AgencyDashboardModel> agencyData = [];
 
@@ -125,6 +143,10 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
   bool isFreshnessFinishLoading = false;
   bool isPromoPlanFinishLoading = false;
   bool isStockFinishLoading = false;
+  bool isBeforeFixingFinishLoading = false;
+  bool isOtherPhotoFinishLoading = false;
+  bool isSosFinishLoading = false;
+  bool isPlanogramFinishLoading = false;
 
   @override
   void initState() {
@@ -165,7 +187,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         moduleIdList.add(allReqModuleData[i].moduleId.toString().trim());
       }
     }
-
+    print("REQUIRED MODULES");
     print(moduleIdList);
 
     getAllCountData();
@@ -178,22 +200,9 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F7FD),
-      appBar: AppBar(
-        title: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              storeName,
-              style: const TextStyle(fontSize: 16),
-            ),
-            const Text(
-              "Visit Upload",
-              style: TextStyle(fontSize: 12),
-            ),
-          ],
-        ),
-      ),
+      appBar: generalAppBar(context, storeName, userName, (){
+        Navigator.of(context).pop();
+      }, (){print("filter Click");}, true, false, false),
       body: Column(
         children: [
           Expanded(
@@ -217,13 +226,74 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                             isUploaded: availabilityCountModel.totalNotUploaded == 0,
                             isUploadData: isAvlFinishLoading,
                             storeName:storeName,
-                            moduleName: "Total Sku's",
+                            moduleName: "Sku's",
                             screenName: "Availability",
                             checkinTime:checkInTime,
                             avlSkus:availabilityCountModel.totalAvl,
                             notAvlSkus: availabilityCountModel.totalNotAvl,
                             notMarkedSkus: availabilityCountModel.totalNotMarked,
                             totalSkus: availabilityCountModel.totalSku,),
+
+                        if(beforeFixingCountModel.totalBeforeFixing  >0)
+                          VisitBeforeFixingUploadScreenCard(
+                              screenName: "Before Fixing",
+                              moduleName: "Category",
+                              onUploadTap: () async {
+
+                                await uploadImagesToGcs(AppConstants.beforeFixing);
+
+                               beforeFixingUploadApi();
+
+                              },
+                              totalBeforeFixing: beforeFixingCountModel.totalBeforeFixing,
+                              uploadedData: beforeFixingCountModel.totalCategories,
+                              isUploadData: isBeforeFixingFinishLoading,
+                              isUploaded: beforeFixingCountModel.totalNotUpload == 0),
+
+                        if(otherPhotoCountModel.totalOtherPhotos  > 0)
+                          VisitBeforeFixingUploadScreenCard(
+                              screenName: "Other Photo",
+                              moduleName: "Category",
+                              onUploadTap: () async {
+
+                                await uploadImagesToGcs(AppConstants.otherPhoto);
+
+                                otherPhotoUploadApi();
+
+                              },
+                              totalBeforeFixing: otherPhotoCountModel.totalOtherPhotos,
+                              uploadedData: otherPhotoCountModel.totalCategories,
+                              isUploadData: isOtherPhotoFinishLoading,
+                              isUploaded: otherPhotoCountModel.totalNotUpload == 0),
+
+                        if(sosCountModel.totalSosItems  > 0)
+                          VisitSosUploadScreenCard(
+                              screenName: "Share of Shelf",
+                              moduleName: "Records",
+                              onUploadTap: () async {
+
+                                sosUploadApi();
+
+                              },
+                              totalBeforeFixing: sosCountModel.totalSosItems,
+                              uploadedData: sosCountModel.totalCategories,
+                              isUploadData: isSosFinishLoading,
+                              isUploaded: sosCountModel.totalNotUpload == 0),
+
+                        if(planogramCountModel.totalPlanogramItems > 0)
+                          VisitPlanogramUploadScreenCard(
+                              screenName: "PLanogram",
+                              moduleName: "Category",
+                              onUploadTap: () async {
+                                await uploadImagesToGcs(AppConstants.planogram);
+
+                                planogramUploadApi();
+                              },
+                              totalPlanogram: planogramCountModel.totalPlanogramItems,
+                              totalAdhere: planogramCountModel.totalAdhere,
+                              totalNotAdhere: planogramCountModel.totalNotAdhere,
+                              isUploadData: isPlanogramFinishLoading,
+                              isUploaded: planogramCountModel.totalNotUpload == 0),
 
                         if (tmrPickListCountModel.totalPickListItems > 0 )
                           VisitPickListUploadScreenCard(
@@ -291,8 +361,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                             isUploadData: isRtvFinishLoading,
                             moduleName: "Sku's",
                             screenName: "RTV",
-                            uploadedData:rtvCountModel.totalVolume,
-                            notUploadedData: rtvCountModel.totalValue,
+                            uploadedData:rtvCountModel.totalVolume.toInt(),
+                            notUploadedData: rtvCountModel.totalValue.toInt(),
                             totalRtv: rtvCountModel.totalRtv,),
 
                         if(priceCheckCountModel.totalPriceCheck > 0)
@@ -377,19 +447,18 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                     borderRadius: BorderRadius.circular(10)),
               ),
               onPressed:isDataUploading ? null : isFinishButton ? (){
+                print((moduleIdList.contains("15")) &&
+                    (planoguideCountModel.totalUploaded.toString() == "null" ||
+                    planoguideCountModel.totalUploaded == 0));
                 if(userRole == "TMR") {
-                  if ((moduleIdList.contains("3")) && (availabilityCountModel.totalSku != availabilityCountModel.totalUploaded) || availabilityCountModel.totalSku == 0 || availabilityCountModel.totalUploaded.toString() == "null") {
+                  if ((moduleIdList.contains("3") || moduleIdList.contains("17") ) && ((availabilityCountModel.totalSku != availabilityCountModel.totalUploaded) || availabilityCountModel.totalSku == 0 || availabilityCountModel.totalUploaded.toString() == "null")) {
                     ToastMessage.errorMessage(context, "Please Mark All Sku's Availability");
-                  } else if ((moduleIdList.contains("3")) && tmrPickListCountModel.totalPickListItems != tmrPickListCountModel.totalPickReady) {
+                  } else if ((moduleIdList.contains("3")) && (tmrPickListCountModel.totalPickListItems != tmrPickListCountModel.totalPickReady)) {
                     ToastMessage.errorMessage(context, "Please Wait for pick list response");
-                  } else if ((moduleIdList.contains("15")) &&
-                      planoguideCountModel.totalUploaded.toString() == "null" ||
-                      planoguideCountModel.totalUploaded == 0) {
+                  } else if ((moduleIdList.contains("15")) && (planoguideCountModel.totalUploaded.toString() == "null" || planoguideCountModel.totalUploaded == 0)) {
                     ToastMessage.errorMessage(
                         context, "PLease Add At lease one planoguide");
-                  } else if ((moduleIdList.contains("16")) &&
-                      brandShareCountModel.totalUpload.toString() == "null" ||
-                      brandShareCountModel.totalUpload == 0) {
+                  } else if ((moduleIdList.contains("16")) && (brandShareCountModel.totalUpload.toString() == "null" || brandShareCountModel.totalUpload == 0)) {
                     ToastMessage.errorMessage(
                         context, "Please Add at least one brand share");
                   } else {
@@ -568,11 +637,54 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       });
     });
 
+    await DatabaseHelper.getBeforeFixingCountData(workingId).then((value) {
+
+      beforeFixingCountModel = value;
+
+    });
+
+    await DatabaseHelper.getOtherPhotoCountData(workingId).then((value) {
+
+      otherPhotoCountModel = value;
+
+    });
+
+    await DatabaseHelper.getSosCountData(workingId).then((value) {
+
+      sosCountModel = value;
+
+    });
+
+    await DatabaseHelper.getTransPlanogramCountData(workingId).then((value) {
+
+      planogramCountModel = value;
+
+    });
+
     setState(() {
+
+      if(beforeFixingCountModel.totalNotUpload > 0) {
+        isFinishButton = false;
+      }
+
+      if(otherPhotoCountModel.totalNotUpload > 0) {
+        isFinishButton = false;
+      }
+
+      if(sosCountModel.totalNotUpload > 0) {
+        isFinishButton = false;
+      }
+
+      if(planogramCountModel.totalNotUpload > 0) {
+
+        isFinishButton = false;
+
+      }
 
       if(availabilityCountModel.totalNotUploaded > 0) {
         isFinishButton = false;
       }
+
       if( planoguideCountModel.totalNotUploaded >0) {
         isFinishButton = false;
       }
@@ -657,6 +769,50 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
           }
         }
       }
+    }
+
+    if(module == AppConstants.beforeFixing) {
+
+      for (int j=0;j<beforeFixingGcsImagesList.length; j++) {
+        for (int i = 0; i < _imageFiles.length; i++) {
+          if(beforeFixingGcsImagesList[j].imageName.isNotEmpty)
+          {
+            if (_imageFiles[i].path.endsWith(beforeFixingGcsImagesList[j].imageName)) {
+              beforeFixingGcsImagesList[j].imageFile = _imageFiles[i];
+            }
+          }
+        }
+      }
+    }
+
+    if(module == AppConstants.otherPhoto) {
+
+      for (int j=0;j<otherPhotoGcsImagesList.length; j++) {
+        for (int i = 0; i < _imageFiles.length; i++) {
+          if(otherPhotoGcsImagesList[j].imageName.isNotEmpty)
+          {
+            if (_imageFiles[i].path.endsWith(otherPhotoGcsImagesList[j].imageName)) {
+              otherPhotoGcsImagesList[j].imageFile = _imageFiles[i];
+            }
+          }
+        }
+      }
+
+    }
+
+    if(module == AppConstants.planogram) {
+
+      for (int j=0;j<planogramGcsImagesList.length; j++) {
+        for (int i = 0; i < _imageFiles.length; i++) {
+          if(planogramGcsImagesList[j].imageName.isNotEmpty)
+          {
+            if (_imageFiles[i].path.endsWith(planogramGcsImagesList[j].imageName)) {
+              planogramGcsImagesList[j].imageFile = _imageFiles[i];
+            }
+          }
+        }
+      }
+
     }
 
   }
@@ -811,16 +967,161 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         });
       }
 
+      if(moduleName == AppConstants.beforeFixing) {
+
+        setState(() {
+          isBeforeFixingFinishLoading = true;
+        });
+
+        await DatabaseHelper.geBeforeFixingGcsImagesList(workingId).then((value) async {
+
+          beforeFixingGcsImagesList = value.cast<TransPlanoGuideGcsImagesListModel>();
+
+          await _getImages(AppConstants.beforeFixing).then((value) {
+            setTransPhotoInList(AppConstants.beforeFixing);
+
+            setState(() {});
+          });
+
+        });
+
+        print("------Before Fixing Image Upload -------- ");
+        for(int j = 0; j < beforeFixingGcsImagesList.length; j++) {
+
+          final filename =  beforeFixingGcsImagesList[j].imageName;
+          final filePath = 'capture_photo/$filename';
+          final fileContent = await beforeFixingGcsImagesList[j].imageFile!.readAsBytes();
+          final bucketObject = Object(name: filePath);
+
+          final resp = await storage.objects.insert(
+            bucketObject,
+            bucketName,
+            predefinedAcl: 'publicRead',
+            uploadMedia: Media(
+              Stream<List<int>>.fromIterable([fileContent]),
+              fileContent.length,
+            ),
+          );
+          print("Image Uploaded successfully");
+
+          await updatBeforeFixingAfterGcs1(beforeFixingGcsImagesList[j].id);
+
+        }
+        setState(() {
+          isBeforeFixingFinishLoading = false;
+        });
+      }
+
+      if(moduleName == AppConstants.otherPhoto) {
+
+        setState(() {
+          isOtherPhotoFinishLoading = true;
+        });
+
+        await DatabaseHelper.getOtherPhotoGcsImagesList(workingId).then((value) async {
+
+          otherPhotoGcsImagesList = value.cast<TransPlanoGuideGcsImagesListModel>();
+
+          await _getImages(AppConstants.otherPhoto).then((value) {
+            setTransPhotoInList(AppConstants.otherPhoto);
+
+            setState(() {});
+          });
+
+        });
+
+        print("------Other Photo Image Upload -------- ");
+        for(int j = 0; j < otherPhotoGcsImagesList.length; j++) {
+
+          final filename =  otherPhotoGcsImagesList[j].imageName;
+          final filePath = 'capture_photo/$filename';
+          final fileContent = await otherPhotoGcsImagesList[j].imageFile!.readAsBytes();
+          final bucketObject = Object(name: filePath);
+
+          final resp = await storage.objects.insert(
+            bucketObject,
+            bucketName,
+            predefinedAcl: 'publicRead',
+            uploadMedia: Media(
+              Stream<List<int>>.fromIterable([fileContent]),
+              fileContent.length,
+            ),
+          );
+          print("Image Uploaded successfully");
+
+          await updateOtherAfterGcs1(otherPhotoGcsImagesList[j].id);
+
+        }
+        setState(() {
+          isOtherPhotoFinishLoading = false;
+        });
+      }
+
+      if(moduleName == AppConstants.planogram) {
+
+        setState(() {
+          isPlanogramFinishLoading = true;
+        });
+
+        await DatabaseHelper.getTransPlanogramGcsImagesList(workingId).then((value) async {
+
+          planogramGcsImagesList = value.cast<TransPlanoGuideGcsImagesListModel>();
+
+          await _getImages(AppConstants.planogram).then((value) {
+            setTransPhotoInList(AppConstants.planogram);
+
+            setState(() {});
+          });
+
+        });
+
+        print("------Planogram Image Upload -------- ");
+        for(int j = 0; j < planogramGcsImagesList.length; j++) {
+
+          final filename =  planogramGcsImagesList[j].imageName;
+          final filePath = 'planogram/$filename';
+          final fileContent = await planogramGcsImagesList[j].imageFile!.readAsBytes();
+          final bucketObject = Object(name: filePath);
+
+          final resp = await storage.objects.insert(
+            bucketObject,
+            bucketName,
+            predefinedAcl: 'publicRead',
+            uploadMedia: Media(
+              Stream<List<int>>.fromIterable([fileContent]),
+              fileContent.length,
+            ),
+          );
+          print("Image Uploaded successfully");
+
+          await updatePlanogramAfterGcs1(planogramGcsImagesList[j].id);
+
+        }
+        setState(() {
+          isPlanogramFinishLoading = false;
+        });
+      }
+
       return true;
     } catch (e) {
       // Handle any errors that occur during the upload
       print("Upload GCS Error $e");
       setState(() {
-        isPlanoguideFinishLoading = false;
-        isRtvFinishLoading = false;
-        isPromoPlanFinishLoading = false;
+        isAvlFinishLoading = false;
+         isPickListFinishLoading = false;
+         isPlanoguideFinishLoading = false;
+         isShelfShareFinishLoading = false;
+         isRtvFinishLoading = false;
+         isPriceCheckFinishLoading = false;
+         isFreshnessFinishLoading = false;
+         isPromoPlanFinishLoading = false;
+         isStockFinishLoading = false;
+         isBeforeFixingFinishLoading = false;
+         isOtherPhotoFinishLoading = false;
+         isSosFinishLoading = false;
+         isPlanogramFinishLoading = false;
       });
-      ToastMessage.errorMessage(context, "Something went wrong please try again later");
+      ToastMessage.errorMessage(context, "Uploading images error please try again!");
       return false;
     }
   }
@@ -846,6 +1147,33 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
   Future<bool> updatePromoPlanAfterGcs1(int promoId) async {
     print("UPLOAD Rtv AFTER GCS");
     await DatabaseHelper.updatePromoPlanAfterGcsImageUpload(workingId,promoId.toString()).then((value) {
+
+    });
+
+    return true;
+  }
+
+  Future<bool> updatBeforeFixingAfterGcs1(int promoId) async {
+    print("UPLOAD Before Fixing AFTER GCS");
+    await DatabaseHelper.updateBeforeFixingAfterGcsImageUpload(workingId,promoId.toString()).then((value) {
+
+    });
+
+    return true;
+  }
+
+  Future<bool> updateOtherAfterGcs1(int promoId) async {
+    print("UPLOAD Other Photo AFTER GCS");
+    await DatabaseHelper.updateOtherPhotoAfterGcsImageUpload(workingId,promoId.toString()).then((value) {
+
+    });
+
+    return true;
+  }
+
+  Future<bool> updatePlanogramAfterGcs1(int promoId) async {
+    print("UPLOAD Planogram AFTER GCS");
+    await DatabaseHelper.updateTransPlanogramAfterGcsImageUpload(workingId,promoId.toString()).then((value) {
 
     });
 
@@ -918,6 +1246,180 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
     skuId = removeLastComma(skuId);
     print(skuId);
     await DatabaseHelper.updateTransAVLAfterUpdate(workingId,skuId).then((value) {
+
+    });
+
+    return true;
+  }
+
+  beforeFixingUploadApi() async {
+
+    await DatabaseHelper.getBeforeFixingApiUploadDataList(workingId).then((value) {
+      beforeFixingImageList  = value.cast<SaveOtherPhotoData>();
+
+      setState((){});
+    });
+
+    SaveOtherPhoto saveOtherPhoto  = SaveOtherPhoto(
+        username: userName,
+        workingId: workingId,
+        workingDate: workingDate,
+        storeId: storeId, images: beforeFixingImageList);
+
+    print("************ Before Fixing Upload in Api **********************");
+    print(jsonEncode(saveOtherPhoto));
+
+    setState((){
+      isBeforeFixingFinishLoading = true;
+    });
+
+    SqlHttpManager()
+        .saveBeforeFixingAndOtherPhotoTrans(token, baseUrl,saveOtherPhoto)
+        .then((value) async => {
+      print("************ Before Fixing Values **********************"),
+
+      await updateBeforeFixingStatusAfterApi(),
+
+      await getAllCountData(),
+
+      setState(() {
+        isBeforeFixingFinishLoading  = false;
+      }),
+      ToastMessage.succesMessage(context, "Before Fixing Data Uploaded Successfully"),
+    }).catchError((onError)=>{
+      ToastMessage.errorMessage(context, onError.toString()),
+      print(onError.toString()),
+      setState(() {
+        isBeforeFixingFinishLoading = false;
+      }),
+    });
+
+  }
+
+  Future <bool> updateBeforeFixingStatusAfterApi() async {
+    String ids = "";
+    for(int i=0;i<beforeFixingImageList.length;i++) {
+      ids = "${beforeFixingImageList[i].transPhotoId.toString()},$ids";
+    }
+    ids = removeLastComma(ids);
+    print(ids);
+    await DatabaseHelper.updateBeforeFixingAfterApi(workingId,ids).then((value) {
+
+    });
+
+    return true;
+  }
+
+  otherPhotoUploadApi() async {
+
+    await DatabaseHelper.getOtherPhotoApiUploadDataList(workingId).then((value) {
+      otherPhotoImageList  = value.cast<SaveOtherPhotoData>();
+
+      setState((){});
+    });
+
+    SaveOtherPhoto saveOtherPhoto  = SaveOtherPhoto(
+        username: userName,
+        workingId: workingId,
+        workingDate: workingDate,
+        storeId: storeId, images: otherPhotoImageList);
+
+    print("************ Other Photo Upload in Api **********************");
+    print(jsonEncode(saveOtherPhoto));
+
+    setState((){
+      isOtherPhotoFinishLoading = true;
+    });
+
+    SqlHttpManager()
+        .saveBeforeFixingAndOtherPhotoTrans(token, baseUrl,saveOtherPhoto)
+        .then((value) async => {
+      print("************ Other Photo Values **********************"),
+
+      await updateOtherPhotoStatusAfterApi(),
+
+      await getAllCountData(),
+
+      setState(() {
+        isOtherPhotoFinishLoading  = false;
+      }),
+      ToastMessage.succesMessage(context, "Other Photo Data Uploaded Successfully"),
+    }).catchError((onError)=>{
+      ToastMessage.errorMessage(context, onError.toString()),
+      print(onError.toString()),
+      setState(() {
+        isOtherPhotoFinishLoading = false;
+      }),
+    });
+
+  }
+
+  Future <bool> updateOtherPhotoStatusAfterApi() async {
+    String ids = "";
+    for(int i=0;i<otherPhotoImageList.length;i++) {
+      ids = "${otherPhotoImageList[i].transPhotoId.toString()},$ids";
+    }
+    ids = removeLastComma(ids);
+    print(ids);
+    await DatabaseHelper.updateOtherPhotoAfterApi(workingId,ids).then((value) {
+
+    });
+
+    return true;
+  }
+
+  sosUploadApi() async {
+
+    await DatabaseHelper.getSosApiUploadDataList(workingId).then((value) {
+      sosDataForApi  = value.cast<SaveSosData>();
+
+      setState((){});
+    });
+
+    SaveSosPhoto saveSosPhoto  = SaveSosPhoto(
+        username: userName,
+        workingId: workingId,
+        workingDate: workingDate,
+        storeId: storeId, sosList: sosDataForApi);
+
+    print("************ Sos Upload in Api **********************");
+    print(jsonEncode(saveSosPhoto));
+
+    setState((){
+      isSosFinishLoading = true;
+    });
+
+    SqlHttpManager()
+        .saveSosTrans(token, baseUrl,saveSosPhoto)
+        .then((value) async => {
+      print("************Sos Values **********************"),
+
+      await updateSosStatusAfterApi(),
+
+      await getAllCountData(),
+
+      setState(() {
+        isSosFinishLoading  = false;
+      }),
+      ToastMessage.succesMessage(context, "Share Of Shelf Data Uploaded Successfully"),
+    }).catchError((onError)=>{
+      ToastMessage.errorMessage(context, onError.toString()),
+      print(onError.toString()),
+      setState(() {
+        isOtherPhotoFinishLoading = false;
+      }),
+    });
+
+  }
+
+  Future <bool> updateSosStatusAfterApi() async {
+    String ids = "";
+    for(int i=0;i<sosDataForApi.length;i++) {
+      ids = "${sosDataForApi[i].id.toString()},$ids";
+    }
+    ids = removeLastComma(ids);
+    print(ids);
+    await DatabaseHelper.updateSosAfterApi(workingId,ids).then((value) {
 
     });
 
@@ -1086,7 +1588,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
     SqlHttpManager()
         .savePlanoguide(token, baseUrl,savePlanoguide)
         .then((value) async => {
-      print("************ Planogram Values **********************"),
+      print("************ Planoguide Values **********************"),
 
       await updateTransPlanoguideAfterApi(),
 
@@ -1176,7 +1678,6 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
     return true;
   }
-
 
   priceCheckUploadApi() async {
 
@@ -1502,6 +2003,68 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
     return true;
   }
 
+  planogramUploadApi() async {
+
+    await DatabaseHelper.getTransPlanogramApiUploadDataList(workingId).then((value) {
+
+      planogramImageList = value.cast<SavePlanogramPhotoData>();
+
+      setState(() {
+
+      });
+    });
+
+    SavePlanogramPhoto savePlanogramPhoto = SavePlanogramPhoto(
+        username: userName,
+        workingId: workingId,
+        storeId: storeId,
+        workingDate: workingDate,
+        planograms: planogramImageList);
+
+    print("************ Planogram Upload in Api **********************");
+    print(jsonEncode(savePlanogramPhoto));
+
+    setState((){
+      isPlanogramFinishLoading = true;
+    });
+
+    SqlHttpManager().savePlanogramTrans(token, baseUrl, savePlanogramPhoto).then((value) async => {
+
+
+      print("************ Planogram Values **********************"),
+
+      await updatePlanogramAfterApi(),
+
+      await getAllCountData(),
+
+      setState((){
+        isPlanogramFinishLoading = false;
+      }),
+
+      ToastMessage.succesMessage(context, "Planogram Data Uploaded Successfully"),
+
+    }).catchError((e) =>{
+      print(e.toString()),
+      setState((){
+        isPlanogramFinishLoading = false;
+      }),
+    });
+  }
+
+  Future<bool> updatePlanogramAfterApi() async {
+    String ids = "";
+    for(int i=0;i<planogramImageList.length;i++) {
+      ids = "${wrapIfString(planogramImageList[i].id.toString())},$ids";
+    }
+    ids = removeLastComma(ids);
+    print(ids);
+    await DatabaseHelper.updateTransPlanogramAfterApi(workingId,ids).then((value) {
+
+    });
+
+    return true;
+  }
+
   finishVisit() async {
     setState(() {
       isDataUploading = true;
@@ -1552,6 +2115,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
   Future <bool>  deleteVisitData() async {
 
     await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_availability,workingId);
+    ///Due to working_id issue
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_picklist,workingId);
     await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_planoguide,workingId);
     await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_BrandShare,workingId);
     await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_rtv,workingId);
@@ -1559,7 +2124,10 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
     await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbTransPromoPlan,workingId);
     await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_freshness,workingId);
     await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_stock,workingId);
-    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_picklist,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_before_faxing,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_photo,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_sos,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_planogram,workingId);
 
     await deleteFolder(workingId);
 

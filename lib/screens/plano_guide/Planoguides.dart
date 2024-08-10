@@ -32,6 +32,7 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
   String clientId = "";
   String workingId = "";
   String storeName = "";
+  String userName = "";
   String imageBaseUrl = "";
   // var imageName = "";
   File? imageFile;
@@ -58,6 +59,7 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
     clientId = sharedPreferences.getString(AppConstants.clientId)!;
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
     storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    userName = sharedPreferences.getString(AppConstants.userName)!;
     imageBaseUrl = sharedPreferences.getString(AppConstants.imageBaseUrl)!;
 
     getTransPlanoGuideOne();
@@ -156,7 +158,7 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
       transDataUpdate[index].imageFile = imageFile;
 
       final String extension = path.extension( transDataUpdate[index].imageFile!.path);
-      transDataUpdate[index].skuImageName = "${DateTime.now().millisecondsSinceEpoch}$extension";
+      transDataUpdate[index].skuImageName = "${userName}_${DateTime.now().millisecondsSinceEpoch}$extension";
       if(transDataUpdate[index].activity_status == 1) {
         transDataUpdate[index].gcs_status = 0;
         savePlanoGuideData(index, false,0,transDataUpdate[index]);
@@ -238,7 +240,7 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
         .height;
     return Scaffold(
         backgroundColor: const Color(0xFFF4F7FD),
-        appBar: generalAppBar(context, storeName, "Planoguide", (){
+        appBar: generalAppBar(context, storeName, userName, (){
           Navigator.of(context).pop();
         }, (){print("filter Click");}, true, false, false),
         body: isLoading ? const Center(child: MyLoadingCircle(),) :transData.isEmpty
@@ -323,7 +325,7 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
                         },
                         isActivity: filteredData[index].activity_status == 1,
                         fieldValue1: filteredData[index].cat_en_name,
-                        labelName1: "Category",
+                        labelName1: "Department",
                         fieldValue2: filteredData[index].pog,
                         labelName2: "POG",
                         unitList: unitList,
@@ -366,7 +368,7 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
                     },
                     isActivity: transData[index].activity_status == 1,
                     fieldValue1: transData[index].cat_en_name,
-                        labelName1: "Category",
+                        labelName1: "Department",
                     fieldValue2: transData[index].pog,
                         labelName2: "POG",
                         unitList: unitList,

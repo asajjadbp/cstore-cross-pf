@@ -4,6 +4,9 @@
 
 import 'dart:convert';
 
+import 'package:cstore/Model/response_model.dart/jp_response_model.dart';
+import 'package:cstore/Model/response_model.dart/user_dashboard_model.dart';
+
 import '../database_model/PlanogramReasonModel.dart';
 import '../database_model/app_setting_model.dart';
 import '../database_model/pomo_plan_model.dart';
@@ -71,6 +74,8 @@ class SyncroniseDetail {
   List<Sys_OSDCTypeModel> sysSosUnit;
   List<RequiredModuleModel> sysReqModule;
   List<PromoPlanModel> sysPromoPlan;
+  List<JourneyPlanDetail> sysJourneyPlan;
+  List<UserDashboardModel> sysDashboard;
 
   SyncroniseDetail({
     required this.sysDropReason,
@@ -93,6 +98,8 @@ class SyncroniseDetail {
     required this.sysSosUnit,
     required this.sysReqModule,
     required this.sysPromoPlan,
+    required this.sysJourneyPlan,
+    required this.sysDashboard,
   });
 
   factory SyncroniseDetail.fromJson(Map<String, dynamic> json) =>
@@ -140,17 +147,19 @@ class SyncroniseDetail {
               json["sys_visit_required_modules"].map((x) => RequiredModuleModel.fromJson(x))),
         sysPromoPlan: List<PromoPlanModel>.from(
             json["sys_promo_plan"].map((x) => PromoPlanModel.fromJson(x))),
+        sysJourneyPlan: List<JourneyPlanDetail>.from(
+            json["sys_jp"].map((x) => JourneyPlanDetail.fromJson(x))),
+        sysDashboard: List<UserDashboardModel>.from(
+            json["sys_dashboard"].map((x) => UserDashboardModel.fromJson(x))),
 
       );
 
   Map<String, dynamic> toJson() => {
-        "sys_drop_reason":
-            List<dynamic>.from(sysDropReason.map((x) => x.toJson())),
-        "sys_agency_dashboard":
-            List<dynamic>.from(sysAgencyDashboard.map((x) => x.toJson())),
-        "sys_client": List<dynamic>.from(sysClient.map((x) => x.toJson())),
-        "sys_category": List<dynamic>.from(sysCategory.map((x) => x.toJson())),
-        "sys_brand": List<dynamic>.from(sysBrand.map((x) => x.toJson())),
+      "sys_drop_reason": List<dynamic>.from(sysDropReason.map((x) => x.toJson())),
+      "sys_agency_dashboard": List<dynamic>.from(sysAgencyDashboard.map((x) => x.toJson())),
+      "sys_client": List<dynamic>.from(sysClient.map((x) => x.toJson())),
+      "sys_category": List<dynamic>.from(sysCategory.map((x) => x.toJson())),
+      "sys_brand": List<dynamic>.from(sysBrand.map((x) => x.toJson())),
       "sys_planogram_reason": List<dynamic>.from(sysPlanoReason.map((x) => x.toJson())),
       "sys_rtv_reason": List<dynamic>.from(sysRTVReason.map((x) => x.toJson())),
       "sys_product": List<dynamic>.from(sysProduct.map((x) => x.toJson())),
@@ -165,6 +174,8 @@ class SyncroniseDetail {
       "sys_brand_faces": List<dynamic>.from(sysBrandFaces.map((x) => x.toJson())),
       "sys_visit_required_modules": List<dynamic>.from(sysReqModule.map((x) => x.toJson())),
       "sys_promo_plan":  List<dynamic>.from(sysPromoPlan.map((x) => x.toJson())),
+      "sys_jp":  List<dynamic>.from(sysJourneyPlan.map((x) => x.toJson())),
+      "sys_dashboard":  List<dynamic>.from(sysDashboard.map((x) => x.toJson())),
   };
 }
 

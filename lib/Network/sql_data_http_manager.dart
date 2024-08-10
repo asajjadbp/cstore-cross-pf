@@ -26,7 +26,7 @@ import 'api.dart';
 class SqlHttpManager {
   final ResponseHandler _handler = ResponseHandler();
 
-  Future<dynamic> saveOtherPhotoTrans(String token, String baseUrl,SaveOtherPhoto saveOtherPhoto) async {
+  Future<dynamic> saveBeforeFixingAndOtherPhotoTrans(String token, String baseUrl,SaveOtherPhoto saveOtherPhoto) async {
     final url = baseUrl + Api.sqlOtherPhotoTableSaving;
     print(url);
     print(jsonEncode(saveOtherPhoto));

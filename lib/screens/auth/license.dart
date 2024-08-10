@@ -72,7 +72,7 @@ class _LicenseKeyState extends State<LicenseKey> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(0, 77, 145, 1),
+      backgroundColor: MyColors.whiteColor,
       body: SingleChildScrollView(
         child: SingleChildScrollView(
           child: SizedBox(
@@ -108,10 +108,6 @@ class _LicenseKeyState extends State<LicenseKey> {
                     height: MediaQuery.of(context).size.height * 0.7,
                     decoration: const BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(60),
-                        // topRight: Radius.circular(60),
-                      ),
                     ),
                     child: Padding(
                       padding:

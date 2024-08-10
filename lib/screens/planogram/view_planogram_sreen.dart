@@ -16,6 +16,7 @@ import '../../Database/table_name.dart';
 import '../../Model/database_model/show_planogram_model.dart';
 import '../utils/app_constants.dart';
 import '../utils/toast/toast.dart';
+import '../widget/app_bar_widgets.dart';
 import '../widget/loading.dart';
 import 'package:intl/intl.dart';
 
@@ -34,6 +35,7 @@ class _ViewPlanogramScreenState extends State<ViewPlanogramScreen> {
   bool isLoading = false;
   String workingId = "";
   String storeName = "";
+  String userName = "";
   DateTime now = DateTime.now();
 
   @override
@@ -47,12 +49,13 @@ class _ViewPlanogramScreenState extends State<ViewPlanogramScreen> {
 
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
     storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    userName = sharedPreferences.getString(AppConstants.userName)!;
     getTransPlanogramOne();
     getGraphData();
   }
 
   Future<void> getGraphData()async {
-    await DatabaseHelper.getAdherenceData().then((value) async {
+    await DatabaseHelper.getAdherenceData(workingId).then((value) async {
       adherenceModel = value;
     });
   }
@@ -154,15 +157,9 @@ class _ViewPlanogramScreenState extends State<ViewPlanogramScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: MyColors.background,
-      appBar: AppBar(
-        title: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(storeName,style: const TextStyle(fontSize: 16),),
-          const Text("View Planogram",style: TextStyle(fontSize: 12),),
-        ],
-      ),),
+      appBar: generalAppBar(context, storeName, userName, (){
+        Navigator.of(context).pop();
+      }, (){print("filter Click");}, true, false, false),
       body: Container(
         margin:const EdgeInsets.symmetric(horizontal: 10),
         child: isLoading
@@ -204,7 +201,7 @@ class _ViewPlanogramScreenState extends State<ViewPlanogramScreen> {
                   itemCount: transData.length,
                   itemBuilder: (ctx, i) {
                     return PlanogramItemCard(
-                      itemTime: DateFormat('HH:mm aa').format(now),
+                      itemTime: DateFormat('hh:mm aa').format(DateTime.parse(transData[i].dateTime)),
                         reason: transData[i].not_adherence_reason,
                         clientName: transData[i].client_name,
                         brandName: transData[i].brand_en_name,

@@ -22,7 +22,7 @@ class SyncroniseHTTP {
       response = await _handler.post(Uri.parse(url), JourneyPlanRequestModel(username: userName).toJson(), token);
     });
     print("_____________DATA_______________");
-    print(jsonEncode(response['data'][0]['sys_promo_plan']));
+    print(jsonEncode(response['data'][0]['sys_dashboard']));
     print("_________________________________");
 
     SyncroniseResponseModel syncResponseData =

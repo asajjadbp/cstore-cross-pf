@@ -18,6 +18,7 @@ import '../utils/appcolor.dart';
 import '../utils/services/image_picker.dart';
 import '../utils/services/take_image_and_save_to_folder.dart';
 import '../utils/toast/toast.dart';
+import '../widget/app_bar_widgets.dart';
 import '../widget/drop_downs.dart';
 import 'package:path/path.dart' as path;
 
@@ -56,6 +57,7 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
   String clientId = "";
   String workingId = "";
   String storeName = "";
+  String userName = "";
 
   @override
   void didChangeDependencies() async {
@@ -76,6 +78,7 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
     clientId = sharedPreferences.getString(AppConstants.clientId)!;
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
     storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    userName = sharedPreferences.getString(AppConstants.userName)!;
 
     if (isInit) {
       getReasonData();
@@ -94,7 +97,7 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
       }
       imageFile = value;
       final String extension = path.extension(imageFile!.path);
-      imageName = "${DateTime.now().millisecondsSinceEpoch}$extension";
+      imageName = "${userName}_${DateTime.now().millisecondsSinceEpoch}$extension";
 
       setState(() {
 
@@ -240,16 +243,9 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(storeName,style: const TextStyle(fontSize: 16),),
-            const Text("Planogram",style: TextStyle(fontSize: 12),),
-          ],
-        ),
-      ),
+      appBar: generalAppBar(context, storeName, userName, (){
+        Navigator.of(context).pop();
+      }, (){print("filter Click");}, true, false, false),
       body: Stack(
         children: [
           isLoading
@@ -258,154 +254,161 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
           )
               : Container(
             margin: const EdgeInsets.only(left: 10, right: 10),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  const Text(
-                    "Client",
-                    style: TextStyle(
-                        color: MyColors.appMainColor,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  // dropdownwidget("Company Name"),
-                  ClientListDropDown(
-                      clientKey: clientKey,
-                      hintText: "Client", clientData: clientData, onChange: (value){
-                    selectedClientId = value.client_id;
-                    getCategoryData(selectedClientId);
-                    getBrandData(selectedClientId);
-                    setState(() {
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        const Text(
+                          "Client",
+                          style: TextStyle(
+                              color: MyColors.appMainColor,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        // dropdownwidget("Company Name"),
+                        ClientListDropDown(
+                            clientKey: clientKey,
+                            hintText: "Client", clientData: clientData, onChange: (value){
+                          selectedClientId = value.client_id;
+                          getCategoryData(selectedClientId);
+                          getBrandData(selectedClientId);
+                          setState(() {
 
-                    });
-                  }),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  const Text(
-                    "Category",
-                    style: TextStyle(
-                        color: MyColors.appMainColor,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  CategoryDropDown(categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
-                    selectedCategoryId = value.id;
-                    setState(() {
+                          });
+                        }),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        const Text(
+                          "Category",
+                          style: TextStyle(
+                              color: MyColors.appMainColor,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        CategoryDropDown(categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
+                          selectedCategoryId = value.id;
+                          setState(() {
 
-                    });
-                  }),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  const Text(
-                    "Brand",
-                    style: TextStyle(
-                        color: MyColors.appMainColor,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  SysBrandDropDown(brandKey:brandKey,hintText: "Brand", brandData: brandData, onChange: (value){
-                    selectedBrandId = value.id;
-                  }),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  const Text(
-                    "Status",
-                    style: TextStyle(
-                        color: MyColors.appMainColor,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  ClientListDropDown(
-                      clientKey: clientKey1,
-                      hintText: "Status", clientData: statusDataList, onChange: (value){
-                    selectedStatusId = value.client_id;
-                      setState(() {
+                          });
+                        }),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        const Text(
+                          "Brand",
+                          style: TextStyle(
+                              color: MyColors.appMainColor,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        SysBrandDropDown(brandKey:brandKey,hintText: "Brand", brandData: brandData, onChange: (value){
+                          selectedBrandId = value.id;
+                        }),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        const Text(
+                          "Status",
+                          style: TextStyle(
+                              color: MyColors.appMainColor,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        ClientListDropDown(
+                            clientKey: clientKey1,
+                            hintText: "Status", clientData: statusDataList, onChange: (value){
+                          selectedStatusId = value.client_id;
+                            setState(() {
 
-                      });
-                  }),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                 if(selectedStatusId == 0)
-                 Column(
-                   mainAxisAlignment: MainAxisAlignment.start,
-                   crossAxisAlignment: CrossAxisAlignment.start,
-                   children: [
-                     const Text(
-                       "Reason",
-                       style: TextStyle(
-                           color: MyColors.appMainColor,
-                           fontWeight: FontWeight.bold),
-                     ),
-                     const SizedBox(
-                       height: 5,
-                     ),
+                            });
+                        }),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                       if(selectedStatusId == 0)
+                       Column(
+                         mainAxisAlignment: MainAxisAlignment.start,
+                         crossAxisAlignment: CrossAxisAlignment.start,
+                         children: [
+                           const Text(
+                             "Reason",
+                             style: TextStyle(
+                                 color: MyColors.appMainColor,
+                                 fontWeight: FontWeight.bold),
+                           ),
+                           const SizedBox(
+                             height: 5,
+                           ),
 
-                     PlanoReasonDropDown(hintText: "Reason", reasonData: planogramReasonData, onChange: (value){
-                       selectedPlanogramReasonId = value.id;
-                       setState(() {
+                           PlanoReasonDropDown(hintText: "Reason", reasonData: planogramReasonData, onChange: (value){
+                             selectedPlanogramReasonId = value.id;
+                             setState(() {
 
-                       });
-                     }),
-                   ],
-                 ),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                             });
+                           }),
+                         ],
+                       ),
+                        const SizedBox(
+                          height: 10,
+                        ),
 
 
-                  ImageRowButton(imageFile: imageFile, onSelectImage: (){
-                    getImage();
-                  }),
+                        ImageRowButton(imageFile: imageFile, onSelectImage: (){
+                          getImage();
+                        }),
 
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  isBtnLoading
-                      ? Container(
-                    height: 60,
-                    child: Center(
-                      child: Container(
-                        height: 60,
-                        child: const MyLoadingCircle(),
-                      ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        isBtnLoading
+                            ? Container(
+                          height: 60,
+                          child: Center(
+                            child: Container(
+                              height: 60,
+                              child: const MyLoadingCircle(),
+                            ),
+                          ),
+                        )
+                            : ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: MyColors.appMainColor,
+                              minimumSize: Size(screenWidth, 45),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10))),
+                          onPressed: () {
+                            saveStorePhotoData();
+                            // Navigator.of(context).pushNamed();
+                          },
+                          child: const Text(
+                            "Save",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+
+                      ],
                     ),
-                  )
-                      : ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: MyColors.appMainColor,
-                        minimumSize: Size(screenWidth, 45),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10))),
-                    onPressed: () {
-                      saveStorePhotoData();
-                      // Navigator.of(context).pushNamed();
-                    },
-                    child: const Text(
-                      "Save",
-                      style: TextStyle(color: Colors.white),
-                    ),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  ElevatedButton(
+                ),
+                Container(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  child:  ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Color.fromARGB(255, 39, 136, 42),
                         minimumSize: Size(screenWidth, 45),
@@ -420,8 +423,8 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
-                ],
-              ),
+                )
+              ],
             ),
           ),
           if(isCategoryLoading || isBrandLoading)

@@ -17,6 +17,7 @@ import '../utils/appcolor.dart';
 import '../utils/services/image_picker.dart';
 import '../utils/services/take_image_and_save_to_folder.dart';
 import '../utils/toast/toast.dart';
+import '../widget/app_bar_widgets.dart';
 import '../widget/image_selection_row_button.dart';
 
 class BeforeFixing extends StatefulWidget {
@@ -43,6 +44,7 @@ class _BeforeFixingState extends State<BeforeFixing> {
   String clientId = "";
   String workingId = "";
   String storeName = "";
+  String userName = "";
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
@@ -54,7 +56,7 @@ class _BeforeFixingState extends State<BeforeFixing> {
     clientId = sharedPreferences.getString(AppConstants.clientId)!;
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
     storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
-
+    userName = sharedPreferences.getString(AppConstants.userName)!;
     if (isInit) {
       getClientData();
       // getCategoryData();
@@ -71,7 +73,7 @@ class _BeforeFixingState extends State<BeforeFixing> {
       imageFile = value;
 
       final String extension = path.extension(imageFile!.path);
-      imageName = "${DateTime.now().millisecondsSinceEpoch}$extension";
+      imageName = "${userName}_${DateTime.now().millisecondsSinceEpoch}$extension";
       setState(() {
 
       });
@@ -156,16 +158,9 @@ class _BeforeFixingState extends State<BeforeFixing> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(storeName,style: const TextStyle(fontSize: 16),),
-            const Text("Before Fixing",style: TextStyle(fontSize: 12),),
-          ],
-        ),
-      ),
+      appBar: generalAppBar(context, storeName, userName, (){
+        Navigator.of(context).pop();
+      }, (){print("filter Click");}, true, false, false),
       body: isLoading
           ? Center(
               child: Container(
@@ -176,103 +171,110 @@ class _BeforeFixingState extends State<BeforeFixing> {
           : Container(
               margin: const EdgeInsets.only(left: 10, right: 10),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const Text(
-                    "Client",
-                    style: TextStyle(
-                        color: MyColors.appMainColor,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  // dropdownwidget("Company Name"),
-                  ClientListDropDown(
-                      clientKey: clientKey,
-                      hintText: "Client", clientData: clientData, onChange: (value){
-                    selectedClientId = value.client_id;
-                    getCategoryData(selectedClientId);
-                    setState(() {
-
-                    });
-                  }),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const Text(
-                    "Category",
-                    style: TextStyle(
-                        color: MyColors.appMainColor,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  isCategoryLoading
-                      ? Center(
-                    child: Container(
-                      height: 60,
-                      child: const MyLoadingCircle(),
-                    ),
-                  )
-                      : CategoryDropDown(categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
-                        selectedCategoryId = value.id;
-                        setState(() {
-
-                        });
-                  }),
-                  const SizedBox(
-                    height: 20,
-                  ),
-
-                  ImageRowButton(imageFile: imageFile, onSelectImage: (){
-                    getImage();
-                  }),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  isBtnLoading
-                      ? Center(
-                    child: Container(
-                      height: 60,
-                      child: const MyLoadingCircle(),
-                    ),
-                  )
-                      : ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: MyColors.appMainColor,
-                              minimumSize: Size(screenWidth, 45),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5))),
-                          onPressed: () {
-                            saveStorePhotoData();
-                            // Navigator.of(context).pushNamed();
-                          },
-                          child: const Text(
-                            "Save",
-                            style: TextStyle(color: Colors.white),
-                          ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 20,
                         ),
-                  const SizedBox(
-                    height: 15,
+                        const Text(
+                          "Client",
+                          style: TextStyle(
+                              color: MyColors.appMainColor,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        // dropdownwidget("Company Name"),
+                        ClientListDropDown(
+                            clientKey: clientKey,
+                            hintText: "Client", clientData: clientData, onChange: (value){
+                          selectedClientId = value.client_id;
+                          getCategoryData(selectedClientId);
+                          setState(() {
+
+                          });
+                        }),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const Text(
+                          "Category",
+                          style: TextStyle(
+                              color: MyColors.appMainColor,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        isCategoryLoading
+                            ? Center(
+                          child: Container(
+                            height: 60,
+                            child: const MyLoadingCircle(),
+                          ),
+                        )
+                            : CategoryDropDown(categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
+                              selectedCategoryId = value.id;
+                              setState(() {
+
+                              });
+                        }),
+                        const SizedBox(
+                          height: 20,
+                        ),
+
+                        ImageRowButton(imageFile: imageFile, onSelectImage: (){
+                          getImage();
+                        }),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        isBtnLoading
+                            ? Center(
+                          child: Container(
+                            height: 60,
+                            child: const MyLoadingCircle(),
+                          ),
+                        )
+                            : ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: MyColors.appMainColor,
+                                    minimumSize: Size(screenWidth, 45),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5))),
+                                onPressed: () {
+                                  saveStorePhotoData();
+                                  // Navigator.of(context).pushNamed();
+                                },
+                                child: const Text(
+                                  "Save",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+
+                      ],
+                    ),
                   ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 39, 136, 42),
-                        minimumSize: Size(screenWidth, 45),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5))),
-                    onPressed: () {
-                      Navigator.of(context)
-                          .pushNamed(ViewBeforeFixing.routename);
-                    },
-                    child: const Text(
-                      "View Before Fixing",
-                      style: TextStyle(color: Colors.white),
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 10),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromARGB(255, 39, 136, 42),
+                          minimumSize: Size(screenWidth, 45),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5))),
+                      onPressed: () {
+                        Navigator.of(context)
+                            .pushNamed(ViewBeforeFixing.routename);
+                      },
+                      child: const Text(
+                        "View Before Fixing",
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
                 ],

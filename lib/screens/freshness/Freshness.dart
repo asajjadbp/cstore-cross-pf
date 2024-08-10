@@ -239,8 +239,7 @@ class _Freshness_ScreenState extends State<Freshness_Screen> {
   }
 
   void InsertTransFreshness(month, year, pieces, skuId) async {
-    String startMonth = DateFormat('MMM').format((DateTime.now())).toLowerCase();
-
+    String startMonth = DateFormat('MMM - MM').format((DateTime.now()));
     int monthDifferenceValue = await monthDifference(startMonth,month);
     print(startMonth);
     print(month);
@@ -257,9 +256,9 @@ class _Freshness_ScreenState extends State<Freshness_Screen> {
     }
 
     if(year.toString() == DateTime.now().year.toString()) {
-      if (monthDifferenceValue < 2) {
+      if (monthDifferenceValue < 1) {
         ToastMessage.errorMessage(
-            context, "You can not enter data for current and next month");
+            context, "You can not enter data for current or previous month");
         return;
       }
     }
@@ -282,28 +281,33 @@ class _Freshness_ScreenState extends State<Freshness_Screen> {
   }
 
   searchFilter() {
-    isFilter = true;
 
-    filterTransData = transData.where((element) => element.activity_status == 1).toList();
+    if(isFilter) {
+      isFilter = false;
+    } else {
+      isFilter = true;
 
+      filterTransData =
+          transData.where((element) => element.activity_status == 1).toList();
+    }
     setState(() {
 
     });
   }
 
   Map<String, int> monthMap = {
-    'jan': 1,
-    'feb': 2,
-    'mar': 3,
-    'apr': 4,
-    'may': 5,
-    'jun': 6,
-    'jul': 7,
-    'aug': 8,
-    'sep': 9,
-    'oct': 10,
-    'nov': 11,
-    'dec': 12,
+    'Jan - 01': 1,
+    'Feb - 02': 2,
+    'Mar - 03': 3,
+    'Apr - 04': 4,
+    'May - 05': 5,
+    'Jun - 06': 6,
+    'Jul - 07': 7,
+    'Aug - 08': 8,
+    'Sep - 09': 9,
+    'Oct - 10': 10,
+    'Nov - 11': 11,
+    'Dec - 12': 12,
   };
 
 
@@ -324,7 +328,7 @@ class _Freshness_ScreenState extends State<Freshness_Screen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: generalAppBar(context, storeName, "Freshness", () {
+      appBar: generalAppBar(context, storeName, userId, () {
         Navigator.of(context).pop();
       }, () {
         showModalBottomSheet<void>(
@@ -530,9 +534,11 @@ class _Freshness_ScreenState extends State<Freshness_Screen> {
                     },
                     child: Card(
                       elevation: 5,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
                         decoration: BoxDecoration(
+                          border: Border.all( color: isFilter ? MyColors.appMainColor2 : MyColors.whiteColor,width: 3),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         alignment: Alignment.center,
@@ -559,9 +565,11 @@ class _Freshness_ScreenState extends State<Freshness_Screen> {
                     },
                     child: Card(
                       elevation: 5,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
                         decoration: BoxDecoration(
+                          border: Border.all( color: isFilter ? MyColors.appMainColor2 : MyColors.whiteColor,width: 3),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         alignment: Alignment.center,
@@ -569,7 +577,7 @@ class _Freshness_ScreenState extends State<Freshness_Screen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Text("RTV Pieces"),
+                            const Text("Freshness Pieces"),
                             Container(
                                 margin: const EdgeInsets.symmetric(vertical: 5),
                                 child: const FaIcon(FontAwesomeIcons.cubesStacked,color: MyColors.savebtnColor,)),

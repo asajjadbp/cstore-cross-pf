@@ -9,6 +9,7 @@ import 'package:cstore/Network/sql_data_http_manager.dart';
 import 'package:cstore/screens/availability/availablity_screen.dart';
 import 'package:cstore/screens/freshness/Freshness.dart';
 import 'package:cstore/screens/planogram/planogram_screen.dart';
+import 'package:cstore/screens/sidco_availability/sidco_availablity_screen.dart';
 import 'package:cstore/screens/utils/app_constants.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:cstore/screens/visit_upload/visitUploadScreen.dart';
@@ -36,6 +37,7 @@ import '../../Model/request_model.dart/finish_visit_request_model.dart';
 import '../../Model/request_model.dart/jp_request_model.dart';
 import '../../Model/request_model.dart/planoguide_request_model.dart';
 import '../../Model/request_model.dart/ready_pick_list_request.dart';
+import '../../Model/request_model.dart/sos_end_api_request_model.dart';
 import '../../Network/jp_http.dart';
 import '../before_fixing/before_fixing.dart';
 import '../brand_share/AddBrandShares.dart';
@@ -94,7 +96,6 @@ class _GridDashBoardState extends State<GridDashBoard> {
   PickListCountModel pickListCountModel = PickListCountModel(totalNotUpload: 0,totalUpload: 0,totalPickListItems: 0,totalPickReady: 0,totalPickNotReady: 0);
   List<ReadyPickListData> pickListDataForApi = [];
 
-
   bool isFinishButton = true;
 
   final FlutterInternetSpeedTest _internetSpeedTest = FlutterInternetSpeedTest();
@@ -144,7 +145,7 @@ class _GridDashBoardState extends State<GridDashBoard> {
       visitActivity = sharedPreferences.getString(AppConstants.visitActivity)!;
 
       print("USER ROLE");
-      print(userName);
+      print(userRole);
 
       if(userRole != "TMR") {
         getPickerPickList();
@@ -1219,7 +1220,7 @@ class _GridDashBoardState extends State<GridDashBoard> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      appBar: generalAppBar(context, storeName, "Visit Activity", (){
+      appBar: generalAppBar(context, storeName, userName, (){
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -1352,11 +1353,11 @@ class _GridDashBoardState extends State<GridDashBoard> {
                                 child: CardWidget(
                                     onTap: () async {
                                      print(agencyData[i].en_name);
-                                     if(agencyData[i].en_name == "Before Fixing") {
+                                     if(agencyData[i].id == 1) {
                                        Navigator.of(context).pushNamed(BeforeFixing.routeName);
-                                     }else if(agencyData[i].en_name == "Planogram") {
+                                     }else if(agencyData[i].id == 5) {
                                        Navigator.of(context).pushNamed(PlanogramScreen.routeName);
-                                     }else if(agencyData[i].en_name == "Availability") {
+                                     } else if(agencyData[i].id == 3) {
 
                                          print(workingId);
                                          print(clientId);
@@ -1375,22 +1376,22 @@ class _GridDashBoardState extends State<GridDashBoard> {
 
                                          });
                                      }
-                                     else if(agencyData[i].en_name=="Other Photo"){
+                                     else if(agencyData[i].id == 11){
                                        Navigator.of(context).pushNamed(AddOtherPhoto.routeName);
-                                     }  else if(agencyData[i].en_name=="RTV"){
+                                     }  else if(agencyData[i].id == 2){
                                        Navigator.of(context).pushNamed(Rtv_List_Screen.routeName);
-                                     } else if(agencyData[i].en_name=="Share Of Shelf"){
+                                     } else if(agencyData[i].id == 6){
                                        Navigator.of(context).pushNamed(ShareOfShelf.routeName);
                                      }
                                      else if(agencyData[i].en_name=="OffShelf Display"){
                                        Navigator.of(context).pushNamed(AddOSDC.routeName);
                                      }
-                                     else if(agencyData[i].en_name=="Stock Count"){
+                                     else if(agencyData[i].id == 9){
                                        Navigator.of(context).pushNamed(StockListScreen.routeName);
                                      }
-                                     else if(agencyData[i].en_name=="Price Check"){
+                                     else if(agencyData[i].id == 7){
                                        Navigator.of(context).pushNamed(PriceCheck_Screen.routeName);
-                                     }else if(agencyData[i].en_name=="Planoguide"){
+                                     }else if(agencyData[i].id == 15){
                                        //Navigator.of(context).pushNamed(Planoguides_Screen.routename);
                                        await DatabaseHelper.insertTransPlanoguide(workingId).then((value) {
 
@@ -1400,7 +1401,7 @@ class _GridDashBoardState extends State<GridDashBoard> {
                                          ToastMessage.errorMessage(context, e.toString());
                                          setState(() {});
                                        });
-                                     } else if(agencyData[i].en_name=="Shelf Shares"){
+                                     } else if(agencyData[i].id == 16){
                                        await DatabaseHelper.insertTransBrandShares(workingId).then((value) {
                                          Navigator.of(context).pushNamed(BrandShares_Screen.routename);
                                        }).catchError((e) {
@@ -1408,7 +1409,7 @@ class _GridDashBoardState extends State<GridDashBoard> {
                                          ToastMessage.errorMessage(context, e.toString());
                                          setState(() {});
                                        });
-                                     } else if(agencyData[i].en_name == "Pick List") {
+                                     } else if(agencyData[i].id == 4) {
                                        Navigator.of(context).pushNamed(PickListScreen.routename);
                                      } else if(agencyData[i].en_name == "Promo") {
                                        await DatabaseHelper.insertTransPromoPlan(workingId,int.parse(storeId)).then((value) {
@@ -1418,8 +1419,26 @@ class _GridDashBoardState extends State<GridDashBoard> {
                                          ToastMessage.errorMessage(context, e.toString());
                                          setState(() {});
                                        });
-                                     } else if(agencyData[i].en_name == "Freshness") {
+                                     } else if(agencyData[i].id == 8) {
                                        Navigator.of(context).pushNamed(Freshness_Screen.routeName);
+                                     } else if(agencyData[i].id == 17) {
+
+                                       print(workingId);
+                                       print(clientId);
+                                       print(visitAvlExcludes);
+                                       var now = DateTime.now();
+
+                                       await DatabaseHelper.insertTransAvailability(workingId,clientId,visitAvlExcludes,now.toString()).then((value) {
+
+                                         Navigator.of(context).pushNamed(SidcoAvailability.routename);
+
+                                       }).catchError((e) {
+
+                                         print(e.toString());
+                                         ToastMessage.errorMessage(context, e.toString());
+                                         setState(() {});
+
+                                       });
                                      }
                                       // Navigator.of(context).pushNamed(BeforeFixing.routeName);
                                     },

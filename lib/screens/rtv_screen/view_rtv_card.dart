@@ -53,34 +53,32 @@ class Viewrtvcard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  height: screenHeight / 35,
-                  width: screenWidth / 4.5,
+                 padding: const EdgeInsets.symmetric(horizontal: 5,vertical: 3),
                   decoration:  const BoxDecoration(
                       color: MyColors.appMainColor,
                       borderRadius:
                           BorderRadius.only(bottomRight: Radius.circular(10))),
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 12, top: 3),
-                    child: Text(
-                      time,
-                      style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white),
-                    ),
+                  child: Text(
+                    time,
+                    style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white),
                   ),
                 ),
-                Container(
-                    margin: const EdgeInsets.only(top: 5),
-                    child: Text(
-                      title,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                      style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: MyColors.appMainColor),
-                    )),
+                Expanded(
+                  child: Container(
+                      margin: const EdgeInsets.only(top: 5),
+                      child: Text(
+                        title,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                        style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: MyColors.appMainColor),
+                      )),
+                ),
                uploadStatus==0?InkWell(
                     onTap: () {
                       onDelete();

@@ -151,8 +151,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
         DatabaseHelper.delete_table(TableName.tbl_sys_sos_units);
         DatabaseHelper.delete_table(TableName.tblSysVisitReqModules);
         DatabaseHelper.delete_table(TableName.tblSysPromoPlan);
+        DatabaseHelper.delete_table(TableName.tblSysJourneyPlan);
+        DatabaseHelper.delete_table(TableName.tblSysDashboard);
 
         ///Table Insertion
+       var isDashboardPlan = await DatabaseHelper.insertSysDashboardArray(syncroniseData[0].sysDashboard);
+       var isJourneyPlan = await DatabaseHelper.insertSysJourneyPlanArray(syncroniseData[0].sysJourneyPlan);
         var isAgencyDash=await DatabaseHelper.insertAgencyDashArray(syncroniseData[0].sysAgencyDashboard);
         var isCategory=await DatabaseHelper.insertCategoryArray(syncroniseData[0].sysCategory);
         var isSubCategory=await DatabaseHelper.insertSubCategoryArray(syncroniseData[0].sysSubCategory);
@@ -175,7 +179,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
         var isPromoPlan = await DatabaseHelper.insertSysPromoPlanArray(syncroniseData[0].sysPromoPlan);
 
         setState(() {
-          isLoading = isAgencyDash && isCategory && isSubCategory
+          isLoading = isJourneyPlan && isDashboardPlan && isAgencyDash && isCategory && isSubCategory
               && isClinet && isPlanoReason && isRtvReason && isProduct && isPhotoType
               && isOSDCType && isOsdcReason && isStorePog && isProductPlacement && isBrandFace && isPromoPlan;
 

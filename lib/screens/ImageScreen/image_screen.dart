@@ -22,6 +22,7 @@ class _PdfScreenState extends State<PdfScreen> {
 
   final GlobalKey<SfPdfViewerState> _pdfViewerKey = GlobalKey();
   String storeName = "";
+  String userName = "";
 
   @override
   void initState() {
@@ -35,6 +36,7 @@ class _PdfScreenState extends State<PdfScreen> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
     storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    userName = sharedPreferences.getString(AppConstants.userName)!;
     setState(() {
 
     });
@@ -46,7 +48,7 @@ class _PdfScreenState extends State<PdfScreen> {
     print("PDF Viewer List");
     print(widget.pdfUrl);
     return Scaffold(
-      appBar: generalAppBar(context, storeName, "Pdf Viewer" , (){
+      appBar: generalAppBar(context, storeName, userName , (){
         Navigator.of(context).pop();
       }, (){
       }, true, false, false),

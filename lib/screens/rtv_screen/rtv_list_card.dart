@@ -154,7 +154,7 @@ class Rtvcard extends StatelessWidget {
           right: 6,
           child: Container(
             height: 20,
-            width: 45,
+            padding:const  EdgeInsets.symmetric(horizontal: 5,vertical: 3),
             decoration: const BoxDecoration(
                 color: Colors.blue,
                 borderRadius: BorderRadius.only(

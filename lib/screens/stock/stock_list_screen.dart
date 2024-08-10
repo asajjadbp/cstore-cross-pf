@@ -1,5 +1,4 @@
 import 'package:cstore/Model/database_model/trans_stock_model.dart';
-import 'package:cstore/screens/price_check/pricecheckcad.dart';
 import 'package:cstore/screens/stock/stock_list_card.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -7,14 +6,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../Database/db_helper.dart';
 import '../../Model/database_model/category_model.dart';
 import '../../Model/database_model/client_model.dart';
-import '../../Model/database_model/pricing_show_model.dart';
 import '../../Model/database_model/sys_brand_model.dart';
 import '../utils/app_constants.dart';
 import '../utils/appcolor.dart';
 import '../utils/toast/toast.dart';
+import '../widget/app_bar_widgets.dart';
 import '../widget/drop_downs.dart';
 import '../widget/loading.dart';
-import '../widget/percent_indicator.dart';
 
 class StockListScreen extends StatefulWidget {
   static const routeName = "/StockListScreen";
@@ -254,10 +252,14 @@ class _StockListScreenState extends State<StockListScreen> {
   }
 
   searchFilter() {
-    isFilter = true;
+    if(isFilter) {
+      isFilter = false;
+    } else {
+      isFilter = true;
 
-    filterTransData = transData.where((element) => element.act_status == 1).toList();
-
+      filterTransData =
+          transData.where((element) => element.act_status == 1).toList();
+    }
     setState(() {
 
     });
@@ -280,228 +282,211 @@ class _StockListScreenState extends State<StockListScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: MyColors.background,
-      appBar: AppBar(
-        title: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              storeName,
-              style: const TextStyle(fontSize: 13),
-            ),
-            const Text(
-              "Stock Check",
-              style: TextStyle(fontSize: 12),
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-              onPressed: () {
-                showModalBottomSheet<void>(
-                  isDismissible: false,
-                  shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(10),
-                          topLeft: Radius.circular(10))),
-                  context: context,
-                  builder: (BuildContext context) {
-                    return WillPopScope(onWillPop: () async {
-                      return false;
-                    }, child: StatefulBuilder(builder:
-                        (BuildContext context1, StateSetter menuState) {
-                      return Container(
-                        height: MediaQuery.of(context).size.height * 0.90,
-                        decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(10),
-                                topLeft: Radius.circular(10))),
-                        margin: const EdgeInsets.only(
-                            right: 10, left: 10, bottom: 10),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Row(
-                                children: [
-                                  const Expanded(
-                                    child: Text(
-                                      "Filter",
-                                      style: TextStyle(
-                                          color: MyColors.appMainColor,
-                                          fontSize: 25,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                  ElevatedButton(
-                                      onPressed: () {
-                                        menuState(() {
-                                          clientKey.currentState!.reset();
-                                          categoryKey.currentState!.reset();
-                                          subCategoryKey.currentState!.reset();
-                                          brandKey.currentState!.reset();
-
-                                          selectedClientId = -1;
-                                          selectedCategoryId = -1;
-                                          selectedSubCategoryId = -1;
-                                          selectedBrandId = -1;
-
-                                          initialClientItem = clientData[0];
-                                          initialCategoryItem = categoryData[0];
-                                          initialSubCategoryItem =
-                                              subCategoryData[0];
-                                          initialBrandItem = brandData[0];
-                                        });
-                                      },
-                                      child: const Text(
-                                        "Reset Filter",
-                                        style: TextStyle(
-                                            color: MyColors.whiteColor),
-                                      ))
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              const Text(
-                                "Client",
-                                style: TextStyle(
-                                    color: MyColors.appMainColor,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              // dropdownwidget("Company Name"),
-                              ClientListDropDownWithInitialValue(
-                                  clientKey: clientKey,
-                                  initialValue: initialClientItem,
-                                  hintText: "Client",
-                                  clientData: clientData,
-                                  onChange: (value) {
-                                    selectedClientId = value.client_id;
-                                    initialClientItem = value;
-                                    getCategoryData(
-                                        selectedClientId, menuState);
-                                    getSubCategoryData(
-                                        selectedClientId, menuState);
-                                    getBrandData(selectedClientId, menuState);
-                                    menuState(() {});
-                                  }),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              const Text(
-                                "Category",
-                                style: TextStyle(
-                                    color: MyColors.appMainColor,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              isCategoryLoading
-                                  ? Center(
-                                      child: Container(
-                                        height: 60,
-                                        child: const MyLoadingCircle(),
-                                      ),
-                                    )
-                                  : CategoryDropDownWithInitialValue(
-                                      initialValue: initialCategoryItem,
-                                      categoryKey: categoryKey,
-                                      hintText: "Category",
-                                      categoryData: categoryData,
-                                      onChange: (value) {
-                                        selectedCategoryId = value.id;
-                                        initialCategoryItem = value;
-                                        menuState(() {});
-                                      }),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              const Text(
-                                "Sub Category",
-                                style: TextStyle(
-                                    color: MyColors.appMainColor,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              isSubCategoryLoading
-                                  ? Center(
-                                      child: Container(
-                                        height: 60,
-                                        child: const MyLoadingCircle(),
-                                      ),
-                                    )
-                                  : CategoryDropDownWithInitialValue(
-                                      initialValue: initialSubCategoryItem,
-                                      categoryKey: subCategoryKey,
-                                      hintText: "Sub Category",
-                                      categoryData: subCategoryData,
-                                      onChange: (value) {
-                                        selectedSubCategoryId = value.id;
-                                        initialSubCategoryItem = value;
-                                        menuState(() {});
-                                      }),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              const Text(
-                                "Brand",
-                                style: TextStyle(
-                                    color: MyColors.appMainColor,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              SysBrandDropDownWithInitialValue(
-                                  initialValue: initialBrandItem,
-                                  brandKey: brandKey,
-                                  hintText: "Brand",
-                                  brandData: brandData,
-                                  onChange: (value) {
-                                    selectedBrandId = value.id;
-                                    initialBrandItem = value;
-                                    menuState(() {});
-                                  }),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: MyColors.appMainColor,
-                                    minimumSize: Size(screenWidth, 45),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(5))),
-                                onPressed: () {
-                                  getTransStockOne();
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text(
-                                  "Search",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                            ],
+      appBar: generalAppBar(context, storeName, UserId, (){
+        Navigator.of(context).pop();
+      }, (){
+        setState(() {
+          isFilter = false;
+        });
+        showModalBottomSheet<void>(
+          isDismissible: false,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(10),
+                  topLeft: Radius.circular(10))),
+          context: context,
+          builder: (BuildContext context) {
+            return WillPopScope(onWillPop: () async {
+              return false;
+            }, child: StatefulBuilder(builder:
+                (BuildContext context1, StateSetter menuState) {
+              return Container(
+                height: MediaQuery.of(context).size.height * 0.90,
+                decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(10),
+                        topLeft: Radius.circular(10))),
+                margin: const EdgeInsets.only(
+                    right: 10, left: 10, bottom: 10),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        children: [
+                          const Expanded(
+                            child: Text(
+                              "Filter",
+                              style: TextStyle(
+                                  color: MyColors.appMainColor,
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold),
+                            ),
                           ),
+                          ElevatedButton(
+                              onPressed: () {
+                                menuState(() {
+                                  clientKey.currentState!.reset();
+                                  categoryKey.currentState!.reset();
+                                  subCategoryKey.currentState!.reset();
+                                  brandKey.currentState!.reset();
+
+                                  selectedClientId = -1;
+                                  selectedCategoryId = -1;
+                                  selectedSubCategoryId = -1;
+                                  selectedBrandId = -1;
+
+                                  initialClientItem = clientData[0];
+                                  initialCategoryItem = categoryData[0];
+                                  initialSubCategoryItem =
+                                  subCategoryData[0];
+                                  initialBrandItem = brandData[0];
+                                });
+                              },
+                              child: const Text(
+                                "Reset Filter",
+                                style: TextStyle(
+                                    color: MyColors.whiteColor),
+                              ))
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      const Text(
+                        "Client",
+                        style: TextStyle(
+                            color: MyColors.appMainColor,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      // dropdownwidget("Company Name"),
+                      ClientListDropDownWithInitialValue(
+                          clientKey: clientKey,
+                          initialValue: initialClientItem,
+                          hintText: "Client",
+                          clientData: clientData,
+                          onChange: (value) {
+                            selectedClientId = value.client_id;
+                            initialClientItem = value;
+                            getCategoryData(
+                                selectedClientId, menuState);
+                            getSubCategoryData(
+                                selectedClientId, menuState);
+                            getBrandData(selectedClientId, menuState);
+                            menuState(() {});
+                          }),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      const Text(
+                        "Category",
+                        style: TextStyle(
+                            color: MyColors.appMainColor,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      isCategoryLoading
+                          ? Center(
+                        child: Container(
+                          height: 60,
+                          child: const MyLoadingCircle(),
                         ),
-                      );
-                    }));
-                  },
-                );
-              },
-              icon: const Icon(
-                Icons.filter_alt_outlined,
-                color: MyColors.whiteColor,
-              ))
-        ],
-      ),
+                      )
+                          : CategoryDropDownWithInitialValue(
+                          initialValue: initialCategoryItem,
+                          categoryKey: categoryKey,
+                          hintText: "Category",
+                          categoryData: categoryData,
+                          onChange: (value) {
+                            selectedCategoryId = value.id;
+                            initialCategoryItem = value;
+                            menuState(() {});
+                          }),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      const Text(
+                        "Sub Category",
+                        style: TextStyle(
+                            color: MyColors.appMainColor,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      isSubCategoryLoading
+                          ? Center(
+                        child: Container(
+                          height: 60,
+                          child: const MyLoadingCircle(),
+                        ),
+                      )
+                          : CategoryDropDownWithInitialValue(
+                          initialValue: initialSubCategoryItem,
+                          categoryKey: subCategoryKey,
+                          hintText: "Sub Category",
+                          categoryData: subCategoryData,
+                          onChange: (value) {
+                            selectedSubCategoryId = value.id;
+                            initialSubCategoryItem = value;
+                            menuState(() {});
+                          }),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      const Text(
+                        "Brand",
+                        style: TextStyle(
+                            color: MyColors.appMainColor,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      SysBrandDropDownWithInitialValue(
+                          initialValue: initialBrandItem,
+                          brandKey: brandKey,
+                          hintText: "Brand",
+                          brandData: brandData,
+                          onChange: (value) {
+                            selectedBrandId = value.id;
+                            initialBrandItem = value;
+                            menuState(() {});
+                          }),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: MyColors.appMainColor,
+                            minimumSize: Size(screenWidth, 45),
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                BorderRadius.circular(5))),
+                        onPressed: () {
+                          getTransStockOne();
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text(
+                          "Search",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }));
+          },
+        );
+      }, true, true, false),
+
       body: Padding(
         padding: const EdgeInsets.all(5),
         child: Column(children: [
@@ -515,9 +500,11 @@ class _StockListScreenState extends State<StockListScreen> {
                     },
                     child: Card(
                       elevation: 5,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
                         decoration: BoxDecoration(
+                          border: Border.all( color: isFilter ? MyColors.appMainColor2 : MyColors.whiteColor,width: 3),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         alignment: Alignment.center,
@@ -545,9 +532,11 @@ class _StockListScreenState extends State<StockListScreen> {
                     },
                     child: Card(
                       elevation: 5,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
                         decoration: BoxDecoration(
+                          border: Border.all( color: isFilter ? MyColors.appMainColor2 : MyColors.whiteColor,width: 3),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         alignment: Alignment.center,
@@ -575,9 +564,11 @@ class _StockListScreenState extends State<StockListScreen> {
                     },
                     child: Card(
                       elevation: 5,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
                         decoration: BoxDecoration(
+                          border: Border.all( color: isFilter ? MyColors.appMainColor2 : MyColors.whiteColor,width: 3),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         alignment: Alignment.center,
@@ -605,9 +596,11 @@ class _StockListScreenState extends State<StockListScreen> {
                     },
                     child: Card(
                       elevation: 5,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
                         decoration: BoxDecoration(
+                          border: Border.all( color: isFilter ? MyColors.appMainColor2 : MyColors.whiteColor,width: 3),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         alignment: Alignment.center,
@@ -646,6 +639,9 @@ class _StockListScreenState extends State<StockListScreen> {
                   promoController[i].text = filterTransData[i].cases.toString();
                   regularController[i].text = filterTransData[i].outer.toString();
                   return StockListCard(
+                      onDeleteTap: () {
+                        deleteStockData(filterTransData[i].pro_id);
+                      },
                       image:"https://storage.googleapis.com/panda-static/sku_pictures/${filterTransData[i].img_name}",
                       proName:filterTransData[i].pro_en_name,
                       pieces: filterTransData[i].pieces,
@@ -672,6 +668,9 @@ class _StockListScreenState extends State<StockListScreen> {
                             promoController[i].text = transData[i].cases.toString();
                             regularController[i].text = transData[i].outer.toString();
                             return StockListCard(
+                                onDeleteTap: (){
+                                  deleteStockData(transData[i].pro_id);
+                                },
                                 image:"https://storage.googleapis.com/panda-static/sku_pictures/${transData[i].img_name}",
                                 proName:transData[i].pro_en_name,
                                 pieces: transData[i].pieces,
@@ -688,4 +687,55 @@ class _StockListScreenState extends State<StockListScreen> {
       ),
     );
   }
+
+  deleteStockData(int proId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            "Are you sure you want to delete this sku data",
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 12,
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text("No"),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+            TextButton(
+              child: const Text("Yes"),
+              onPressed: () async {
+
+                await DatabaseHelper.updateTransStockAfterDeleteOneSkuRecord(workingId,proId.toString()).then((value) {
+                  setState(() {
+                    int transIndex = transData.indexWhere((element) => element.pro_id == proId);
+
+                    if(filterTransData.isNotEmpty) {
+                      int filteredIndex = filterTransData.indexWhere((element) => element.pro_id == proId);
+
+                      filterTransData[filteredIndex].cases = 0;
+                      filterTransData[filteredIndex].outer = 0;
+                      filterTransData[filteredIndex].pieces = 0;
+                    }
+                    transData[transIndex].cases = 0;
+                    transData[transIndex].outer = 0;
+                    transData[transIndex].pieces = 0;
+
+                  });
+                  ToastMessage.succesMessage(context, "Data deleted Successfully");
+                  Navigator.of(context).pop();
+                });
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
+
 }

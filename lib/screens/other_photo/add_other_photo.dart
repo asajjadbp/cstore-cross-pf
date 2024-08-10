@@ -17,6 +17,7 @@ import '../utils/appcolor.dart';
 import '../utils/services/image_picker.dart';
 import '../utils/services/take_image_and_save_to_folder.dart';
 import '../utils/toast/toast.dart';
+import '../widget/app_bar_widgets.dart';
 import '../widget/image_selection_row_button.dart';
 
 class AddOtherPhoto extends StatefulWidget {
@@ -45,6 +46,7 @@ class _AddOtherPhotoState extends State<AddOtherPhoto> {
   String clientId = "";
   String workingId = "";
   String storeName = "";
+  String userName = "";
 
   @override
   void didChangeDependencies() async {
@@ -58,6 +60,7 @@ class _AddOtherPhotoState extends State<AddOtherPhoto> {
     clientId = sharedPreferences.getString(AppConstants.clientId)!;
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
     storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    userName = sharedPreferences.getString(AppConstants.userName)!;
 
     if (isInit) {
       getClientData();
@@ -76,7 +79,7 @@ class _AddOtherPhotoState extends State<AddOtherPhoto> {
       imageFile = value;
 
       final String extension = path.extension(imageFile!.path);
-      imageName = "${DateTime.now().millisecondsSinceEpoch}$extension";
+      imageName = "${userName}_${DateTime.now().millisecondsSinceEpoch}$extension";
       setState(() {
 
       });
@@ -178,16 +181,9 @@ class _AddOtherPhotoState extends State<AddOtherPhoto> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(storeName,style: const TextStyle(fontSize: 16),),
-            const Text("Other Photo",style: TextStyle(fontSize: 12),),
-          ],
-        ),
-      ),
+      appBar: generalAppBar(context, storeName, userName, (){
+        Navigator.of(context).pop();
+      }, (){print("filter Click");}, true, false, false),
       body: isLoading
           ? Center(
         child: Container(
@@ -198,128 +194,135 @@ class _AddOtherPhotoState extends State<AddOtherPhoto> {
           : Container(
         margin: const EdgeInsets.only(left: 10, right: 10),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(
-              height: 20,
-            ),
-            const Text(
-              "Client",
-              style: TextStyle(
-                  color: MyColors.appMainColor,
-                  fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            // dropdownwidget("Company Name"),
-            ClientListDropDown(
-                clientKey: clientKey,
-                hintText: "Client", clientData: clientData, onChange: (value){
-              selectedClientId = value.client_id;
-              getCategoryData(selectedClientId);
-              setState(() {
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  const Text(
+                    "Client",
+                    style: TextStyle(
+                        color: MyColors.appMainColor,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  // dropdownwidget("Company Name"),
+                  ClientListDropDown(
+                      clientKey: clientKey,
+                      hintText: "Client", clientData: clientData, onChange: (value){
+                    selectedClientId = value.client_id;
+                    getCategoryData(selectedClientId);
+                    setState(() {
 
-              });
-            }),
-            const SizedBox(
-              height: 10,
-            ),
-            const Text(
-              "Category",
-              style: TextStyle(
-                  color: MyColors.appMainColor,
-                  fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(
-              height: 5,
-            ),
+                    });
+                  }),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const Text(
+                    "Category",
+                    style: TextStyle(
+                        color: MyColors.appMainColor,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
 
-            isCategoryLoading
-                ? Center(
-              child: Container(
-                height: 60,
-                child: const MyLoadingCircle(),
+                  isCategoryLoading
+                      ? Center(
+                    child: Container(
+                      height: 60,
+                      child: const MyLoadingCircle(),
+                    ),
+                  )
+                      : CategoryDropDown(categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
+                    selectedCategoryId = value.id;
+                    setState(() {
+
+                    });
+                  }),
+
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  const Text(
+                    "Type",
+                    style: TextStyle(
+                        color: MyColors.appMainColor,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  // dropdownwidget("Company Name"),
+
+                  TypeDropDown(hintText: "Type", photoData: photoTypeData, onChange: (value){
+                    selectedTypeId =value.id;
+                    setState(() {
+                    });
+                  }),
+
+
+
+
+                  const SizedBox(
+                    height: 10,
+                  ),
+
+                  ImageRowButton(imageFile: imageFile, onSelectImage: (){
+                    getImage();
+                  }),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  isBtnLoading
+                      ? Center(
+                    child: Container(
+                      height: 60,
+                      child: const MyLoadingCircle(),
+                    ),
+                  )
+                      : ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: MyColors.appMainColor,
+                        minimumSize: Size(screenWidth, 45),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5))),
+                    onPressed: () {
+                      saveStorePhotoData();
+                      // Navigator.of(context).pushNamed();
+                    },
+                    child: const Text(
+                      "Save",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+
+                ],
               ),
-            )
-                : CategoryDropDown(categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
-              selectedCategoryId = value.id;
-              setState(() {
-
-              });
-            }),
-
-            const SizedBox(
-              height: 5,
             ),
-            const Text(
-              "Type",
-              style: TextStyle(
-                  color: MyColors.appMainColor,
-                  fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            // dropdownwidget("Company Name"),
-
-            TypeDropDown(hintText: "Type", photoData: photoTypeData, onChange: (value){
-              selectedTypeId =value.id;
-              setState(() {
-              });
-            }),
-
-
-
-
-            const SizedBox(
-              height: 10,
-            ),
-
-            ImageRowButton(imageFile: imageFile, onSelectImage: (){
-              getImage();
-            }),
-            const SizedBox(
-              height: 20,
-            ),
-            isBtnLoading
-                ? Center(
-              child: Container(
-                height: 60,
-                child: const MyLoadingCircle(),
-              ),
-            )
-                : ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: MyColors.appMainColor,
-                  minimumSize: Size(screenWidth, 45),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5))),
-              onPressed: () {
-                saveStorePhotoData();
-                // Navigator.of(context).pushNamed();
-              },
-              child: const Text(
-                "Save",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 39, 136, 42),
-                  minimumSize: Size(screenWidth, 45),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5))),
-              onPressed: () {
-               Navigator.of(context)
-                   .pushNamed(ViewOtherPhoto.routename);
-              },
-              child: const Text(
-                "View Other Photo",
-                style: TextStyle(color: Colors.white),
+            Container(
+              margin: const EdgeInsets.only(bottom: 5),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 39, 136, 42),
+                    minimumSize: Size(screenWidth, 45),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5))),
+                onPressed: () {
+                  Navigator.of(context)
+                      .pushNamed(ViewOtherPhoto.routename);
+                },
+                child: const Text(
+                  "View Other Photo",
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
           ],

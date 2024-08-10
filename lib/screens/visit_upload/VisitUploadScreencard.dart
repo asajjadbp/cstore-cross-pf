@@ -1565,3 +1565,479 @@ class VisitStockUploadScreenCard extends StatelessWidget {
     );
   }
 }
+
+class VisitBeforeFixingUploadScreenCard extends StatelessWidget {
+  const VisitBeforeFixingUploadScreenCard({
+    super.key,
+    required this.screenName,
+    required this.moduleName,
+    required this.onUploadTap,
+    required this.totalBeforeFixing,
+    required this.uploadedData,
+    required this.isUploadData,
+    required this.isUploaded,
+  });
+
+  final String screenName;
+  final String moduleName;
+  final Function onUploadTap;
+  final bool isUploadData;
+  final int totalBeforeFixing;
+  final int uploadedData;
+  final bool isUploaded;
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    return Container(
+      margin: const EdgeInsets.all(6),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left:12,top: 8),
+            child: Text(
+              screenName,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color:MyColors.appMainColor),
+            ),
+          ),
+          Row(
+            children: [
+              Container(
+                width: screenWidth/1.48,
+                margin: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: MyColors.appMainColor, width: 1),
+                    borderRadius: BorderRadius.circular(5)),
+                child: Column(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 15,vertical: 5),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Center(
+                            child: Text(
+                              moduleName,
+                              style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  color: MyColors.darkGreyColor),
+                            ),
+                          ),
+                          const Icon(Icons.camera_alt,color: MyColors.savebtnColor,),
+                        ],
+                      ),
+                    ),
+                    const Divider(color: MyColors.appMainColor,height: 2,),
+                    Container(
+                      color: MyColors.rowGreyishColor,
+                      padding: const EdgeInsets.all(4.0),
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 15,vertical: 5),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              uploadedData.toString(),
+                              style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: MyColors.darkGreyColor),
+                            ),
+                            Text(
+                              totalBeforeFixing.toString(),
+                              style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: MyColors.darkGreyColor),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 4,)
+                  ],
+                ),
+              ),
+              isUploadData ? const Center(child: CircularProgressIndicator(),) :  InkWell(
+                onTap: isUploaded ? null : (){
+                  onUploadTap();
+                },
+                child: Container(
+                  width: screenWidth/5.3,
+                  height: screenHeight/11.1,
+                  decoration: BoxDecoration(
+                      color: MyColors.appMainColor,
+                      border: Border.all(color: MyColors.appMainColor, width: 1),
+                      borderRadius: BorderRadius.circular(5)),
+                  child: Column(
+                    children: [
+                      Icon( isUploaded ? Icons.check : Icons.cloud_upload_outlined,color: Colors.white,size: 39,),
+                      Padding(
+                        padding: EdgeInsets.only(left: 7, top: 8),
+                        child: Center(
+                          child: Text(
+                            isUploaded ? "Done" : "Upload",
+                            style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class VisitPlanogramUploadScreenCard extends StatelessWidget {
+  const VisitPlanogramUploadScreenCard({
+    super.key,
+    required this.screenName,
+    required this.moduleName,
+    required this.onUploadTap,
+    required this.totalPlanogram,
+    required this.totalAdhere,
+    required this.totalNotAdhere,
+    required this.isUploadData,
+    required this.isUploaded,
+  });
+
+  final String screenName;
+  final String moduleName;
+  final Function onUploadTap;
+  final bool isUploadData;
+  final int totalPlanogram;
+  final int totalAdhere;
+  final int totalNotAdhere;
+  final bool isUploaded;
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    return Container(
+      margin: const EdgeInsets.all(6),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left:12,top: 8),
+            child: Text(
+              screenName,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color:MyColors.appMainColor),
+            ),
+          ),
+          Row(
+            children: [
+              Container(
+                width: screenWidth/1.48,
+                margin: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: MyColors.appMainColor, width: 1),
+                    borderRadius: BorderRadius.circular(5)),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(3.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: screenWidth /5,
+                            child: Padding(
+                              padding:const EdgeInsets.only(left: 5, top: 8),
+                              child: Center(
+                                child: Text(
+                                  moduleName,
+                                  style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                      color: MyColors.darkGreyColor),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 5, top: 3),
+                              child: Icon(Icons.check_box_sharp,color: MyColors.greenColor,),
+                            ),
+                          ),
+                          SizedBox(
+                            width: screenWidth /8,
+                            child: const Padding(
+                              padding: EdgeInsets.only(left: 5, top: 3),
+                              child: Icon(Icons.cancel,color: MyColors.backbtnColor,),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Divider(color: MyColors.appMainColor,height: 2,),
+                    Container(
+                      color: MyColors.rowGreyishColor,
+                      padding: EdgeInsets.all(4.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: screenWidth /5,
+                            child:  Padding(
+                              padding: const EdgeInsets.only(left:5, top: 8),
+                              child: Center(
+                                child: Text(
+                                  totalPlanogram.toString(),
+                                  style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: MyColors.darkGreyColor),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 5, top: 8),
+                            child: Center(
+                              child: Text(
+                                totalAdhere.toString(),
+                                style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: MyColors.darkGreyColor),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: screenWidth /8,
+                            child:  Padding(
+                              padding: const EdgeInsets.only(left: 5, top: 8),
+                              child: Center(
+                                child: Text(
+                                  totalNotAdhere.toString(),
+                                  style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: MyColors.darkGreyColor),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 4,)
+                  ],
+                ),
+              ),
+              isUploadData ? const Center(child: CircularProgressIndicator(),) :  InkWell(
+                onTap: isUploaded ? null : (){
+                  onUploadTap();
+                },
+                child: Container(
+                  width: screenWidth/5.3,
+                  height: screenHeight/11.1,
+                  decoration: BoxDecoration(
+                      color: MyColors.appMainColor,
+                      border: Border.all(color: MyColors.appMainColor, width: 1),
+                      borderRadius: BorderRadius.circular(5)),
+                  child: Column(
+                    children: [
+                      Icon( isUploaded ? Icons.check : Icons.cloud_upload_outlined,color: Colors.white,size: 39,),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 7, top: 8),
+                        child: Center(
+                          child: Text(
+                            isUploaded ? "Done" : "Upload",
+                            style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class VisitSosUploadScreenCard extends StatelessWidget {
+  const VisitSosUploadScreenCard({
+    super.key,
+    required this.screenName,
+    required this.moduleName,
+    required this.onUploadTap,
+    required this.totalBeforeFixing,
+    required this.uploadedData,
+    required this.isUploadData,
+    required this.isUploaded,
+  });
+
+  final String screenName;
+  final String moduleName;
+  final Function onUploadTap;
+  final bool isUploadData;
+  final int totalBeforeFixing;
+  final int uploadedData;
+  final bool isUploaded;
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    return Container(
+      margin: const EdgeInsets.all(6),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left:12,top: 8),
+            child: Text(
+              screenName,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color:MyColors.appMainColor),
+            ),
+          ),
+          Row(
+            children: [
+              Container(
+                width: screenWidth/1.48,
+                margin: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: MyColors.appMainColor, width: 1),
+                    borderRadius: BorderRadius.circular(5)),
+                child: Column(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 15,vertical: 5),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Center(
+                            child: Text(
+                              moduleName,
+                              style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  color: MyColors.darkGreyColor),
+                            ),
+                          ),
+                          const Center(
+                            child: Text(
+                              "Category",
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  color: MyColors.darkGreyColor),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Divider(color: MyColors.appMainColor,height: 2,),
+                    Container(
+                      color: MyColors.rowGreyishColor,
+                      padding: const EdgeInsets.all(4.0),
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 15,vertical: 5),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              totalBeforeFixing.toString(),
+                              style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: MyColors.darkGreyColor),
+                            ),
+                            Text(
+                              uploadedData.toString(),
+                              style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: MyColors.darkGreyColor),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 4,)
+                  ],
+                ),
+              ),
+              isUploadData ? const Center(child: CircularProgressIndicator(),) :  InkWell(
+                onTap: isUploaded ? null : (){
+                  onUploadTap();
+                },
+                child: Container(
+                  width: screenWidth/5.3,
+                  height: screenHeight/11.1,
+                  decoration: BoxDecoration(
+                      color: MyColors.appMainColor,
+                      border: Border.all(color: MyColors.appMainColor, width: 1),
+                      borderRadius: BorderRadius.circular(5)),
+                  child: Column(
+                    children: [
+                      Icon( isUploaded ? Icons.check : Icons.cloud_upload_outlined,color: Colors.white,size: 39,),
+                      Padding(
+                        padding: EdgeInsets.only(left: 7, top: 8),
+                        child: Center(
+                          child: Text(
+                            isUploaded ? "Done" : "Upload",
+                            style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}

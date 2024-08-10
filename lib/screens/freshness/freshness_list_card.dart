@@ -393,7 +393,6 @@ class FreshnessListCard extends StatelessWidget {
           right: 6,
           child: Container(
             height: 20,
-            width: 45,
             decoration: const BoxDecoration(
                 color: Colors.blue,
                 borderRadius: BorderRadius.only(

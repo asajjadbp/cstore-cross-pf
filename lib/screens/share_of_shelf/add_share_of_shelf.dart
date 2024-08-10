@@ -15,6 +15,7 @@ import '../../Model/database_model/sys_unit.dart';
 import '../../Model/database_model/trans_sos_model.dart';
 import '../utils/appcolor.dart';
 import '../utils/toast/toast.dart';
+import '../widget/app_bar_widgets.dart';
 
 class ShareOfShelf extends StatefulWidget {
   static const routeName = "/ShareOfShelf_route";
@@ -50,6 +51,7 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
   String clientId = "";
   String workingId = "";
   String storeName = "";
+  String userName = "";
 
   @override
   void didChangeDependencies() async {
@@ -63,6 +65,7 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
     clientId = sharedPreferences.getString(AppConstants.clientId)!;
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
     storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    userName = sharedPreferences.getString(AppConstants.userName)!;
 
     if (isInit) {
       getClientData();
@@ -136,9 +139,14 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
   void StoreUnitDataDB() async{
     if (selectedClientId == -1 ||
         selectedCategoryId == -1 ||
+        selectedBrandId == -1 ||
         _selectedUnit == ""||
         valueControllerActual.text==""||valueControllerCatSpace.text=="" ) {
-      ToastMessage.errorMessage(context, "Please fill the form and take image");
+      ToastMessage.errorMessage(context, "Please fill the form");
+      return;
+    }
+    if((double.parse( valueControllerActual.text)) >= (double.parse(valueControllerCatSpace.text))) {
+      ToastMessage.errorMessage(context, "Actual Space cannot be greater or equal than category space");
       return;
     }
     setState(() {
@@ -153,13 +161,16 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
         actual_space: valueControllerActual.text,
         unit: _selectedUnit,
         date_time: now.toString(),
+        uploadStatus: 0,
         working_id: int.parse(workingId)))
         .then((_) {
       ToastMessage.succesMessage(context, "Data store successfully");
-      selectedCategoryId = -1;
-      selectedClientId = -1;
-      selectedBrandId=-1;
-      _selectedUnit="";
+      // selectedCategoryId = -1;
+      // selectedClientId = -1;
+      // selectedBrandId=-1;
+      // _selectedUnit="";
+      valueControllerActual.clear();
+      valueControllerCatSpace.clear();
       isBrandLoading=false;
     });
   }
@@ -170,257 +181,226 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
 
     return Scaffold(
       backgroundColor: MyColors.background,
-      appBar: AppBar(
-        title: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(storeName,style: const TextStyle(fontSize: 16),),
-            const Text("Share Of Shelf",style: TextStyle(fontSize: 12),),
-          ],
-        ),
-      ),
-      body: SingleChildScrollView(
-          child: Column(
-            children: [
-              isLoading
-                  ? Center(
-                child: Container(
-                  height: 60,
-                  child: const MyLoadingCircle(),
-                ),
-              )
-                  : Container(
-                margin: const EdgeInsets.only(left: 10, right: 10),
+      appBar: generalAppBar(context, storeName, userName, (){
+        Navigator.of(context).pop();
+      }, (){print("filter Click");}, true, false, false),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    const Text(
-                      "Client",
-                      style: TextStyle(
-                          color: MyColors.appMainColor,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    // dropdownwidget("Company Name"),
-                    ClientListDropDown(
-                        clientKey: clientKey,
-                        hintText: "Client", clientData: clientData, onChange: (value){
-                      selectedClientId = value.client_id;
-                      getCategoryData(selectedClientId);
-                      getBrandData(selectedClientId);
-                      setState(() {
-                      });
-                    }),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    const Text(
-                      "Category",
-                      style: TextStyle(
-                          color: MyColors.appMainColor,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    isCategoryLoading
+                    isLoading
                         ? Center(
                       child: Container(
                         height: 60,
                         child: const MyLoadingCircle(),
                       ),
                     )
-                        : CategoryDropDown(categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
-                      selectedCategoryId = value.id;
-                      setState(() {
+                        : Container(
+                      margin: const EdgeInsets.only(left: 10, right: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          const Text(
+                            "Client",
+                            style: TextStyle(
+                                color: MyColors.appMainColor,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          // dropdownwidget("Company Name"),
+                          ClientListDropDown(
+                              clientKey: clientKey,
+                              hintText: "Client", clientData: clientData, onChange: (value){
+                            selectedClientId = value.client_id;
+                            getCategoryData(selectedClientId);
+                            getBrandData(selectedClientId);
+                            setState(() {
+                            });
+                          }),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          const Text(
+                            "Category",
+                            style: TextStyle(
+                                color: MyColors.appMainColor,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          isCategoryLoading
+                              ? Center(
+                            child: Container(
+                              height: 60,
+                              child: const MyLoadingCircle(),
+                            ),
+                          )
+                              : CategoryDropDown(categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
+                            selectedCategoryId = value.id;
+                            setState(() {
 
-                      });
-                    }),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    const Text(
-                      "Brand",
-                      style: TextStyle(
-                          color: MyColors.appMainColor,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    SysBrandDropDown(brandKey:brandKey,hintText: "Brand", brandData: brandData, onChange: (value){
-                      selectedBrandId = value.id;
-                    }),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    const Text(
-                      "Category Space",
-                      style: TextStyle(
-                          color: MyColors.appMainColor,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 0),
-                      child: TextField(
-                        showCursor: true,
-                        enableInteractiveSelection:false,
-                        onChanged: (value) {
-                          print(value);
-                        },
-                        controller: valueControllerCatSpace,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                            prefixIconColor: MyColors.appMainColor,
-                            focusColor: MyColors.appMainColor,
-                            fillColor:MyColors.dropBorderColor,
-                            labelStyle: TextStyle(color: MyColors.appMainColor),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    width: 1, color: MyColors.appMainColor)),
-                            border: OutlineInputBorder(),
-                            hintText: 'Enter Total'),
-                        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^[0-9][0-9]*'))],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    const Text(
-                      "Actual Space",
-                      style: TextStyle(
-                          color: MyColors.appMainColor,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 0),
-                      child: TextField(
-                        showCursor: true,
-                        enableInteractiveSelection:false,
-                        onChanged: (value) {
-                          print(value);
-                        },
-                        controller: valueControllerActual,
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                            prefixIconColor: MyColors.appMainColor,
-                            focusColor: MyColors.appMainColor,
-                            fillColor:MyColors.dropBorderColor,
-                            labelStyle: TextStyle(color: MyColors.appMainColor,
-                                height: 50.0),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    width: 1, color: MyColors.appMainColor)),
-                            border: OutlineInputBorder(),
-                            hintText: 'Enter Actual'),
-                        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^[0-9][0-9]*'))],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    const Text(
-                      "Select Unit",
-                      style: TextStyle(
-                          color: MyColors.appMainColor,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    UnitDropDown(hintText: "Select Unit", unitData: unitList, onChange: (value){
-                      _selectedUnit = value;
-                    }),
-                    // DropdownButtonFormField(
-                    //   decoration: InputDecoration(
-                    //     isDense: true,
-                    //     filled: true,
-                    //     fillColor:MyColors.dropBorderColor,
-                    //     contentPadding: EdgeInsets.zero,
-                    //     border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
-                    //   ),
-                    //   hint: const Text('Please select unit',style: TextStyle(
-                    //     height: 50.0,
-                    //   ),), // Not necessary for Option 1
-                    //   value: _selectedUnit,
-                    //   onChanged: (newValue) {
-                    //     setState(() {
-                    //       _selectedUnit = newValue!;
-                    //     });
-                    //   },
-                    //
-                    //   items: unitList.map((unit) {
-                    //     return DropdownMenuItem(
-                    //       child: new Text(unit),
-                    //       value: unit,
-                    //     );
-                    //   }).toList(),
-                    //
-                    // ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    isBtnLoading
-                        ? Center(
-                      child: Container(
-                        height: 60,
-                        child: const MyLoadingCircle(),
-                      ),
-                    )
-                        : ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: MyColors.appMainColor,
-                          minimumSize: Size(screenWidth, 50),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5))),
-                      onPressed: () {
-                        StoreUnitDataDB();
-                      },
-                      child: const Text(
-                        "Save",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(255, 39, 136, 42),
-                          minimumSize: Size(screenWidth, 50),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5))),
-                      onPressed: () {
-                        Navigator.of(context)
-                            .pushNamed(ViewShareOfShelf.routename);
-                      },
-                      child: const Text(
-                        "View Share Of Shelf",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    )
+                            });
+                          }),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          const Text(
+                            "Brand",
+                            style: TextStyle(
+                                color: MyColors.appMainColor,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          SysBrandDropDown(brandKey:brandKey,hintText: "Brand", brandData: brandData, onChange: (value){
+                            selectedBrandId = value.id;
+                          }),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          const Text(
+                            "Category Space",
+                            style: TextStyle(
+                                color: MyColors.appMainColor,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 0),
+                            child: TextField(
+                              showCursor: true,
+                              enableInteractiveSelection:false,
+                              onChanged: (value) {
+                                print(value);
+                              },
+                              controller: valueControllerCatSpace,
+                              keyboardType: TextInputType.number,
+                              decoration: const InputDecoration(
+                                  prefixIconColor: MyColors.appMainColor,
+                                  focusColor: MyColors.appMainColor,
+                                  fillColor:MyColors.dropBorderColor,
+                                  labelStyle: TextStyle(color: MyColors.appMainColor),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          width: 1, color: MyColors.appMainColor)),
+                                  border: OutlineInputBorder(),
+                                  hintText: 'Enter Total'),
+                              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^[0-9.]*'))],
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          const Text(
+                            "Actual Space",
+                            style: TextStyle(
+                                color: MyColors.appMainColor,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 0),
+                            child: TextField(
+                              showCursor: true,
+                              enableInteractiveSelection:false,
+                              onChanged: (value) {
+                                print(value);
+                              },
+                              controller: valueControllerActual,
+                              keyboardType: TextInputType.number,
+                              decoration: const InputDecoration(
+                                  prefixIconColor: MyColors.appMainColor,
+                                  focusColor: MyColors.appMainColor,
+                                  fillColor:MyColors.dropBorderColor,
+                                  labelStyle: TextStyle(color: MyColors.appMainColor,
+                                      height: 50.0),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          width: 1, color: MyColors.appMainColor)),
+                                  border: OutlineInputBorder(),
+                                  hintText: 'Enter Actual'),
+                              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^[0-9.]*'))],
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          const Text(
+                            "Select Unit",
+                            style: TextStyle(
+                                color: MyColors.appMainColor,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          UnitDropDown(hintText: "Select Unit", unitData: unitList, onChange: (value){
+                            _selectedUnit = value;
+                          }),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          isBtnLoading
+                              ? Center(
+                            child: Container(
+                              height: 60,
+                              child: const MyLoadingCircle(),
+                            ),
+                          )
+                              : ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: MyColors.appMainColor,
+                                minimumSize: Size(screenWidth, 50),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5))),
+                            onPressed: () {
+                              StoreUnitDataDB();
+                            },
+                            child: const Text(
+                              "Save",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
 
-
+                        ],
+                      ),
+                    ),
                   ],
-                ),
+                )
+            ),
+          ),
+          Container(
+            margin:const  EdgeInsets.only(bottom: 10,left: 5,right: 5),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 39, 136, 42),
+                  minimumSize: Size(screenWidth, 50),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5))),
+              onPressed: () {
+                Navigator.of(context)
+                    .pushNamed(ViewShareOfShelf.routename);
+              },
+              child: const Text(
+                "View Share Of Shelf",
+                style: TextStyle(color: Colors.white),
               ),
-            ],
-          )
+            ),
+          ),
+        ],
       ),
     );
   }

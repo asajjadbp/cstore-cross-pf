@@ -16,6 +16,7 @@ class GetTransPhotoModel {
   late String categoryArName = "";
   late String type_en_name = "";
   late String type_ar_name = "";
+  late String dateTime = "";
 
 
   GetTransPhotoModel(
@@ -31,7 +32,8 @@ class GetTransPhotoModel {
       required this.categoryEnName,
       required this.categoryArName,
       required this.type_en_name,
-      required this.type_ar_name
+      required this.type_ar_name,
+      required this.dateTime,
       });
 
   // Convert a Dog into a Map. The keys must correspond to the names of the
@@ -48,6 +50,7 @@ class GetTransPhotoModel {
       TableName.trans_upload_status: upload_status,
       TableName.cat_en_name: categoryEnName,
       TableName.cat_ar_name: categoryArName,
+      TableName.dateTime: dateTime,
       TableName.sys_photo_type_en_name: type_en_name,
       TableName.sys_photo_type_ar_name: type_ar_name,
     };
@@ -55,6 +58,6 @@ class GetTransPhotoModel {
 
   @override
   String toString() {
-    return 'GetTransPhotoModel{clientName: $clientName, trans_photo_type_id: $trans_photo_type_id, client_id: $client_id,type_id:$type_id ,cat_id: $cat_id, img_name: $img_name, gcs_status: $gcs_status, upload_status: $upload_status, imageFile: $imageFile, categoryEnName: $categoryEnName, categoryArName: $categoryArName, type_en_name: $type_en_name, type_ar_name: $type_ar_name}';
+    return 'GetTransPhotoModel{clientName: $clientName, trans_photo_type_id: $trans_photo_type_id,date_time:$dateTime,client_id: $client_id,type_id:$type_id ,cat_id: $cat_id, img_name: $img_name, gcs_status: $gcs_status, upload_status: $upload_status, imageFile: $imageFile, categoryEnName: $categoryEnName, categoryArName: $categoryArName, type_en_name: $type_en_name, type_ar_name: $type_ar_name}';
   }
 }

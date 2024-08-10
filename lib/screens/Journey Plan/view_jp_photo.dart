@@ -48,6 +48,8 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
         .startVisit(userName, workingId, storeImage, lat, long, clientId,
             commentText.text, token, baseUrl)
         .then((value) {
+          print("CHECKING TIME");
+          print(value['data'][0]['check_in']);
 
           sharedPreferences.setString(AppConstants.workingId, journeyPlanDetail.workingId.toString());
           sharedPreferences.setString(AppConstants.storeId, journeyPlanDetail.storeId.toString());
@@ -58,25 +60,22 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
           sharedPreferences.setString(AppConstants.availableExclude, journeyPlanDetail.avlExclude.toString());
           sharedPreferences.setString(AppConstants.otherExclude, journeyPlanDetail.otherExclude.toString());
           sharedPreferences.setString(AppConstants.workingDate, journeyPlanDetail.workingDate.toString());
-          sharedPreferences.setString(AppConstants.visitCheckIn, journeyPlanDetail.checkIn.toString());
+          sharedPreferences.setString(AppConstants.visitCheckIn, value['data'][0]['check_in'].toString());
           sharedPreferences.setString(AppConstants.visitActivity, journeyPlanDetail.visitActivity.toString());
 
           setState(() {
         isLoading = false;
       });
-      if (value.status) {
-        ToastMessage.succesMessage(context, value.msg);
-
         Navigator.of(context).pop();
 
+        ToastMessage.succesMessage(context, value['msg']);
+
         Navigator.of(context).pushNamed(GridDashBoard.routeName);
-      } else {
-        ToastMessage.errorMessage(context, value.msg);
-      }
     }).catchError((error) {
       setState(() {
         isLoading = false;
       });
+      print(error.toString());
       ToastMessage.errorMessage(context, error.toString());
     });
 

@@ -25,6 +25,7 @@ class SaveSosPhoto {
 }
 
 class SaveSosData {
+  final int id;
   final int clientId;
   final int categoryId;
   final int brandId;
@@ -33,6 +34,7 @@ class SaveSosData {
   final String unit;
 
   SaveSosData({
+    required this.id,
     required this.clientId,
     required this.categoryId,
     required this.brandId,
@@ -43,6 +45,7 @@ class SaveSosData {
 
   Map<String, dynamic> toJson() {
     return {
+      'id':id,
       'client_id': clientId,
       'cat_id': categoryId,
       'brand_id': brandId,

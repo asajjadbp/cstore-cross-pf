@@ -114,33 +114,35 @@ class ExpiryCard extends StatelessWidget {
                       const Icon(Icons.error),
                     ),
                   ),
-                  Column(
-                    children: [
-                      Row(
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Row(
+                            children: [
+                              CardWidget(title: "Jan",data: jan,),
+                              CardWidget(title: "Feb",data: feb,),
+                              CardWidget(title: "Mar",data: mar,),
+                              CardWidget(title: "Apr",data: apr,),
+                            ],
+                        ),
+                        Row(
                           children: [
-                            CardWidget(title: "Jan",data: jan,),
-                            CardWidget(title: "Feb",data: feb,),
-                            CardWidget(title: "Mar",data: mar,),
-                            CardWidget(title: "Apr",data: apr,),
+                            CardWidget(title: "May",data: may,),
+                            CardWidget(title: "Jun",data: jun,),
+                            CardWidget(title: "Jul",data: jul,),
+                            CardWidget(title: "Aug",data: aug,),
                           ],
-                      ),
-                      Row(
-                        children: [
-                          CardWidget(title: "May",data: may,),
-                          CardWidget(title: "Jun",data: jun,),
-                          CardWidget(title: "Jul",data: jul,),
-                          CardWidget(title: "Aug",data: aug,),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          CardWidget(title: "Sep",data: sep,),
-                          CardWidget(title: "Oct",data: oct,),
-                          CardWidget(title: "Nov",data: nov,),
-                          CardWidget(title: "Dec",data: dec,),
-                        ],
-                      ),
-                    ],
+                        ),
+                        Row(
+                          children: [
+                            CardWidget(title: "Sep",data: sep,),
+                            CardWidget(title: "Oct",data: oct,),
+                            CardWidget(title: "Nov",data: nov,),
+                            CardWidget(title: "Dec",data: dec,),
+                          ],
+                        ),
+                      ],
+                    ),
                   )
                 ],
               ),
@@ -155,67 +157,54 @@ class CardWidget extends StatelessWidget {
   CardWidget({super.key, required this.title, required this.data});
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 3,vertical: 3),
-      width: 53,
-      height: 35,
-      child: Stack(
-        children: [
-          Positioned(
-            child: Container(
-              height: 20.0,
-              width: 100,
-              decoration: BoxDecoration(
-                  color: data !="" ? MyColors.appMainColor : MyColors.backbtnColor,
-                  borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(4),
-                      topRight: Radius.circular(4))),
-            ),
+    return Expanded(
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(top: BorderSide(color: data !="" ? MyColors.appMainColor : Colors.grey.withOpacity(0.2),width: 3),
+            bottom: BorderSide(color: data !="" ? Colors.grey.withOpacity(0.2) : Colors.grey.withOpacity(0.2),width: 3),
+            left: BorderSide(color: data !="" ? Colors.grey.withOpacity(0.2) : Colors.grey.withOpacity(0.2),width: 3),
+            right: BorderSide(color: data !="" ? Colors.grey.withOpacity(0.2) : Colors.grey.withOpacity(0.2),width: 3)
           ),
-          Positioned(
-            top: 3,
-            left: 0,
-            right: 0,
-            child: Container(
-              height: 32,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(4.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 0.3,
-                    blurRadius: 1,
-                    offset: const Offset(1, 1),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                   Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 10.0,
-                      fontWeight: FontWeight.w600,
-                      color: MyColors.appMainColor,
-                    ),
-                  ),
-                  const SizedBox(height: 5,),
-                  Text(
-                    data!="" ? data: '--',
-                    style: const TextStyle(
-                      fontSize: 11.0,
-                      color: Colors.black,
-                      fontFamily: 'lato',
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 0.3,
+              blurRadius: 1,
+              offset: const Offset(1, 1),
             ),
-          ),
-        ],
+          ],
+
+        ),
+        margin: const EdgeInsets.symmetric(horizontal: 3,vertical: 3),
+        child: Column(
+          children: [
+            Text(
+             title,
+             style: const TextStyle(
+               fontSize: 10.0,
+               fontWeight: FontWeight.w600,
+               color: MyColors.appMainColor,
+             ),
+                ),
+                const SizedBox(height: 5,),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+             child: Container(
+               padding:const EdgeInsets.all(5),
+               child: Text(
+                 data!="" ? data: '--',
+                 maxLines: 1,
+                 style: const TextStyle(
+                   fontSize: 11.0,
+                   color: Colors.black,
+                   fontFamily: 'lato',
+                   fontWeight: FontWeight.w500,
+                 ),
+               ),
+             ),
+                ),
+          ],
+        ),
       ),
     );
   }

@@ -19,6 +19,7 @@ import 'package:cstore/screens/promoplane/PromoPlan.dart';
 import 'package:cstore/screens/rtv_screen/rtv_list_screen.dart';
 import 'package:cstore/screens/share_of_shelf/add_share_of_shelf.dart';
 import 'package:cstore/screens/share_of_shelf/view_share_of_shelf.dart';
+import 'package:cstore/screens/sidco_availability/sidco_availablity_screen.dart';
 import 'package:cstore/screens/splash_screen.dart';
 import 'package:cstore/screens/stock/stock_list_screen.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
@@ -139,6 +140,7 @@ class _MyAppState extends State<MyApp> {
         PromoPlan_scrren.routeName:(context)=> const PromoPlan_scrren(),
         ViewFreshness_Screen.routeName:(context)=>const ViewFreshness_Screen(),
         StockListScreen.routeName:(context)=>const StockListScreen(),
+        SidcoAvailability.routename:(context)=>const SidcoAvailability(),
       },
     );
   }

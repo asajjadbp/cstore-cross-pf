@@ -114,7 +114,7 @@ class BrandShares_ScreenState extends State<BrandShares_Screen> {
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
         backgroundColor: const Color(0xFFF4F7FD),
-        appBar: generalAppBar(context,storeName, "Share Shelf", (){
+        appBar: generalAppBar(context, storeName, userName, (){
           Navigator.of(context).pop();
         }, (){print("filter Click");}, true, false, false),
         body: isLoading ? const Center(child: MyLoadingCircle(),) : transData.isEmpty
@@ -183,7 +183,7 @@ class BrandShares_ScreenState extends State<BrandShares_Screen> {
                       return Shelf_SharesCard(
                         isDone: filteredList[filterIndex].activity_status == 1,
                         fieldName1: filteredList[filterIndex].cat_en_name,
-                        labelName1: "category",
+                        labelName1: "Department",
                         fieldName2: filteredList[filterIndex].brand_en_name,
                         labelName2: "Brand",
                         fieldName3: filteredList[filterIndex].given_faces,
@@ -215,7 +215,7 @@ class BrandShares_ScreenState extends State<BrandShares_Screen> {
                         return Shelf_SharesCard(
                           isDone: transData[index].activity_status == 1,
                           fieldName1: transData[index].cat_en_name,
-                          labelName1: "category",
+                          labelName1: "Department",
                           fieldName2: transData[index].brand_en_name,
                           labelName2: "Brand",
                           fieldName3: transData[index].given_faces,

@@ -90,7 +90,7 @@ class JourneyPlanHTTP {
     return undropVisitResponseData;
   }
 
-  Future<StartVisitResponseModel> startVisit(
+  Future<dynamic> startVisit(
       String username,
       String workingID,
       String storeImage,
@@ -120,10 +120,10 @@ class JourneyPlanHTTP {
     //     .post(Uri.parse(url), headers: headers, body: {"username": ""});
     // final responseData = jsonDecode(response.body);
 
-    StartVisitResponseModel startVisitResponseData =
-        StartVisitResponseModel.fromJson(response);
+    // StartVisitResponseModel startVisitResponseData =
+    //     StartVisitResponseModel.fromJson(response);
 
-    return startVisitResponseData;
+    return response;
   }
 
   Future<dynamic> finishVisit(String token, String baseUrl,FinishVisitRequestModel finishVisitRequestModel) async {

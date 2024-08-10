@@ -323,8 +323,15 @@ class TableName {
   static const String trans_freshness_date_time="date_time";
   static const String trans_freshness_working_id="working_id";
 
+  ///Table Names Here
+
+  static const String tblSysJourneyPlan = "sys_journey_plan";
+  static const String tblSysDashboard = "sys_dashboard";
   static const String tblSysPromoPlan = "sys_promoplan";
   static const String tbTransPromoPlan = "trans_promoplan";
+
+  ///Column Names Here
+
   static const String promoId = "promo_id";
   static const String storeId = "store_id";
   static const String skuId = "sku_id";
@@ -344,6 +351,35 @@ class TableName {
   static const String promoReason = "promo_reason";
   static const String promoStatus = "promo_status";
   static const String modalImage = "modal_image";
-
+  static const String workingDate = "working_date";
+  static const String enStoreName = "en_store_name";
+  static const String arStoreName = "ar_store_name";
+  static const String storeGCode = "gcode";
+  static const String clientIds = "client_ids";
+  static const String userId = "user_id";
+  static const String checkInTime = "check_in";
+  static const String checkOutTime = "check_out";
+  static const String startVisitPhoto = "start_visit_photo";
+  static const String checkInGps = "checkin_gps";
+  static const String checkOutGps = "checkout_gps";
+  static const String visitStatus = "visit_status";
+  static const String visitType = "visit_type";
+  static const String isDrop = "is_drop";
+  static const String visitActivityType = "visit_activity_type";
+  static const String avlExclude = "avl_exclude";
+  static const String otherExclude = "other_exculde";
+  static const String jpPlanned = "jp_planned";
+  static const String jpVisited = "jp_visited";
+  static const String outOfPlanned = "out_of_planned";
+  static const String outOfPlannedVisited = "out_of_plan_visited";
+  static const String jpc = "jpc";
+  static const String pro = "pro";
+  static const String workingHrs = "working_hrs";
+  static const String eff = "eff";
+  static const String monthlyAttend = "monthly_attend";
+  static const String monthlyPro = "monthly_pro";
+  static const String monthlyEff = "monthly_eff";
+  static const String monthlyIncentives = "monthly_incentives";
+  static const String monthlyDeduction = "monthly_deduction";
 
 }

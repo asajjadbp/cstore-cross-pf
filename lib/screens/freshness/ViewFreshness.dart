@@ -24,6 +24,7 @@ class ViewFreshness_Screen extends StatefulWidget {
 
 class _ViewFreshness_ScreenState extends State<ViewFreshness_Screen> {
   String storeName = "";
+  String userName = "";
   List<TransFreshnessModel> transData = [];
   bool isLoading = true;
   String workingId = "";
@@ -148,6 +149,7 @@ class _ViewFreshness_ScreenState extends State<ViewFreshness_Screen> {
   getUserData() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    userName = sharedPreferences.getString(AppConstants.userName)!;
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
     clientId = sharedPreferences.getString(AppConstants.clientId)!;
     getClientData();
@@ -175,7 +177,7 @@ class _ViewFreshness_ScreenState extends State<ViewFreshness_Screen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: generalAppBar(context, storeName, "View Freshness", () {
+      appBar: generalAppBar(context, storeName, userName, () {
         Navigator.of(context).pop();
       }, () {
         showModalBottomSheet<void>(

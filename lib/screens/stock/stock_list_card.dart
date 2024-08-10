@@ -14,6 +14,7 @@ class StockListCard extends StatelessWidget {
     required this.cases,
     required this.outer,
     required this.stockCheckValues,
+    required this.onDeleteTap,
     required this.rsp});
 
 
@@ -24,6 +25,7 @@ class StockListCard extends StatelessWidget {
   final int outer;
   final int pieces;
   final String rsp;
+  final Function onDeleteTap;
   final Function(String cases,String outer,String pieces) stockCheckValues;
   TextEditingController valueControllerCases=TextEditingController();
   TextEditingController valueControllerOuter=TextEditingController();
@@ -41,141 +43,155 @@ class StockListCard extends StatelessWidget {
         .width;
     return Stack(
       children: [
-        Container(
-          height: screenHeight / 7,
-          margin: const EdgeInsets.all(5),
-          decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: Colors.black12, width: 1),
-              borderRadius: BorderRadius.circular(7)),
-          child: Row(
-            children: [
-              Container(
-                margin:
-                const EdgeInsets.only(top: 12, left: 12, bottom: 4),
-                child: CachedNetworkImage(
-                  imageUrl: image,
-                  width: 79,
-                  height: 85,
-                  imageBuilder: (context, imageProvider) {
-                    return Container(
-                        margin: const EdgeInsets.only(bottom: 4),
-                        decoration: BoxDecoration(
-                            borderRadius:
-                            const BorderRadius.all(Radius.circular(6.0)),
-                            image: DecorationImage(
-                              image: imageProvider,
-                              fit: BoxFit.fitWidth,
-                            )));
-                  },
-                  placeholder: (context, url) =>
-                  const SizedBox(
-                      width: 20, height: 10, child: MyLoadingCircle()),
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
-                ),
+        Row(
+          children: [
+            Container(
+              margin:
+              const EdgeInsets.only(top: 12, left: 12, bottom: 4,right: 4),
+              child: CachedNetworkImage(
+                imageUrl: image,
+                width: 79,
+                height: 85,
+                imageBuilder: (context, imageProvider) {
+                  return Container(
+                      margin: const EdgeInsets.only(bottom: 4),
+                      decoration: BoxDecoration(
+                          borderRadius:
+                          const BorderRadius.all(Radius.circular(6.0)),
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.fitWidth,
+                          )));
+                },
+                placeholder: (context, url) =>
+                const SizedBox(
+                    width: 20, height: 10, child: MyLoadingCircle()),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
-              Column(
+            ),
+            Expanded(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    margin: const EdgeInsets.only(left: 7, top: 5),
-                    width: screenWidth / 1.7,
-                    child: Text(
-                      proName,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                      style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'lato',
-                          color: MyColors.appMainColor),
+                    margin: const EdgeInsets.symmetric(vertical: 5),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            proName,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                            style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: 'lato',
+                                color: MyColors.appMainColor),
+                          ),
+                        ),
+                        InkWell(
+                            onTap: () {
+                              onDeleteTap();
+                            },
+                            child:const Icon(Icons.delete,color: MyColors.backbtnColor,))
+                      ],
                     ),
                   ),
                   Container(
-                    margin: const EdgeInsets.only(left: 3,bottom: 8),
+                    margin: const EdgeInsets.only(left: 3,bottom: 8,top: 4),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Column(
+                        Expanded(child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            Text(
-                              cases != 0 ? cases.toString() : "___",
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                  fontSize: 13,
-                                  fontFamily: 'lato',
-                                  fontWeight: FontWeight.w500,
-                                  color: MyColors.appMainColor),
+                            Column(
+                              children: [
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Text(
+                                    cases != 0 ? cases.toString() : "___",
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    style: const TextStyle(
+                                        fontSize: 13,
+                                        fontFamily: 'lato',
+                                        fontWeight: FontWeight.w500,
+                                        color: MyColors.appMainColor),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 6,
+                                ),
+                                const Text(
+                                  "Cases ",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontFamily: 'lato',
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(
-                              height: 6,
-                            ),
-                            const Text(
-                              "Cases ",
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontFamily: 'lato',
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          width: screenWidth / 9,
-                        ),
-                        Column(
+                            Column(
 
-                          children: [
-                            Text(
-                              outer != 0 ? outer.toString() : "_ _ _",
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                  fontSize: 13,
-                                  fontFamily: 'lato',
-                                  fontWeight: FontWeight.w500,
-                                  color: MyColors.appMainColor),
+                              children: [
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Text(
+                                    outer != 0 ? outer.toString() : "_ _ _",
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    style: const TextStyle(
+                                        fontSize: 13,
+                                        fontFamily: 'lato',
+                                        fontWeight: FontWeight.w500,
+                                        color: MyColors.appMainColor),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 6,
+                                ),
+                                const Text(
+                                  "Outer ",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontFamily: 'lato',
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(
-                              height: 6,
-                            ),
-                            const Text(
-                              "Outer ",
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontFamily: 'lato',
-                                fontWeight: FontWeight.w500,
-                              ),
+                            Column(
+                              children: [
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Text(
+                                    pieces != 0 ? pieces.toString() : "_ _ _",
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    style: const TextStyle(
+                                        fontSize: 13,
+                                        fontFamily: 'lato',
+                                        fontWeight: FontWeight.w500,
+                                        color: MyColors.appMainColor),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 6,
+                                ),
+                                const Text(
+                                  "Pieces ",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontFamily: 'lato',
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
-                        ),
-                        SizedBox(
-                          width: screenWidth / 7.2,
-                        ),
-                        Column(
-                          children: [
-                            Text(
-                              pieces != 0 ? pieces.toString() : "_ _ _",
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                  fontSize: 13,
-                                  fontFamily: 'lato',
-                                  fontWeight: FontWeight.w500,
-                                  color: MyColors.appMainColor),
-                            ),
-                            const SizedBox(
-                              height: 6,
-                            ),
-                            const Text(
-                              "Pieces ",
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontFamily: 'lato',
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
+                        )),
                         InkWell(
                           onTap: () {
                             valueControllerCases.text = "0";
@@ -476,15 +492,15 @@ class StockListCard extends StatelessWidget {
                   ),
                 ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
         Positioned(
           bottom: 6,
           right: 6,
           child: Container(
             height: 18,
-            width: 49,
+            padding: const EdgeInsets.symmetric(horizontal: 5,vertical: 3),
             decoration: const BoxDecoration(
                 color: MyColors.appMainColor,
                 borderRadius: BorderRadius.only(

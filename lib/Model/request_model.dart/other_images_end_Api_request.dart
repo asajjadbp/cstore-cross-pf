@@ -26,12 +26,14 @@ class SaveOtherPhoto {
 }
 
 class SaveOtherPhotoData {
+  final int transPhotoId;
   final int clientId;
   final int categoryId;
   final int typeId;
   final String imageName;
 
   SaveOtherPhotoData({
+    required this.transPhotoId,
     required this.clientId,
     required this.categoryId,
     required this.typeId,
@@ -40,6 +42,7 @@ class SaveOtherPhotoData {
 
   Map<String, dynamic> toJson() {
     return {
+      'trans_photo_id': transPhotoId,
       'client_id': clientId,
       'cat_id': categoryId,
       'photo_type_id': typeId,

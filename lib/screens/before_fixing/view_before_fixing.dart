@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,6 +11,7 @@ import '../../Database/table_name.dart';
 import '../../Model/database_model/show_before_fixing.dart';
 import '../utils/app_constants.dart';
 import '../utils/toast/toast.dart';
+import '../widget/app_bar_widgets.dart';
 import '../widget/loading.dart';
 
 class ViewBeforeFixing extends StatefulWidget {
@@ -27,6 +29,7 @@ class _ViewBeforeFixingState extends State<ViewBeforeFixing> {
   bool isLoading = false;
   String workingId = "";
   String storeName = '';
+  String userName = '';
 
   @override
   void initState() {
@@ -39,6 +42,7 @@ class _ViewBeforeFixingState extends State<ViewBeforeFixing> {
 
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
     storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    userName = sharedPreferences.getString(AppConstants.userName)!;
     getTransBeforeFixingOne();
   }
 
@@ -120,69 +124,52 @@ class _ViewBeforeFixingState extends State<ViewBeforeFixing> {
   }
 
   void deletePhoto(int recordId, String imgName) async {
-    await DatabaseHelper.deleteOneRecord(
-            TableName.tbl_trans_before_faxing, recordId)
-        .then((_) async {
-      // await deleteImageFromLocal(imgName).then((_) {
-      //   _loadImages();
-      //   getTransBeforeFixingOne();
-      // });
-
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text(
-              "Are you sure you want to delete this item Permanently",
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 12,
-              ),
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            "Are you sure you want to delete this item Permanently",
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 12,
             ),
-            actions: [
-              TextButton(
-                child: const Text("No"),
-                onPressed: () {
-                  Navigator.of(context).pop(true);
-                },
-              ),
-              TextButton(
-                child: const Text("Yes"),
-                onPressed: () {
+          ),
+          actions: [
+            TextButton(
+              child: const Text("No"),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+            TextButton(
+              child: const Text("Yes"),
+              onPressed: () async {
+                await DatabaseHelper.deleteOneRecord(
+                    TableName.tbl_trans_before_faxing, recordId)
+                    .then((_) async {
                   deleteImageFromLocal(imgName).then((_) {
                     _loadImages();
                     getTransBeforeFixingOne();
                     Navigator.of(context).pop(true);
                   });
-                },
-              )
-            ],
-          );
-        },
-      );
-    });
+                });
+              },
+            )
+          ],
+        );
+      },
+    );
+
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: MyColors.background,
-      appBar: AppBar(
-        title: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              storeName,
-              style: const TextStyle(fontSize: 16),
-            ),
-            const Text(
-              "View Before Fixing",
-              style: TextStyle(fontSize: 12),
-            ),
-          ],
-        ),
-      ),
+      appBar: generalAppBar(context, storeName, userName, (){
+        Navigator.of(context).pop();
+      }, (){print("filter Click");}, true, false, false),
       body: isLoading
           ? const Center(
               child: MyLoadingCircle(),
@@ -204,94 +191,113 @@ class _ViewBeforeFixingState extends State<ViewBeforeFixing> {
                         color: Colors.white,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10.0)),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        child: Stack(
                           children: [
-                            Container(
-                              width: 96,
-                              height: 100,
-                              padding: const EdgeInsets.only(
-                                left: 5,
-                                top: 5,
-                                bottom: 5.0,
-                              ),
-                              margin: EdgeInsets.symmetric(horizontal: 5),
-                              child: ClipRRect(
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(6.0),
-                                    bottomLeft: Radius.circular(6.0),
-                                    topRight: Radius.circular(6.0),
-                                    bottomRight: Radius.circular(6.0),
-                                  ), // Image border
-                                  child: FittedBox(
-                                      fit: BoxFit.cover,
-                                      child: transData[i].imageFile != null
-                                          ? Image.file(
-                                              transData[i].imageFile as File)
-                                          : Container())),
-                            ),
-                            Expanded(
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  width: 96,
+                                  height: 100,
+                                  padding: const EdgeInsets.only(
+                                    left: 5,
+                                    top: 5,
+                                    bottom: 5.0,
+                                  ),
+                                  margin: EdgeInsets.symmetric(horizontal: 5),
+                                  child: ClipRRect(
+                                      borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(6.0),
+                                        bottomLeft: Radius.circular(6.0),
+                                        topRight: Radius.circular(6.0),
+                                        bottomRight: Radius.circular(6.0),
+                                      ), // Image border
+                                      child: FittedBox(
+                                          fit: BoxFit.cover,
+                                          child: transData[i].imageFile != null
+                                              ? Image.file(
+                                                  transData[i].imageFile as File)
+                                              : Container())),
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
-                                      Image.asset(
-                                          "assets/icons/client_icon.png"),
-                                      const SizedBox(
-                                        width: 5,
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Image.asset(
+                                              "assets/icons/client_icon.png"),
+                                          const SizedBox(
+                                            width: 5,
+                                          ),
+                                          Expanded(
+                                              child: Text(
+                                            transData[i].clientName,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600),
+                                          ))
+                                        ],
                                       ),
-                                      Expanded(
-                                          child: Text(
-                                        transData[i].clientName,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w600),
-                                      ))
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          SvgPicture.asset(
+                                            "assets/icons/Component 13.svg",
+                                            width: 10,
+                                            height: 12,
+                                          ),
+                                          const SizedBox(
+                                            width: 5,
+                                          ),
+                                          Expanded(
+                                              child: Text(
+                                                  transData[i].categoryEnName,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      fontWeight: FontWeight.w600)))
+                                        ],
+                                      ),
                                     ],
                                   ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      SvgPicture.asset(
-                                        "assets/icons/Component 13.svg",
-                                        width: 10,
-                                        height: 12,
+                                ),
+                                Align(
+                                    alignment: Alignment.topRight,
+                                    child: IconButton(
+                                      onPressed: () {
+                                        deletePhoto(
+                                            transData[i].id, transData[i].img_name);
+                                      },
+                                      icon: const Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
                                       ),
-                                      const SizedBox(
-                                        width: 5,
-                                      ),
-                                      Expanded(
-                                          child: Text(
-                                              transData[i].categoryEnName,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w600)))
-                                    ],
-                                  ),
-                                ],
+                                    ))
+                              ],
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: Container(
+                                padding: const EdgeInsets.all(5),
+                                decoration: const BoxDecoration(
+                                    color: MyColors.appMainColor,
+                                    borderRadius:
+                                    BorderRadius.only(bottomRight: Radius.circular(10))),
+                                child: Text(
+                                  DateFormat('hh:mm aa').format(DateTime.parse(transData[i].dateTime)),
+                                  style: const TextStyle(color: MyColors.whiteColor),
+                                ),
                               ),
                             ),
-                            Align(
-                                alignment: Alignment.topRight,
-                                child: IconButton(
-                                  onPressed: () {
-                                    deletePhoto(
-                                        transData[i].id, transData[i].img_name);
-                                  },
-                                  icon: const Icon(
-                                    Icons.delete,
-                                    color: Colors.red,
-                                  ),
-                                ))
                           ],
                         ),
                       ),

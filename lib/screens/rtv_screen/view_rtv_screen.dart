@@ -28,6 +28,7 @@ class _viewrtvScreenState extends State<viewrtvScreen> {
   bool isLoading = false;
   String workingId = "";
   String storeName = '';
+  String userName = '';
   String clientId = '';
 
   @override
@@ -40,6 +41,7 @@ class _viewrtvScreenState extends State<viewrtvScreen> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
     storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    userName = sharedPreferences.getString(AppConstants.userName)!;
     clientId = sharedPreferences.getString(AppConstants.clientId)!;
     getTransRTVOne();
   }
@@ -138,7 +140,7 @@ class _viewrtvScreenState extends State<viewrtvScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: const Color(0xFFF4F7FD),
-      appBar: generalAppBar(context, storeName, "View RTV", (){
+      appBar: generalAppBar(context, storeName, userName, (){
         Navigator.of(context).pop();
       }, (){print("filter Click");}, true, false, false),
       body: isLoading

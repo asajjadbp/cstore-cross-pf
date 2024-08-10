@@ -10,6 +10,7 @@ import '../../Model/database_model/sys_brand_model.dart';
 import '../utils/app_constants.dart';
 import '../utils/appcolor.dart';
 import '../utils/toast/toast.dart';
+import '../widget/app_bar_widgets.dart';
 import '../widget/drop_downs.dart';
 import '../widget/loading.dart';
 import '../widget/percent_indicator.dart';
@@ -32,6 +33,7 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
   String workingId = "";
   String clientId = "";
   String storeName = "";
+  String userName = "";
   bool isBtnLoading = false;
   bool isFilter = false;
   int promoPrice=0;
@@ -68,6 +70,7 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
     setState(() {
       workingId = sharedPreferences.getString(AppConstants.workingId)!;
       storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+      userName = sharedPreferences.getString(AppConstants.userName)!;
       clientId = sharedPreferences.getString(AppConstants.clientId)!;
     });
     getTransPricingOne();
@@ -94,9 +97,9 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
   }
   void InsertTransPromoPrice(String regularPrice,String promoPrice,skuId) async{
     print("Insert Data Getting");
-    if (regularPrice == "0" || regularPrice.isEmpty) {
+    if (regularPrice == "0" || regularPrice == "0.0" || regularPrice.isEmpty) {
       ToastMessage.errorMessage(context, "Please add proper regular price");
-    } else if(promoPrice.isNotEmpty && (int.parse(promoPrice) >= int.parse(regularPrice))) {
+    } else if(promoPrice.isNotEmpty && (double.parse(promoPrice) >= double.parse(regularPrice))) {
       ToastMessage.errorMessage(context, "Promo price can't be greater than or equal to regular price");
     }else {
       setState(() {
@@ -217,11 +220,19 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
   }
 
   searchFilter() {
-    setState(() {
-      isFilter = true;
+    if(isFilter) {
+      isFilter = false;
+      setState(() {
 
-      filterTransData = transData.where((element) => element.act_status == 1).toList();
-    });
+      });
+    } else {
+      setState(() {
+        isFilter = true;
+
+        filterTransData =
+            transData.where((element) => element.act_status == 1).toList();
+      });
+    }
   }
 
   @override
@@ -277,203 +288,196 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
       //     ],
       //   ),
       // ),
-      appBar: AppBar(title: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(storeName,style: const TextStyle(fontSize: 13),),
-          const Text("Price check",style: TextStyle(fontSize: 12),),
-        ],
-      ),
-        actions: [
-          IconButton(onPressed: (){
-            showModalBottomSheet<void>(
-              isDismissible: false,
-              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topRight: Radius.circular(10),topLeft: Radius.circular(10))),
-              context: context,
-              builder: (BuildContext context) {
-                return WillPopScope(
-                    onWillPop: () async {
-                      return false;
-                    },
-                    child: StatefulBuilder(
-                        builder: (BuildContext context1, StateSetter menuState) {
+      appBar: generalAppBar(context, storeName, userName, (){
+        Navigator.of(context).pop();
+      }, (){setState(() {
+        isFilter = false;
+      });
+      showModalBottomSheet<void>(
+        isDismissible: false,
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topRight: Radius.circular(10),topLeft: Radius.circular(10))),
+        context: context,
+        builder: (BuildContext context) {
+          return WillPopScope(
+              onWillPop: () async {
+                return false;
+              },
+              child: StatefulBuilder(
+                  builder: (BuildContext context1, StateSetter menuState) {
 
-                          return Container(
-                            height: MediaQuery.of(context).size.height * 0.90,
-                            decoration: const BoxDecoration(borderRadius: BorderRadius.only(topRight: Radius.circular(10),topLeft: Radius.circular(10))),
-                            margin: const EdgeInsets.only(right: 10,left: 10,bottom: 10),
-                            child: SingleChildScrollView(
+                    return Container(
+                      height: MediaQuery.of(context).size.height * 0.90,
+                      decoration: const BoxDecoration(borderRadius: BorderRadius.only(topRight: Radius.circular(10),topLeft: Radius.circular(10))),
+                      margin: const EdgeInsets.only(right: 10,left: 10,bottom: 10),
+                      child: SingleChildScrollView(
 
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Row(
-                                    children: [
-                                      const Expanded(
-                                        child: Text(
-                                          "Filter",
-                                          style: TextStyle(
-                                              color: MyColors.appMainColor,
-                                              fontSize: 25,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                      ElevatedButton(onPressed: (){
-                                        menuState(() {
-                                          clientKey.currentState!.reset();
-                                          categoryKey.currentState!.reset();
-                                          subCategoryKey.currentState!.reset();
-                                          brandKey.currentState!.reset();
-
-                                          selectedClientId = -1;
-                                          selectedCategoryId = -1;
-                                          selectedSubCategoryId = -1;
-                                          selectedBrandId = -1;
-
-                                          initialClientItem = clientData[0];
-                                          initialCategoryItem = categoryData[0];
-                                          initialSubCategoryItem = subCategoryData[0];
-                                          initialBrandItem = brandData[0];
-                                        });
-                                      }, child: const Text("Reset Filter",style: TextStyle(color: MyColors.whiteColor),))
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  const Text(
-                                    "Client",
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Row(
+                              children: [
+                                const Expanded(
+                                  child: Text(
+                                    "Filter",
                                     style: TextStyle(
                                         color: MyColors.appMainColor,
+                                        fontSize: 25,
                                         fontWeight: FontWeight.bold),
                                   ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  // dropdownwidget("Company Name"),
-                                  ClientListDropDownWithInitialValue(
-                                      clientKey: clientKey,
-                                      initialValue: initialClientItem,
-                                      hintText: "Client", clientData: clientData, onChange: (value){
-                                    selectedClientId = value.client_id;
-                                    initialClientItem = value;
-                                    getCategoryData(selectedClientId,menuState);
-                                    getSubCategoryData(selectedClientId,menuState);
-                                    getBrandData(selectedClientId,menuState);
-                                    menuState(() {
+                                ),
+                                ElevatedButton(onPressed: (){
+                                  menuState(() {
+                                    clientKey.currentState!.reset();
+                                    categoryKey.currentState!.reset();
+                                    subCategoryKey.currentState!.reset();
+                                    brandKey.currentState!.reset();
 
-                                    });
-                                  }),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  const Text(
-                                    "Category",
-                                    style: TextStyle(
-                                        color: MyColors.appMainColor,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  isCategoryLoading
-                                      ? Center(
-                                    child: Container(
-                                      height: 60,
-                                      child: const MyLoadingCircle(),
-                                    ),
-                                  )
-                                      : CategoryDropDownWithInitialValue(
-                                      initialValue: initialCategoryItem,
-                                      categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
-                                    selectedCategoryId = value.id;
-                                    initialCategoryItem = value;
-                                    menuState(() {
+                                    selectedClientId = -1;
+                                    selectedCategoryId = -1;
+                                    selectedSubCategoryId = -1;
+                                    selectedBrandId = -1;
 
-                                    });
-                                  }),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  const Text(
-                                    "Sub Category",
-                                    style: TextStyle(
-                                        color: MyColors.appMainColor,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  isSubCategoryLoading
-                                      ? Center(
-                                    child: Container(
-                                      height: 60,
-                                      child: const MyLoadingCircle(),
-                                    ),
-                                  )
-                                      : CategoryDropDownWithInitialValue(
-                                      initialValue: initialSubCategoryItem,
-                                      categoryKey:subCategoryKey,hintText: "Sub Category", categoryData: subCategoryData, onChange: (value){
-                                    selectedSubCategoryId = value.id;
-                                    initialSubCategoryItem = value;
-                                    menuState(() {
+                                    initialClientItem = clientData[0];
+                                    initialCategoryItem = categoryData[0];
+                                    initialSubCategoryItem = subCategoryData[0];
+                                    initialBrandItem = brandData[0];
+                                  });
+                                }, child: const Text("Reset Filter",style: TextStyle(color: MyColors.whiteColor),))
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Text(
+                              "Client",
+                              style: TextStyle(
+                                  color: MyColors.appMainColor,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            // dropdownwidget("Company Name"),
+                            ClientListDropDownWithInitialValue(
+                                clientKey: clientKey,
+                                initialValue: initialClientItem,
+                                hintText: "Client", clientData: clientData, onChange: (value){
+                              selectedClientId = value.client_id;
+                              initialClientItem = value;
+                              getCategoryData(selectedClientId,menuState);
+                              getSubCategoryData(selectedClientId,menuState);
+                              getBrandData(selectedClientId,menuState);
+                              menuState(() {
 
-                                    });
-                                  }),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  const Text(
-                                    "Brand",
-                                    style: TextStyle(
-                                        color: MyColors.appMainColor,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  SysBrandDropDownWithInitialValue(
-                                      initialValue: initialBrandItem,
-                                      brandKey:brandKey,hintText: "Brand", brandData: brandData, onChange: (value){
-                                    selectedBrandId = value.id;
-                                    initialBrandItem = value;
-                                    menuState(() {
+                              });
+                            }),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Text(
+                              "Category",
+                              style: TextStyle(
+                                  color: MyColors.appMainColor,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            isCategoryLoading
+                                ? Center(
+                              child: Container(
+                                height: 60,
+                                child: const MyLoadingCircle(),
+                              ),
+                            )
+                                : CategoryDropDownWithInitialValue(
+                                initialValue: initialCategoryItem,
+                                categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
+                              selectedCategoryId = value.id;
+                              initialCategoryItem = value;
+                              menuState(() {
 
-                                    });
-                                  }),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor: MyColors.appMainColor,
-                                        minimumSize: Size(screenWidth, 45),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(5))),
-                                    onPressed: () {
-                                      getTransPricingOne();
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text(
-                                      "Search",
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                ],
+                              });
+                            }),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Text(
+                              "Sub Category",
+                              style: TextStyle(
+                                  color: MyColors.appMainColor,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            isSubCategoryLoading
+                                ? Center(
+                              child: Container(
+                                height: 60,
+                                child: const MyLoadingCircle(),
+                              ),
+                            )
+                                : CategoryDropDownWithInitialValue(
+                                initialValue: initialSubCategoryItem,
+                                categoryKey:subCategoryKey,hintText: "Sub Category", categoryData: subCategoryData, onChange: (value){
+                              selectedSubCategoryId = value.id;
+                              initialSubCategoryItem = value;
+                              menuState(() {
+
+                              });
+                            }),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Text(
+                              "Brand",
+                              style: TextStyle(
+                                  color: MyColors.appMainColor,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            SysBrandDropDownWithInitialValue(
+                                initialValue: initialBrandItem,
+                                brandKey:brandKey,hintText: "Brand", brandData: brandData, onChange: (value){
+                              selectedBrandId = value.id;
+                              initialBrandItem = value;
+                              menuState(() {
+
+                              });
+                            }),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: MyColors.appMainColor,
+                                  minimumSize: Size(screenWidth, 45),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5))),
+                              onPressed: () {
+                                getTransPricingOne();
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text(
+                                "Search",
+                                style: TextStyle(color: Colors.white),
                               ),
                             ),
-                          );
-                        }
-                    )
-                );
-              },
-            );
-          },
-              icon: const Icon(Icons.filter_alt_outlined,color: MyColors.whiteColor,))
-        ],
-      ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+              )
+          );
+        },
+      );
+      }, true, true, false),
+
       body: Padding(
         padding:  const EdgeInsets.all(5),
         child: Column(children: [
@@ -487,9 +491,11 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
                     },
                     child: Card(
                       elevation: 5,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
                         decoration: BoxDecoration(
+                          border: Border.all( color: isFilter ? MyColors.appMainColor2 : MyColors.whiteColor,width: 3),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         alignment: Alignment.center,
@@ -517,9 +523,11 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
                     },
                     child: Card(
                       elevation: 5,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
                         decoration: BoxDecoration(
+                          border: Border.all( color: isFilter ? MyColors.appMainColor2 : MyColors.whiteColor,width: 3),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         alignment: Alignment.center,
@@ -547,9 +555,11 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
                     },
                     child: Card(
                       elevation: 5,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
                         decoration: BoxDecoration(
+                          border: Border.all( color: isFilter ? MyColors.appMainColor2 : MyColors.whiteColor,width: 3),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         alignment: Alignment.center,

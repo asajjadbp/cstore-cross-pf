@@ -25,6 +25,7 @@ class SavePlanogramPhoto {
 }
 
 class SavePlanogramPhotoData {
+  final int id;
   final int clientId;
   final int categoryId;
   final int brandId;
@@ -33,6 +34,7 @@ class SavePlanogramPhotoData {
   final int reasonId;
 
   SavePlanogramPhotoData({
+    required this.id,
     required this.clientId,
     required this.categoryId,
     required this.brandId,
@@ -43,6 +45,7 @@ class SavePlanogramPhotoData {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'client_id': clientId,
       'cat_id': categoryId,
       'brand_id': brandId,

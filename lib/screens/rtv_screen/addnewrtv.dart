@@ -41,6 +41,7 @@ class _addnewrtvscreenState extends State<addnewrtvscreen> {
   String clientId = "";
   String workingId = "";
   String storeName = "";
+  String userName = "";
   TextEditingController totalPieces = TextEditingController();
   TextEditingController dateInput = TextEditingController();
   DateTime? pickedDate;
@@ -57,6 +58,7 @@ class _addnewrtvscreenState extends State<addnewrtvscreen> {
     clientId = sharedPreferences.getString(AppConstants.clientId)!;
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
     storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    userName = sharedPreferences.getString(AppConstants.userName)!;
 
     if (isInit) {
       getReasonData();
@@ -82,7 +84,7 @@ class _addnewrtvscreenState extends State<addnewrtvscreen> {
       imageFile = value;
 
       final String extension = path.extension(imageFile!.path);
-      imageName = "${DateTime.now().millisecondsSinceEpoch}$extension";
+      imageName = "${userName}_${DateTime.now().millisecondsSinceEpoch}$extension";
       setState(() {});
       // _takePhoto(value);
     });
@@ -139,7 +141,7 @@ class _addnewrtvscreenState extends State<addnewrtvscreen> {
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
         backgroundColor: const Color(0xFFF4F7FD),
-        appBar: generalAppBar(context, storeName, "Add RTV", (){
+        appBar: generalAppBar(context, storeName, userName, (){
           Navigator.of(context).pop();
         }, (){print("filter Click");}, true, false, false),
         body: SingleChildScrollView(

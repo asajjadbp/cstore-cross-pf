@@ -14,29 +14,39 @@ final Function onSelectImage;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        Container(
-          width: MediaQuery.of(context).size.width/2.2,
-          height: MediaQuery.of(context).size.height/4.4,
-          child: InkWell(
-            onTap: () {
-              onSelectImage();
-            },
-            child: Card(
-              color: Colors.white,
-              elevation: 1,
-              child: Image.asset("assets/icons/camera_icon.png"),
+        Column(
+          children: [
+            const Text("Take Photo"),
+            Container(
+              width: MediaQuery.of(context).size.width/2.2,
+              height: MediaQuery.of(context).size.height/4.4,
+              child: InkWell(
+                onTap: () {
+                  onSelectImage();
+                },
+                child: Card(
+                  color: Colors.white,
+                  elevation: 1,
+                  child: Image.asset("assets/icons/camera_icon.png"),
+                ),
+              ),
             ),
-          ),
+          ],
         ),
-        Container(
-          width: MediaQuery.of(context).size.width/2.2,
-          height: MediaQuery.of(context).size.height/4.4,
-          child: Card(
-            color: Colors.white,
-            elevation: 1,
-            child: imageFile != null ? Image.file(File(imageFile!.path),fit: BoxFit.fill,) :
-            Image.asset("assets/icons/gallery_icon.png"),
-          ),
+        Column(
+          children: [
+            const Text("View Photo"),
+            Container(
+              width: MediaQuery.of(context).size.width/2.2,
+              height: MediaQuery.of(context).size.height/4.4,
+              child: Card(
+                color: Colors.white,
+                elevation: 1,
+                child: imageFile != null ? Image.file(File(imageFile!.path),fit: BoxFit.fill,) :
+                Image.asset("assets/icons/gallery_icon.png"),
+              ),
+            ),
+          ],
         ),
       ],
     );

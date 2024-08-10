@@ -12,7 +12,9 @@ import 'package:cstore/screens/utils/toast/toast.dart';
 import 'package:cstore/screens/widget/drop_downs.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../Database/table_name.dart';
 import '../../Model/database_model/drop_reason_model.dart';
 import '../grid_dashboard/grid_dashboard.dart';
 import '../utils/app_constants.dart';
@@ -39,12 +41,16 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
   bool isError = false;
   String errorText = "";
   int selectedReasonId = -1;
+  String bucketName = "";
 
   // This id is taking to recognize that card and start reloading
   var dropWorkingId = "";
   List<JourneyPlanDetail> jpData = [];
 
   List<DropReasonModel> dropReasonList = [];
+
+  final RefreshController _refreshController = RefreshController(
+      initialRefresh: false);
 
   void initState() {
     getUserData();
@@ -56,7 +62,7 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
 
     userName = prefs.getString(AppConstants.userName)!;
     token = prefs.getString(AppConstants.tokenId)!;
-
+    bucketName = prefs.getString(AppConstants.bucketName)!;
     imageBaseUrl = prefs.getString(AppConstants.imageBaseUrl)!;
 
     print(userName);
@@ -67,7 +73,14 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
 
     getDropReasons();
 
+    getJpDataFromSqlDb();
+  }
+
+  void _onRefresh() async {
+    // await Future.delayed(const Duration(milliseconds: 1000));
+    // DatabaseHelper.delete_table(TableName.tbl_user_dashboard);
     callJp();
+    _refreshController.refreshCompleted();
   }
 
   getDropReasons() async {
@@ -89,6 +102,18 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
     });
   }
 
+  getJpDataFromSqlDb() async {
+    setState(() {
+      isLoading = true;
+    });
+    await DatabaseHelper.getJourneyPlanData(userName).then((value) {
+      jpData = value;
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
+
   Future callJp() async {
     setState(() {
       isError = false;
@@ -97,13 +122,18 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
     // try {
     await JourneyPlanHTTP()
         .getJourneyPlan(userName, token, baseUrl)
-        .then((value) {
+        .then((value) async {
       setState(() {
         isLoading = false;
       });
 
       if (value.status) {
         jpData = value.data;
+        DatabaseHelper.delete_table(TableName.tblSysJourneyPlan);
+
+        await DatabaseHelper.insertSysJourneyPlanArray(value.data);
+
+        getJpDataFromSqlDb();
       }
     }).catchError((onError) {
       isError = true;
@@ -139,7 +169,7 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
           InkWell(
             onTap: () {
               getDropReasons();
-              callJp();
+              getJpDataFromSqlDb();
             },
             child: Container(
               decoration: BoxDecoration(
@@ -161,92 +191,98 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
           ? const Center(
         child: Text("No journey plan found"),
       )
-          : ListView.builder(
-          itemCount: jpData.length,
-          itemBuilder: (ctx, i) {
-            print(
-                "https://storage.googleapis.com/pandaimage-bucket/visits/${jpData[i]
-                    .startVisitPhoto}");
-            return JourneyPlan(
-              onLocationTap: () {
-                launchStoreUrl(jpData[i].gcode);
-              },
-              imageBaseUrl: imageBaseUrl,
-              jp: jpData[i],
-              onStartClick: () {
-                if (jpData[i].visitStatus == "1") {
-                  setVisitSession(jpData[i]);
-                } else {
-                  getImage(jpData[i]);
-                }
-              },
-              onDropClick: () {
-                if (jpData[i].isDrop == 0) {
-                  // dropVisit(jpData[i].workingId.toString());
-                  showDialog(context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: const Text(
-                            "Are you sure you want to drop this visit?"),
-                        content: ReasonDropDown(hintText: "Select Reason",
-                            reasonData: dropReasonList,
-                            onChange: (value) {
-                              selectedReasonId = value.id;
-                            }),
-                        actions: [
-                          TextButton(
-                            child: const Text("No"),
-                            onPressed: () {
-                              // returnValue = true;
-                              Navigator.of(context).pop(true);
-                            },
-                          ),
-                          TextButton(
-                            child: const Text("Yes"),
-                            onPressed: () {
-                              // returnValue = true;
-                              if (selectedReasonId != -1) {
-                                dropVisit(jpData[i].workingId.toString());
+          : SmartRefresher(
+        controller: _refreshController,
+        enablePullDown: true,
+        enablePullUp: true,
+        onRefresh: _onRefresh,
+        child: ListView.builder(
+            itemCount: jpData.length,
+            itemBuilder: (ctx, i) {
+              // print(
+              //     "https://storage.googleapis.com/$bucketName/visits/${jpData[i]
+              //         .startVisitPhoto}");
+              return JourneyPlan(
+                onLocationTap: () {
+                  launchStoreUrl(jpData[i].gcode);
+                },
+                imageBaseUrl: bucketName,
+                jp: jpData[i],
+                onStartClick: () {
+                  if (jpData[i].visitStatus == "1") {
+                    setVisitSession(jpData[i]);
+                  } else {
+                    getImage(jpData[i]);
+                  }
+                },
+                onDropClick: () {
+                  if (jpData[i].isDrop == 0) {
+                    // dropVisit(jpData[i].workingId.toString());
+                    showDialog(context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text(
+                              "Are you sure you want to drop this visit?"),
+                          content: ReasonDropDown(hintText: "Select Reason",
+                              reasonData: dropReasonList,
+                              onChange: (value) {
+                                selectedReasonId = value.id;
+                              }),
+                          actions: [
+                            TextButton(
+                              child: const Text("No"),
+                              onPressed: () {
+                                // returnValue = true;
+                                Navigator.of(context).pop(true);
+                              },
+                            ),
+                            TextButton(
+                              child: const Text("Yes"),
+                              onPressed: () {
+                                // returnValue = true;
+                                if (selectedReasonId != -1) {
+                                  dropVisit(jpData[i].workingId.toString());
+                                  Navigator.of(context).pop();
+                                } else {
+                                  ToastMessage.errorMessage(
+                                      context, "Please Select reason");
+                                }
+                              },
+                            )
+                          ],
+                        );
+                      },);
+                  } else {
+                    showDialog(context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text("Do you want to UnDrop this visit?"),
+                          actions: [
+                            TextButton(
+                              child: const Text("No"),
+                              onPressed: () {
+                                // returnValue = true;
+                                Navigator.of(context).pop(true);
+                              },
+                            ),
+                            TextButton(
+                              child: const Text("Yes"),
+                              onPressed: () {
+                                // returnValue = true;
+                                undropVisit(jpData[i].workingId.toString());
                                 Navigator.of(context).pop();
-                              } else {
-                                ToastMessage.errorMessage(
-                                    context, "Please Select reason");
-                              }
-                            },
-                          )
-                        ],
-                      );
-                    },);
-                } else {
-                  showDialog(context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: const Text("Do you want to UnDrop this visit?"),
-                        actions: [
-                          TextButton(
-                            child: const Text("No"),
-                            onPressed: () {
-                              // returnValue = true;
-                              Navigator.of(context).pop(true);
-                            },
-                          ),
-                          TextButton(
-                            child: const Text("Yes"),
-                            onPressed: () {
-                              // returnValue = true;
-                              undropVisit(jpData[i].workingId.toString());
-                              Navigator.of(context).pop();
-                            },
-                          )
-                        ],
-                      );
-                    },);
-                }
-              },
-              isDropLoading: isDropLoading,
-              workingId: dropWorkingId,
-            );
-          }),
+                              },
+                            )
+                          ],
+                        );
+                      },);
+                  }
+                },
+                isDropLoading: isDropLoading,
+                workingId: dropWorkingId,
+              );
+            }),
+          ),
     );
   }
 
@@ -277,7 +313,7 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
 
     Navigator.of(context).pushNamed(GridDashBoard.routeName).then((value) {
       print("JP SCREEN LOADING");
-      callJp();
+      getJpDataFromSqlDb();
     });
   }
 
@@ -296,7 +332,7 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
         "visitItem": journeyPlanDetail
       }).then((value) {
         print("JP SCREEN LOADING");
-        callJp();
+        getJpDataFromSqlDb();
       });
     });
   }
@@ -313,7 +349,7 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
         .dropVisit(
         userName, workingId, selectedReasonId.toString(), token, baseUrl)
         .then((value) {
-      callJp();
+      getJpDataFromSqlDb();
       setState(() {
         isDropLoading = false;
         dropWorkingId = workingId;

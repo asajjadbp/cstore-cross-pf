@@ -14,7 +14,7 @@ Future<void> takePicture(BuildContext context, File? imageFile,
     String imageName, String visitId, String moduleName) async {
   final PermissionStatus permissionStatus = await _getPermission();
   XFile compressedImageFile;
-  XFile compressedWaterMarkImageFile;
+  // XFile compressedWaterMarkImageFile;
   if (permissionStatus == PermissionStatus.granted) {
     if (imageFile != null) {
       final String dirPath = (await getExternalStorageDirectory())!.path;
@@ -42,25 +42,25 @@ Future<void> takePicture(BuildContext context, File? imageFile,
       }
 
       //Image Compress Function call
-      compressedWaterMarkImageFile = await addWatermark(compressedImageFile, DateTime.now().toString());
+      // compressedWaterMarkImageFile = await addWatermark(compressedImageFile, DateTime.now().toString());
 
       print("__________________FIle Details________________");
       print(mb);
       print(dirPath);
       print(filePath);
       print(imageName);
-      print(compressedWaterMarkImageFile.path);
+      print(compressedImageFile.path);
       print(imageFile.lengthSync());
       print(await compressedImageFile.length());
       print("__________________FIle Details________________");
 
       if (await folder.exists()) {
-        await File(compressedWaterMarkImageFile.path).copy(filePath).then((value) {
+        await File(compressedImageFile.path).copy(filePath).then((value) {
           // ToastMessage.succesMessage(context, "Image store successfully");
         });
       } else {
         await Directory(folderPath).create(recursive: true);
-        await File(compressedWaterMarkImageFile.path).copy(filePath).then((value) {
+        await File(compressedImageFile.path).copy(filePath).then((value) {
           // ToastMessage.succesMessage(context, "Image store successfully");
         });
       }
@@ -121,11 +121,11 @@ Future<XFile> addWatermark(XFile compressedFile, String watermarkText) async {
   // Define the watermark text
   img.drawString(
     image,
-    img.arial_48,
+    img.arial_24,
     x,
     y,
     updatedMark,
-    color: img.getColor(0, 0, 0),
+    color: img.getColor(255, 226, 226, 226),
   );
   // Get the temporary directory to save the watermarked image
   final Directory tempDir = await getTemporaryDirectory();
