@@ -131,7 +131,7 @@ class PlanogramItemCard extends StatelessWidget {
                             ),
                             Expanded(
                                 child: Text(
-                              brandName,
+                              brandName.isEmpty ? "-----" : brandName,
                               overflow: TextOverflow.ellipsis,
                             ))
                           ],

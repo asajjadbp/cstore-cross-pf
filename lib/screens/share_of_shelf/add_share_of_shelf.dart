@@ -114,7 +114,7 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
     });
 
 
-    await DatabaseHelper.getBrandList(selectedClientId).then((value) {
+    await DatabaseHelper.getBrandList(selectedClientId,selectedCategoryId.toString()).then((value) {
       setState(() {
         isBrandLoading = false;
       });
@@ -139,7 +139,6 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
   void StoreUnitDataDB() async{
     if (selectedClientId == -1 ||
         selectedCategoryId == -1 ||
-        selectedBrandId == -1 ||
         _selectedUnit == ""||
         valueControllerActual.text==""||valueControllerCatSpace.text=="" ) {
       ToastMessage.errorMessage(context, "Please fill the form");
@@ -245,6 +244,7 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
                           )
                               : CategoryDropDown(categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
                             selectedCategoryId = value.id;
+                            getBrandData(selectedClientId);
                             setState(() {
 
                             });

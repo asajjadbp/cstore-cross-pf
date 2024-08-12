@@ -145,7 +145,7 @@ class _Freshness_ScreenState extends State<Freshness_Screen> {
       isSubCategoryLoading = true;
     });
 
-    await DatabaseHelper.getSubCategoryList(selectedClientId).then((value) {
+    await DatabaseHelper.getSubCategoryList(selectedClientId,selectedCategoryId.toString()).then((value) {
       subCategoryData = value;
       subCategoryData.insert(
           0,
@@ -170,7 +170,7 @@ class _Freshness_ScreenState extends State<Freshness_Screen> {
       isBrandLoading = true;
     });
 
-    await DatabaseHelper.getBrandList(selectedClientId).then((value) {
+    await DatabaseHelper.getBrandList(selectedClientId,selectedCategoryId.toString()).then((value) {
       brandData = value;
 
       brandData.insert(
@@ -443,6 +443,9 @@ class _Freshness_ScreenState extends State<Freshness_Screen> {
                                   categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
                                 selectedCategoryId = value.id;
                                 initialCategoryItem = value;
+                                getSubCategoryData(
+                                    selectedClientId, menuState);
+                                getBrandData(selectedClientId,menuState);
                                 menuState(() {
 
                                 });

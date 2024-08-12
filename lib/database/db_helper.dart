@@ -2317,7 +2317,7 @@ class DatabaseHelper {
             "FROM trans_planogram "
             "JOIN sys_client on sys_client.client_id=trans_planogram.client_id "
             "JOIN sys_category on sys_category.id=trans_planogram.cat_id "
-            "JOIN sys_brand on sys_brand.id=trans_planogram.brand_id "
+            "LEFT JOIN sys_brand on sys_brand.id=trans_planogram.brand_id "
             "LEFT JOIN sys_planogram_reason on sys_planogram_reason.id=trans_planogram.reason_id "
             "WHERE trans_planogram.working_id=$workingId ORDER BY sys_category.en_name,sys_brand.en_name ASC");
     print(jsonEncode(planogram));
@@ -2333,8 +2333,8 @@ class DatabaseHelper {
         client_name: planogram[index][TableName.sys_client_name] as String,
         cat_en_name:planogram[index]['cat_en_name'] as String,
         cat_ar_name:planogram[index]['cat_ar_name'] as String,
-        brand_en_name:planogram[index]['brand_en_name'] as String,
-        brand_ar_name:planogram[index]['brand_ar_name'] as String,
+        brand_en_name:planogram[index]['brand_en_name'] ?? "",
+        brand_ar_name:planogram[index]['brand_ar_name'] ?? "",
         is_adherence:planogram[index]['is_adherence'].toString(),
         image_name:planogram[index]['image_name'] as String,
         imageFile: null,
@@ -2518,7 +2518,7 @@ class DatabaseHelper {
             " FROM trans_sos "
             "JOIN sys_client on sys_client.client_id=trans_sos.client_id "
             "JOIN sys_category on sys_category.id=trans_sos.cat_id "
-            "JOIN sys_brand on sys_brand.id=trans_sos.brand_id "
+            "LEFT JOIN sys_brand on sys_brand.id=trans_sos.brand_id "
             "WHERE trans_sos.working_id=$workingId ORDER BY sys_category.en_name,sys_brand.en_name ASC");
     print(jsonEncode(sos));
 
@@ -3061,14 +3061,25 @@ class DatabaseHelper {
       );
     });
   }
-  static Future<List<CategoryModel>> getSubCategoryList(int client_ids) async {
+  static Future<List<CategoryModel>> getSubCategoryList(int client_ids,String categoryId) async {
     final db = await initDataBase();
+
+    String searchWhere = "";
+
+    if(categoryId.isNotEmpty && categoryId != "-1") {
+      searchWhere = " AND sys_product.category_id = $categoryId ";
+    }
+
     final List<Map<String, dynamic>> categoryMaps = await db.rawQuery(
         "SELECT sys_subcategory.id as cat_id,sys_subcategory.en_name as cat_en_name,sys_subcategory.client_id,"
-            "sys_subcategory.ar_name as cat_ar_name FROM  sys_subcategory JOIN sys_client "
-            "on sys_client.client_id=sys_subcategory.client_id WHERE sys_subcategory.client_id=($client_ids) ORDER BY sys_subcategory.en_name ASC");
+            " sys_subcategory.ar_name as cat_ar_name "
+            " FROM sys_product JOIN sys_client on sys_client.client_id=sys_subcategory.client_id "
+            " JOIN sys_subcategory on sys_subcategory.id=sys_product.subcategory_id "
+            " WHERE sys_subcategory.client_id=($client_ids) $searchWhere GROUP BY subcategory_id ORDER BY sys_subcategory.en_name ASC");
 //AND sys_subcategory.category_id=($categoryId)
-
+    print(categoryId);
+    print(client_ids);
+    print("________Sub Category List ________________");
     return List.generate(categoryMaps.length, (index) {
       return CategoryModel(
         id: categoryMaps[index]['cat_id'] as int,
@@ -3092,14 +3103,24 @@ class DatabaseHelper {
       );
     });
   }
-  static Future<List<SYS_BrandModel>> getBrandList(int client_id) async {
+  static Future<List<SYS_BrandModel>> getBrandList(int client_id, String categoryId) async {
     final db = await initDataBase();
+
+    String searchWhere = "";
+
+    if(categoryId.isNotEmpty && categoryId != "-1") {
+      searchWhere = " AND sys_product.category_id = $categoryId ";
+    }
+
     final List<Map<String, dynamic>> brandMaps = await db.rawQuery(
         "SELECT sys_brand.id,sys_brand.en_name ,sys_brand.ar_name,sys_brand.client_id "
-            "FROM sys_brand JOIN sys_client on sys_client.client_id=sys_brand.client_id "
-            "WHERE sys_brand.client_id = ${client_id} ORDER BY sys_brand.en_name ASC");
+            "FROM sys_product JOIN sys_client on sys_client.client_id=sys_brand.client_id "
+            " JOIN sys_brand on sys_brand.id=sys_product.brand_id "
+            "WHERE sys_brand.client_id = ${client_id} $searchWhere GROUP BY brand_id ORDER BY sys_brand.en_name ASC");
 
     print(jsonEncode(brandMaps));
+    print(categoryId);
+    print(client_id);
     print("________BRAND List ________________");
     return List.generate(brandMaps.length, (index) {
       return SYS_BrandModel(

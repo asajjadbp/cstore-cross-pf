@@ -112,7 +112,7 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
       isSubCategoryLoading = true;
     });
 
-    await DatabaseHelper.getSubCategoryList(selectedClientId).then((value) {
+    await DatabaseHelper.getSubCategoryList(selectedClientId,selectedCategoryId.toString()).then((value) {
 
       subCategoryData = value;
       subCategoryData.insert(0, CategoryModel(en_name: "Select Sub Category",ar_name: "Select Sub Category",id: -1, client: -1));
@@ -132,7 +132,7 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
       isBrandLoading = true;
     });
 
-    await DatabaseHelper.getBrandList(selectedClientId).then((value) {
+    await DatabaseHelper.getBrandList(selectedClientId,selectedCategoryId.toString()).then((value) {
       brandData = value;
 
       brandData.insert(0, SYS_BrandModel(en_name: "Select Brand",ar_name: "Select Brand",id: -1, client: -1));
@@ -387,6 +387,9 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
                                   categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
                                 selectedCategoryId = value.id;
                                 initialCategoryItem = value;
+                                getSubCategoryData(
+                                    selectedClientId, menuState);
+                                getBrandData(selectedClientId,menuState);
                                 menuState(() {
 
                                 });

@@ -5,7 +5,8 @@ import 'package:cstore/screens/utils/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 import '../../Model/response_model.dart/jp_response_model.dart';
 import '../utils/services/take_image_and_save_to_folder.dart';
 import '../widget/app_bar_widgets.dart';
@@ -113,6 +114,9 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
       isLoading = true;
     });
     try {
+      XFile compressedImageFile;
+      XFile compressedWaterMarkImageFile;
+
       await LocationService.getLocation().then((value) async {
         if (value["locationIsPicked"]) {
           final credentials = ServiceAccountCredentials.fromJson(
@@ -133,13 +137,34 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
           //     "binzagr-bucket"; // Replace with your bucket name
           final filePath = 'visits/$filename';
 
+          //Image Compress Function call
+          final dir = await getTemporaryDirectory();
+          final targetPath = path.join(dir.path, filename);
+
           print("Bucket Name asdwa");
           print(bucketName);
           print(filePath);
-          XFile waterMarkFile = await addWatermark(XFile(imageFile.path),DateTime.now().toString());
-          print(waterMarkFile.path);
-          print(waterMarkFile.name);
-          File waterMarkImageFile = File(waterMarkFile.path);
+
+          int sizeInBytes = imageFile.readAsBytesSync().lengthInBytes;
+          final kb = sizeInBytes / 1024;
+          final mb = kb / 1024;
+
+          if(mb >= 6) {
+            compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,60);
+          } else if(mb < 6 && mb > 4) {
+            compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,75);
+          } else if(mb < 4 && mb > 2) {
+            compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,90);
+          } else {
+            compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,100);
+          }
+
+          compressedWaterMarkImageFile = await addWatermark(compressedImageFile,DateTime.now().toString());
+         print(mb);
+          print(kb);
+          print(compressedWaterMarkImageFile.path);
+          print(compressedWaterMarkImageFile.name);
+          File waterMarkImageFile = File(compressedWaterMarkImageFile.path);
 
           final fileContent = await waterMarkImageFile.readAsBytes();
           final bucketObject = Object(name: filePath);

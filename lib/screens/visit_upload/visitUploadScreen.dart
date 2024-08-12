@@ -205,6 +205,34 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       }, (){print("filter Click");}, true, false, false),
       body: Column(
         children: [
+          Container(
+            margin:const  EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  storeName,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black),
+                ),
+                Text(
+                  "CheckIn : $checkInTime",
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color:MyColors.darkGreyColor),
+                )
+              ],
+
+            ),
+          ),
           Expanded(
             child: Stack(
               alignment: Alignment.topCenter,
@@ -218,37 +246,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 12, top: 3),
-                              child: Text(
-                                storeName,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                                style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 12, top: 3),
-                              child: Text(
-                                "CheckIn : $checkInTime",
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                                style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color:MyColors.darkGreyColor),
-                              ),
-                            )
-                          ],
 
-                        ),
                         if (availabilityCountModel.totalSku > 0 )
                           VisitAvlUploadScreenCard(
                             onUploadTap: (){

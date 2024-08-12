@@ -113,7 +113,7 @@ class _DashBoardState extends State<DashBoard> {
         DatabaseHelper.delete_table(TableName.tblSysDashboard);
         await DatabaseHelper.insertSysDashboardArray(value.data!)
             .then((_) async {
-          ToastMessage.succesMessage(context, "Data updated successfully");
+          // ToastMessage.succesMessage(context, "Data updated successfully");
           getSqlUserDashboard();
 
           // isError=false;
@@ -237,7 +237,9 @@ class _DashBoardState extends State<DashBoard> {
       return Expanded(
         child: InkWell(
           onTap: () {
-            Navigator.of(context).pushNamed(JourneyPlanScreen.routename);
+            Navigator.of(context).pushNamed(JourneyPlanScreen.routename).then((value) {
+              getApiUserDashboard();
+            });
           },
           child: Card(
             color: MyColors.appMainColor,

@@ -200,7 +200,7 @@ class _StockListScreenState extends State<StockListScreen> {
       isSubCategoryLoading = true;
     });
 
-    await DatabaseHelper.getSubCategoryList(selectedClientId).then((value) {
+    await DatabaseHelper.getSubCategoryList(selectedClientId,selectedCategoryId.toString()).then((value) {
       subCategoryData = value;
       subCategoryData.insert(
           0,
@@ -224,7 +224,7 @@ class _StockListScreenState extends State<StockListScreen> {
       isBrandLoading = true;
     });
 
-    await DatabaseHelper.getBrandList(selectedClientId).then((value) {
+    await DatabaseHelper.getBrandList(selectedClientId,selectedCategoryId.toString()).then((value) {
       brandData = value;
 
       brandData.insert(
@@ -408,6 +408,9 @@ class _StockListScreenState extends State<StockListScreen> {
                           onChange: (value) {
                             selectedCategoryId = value.id;
                             initialCategoryItem = value;
+                            getSubCategoryData(
+                                selectedClientId, menuState);
+                            getBrandData(selectedClientId,menuState);
                             menuState(() {});
                           }),
                       const SizedBox(

@@ -50,6 +50,7 @@ class _AddOSDCState extends State<AddOSDC> {
   String clientId = "";
   String workingId = "";
   String storeName = "";
+  String userName = "";
   TextEditingController valueControllerQty = TextEditingController();
 
   @override
@@ -65,6 +66,7 @@ class _AddOSDCState extends State<AddOSDC> {
     clientId = sharedPreferences.getString(AppConstants.clientId)!;
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
     storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    userName = sharedPreferences.getString(AppConstants.userName)!;
 
     if (isInit) {
       getTypeData();
@@ -81,7 +83,7 @@ class _AddOSDCState extends State<AddOSDC> {
       }
       imagesList.add(value);
       final String extension = path.extension(value.path);
-      imagesNameList.add("${DateTime.now().millisecondsSinceEpoch}$extension");
+      imagesNameList.add("${userName}_${DateTime.now().millisecondsSinceEpoch}$extension");
 
       setState(() {});
       // _takePhoto(value);

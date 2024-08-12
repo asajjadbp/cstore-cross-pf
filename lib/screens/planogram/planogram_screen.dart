@@ -131,7 +131,6 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
       });
       clientData = value;
     });
-    print(clientData[0].client_name);
 
   }
 
@@ -168,7 +167,7 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
     print(categoryData[0].en_name);
   }
 
-  void getBrandData(int clientId) async {
+  void getBrandData(int clientId,String categoryId) async {
     brandKey.currentState!.reset();
     selectedBrandId = -1;
     brandData = [SYS_BrandModel(en_name: "",ar_name: "",id: -1, client: -1)];
@@ -176,7 +175,7 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
       isBrandLoading = true;
     });
 
-    await DatabaseHelper.getBrandList(selectedClientId).then((value) {
+    await DatabaseHelper.getBrandList(selectedClientId,categoryId).then((value) {
       setState(() {
         isBrandLoading = false;
       });
@@ -189,7 +188,6 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
   void saveStorePhotoData() async {
     if (selectedClientId == -1 ||
         selectedCategoryId == -1 ||
-        selectedBrandId == -1 ||
         selectedStatusId == -1 ||
         imageFile == null) {
       ToastMessage.errorMessage(context, "Please fill the form and take image");
@@ -280,7 +278,7 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
                             hintText: "Client", clientData: clientData, onChange: (value){
                           selectedClientId = value.client_id;
                           getCategoryData(selectedClientId);
-                          getBrandData(selectedClientId);
+                          getBrandData(selectedClientId,selectedCategoryId.toString());
                           setState(() {
 
                           });
@@ -299,6 +297,7 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
                         ),
                         CategoryDropDown(categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
                           selectedCategoryId = value.id;
+                          getBrandData(selectedClientId,selectedCategoryId.toString());
                           setState(() {
 
                           });
