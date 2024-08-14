@@ -17,6 +17,7 @@ import '../Model/database_model/app_setting_model.dart';
 import '../Model/database_model/availability_show_model.dart';
 import '../Model/database_model/avl_product_placement_model.dart';
 import '../Model/database_model/freshness_graph_count.dart';
+import '../Model/database_model/knowledgeShare_model.dart';
 import '../Model/database_model/planoguide_gcs_images_list_model.dart';
 import '../Model/database_model/pricing_show_model.dart';
 import '../Model/database_model/promo_plan_graph_api_count_model.dart';
@@ -25,6 +26,7 @@ import '../Model/database_model/rtv_show_model.dart';
 import '../Model/database_model/show_before_fixing.dart';
 import '../Model/database_model/show_freshness_list_model.dart';
 import '../Model/database_model/show_planogram_model.dart';
+import '../Model/database_model/show_proof_of_sale_model.dart';
 import '../Model/database_model/show_trans_osdc_model.dart';
 import '../Model/database_model/show_trans_rtv_model.dart';
 import '../Model/database_model/show_trans_sos.dart';
@@ -35,6 +37,7 @@ import '../Model/database_model/sys_product_model.dart';
 import '../Model/database_model/sys_product_placement_model.dart';
 import '../Model/database_model/sys_store_pog_model.dart';
 import '../Model/database_model/total_count_response_model.dart';
+import '../Model/database_model/trans_add_proof_of_sale_model.dart';
 import '../Model/database_model/trans_before_faxing.dart';
 import '../Model/database_model/trans_brand_shares_model.dart';
 import '../Model/database_model/trans_osd_image_model.dart';
@@ -52,6 +55,7 @@ import '../Model/database_model/trans_pricing_model.dart';
 import '../Model/database_model/trans_promo_model.dart';
 import '../Model/database_model/trans_promo_plan_list_model.dart';
 import '../Model/database_model/trans_rtv_model.dart';
+import '../Model/database_model/trans_rtv_one_plus_one.dart';
 import '../Model/request_model.dart/availability_api_request_model.dart';
 import '../Model/request_model.dart/brand_share_request.dart';
 import '../Model/request_model.dart/other_images_end_Api_request.dart';
@@ -109,6 +113,8 @@ class DatabaseHelper {
           " TEXT, " +
           TableName.agency_dash_accessTo +
           " TEXT, " +
+          TableName.orderBy +
+          " INTEGER," +
           TableName.agency_dash_status +
           " INTEGER" +
           ")");
@@ -729,27 +735,31 @@ class DatabaseHelper {
       await db.execute('CREATE TABLE ' +
           TableName.tbl_trans_one_plus_one +
           "(" +
-          TableName.trans_one_plus_one_id+
+          TableName.col_id +
           " INTEGER PRIMARY KEY AUTOINCREMENT," +
-          TableName.trans_one_plus_one_sku_id +
+          TableName.sku_id +
           " INTEGER, " +
-          TableName.trans_one_plus_one_quantity +
+          TableName.pieces +
           " INTEGER, " +
-          TableName.trans_one_plus_one_doc_no+
+          TableName.trans_one_plus_one_doc_no +
           " TEXT, " +
-          TableName.trans_one_plus_one_comment+
+          TableName.trans_one_plus_one_comment +
           " TEXT, " +
-          TableName.trans_one_plus_one_type+
+          TableName.trans_one_plus_one_type +
           " TEXT, " +
-          TableName.trans_one_plus_one_image+
+          TableName.image_name +
           " TEXT, " +
-          TableName.trans_one_plus_one_doc_image+
+          TableName.trans_one_plus_one_doc_image +
           " TEXT, " +
           TableName.trans_date_time +
           " TEXT, " +
-          TableName.trans_upload_status+
+          TableName.upload_status +
           " INTEGER, " +
-          TableName.trans_one_plus_one_working_id +
+          TableName.gcs_status +
+          " INTEGER, " +
+          TableName.activity_status +
+          " INTEGER, " +
+          TableName.working_id +
           " INTEGER" +
           ")");
 
@@ -988,7 +998,55 @@ class DatabaseHelper {
           " INTEGER" +
           ")");
 
-    });
+      await db.execute('CREATE TABLE ' +
+    TableName.tblSysKnowledgeShare +
+    "(" +
+    TableName.col_id +
+    " INTEGER PRIMARY KEY UNIQUE," +
+    TableName.sys_knowledge_title +
+    " TEXT, " +
+    TableName.sys_knowledge_des +
+    " TEXT, " +
+    TableName.client_id +
+    " INTEGER, " +
+    TableName.chain_id +
+    " INTEGER, " +
+    TableName.sys_knowledge_addedBy +
+    " TEXT, " +
+    TableName.sys_knowledge_fileName +
+    " TEXT, " +
+    TableName.sys_knowledge_type +
+    " TEXT, " +
+    TableName.sys_knowledge_active +
+    " TEXT, " +
+    TableName.sys_issue_update_at +
+    " TEXT" +
+    ")");
+
+
+
+
+      // await db.execute(
+      //     'CREATE TABLE ${TableName.tbl_trans_POS} ('
+      //         '${TableName.col_id} INTEGER PRIMARY KEY, '
+      //         '${TableName.sku_id} INTEGER, '
+      //         '${TableName.trans_pos_name} TEXT, '
+      //         '${TableName.trans_pos_email} TEXT, '
+      //         '${TableName.trans_pos_phone} TEXT, '
+      //         '${TableName.trans_pos_amount} TEXT, '
+      //         '${TableName.client_id} INTEGER, '
+      //         '${TableName.cat_id} INTEGER, '
+      //         '${TableName.quantity} INTEGER, '
+      //         '${TableName.image_name} TEXT, '
+      //         '${TableName.working_id} INTEGER, '
+      //         '${TableName.upload_status} INTEGER, '
+      //         '${TableName.gcs_status} INTEGER, '
+      //         '${TableName.dateTime} TEXT, '
+      //         'UNIQUE(${TableName.dateTime}, ${TableName.sku_id})'
+      //         ')'
+      // );
+
+        });
 
   }
   static Future<Database> initDataBase() async {
@@ -1336,6 +1394,7 @@ class DatabaseHelper {
         TableName.agency_dash_icon: data.iconSvg,
         TableName.agency_dash_status: data.status,
         TableName.agency_dash_accessTo: data.accessTo,
+        TableName.orderBy: data.orderBy,
       };
       bool isDuplicate = await hasDuplicateEntry(
           db, TableName.tbl_sys_agency_dashboard, fields);
@@ -1354,6 +1413,7 @@ class DatabaseHelper {
             TableName.agency_dash_icon: data.iconSvg,
             TableName.agency_dash_status: data.status,
             TableName.agency_dash_accessTo: data.accessTo,
+            TableName.orderBy: data.orderBy,
           },
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
@@ -2117,7 +2177,7 @@ class DatabaseHelper {
   static Future<List<AgencyDashboardModel>> getAgencyDashboard() async {
     var db = await initDataBase();
     final List<Map<String, dynamic>> agencyDashboard =
-        await db.rawQuery("SELECT *from ${TableName.tbl_sys_agency_dashboard}");
+        await db.rawQuery("SELECT *from ${TableName.tbl_sys_agency_dashboard} ORDER BY order_by ASC");
     print(agencyDashboard);
     return List.generate(agencyDashboard.length, (index) {
       return AgencyDashboardModel.fromJson(agencyDashboard[index]);
@@ -3007,10 +3067,19 @@ class DatabaseHelper {
     return await db.rawInsert(insertQuery);
   }
   static Future<int>  insertTransAvailability(String workingID,String clientId,String visitAvlExcludes,String now) async {
+
+    String searchWhere = "";
+    String avlExclSearchParam = await getAvlExcludesString(workingID);
+    print(avlExclSearchParam);
+
+    if(avlExclSearchParam.isNotEmpty) {
+      searchWhere = " AND id NOT IN($avlExclSearchParam)";
+    }
+
+
     String insertQuery = "INSERT OR IGNORE INTO trans_availability (client_id,sku_id, avl_status, activity_status,req_picklist,actual_picklist,picklist_reason,picklist_ready,working_id,pick_upload_status,upload_status,date_time,picker_name,pick_list_send_time,pick_list_receive_time) "
         "SELECT client_id,id, -1, 0 , 0,0,0,0,$workingID,0,0,00,'','',''"
-        " FROM sys_product where client_id IN($clientId) "
-        "AND id NOT IN($visitAvlExcludes)";
+        " FROM sys_product where client_id IN($clientId) $searchWhere";
     var db = await initDataBase();
     print("_______________INSERT AVAILABILITY________________");
     print(insertQuery);
@@ -3732,6 +3801,15 @@ class DatabaseHelper {
 
   static Future<List<PricingShowModel>> getDataListPriceCheck(String workingId, String clientId,String jpSessionClientIds, String brandId,String categoryId,String subCategoryId) async {
 
+    String searchOtherExclude = "";
+    String otherExclSearchParam = await getOtherExcludesString(workingId);
+    print(otherExclSearchParam);
+
+    if(otherExclSearchParam.isNotEmpty) {
+      searchOtherExclude = "And sys_product.id not in ($otherExclSearchParam)";
+    }
+
+
     String searchWhere = "";
 
     String clientIds = "";
@@ -3765,7 +3843,7 @@ class DatabaseHelper {
         "JOIN sys_category on sys_category.id=sys_product.category_id "
         "JOIN sys_subcategory on sys_subcategory.id=sys_product.subcategory_id "
         "JOIN sys_brand on sys_brand.id=sys_product.brand_id "
-        "WHERE 1=1 And sys_product.client_id in ($clientIds) And sys_product.id not in (11000,11001,11002) $searchWhere) SystemTable "
+        "WHERE 1=1 And sys_product.client_id in ($clientIds) $searchOtherExclude $searchWhere) SystemTable "
         "LEFT JOIN ( SELECT sku_id,act_status,regular_price,promo_price FROM trans_pricing WHERE working_id=$workingId ) TransTable "
         "on SystemTable.pro_id = TransTable.sku_id "
         "GROUP BY SystemTable.pro_id ORDER BY sub_category,brand ASC";
@@ -3891,6 +3969,14 @@ class DatabaseHelper {
 
   static Future<List<RTVShowModel>> getDataListRTV(String workingId, String clientId,String jpSessionClientIds,String otherExcludes,String brandId,String categoryId,String subCategoryId) async {
 
+    String searchOtherExclude = "";
+    String otherExclSearchParam = await getOtherExcludesString(workingId);
+    print(otherExclSearchParam);
+
+    if(otherExclSearchParam.isNotEmpty) {
+      searchOtherExclude = "And sys_product.id not in ($otherExclSearchParam)";
+    }
+
     String searchWhere = "";
 
     String clientIds = "";
@@ -3921,8 +4007,7 @@ class DatabaseHelper {
         "JOIN sys_category on sys_category.id=sys_product.category_id "
         "JOIN sys_subcategory on sys_subcategory.id=sys_product.subcategory_id "
         "JOIN sys_brand on sys_brand.id=sys_product.brand_id "
-        "WHERE 1=1 And sys_product.client_id in ($clientIds) And sys_product.id "
-        "not in (11000,11001,11002) $searchWhere ) SystemTable "
+        "WHERE 1=1 And sys_product.client_id in ($clientIds) $searchOtherExclude $searchWhere ) SystemTable "
         "LEFT JOIN ( SELECT sku_id,act_status FROM trans_rtv WHERE working_id=$workingId ) TransTable "
         "on SystemTable.pro_id = TransTable.sku_id GROUP BY SystemTable.pro_id ORDER BY SystemTable.sub_category,SystemTable.brand ASC";
     print(query);
@@ -4026,6 +4111,15 @@ class DatabaseHelper {
       String categoryId,
       String subCategoryId) async {
 
+    String searchOtherExclude = "";
+    String otherExclSearchParam = await getOtherExcludesString(workingId);
+    print(otherExclSearchParam);
+
+    if(otherExclSearchParam.isNotEmpty) {
+      searchOtherExclude = "And sys_product.id not in ($otherExclSearchParam)";
+    }
+
+
     String searchWhere = "";
 
     String clientIds = "";
@@ -4057,8 +4151,7 @@ class DatabaseHelper {
         " JOIN sys_category on sys_category.id=sys_product.category_id"
         " JOIN sys_subcategory on sys_subcategory.id=sys_product.subcategory_id"
         " JOIN sys_brand on sys_brand.id=sys_product.brand_id"
-        " WHERE 1=1 And sys_product.client_id in ($clientIds) And sys_product.id "
-        " not in (11000,11001,11002) $searchWhere ) SystemTable"
+        " WHERE 1=1 And sys_product.client_id in ($clientIds) $searchOtherExclude $searchWhere ) SystemTable"
         " LEFT JOIN ( SELECT sku_id FROM trans_freshness WHERE working_id=$workingId ) TransTable"
         " on SystemTable.pro_id = TransTable.sku_id"
         " GROUP BY SystemTable.pro_id"
@@ -4105,6 +4198,15 @@ class DatabaseHelper {
       String brandId,
       String categoryId,
       String subCategoryId) async {
+
+    String searchOtherExclude = "";
+    String otherExclSearchParam = await getOtherExcludesString(workingId);
+    print(otherExclSearchParam);
+
+    if(otherExclSearchParam.isNotEmpty) {
+      searchOtherExclude = "And sys_product.id not in ($otherExclSearchParam)";
+    }
+
 
     String searchWhere = "";
 
@@ -4427,6 +4529,16 @@ class DatabaseHelper {
   static Future<List<TransStockModel>> getDataListStock(String workingId,
       String clientId, String jpSessionClientIds, String brandId,
       String categoryId, String subCategoryId) async {
+
+    String searchOtherExclude = "";
+    String otherExclSearchParam = await getOtherExcludesString(workingId);
+    print(otherExclSearchParam);
+
+    if(otherExclSearchParam.isNotEmpty) {
+      searchOtherExclude = "And sys_product.id not in ($otherExclSearchParam)";
+    }
+
+
     String searchWhere = "";
     String clientIds = "";
     if (clientId != "-1") {
@@ -4457,10 +4569,14 @@ class DatabaseHelper {
         " JOIN sys_category on sys_category.id=sys_product.category_id"
         " JOIN sys_subcategory on sys_subcategory.id=sys_product.subcategory_id"
         " JOIN sys_brand on sys_brand.id=sys_product.brand_id"
-        " WHERE 1=1 And sys_product.client_id in ($clientIds) And sys_product.id not in (11000,11001,11002) $searchWhere) SystemTable"
+        " WHERE 1=1 And sys_product.client_id in ($clientIds) $searchOtherExclude $searchWhere) SystemTable"
         " LEFT JOIN (SELECT sku_id,act_status,cases,outer,pieces FROM trans_stock WHERE working_id=$workingId) TransTable "
         " on SystemTable.pro_id = TransTable.sku_id"
         " GROUP BY SystemTable.pro_id ORDER BY sub_category,brand ASC";
+
+    print(query);
+    print("-------------------- Stock --------------------");
+
     final List<Map<String, dynamic>> pricingMap = await db.rawQuery(query);
     return List.generate(pricingMap.length, (index) {
       return TransStockModel(
@@ -4672,7 +4788,7 @@ class DatabaseHelper {
           visitStatus: journeyPlanMap[index]["visit_status"].toString(),
           visitType: journeyPlanMap[index]["visit_type"].toString(),
           avlExclude: journeyPlanMap[index]["avl_exclude"].toString(),
-          otherExclude: journeyPlanMap[index]["other_exclude"].toString(),
+          otherExclude: journeyPlanMap[index]["other_exculde"].toString(),
           isDrop: journeyPlanMap[index]["is_drop"] ?? 0,
           visitActivity: journeyPlanMap[index]['visit_activity_type'] ?? 0
       );
@@ -4685,6 +4801,246 @@ class DatabaseHelper {
     await db.delete(tblName, where: 'working_id = ?', whereArgs: [workingId]);
     print("Table data delet $tblName,  $workingId");
   }
+
+
+
+
+  static Future<void> insertTransPOS(
+      TransAddProfOfSale transAddProfOfSale) async {
+    var db = await initDataBase();
+    await db.insert(
+      TableName.tbl_trans_POS,
+      transAddProfOfSale.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+  static Future<List<ShowProofOfSaleModel>> getTransPOS(
+      String workingId) async {
+    print("__________________TransPlanogram__________________");
+
+    final db = await initDataBase();
+    final List<Map<String, dynamic>> posData = await db.rawQuery(
+        "Select   trans_proof_of_sale.*,sys_product.en_name as pro_en_name, sys_product.ar_name as pro_ar_name,"
+            " sys_category.en_name as cat_en_name, sys_category.ar_name as cat_ar_name"
+            " From trans_proof_of_sale"
+            " JOIN sys_product on sys_product.id = trans_proof_of_sale.sku_id"
+            " JOIN sys_category on sys_category.id = sys_product.category_id"
+            " WHERE working_id=$workingId");
+    print(jsonEncode(posData));
+
+    return List.generate(posData.length, (index) {
+      return ShowProofOfSaleModel(
+          id: posData[index][TableName.col_id] ?? 0,
+          sku_id: posData[index][TableName.sku_id] ?? 0,
+          client_id: posData[index][TableName.client_id] ?? 0,
+          qty: posData[index][TableName.quantity] ?? 0,
+          gcs_status: posData[index][TableName.gcs_status] ?? 0,
+          upload_status: posData[index][TableName.upload_status] ?? 0,
+          cat_en_name: posData[index]['cat_en_name'] ?? "",
+          cat_ar_name: posData[index]['cat_ar_name'] ?? "",
+          pro_en_name: posData[index]['pro_en_name'] ?? "",
+          pro_ar_name: posData[index]['pro_en_name'] ?? "",
+          image_name: posData[index][TableName.image_name] ?? "",
+          name: posData[index][TableName.trans_pos_name] ?? "",
+          email: posData[index][TableName.trans_pos_email] ?? "",
+          amount: posData[index][TableName.trans_pos_amount] ?? "",
+          phone: posData[index][TableName.trans_pos_phone] ?? "");
+    });
+  }
+
+  static Future<List<Sys_PhotoTypeModel>> getSkusList(int catId) async {
+    final db = await initDataBase();
+    final List<Map<String, dynamic>> photoTypeMaps = await db.rawQuery(
+        "SELECT sys_product.en_name,sys_product.er_name from sys_product where sys_product.cat_id=$catId");
+    print(jsonEncode(photoTypeMaps));
+    print("________Photo type List ________________");
+    return List.generate(photoTypeMaps.length, (index) {
+      return Sys_PhotoTypeModel(
+        id: photoTypeMaps[index]['id'] as int,
+        en_name: photoTypeMaps[index]['en_name'] as String,
+        ar_name: photoTypeMaps[index]['ar_name'] as String,
+      );
+    });
+  }
+  static Future<void> insertTransRtvOnePlusOne(
+      TransRtvOnePlusOneModel transRtvModel) async {
+    var db = await initDataBase();
+    await db.insert(
+      TableName.tbl_trans_one_plus_one,
+      transRtvModel.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+  static Future<List<RTVShowModel>> getDataListRTVOnePlusOne(
+      String workingId,
+      String clientId,
+      String jpSessionClientIds,
+      String otherExcludes,
+      String brandId,
+      String categoryId,
+      String subCategoryId) async {
+    String searchWhere = "";
+    String clientIds = "";
+    if (clientId != "-1") {
+      clientIds = clientId;
+    } else {
+      clientIds = jpSessionClientIds;
+    }
+
+    if (brandId != "-1") {
+      searchWhere = "$searchWhere And sys_product.brand_id = '$brandId'";
+    }
+    if (subCategoryId != "-1") {
+      searchWhere =
+      "$searchWhere And sys_product.subcategory_id = '$subCategoryId'";
+    }
+    if (categoryId != "-1") {
+      searchWhere = "$searchWhere And sys_product.category_id = '$categoryId'";
+    }
+
+    final db = await initDataBase();
+    String query =
+        "SELECT SystemTable.*,TransTable.act_status From (SELECT sys_product.id as pro_id, "
+        "sys_product.en_name as pro_en_name, sys_product.ar_name as pro_ar_name, "
+        "sys_category.en_name  ||  '  ' ||  sys_subcategory.en_name as cat_en_name, sys_category.ar_name as cat_ar_name, "
+        "sys_brand.en_name as brand_en_name,sys_brand.ar_name as brand_ar_name,sys_product.image, sys_product.rsp, sys_subcategory.en_name as sub_category,sys_brand.en_name as brand "
+        "from sys_product "
+        "JOIN sys_category on sys_category.id=sys_product.category_id "
+        "JOIN sys_subcategory on sys_subcategory.id=sys_product.subcategory_id "
+        "JOIN sys_brand on sys_brand.id=sys_product.brand_id "
+        "WHERE 1=1 And sys_product.client_id in ($clientIds) And sys_product.id "
+        "not in (11000,11001,11002) $searchWhere ) SystemTable "
+        "LEFT JOIN ( SELECT sku_id,act_status FROM trans_one_plus_one WHERE working_id=$workingId ) TransTable "
+        "on SystemTable.pro_id = TransTable.sku_id GROUP BY SystemTable.pro_id ORDER BY SystemTable.sub_category,SystemTable.brand ASC";
+    print("show rtv_query");
+    print(query);
+    final List<Map<String, dynamic>> rtvMap = await db.rawQuery(query);
+    print(rtvMap);
+    return List.generate(rtvMap.length, (index) {
+      return RTVShowModel(
+        pro_id: rtvMap[index]['pro_id'] as int,
+        cat_en_name: rtvMap[index]['cat_en_name'] ?? "",
+        cat_ar_name: rtvMap[index]['cat_ar_name'] ?? "",
+        pro_en_name: rtvMap[index]['pro_en_name'] ?? "",
+        pro_ar_name: rtvMap[index]['pro_ar_name'] ?? "",
+        img_name: rtvMap[index]['image'] ?? "",
+        rsp: rtvMap[index]['rsp'] ?? "",
+        brand_en_name: rtvMap[index]['brand_en_name'] ?? "",
+        brand_ar_name: rtvMap[index]['brand_ar_name'] ?? "",
+        rtv_taken: rtvMap[index]['rtv_taken'] ?? 0,
+        pieces: rtvMap[index]['pieces'] ?? 0,
+        act_status: rtvMap[index]['act_status'] ?? 0,
+        imageFile: null,
+      );
+    });
+  }
+
+  static Future<List<TransOnePlusOneModel>> getTransRTVOnePluOneDataList(
+      String workingId) async {
+    final db = await initDataBase();
+    String query =
+        " SELECT trans_one_plus_one.id as trans_id,sys_product.en_name as pro_en_name, sys_product.ar_name as pro_ar_name,trans_one_plus_one.date_time,"
+        " trans_one_plus_one.gcs_status,trans_one_plus_one.upload_status,trans_one_plus_one.image_name,trans_one_plus_one.doc_image,"
+        " trans_one_plus_one.pieces,trans_one_plus_one.doc_no,trans_one_plus_one.comment,trans_one_plus_one.type"
+        " from trans_one_plus_one"
+        " Join sys_product on sys_product.id  = trans_one_plus_one.sku_id"
+        " WHERE working_id=$workingId ORDER BY date_time DESC";
+    print(query);
+    final List<Map<String, dynamic>> rtvMap = await db.rawQuery(query);
+    print(jsonEncode(rtvMap));
+    print("___RTV Data List _______");
+    return List.generate(rtvMap.length, (index) {
+      return TransOnePlusOneModel(
+          id: rtvMap[index]['trans_id'] ?? 0,
+          pieces: rtvMap[index]['pieces'] ?? 0,
+          pro_en_name: rtvMap[index]['pro_en_name'] ?? "",
+          pro_ar_name: rtvMap[index]['pro_ar_name'] ?? "",
+          doc_no: rtvMap[index]['doc_no'] ?? "",
+          comment: rtvMap[index]['comment'] ?? "",
+          type: rtvMap[index]['type'] ?? "",
+          date_time: rtvMap[index]['date_time'] ?? "",
+          doc_image: rtvMap[index]['doc_image'] ?? "",
+          image_name: rtvMap[index]['image_name'] ?? "",
+          working_id: rtvMap[index]['working_id'] ?? 0,
+          upload_status: rtvMap[index]['upload_status'] ?? 0,
+          gcs_status: rtvMap[index]['gcs_status'] ?? 0,
+          act_status: rtvMap[index]['act_status'] ?? 0,
+          imageFile: null,
+          imageFileDoc: null);
+    });
+  }
+
+  static Future<List<KnowledgeShareModel>> getKnowledgeShareList(String clientId) async {
+    var db = await initDataBase();
+    final List<Map<String, dynamic>> knowledgeList = await db.rawQuery(
+        "Select * FROM sys_knowledge_share WHERE client_id in($clientId)");
+    return List.generate(knowledgeList.length, (index) {
+      return KnowledgeShareModel(
+          id:knowledgeList[index][TableName.col_id] ?? 0,
+          client_id: knowledgeList[index][TableName.client_id] ?? 0,
+          chain_id: knowledgeList[index][TableName.chain_id] ?? 0,
+          title: knowledgeList[index][TableName.sys_knowledge_title] ?? "",
+          description: knowledgeList[index][TableName.sys_knowledge_des] ?? "",
+          added_by: knowledgeList[index][TableName.sys_knowledge_addedBy] ?? "",
+          file_name: knowledgeList[index][TableName.sys_knowledge_fileName] ?? "",
+          type: knowledgeList[index][TableName.sys_knowledge_type] ?? "",
+          active: knowledgeList[index][TableName.sys_knowledge_active] ?? "",
+          updated_at: knowledgeList[index][TableName.sys_issue_update_at] ?? "");
+    });
+  }
+
+  static Future<bool> insertSysKnowledgeShareArray(
+      List<KnowledgeShareModel> modelList) async {
+    var db = await initDataBase();
+
+    for (KnowledgeShareModel data in modelList) {
+      Map<String, dynamic> fields = {
+        TableName.col_id: data.id,
+        TableName.sys_knowledge_title: data.title,
+        TableName.sys_knowledge_des: data.description,
+        TableName.client_id: data.client_id,
+        TableName.chain_id: data.chain_id,
+        TableName.sys_knowledge_addedBy: data.added_by,
+        TableName.sys_knowledge_fileName: data.file_name,
+        TableName.sys_knowledge_type: data.type,
+        TableName.sys_knowledge_active: data.active,
+        TableName.sys_issue_update_at: data.updated_at,
+      };
+
+      bool isDuplicate =
+      await hasDuplicateEntry(db, TableName.tblSysKnowledgeShare, fields);
+      if (isDuplicate) {
+        print("Error: Duplicate entry knowledgeshare");
+      } else {
+        await db.insert(
+          TableName.tblSysKnowledgeShare,
+          {
+            TableName.col_id: data.id,
+            TableName.sys_knowledge_title: data.title,
+            TableName.sys_knowledge_des: data.description,
+            TableName.client_id: data.client_id,
+            TableName.chain_id: data.chain_id,
+            TableName.sys_knowledge_addedBy: data.added_by,
+            TableName.sys_knowledge_fileName: data.file_name,
+            TableName.sys_knowledge_type: data.type,
+            TableName.sys_knowledge_active: data.active,
+            TableName.sys_issue_update_at: data.updated_at,
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+
+        print("Sys Promo Plan Item");
+        print(jsonEncode(data));
+      }
+    }
+    return false;
+  }
+
+
+
+
+
+
 }
 
 String wrapIfString(dynamic value) {
@@ -4694,3 +5050,26 @@ String wrapIfString(dynamic value) {
     return value.toString();
   }
 }
+
+///Getting AVL Excludes From Queries
+Future<String> getAvlExcludesString(String workingId) async {
+  final db = await DatabaseHelper.initDataBase();
+  final List<Map<String, dynamic>> journeyPlanMap = await db.rawQuery(
+      "SELECT avl_exclude FROM sys_journey_plan WHERE working_id=$workingId");
+
+  print(jsonEncode(journeyPlanMap));
+  print("-------------------- AVL Excludes ------------------------");
+  return journeyPlanMap[0]['avl_exclude'] ?? "";
+}
+
+///Getting AVL Excludes From Queries
+Future<String> getOtherExcludesString(String workingId) async {
+  final db = await DatabaseHelper.initDataBase();
+  final List<Map<String, dynamic>> journeyPlanMap = await db.rawQuery(
+      "SELECT other_exculde FROM sys_journey_plan WHERE working_id=$workingId");
+
+  print(jsonEncode(journeyPlanMap));
+  print("-------------------- AVL Excludes ------------------------");
+  return journeyPlanMap[0]['other_exculde'] ?? "";
+}
+

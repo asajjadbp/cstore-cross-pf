@@ -263,11 +263,19 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
                         const SizedBox(
                           height: 5,
                         ),
-                        const Text(
-                          "Client",
-                          style: TextStyle(
-                              color: MyColors.appMainColor,
-                              fontWeight: FontWeight.bold),
+                        const Row(
+                          children: [
+                            Text(
+                              "Client ",
+                              style: TextStyle(
+                                  color: MyColors.appMainColor,
+                                  fontWeight: FontWeight.bold),
+                            ),
+
+                            Text("*", style: TextStyle(
+                                color: MyColors.backbtnColor,
+                                fontWeight: FontWeight.bold,fontSize: 14),)
+                          ],
                         ),
                         const SizedBox(
                           height: 5,
@@ -275,7 +283,7 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
                         // dropdownwidget("Company Name"),
                         ClientListDropDown(
                             clientKey: clientKey,
-                            hintText: "Client", clientData: clientData, onChange: (value){
+                            hintText: "Client ", clientData: clientData, onChange: (value){
                           selectedClientId = value.client_id;
                           getCategoryData(selectedClientId);
                           getBrandData(selectedClientId,selectedCategoryId.toString());
@@ -286,11 +294,18 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
                         const SizedBox(
                           height: 5,
                         ),
-                        const Text(
-                          "Category",
-                          style: TextStyle(
-                              color: MyColors.appMainColor,
-                              fontWeight: FontWeight.bold),
+                        const Row(
+                          children: [
+                            Text(
+                              "Category ",
+                              style: TextStyle(
+                                  color: MyColors.appMainColor,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text("*", style: TextStyle(
+                                color: MyColors.backbtnColor,
+                                fontWeight: FontWeight.bold,fontSize: 14),)
+                          ],
                         ),
                         const SizedBox(
                           height: 5,
@@ -305,8 +320,8 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
                         const SizedBox(
                           height: 5,
                         ),
-                        const Text(
-                          "Brand",
+                      const Text(
+                          "Brand ",
                           style: TextStyle(
                               color: MyColors.appMainColor,
                               fontWeight: FontWeight.bold),
@@ -320,11 +335,18 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
                         const SizedBox(
                           height: 5,
                         ),
-                        const Text(
-                          "Status",
-                          style: TextStyle(
-                              color: MyColors.appMainColor,
-                              fontWeight: FontWeight.bold),
+                        const Row(
+                          children: [
+                            Text(
+                              "Status ",
+                              style: TextStyle(
+                                  color: MyColors.appMainColor,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text("*", style: TextStyle(
+                                color: MyColors.backbtnColor,
+                                fontWeight: FontWeight.bold,fontSize: 14),)
+                          ],
                         ),
                         const SizedBox(
                           height: 5,
@@ -366,9 +388,9 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
                         const SizedBox(
                           height: 10,
                         ),
-
-
-                        ImageRowButton(imageFile: imageFile, onSelectImage: (){
+                        ImageRowButton(
+                            isRequired: true,
+                            imageFile: imageFile, onSelectImage: (){
                           getImage();
                         }),
 

@@ -470,7 +470,7 @@ class _AvailabilityState extends State<Availability> {
           builder: (BuildContext context) {
             return CustomDetailsDialogue(
               pogOnTap: (){
-                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PdfScreen(pdfUrl: "${imageBaseUrl}pog/${avlProductPlacementModel.pog}.pdf")));
+                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PdfScreen( type: "PDF", pdfUrl: "${imageBaseUrl}pog/${avlProductPlacementModel.pog}.pdf")));
               },
               title: availabilityShowModel.pro_en_name,
               shelfNo: avlProductPlacementModel.shelfNo,

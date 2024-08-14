@@ -321,7 +321,7 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
                       return PlanoguidesCard(
                         onImageTap: (){
                           // launchUrlOpen("${imageBaseUrl}pog/${filteredData[index].imageName}");
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PdfScreen(pdfUrl: "${imageBaseUrl}pog/${filteredData[index].imageName}")));
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PdfScreen(type: "PDF",pdfUrl: "${imageBaseUrl}pog/${filteredData[index].imageName}")));
                         },
                         isActivity: filteredData[index].activity_status == 1,
                         fieldValue1: filteredData[index].cat_en_name,
@@ -364,7 +364,7 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
                     onImageTap: (){
 
                       // launchUrlOpen("${imageBaseUrl}pog/${transData[index].imageName}");
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PdfScreen(pdfUrl: "${imageBaseUrl}pog/${transData[index].imageName}")));
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PdfScreen(type: "PDF",pdfUrl: "${imageBaseUrl}pog/${transData[index].imageName}")));
                     },
                     isActivity: transData[index].activity_status == 1,
                     fieldValue1: transData[index].cat_en_name,

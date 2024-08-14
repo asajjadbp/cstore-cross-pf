@@ -471,7 +471,7 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
           builder: (BuildContext context) {
             return CustomDetailsDialogue(
               pogOnTap: (){
-                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PdfScreen(pdfUrl: "${imageBaseUrl}pog/${avlProductPlacementModel.pog}.pdf")));
+                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PdfScreen(type: "PDF",pdfUrl: "${imageBaseUrl}pog/${avlProductPlacementModel.pog}.pdf")));
               },
               title: availabilityShowModel.pro_en_name,
               shelfNo: avlProductPlacementModel.shelfNo,
@@ -1191,7 +1191,7 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
                           itemCount: availableData.length,
                           shrinkWrap: true,
                           itemBuilder: (context,index) {
-                            print( "${imageBaseUrl}sku_pictures/${availableData[index].image}");
+                            // print( "${imageBaseUrl}sku_pictures/${availableData[index].image}");
                             return SidcoAvailabilityItem(
                               onImageTap: (){
                                 getDetailsDialogue(availableData[index]);

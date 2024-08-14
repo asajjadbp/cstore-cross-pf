@@ -204,11 +204,18 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
                           const SizedBox(
                             height: 20,
                           ),
-                          const Text(
-                            "Client",
-                            style: TextStyle(
-                                color: MyColors.appMainColor,
-                                fontWeight: FontWeight.bold),
+                          const Row(
+                            children: [
+                              Text(
+                                "Client ",
+                                style: TextStyle(
+                                    color: MyColors.appMainColor,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text("*", style: TextStyle(
+                                  color: MyColors.backbtnColor,
+                                  fontWeight: FontWeight.bold,fontSize: 14),)
+                            ],
                           ),
                           const SizedBox(
                             height: 5,
@@ -226,11 +233,18 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
                           const SizedBox(
                             height: 10,
                           ),
-                          const Text(
-                            "Category",
-                            style: TextStyle(
-                                color: MyColors.appMainColor,
-                                fontWeight: FontWeight.bold),
+                          const Row(
+                            children: [
+                              Text(
+                                "Category ",
+                                style: TextStyle(
+                                    color: MyColors.appMainColor,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text("*", style: TextStyle(
+                                  color: MyColors.backbtnColor,
+                                  fontWeight: FontWeight.bold,fontSize: 14),)
+                            ],
                           ),
                           const SizedBox(
                             height: 5,
@@ -267,11 +281,18 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
                           const SizedBox(
                             height: 15,
                           ),
-                          const Text(
-                            "Category Space",
-                            style: TextStyle(
-                                color: MyColors.appMainColor,
-                                fontWeight: FontWeight.bold),
+                          const Row(
+                            children: [
+                              Text(
+                                "Category Space ",
+                                style: TextStyle(
+                                    color: MyColors.appMainColor,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text("*", style: TextStyle(
+                                  color: MyColors.backbtnColor,
+                                  fontWeight: FontWeight.bold,fontSize: 14),)
+                            ],
                           ),
                           const SizedBox(
                             height: 5,
@@ -302,11 +323,18 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
                           const SizedBox(
                             height: 15,
                           ),
-                          const Text(
-                            "Actual Space",
-                            style: TextStyle(
-                                color: MyColors.appMainColor,
-                                fontWeight: FontWeight.bold),
+                          const Row(
+                            children: [
+                              Text(
+                                "Actual Space ",
+                                style: TextStyle(
+                                    color: MyColors.appMainColor,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text("*", style: TextStyle(
+                                  color: MyColors.backbtnColor,
+                                  fontWeight: FontWeight.bold,fontSize: 14),)
+                            ],
                           ),
                           const SizedBox(
                             height: 5,
@@ -338,11 +366,19 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
                           const SizedBox(
                             height: 15,
                           ),
-                          const Text(
-                            "Select Unit",
-                            style: TextStyle(
-                                color: MyColors.appMainColor,
-                                fontWeight: FontWeight.bold),
+                          const Row(
+                            children: [
+                              Text(
+                                "Select Unit ",
+                                style: TextStyle(
+                                    color: MyColors.appMainColor,
+                                    fontWeight: FontWeight.bold),
+                              ),
+
+                              Text("*", style: TextStyle(
+                                  color: MyColors.backbtnColor,
+                                  fontWeight: FontWeight.bold,fontSize: 14),)
+                            ],
                           ),
                           const SizedBox(
                             height: 15,

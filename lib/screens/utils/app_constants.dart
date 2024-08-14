@@ -42,6 +42,7 @@ class AppConstants {
   static String  beforeFixing = "before_fixing";
   static String  osdc = "osdc";
   static String  rtv = "rtv";
+  static String  pos = "pos";
   static String  otherPhoto = "other_photo";
   static String  planogram = "planogram";
   static String  planoguide = "planoguide";

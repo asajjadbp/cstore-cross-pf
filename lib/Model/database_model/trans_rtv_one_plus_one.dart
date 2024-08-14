@@ -9,6 +9,7 @@ class TransRtvOnePlusOneModel {
   late int upload_status;
   late int working_id = 1;
   late String image_name ;
+  late String doc_image_name ;
   late String comment ;
   late String type ;
   late String doc_no ;
@@ -22,6 +23,7 @@ class TransRtvOnePlusOneModel {
     required this.upload_status,
     required this.working_id,
     required this.image_name,
+    required this.doc_image_name,
     required this.comment,
     required this.type,
     required this.doc_no,
@@ -40,6 +42,7 @@ class TransRtvOnePlusOneModel {
       'comment': this.comment,
       'type': this.type,
       'doc_no': this.doc_no,
+      'doc_image': this.doc_image_name,
     };
   }
   factory TransRtvOnePlusOneModel.fromMap(Map<String, dynamic> map) {
@@ -55,6 +58,7 @@ class TransRtvOnePlusOneModel {
       comment: map['comment'] as String,
       type: map['type'] as String,
       doc_no: map['doc_no'] as String,
+      doc_image_name: map['doc_image'] as String,
     );
   }
 }

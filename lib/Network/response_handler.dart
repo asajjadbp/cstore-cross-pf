@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:cstore/screens/utils/services/vpn_detector.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,6 +20,8 @@ class ResponseHandler {
     // };
     var responseJson;
     try {
+      bool isVpnConnected = await vpnDetector();
+      if(isVpnConnected) throw FetchDataException("Please Disable Your Vpn");
       final response = await http
           .post(
           url,
@@ -56,6 +59,8 @@ class ResponseHandler {
     // };
     var responseJson;
     try {
+      bool isVpnConnected = await vpnDetector();
+      if(isVpnConnected) throw FetchDataException("Please Disable Your Vpn");
       final response = await http
           .post(url, body: jsonEncode(reqMap), headers: head)
           .timeout(const Duration(seconds: 45));

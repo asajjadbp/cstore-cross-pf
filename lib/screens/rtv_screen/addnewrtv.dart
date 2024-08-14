@@ -325,6 +325,7 @@ class _addnewrtvscreenState extends State<addnewrtvscreen> {
               ),
               ImageRowButton(
                   imageFile: imageFile,
+                  isRequired: false,
                   onSelectImage: () {
                     getImage();
                   }),

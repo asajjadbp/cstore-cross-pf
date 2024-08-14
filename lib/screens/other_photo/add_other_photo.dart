@@ -275,7 +275,9 @@ class _AddOtherPhotoState extends State<AddOtherPhoto> {
                     height: 10,
                   ),
 
-                  ImageRowButton(imageFile: imageFile, onSelectImage: (){
+                  ImageRowButton(
+                      isRequired: false,
+                      imageFile: imageFile, onSelectImage: (){
                     getImage();
                   }),
                   const SizedBox(

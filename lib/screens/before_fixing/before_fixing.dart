@@ -227,7 +227,9 @@ class _BeforeFixingState extends State<BeforeFixing> {
                           height: 20,
                         ),
 
-                        ImageRowButton(imageFile: imageFile, onSelectImage: (){
+                        ImageRowButton(
+                            isRequired: false,
+                            imageFile: imageFile, onSelectImage: (){
                           getImage();
                         }),
                         const SizedBox(

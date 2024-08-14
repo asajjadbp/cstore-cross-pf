@@ -96,8 +96,8 @@ class JourneyPlanDetail {
         checkoutGps: json["checkout_gps"].toString(),
         visitStatus: json["visit_status"].toString(),
         visitType: json["visit_type"].toString(),
-        avlExclude: json["avl_exclude"].toString(),
-        otherExclude: json["other_exclude"].toString(),
+        avlExclude: json["avl_exclude"] ?? "",
+        otherExclude: json["other_exculde"] ?? "",
         isDrop: json["is_drop"],
         visitActivity: json['visit_activity_type']
       );
@@ -119,7 +119,7 @@ class JourneyPlanDetail {
         "visit_status": visitStatus,
         "visit_type": visitType,
         "avl_exclude": avlExclude,
-        "other_exclude": otherExclude,
+        "other_exculde": otherExclude,
         "is_drop": isDrop.toString(),
         'visit_activity_type' : visitActivity
       };

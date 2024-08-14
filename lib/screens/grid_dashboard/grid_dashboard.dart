@@ -41,12 +41,15 @@ import '../../Model/request_model.dart/sos_end_api_request_model.dart';
 import '../../Network/jp_http.dart';
 import '../before_fixing/before_fixing.dart';
 import '../brand_share/AddBrandShares.dart';
+import '../knowledge_share/knowledge_share_screen.dart';
 import '../osdc/add_osdc.dart';
 import '../other_photo/add_other_photo.dart';
 import '../pick_list/pick_list.dart';
 import '../plano_guide/Planoguides.dart';
 import '../price_check/Pricecheck.dart';
 import '../promoplane/PromoPlan.dart';
+import '../rtv_1+1/add_new_rtv_1+1.dart';
+import '../rtv_1+1/rtv_one_plus_one_list.dart';
 import '../rtv_screen/rtv_list_screen.dart';
 import '../share_of_shelf/add_share_of_shelf.dart';
 import '../stock/stock_list_screen.dart';
@@ -1354,9 +1357,12 @@ class _GridDashBoardState extends State<GridDashBoard> {
                                     onTap: () async {
                                      print(agencyData[i].en_name);
                                      if(agencyData[i].id == 1) {
-                                       Navigator.of(context).pushNamed(BeforeFixing.routeName);
+                                      Navigator.of(context).pushNamed(BeforeFixing.routeName);
+                                      //  Navigator.of(context).pushNamed(ViewKnowledgeShare.routename);
                                      }else if(agencyData[i].id == 5) {
                                        Navigator.of(context).pushNamed(PlanogramScreen.routeName);
+                                     }else if(agencyData[i].id == 10) {
+                                       Navigator.of(context).pushNamed(ViewKnowledgeShare.routename);
                                      } else if(agencyData[i].id == 3) {
 
                                          print(workingId);

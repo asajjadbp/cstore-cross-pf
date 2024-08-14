@@ -177,6 +177,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
         var isDailyCheckList=await  DatabaseHelper.insertDailyCheckListArray(syncroniseData[0].sysDailCheckList);
         var isSOSUnit=await  DatabaseHelper.insertSOSUnitArray(syncroniseData[0].sysSosUnit);
         var isPromoPlan = await DatabaseHelper.insertSysPromoPlanArray(syncroniseData[0].sysPromoPlan);
+        await DatabaseHelper.insertSysKnowledgeShareArray(syncroniseData[0].knowledgeShareModel);
 
         setState(() {
           isLoading = isJourneyPlan && isDashboardPlan && isAgencyDash && isCategory && isSubCategory

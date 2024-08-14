@@ -5,9 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class ImageRowButton extends StatelessWidget {
-  const ImageRowButton({super.key,required this.imageFile,required this.onSelectImage});
+  const ImageRowButton({super.key,required this.imageFile,required this.onSelectImage,required this.isRequired});
 final File? imageFile;
 final Function onSelectImage;
+final bool isRequired;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,15 @@ final Function onSelectImage;
       children: [
         Column(
           children: [
-            const Text("Take Photo"),
+             Row(
+              children: [
+                const Text("Take Photo "),
+                if(isRequired)
+                const Text("*", style: TextStyle(
+                    color: MyColors.backbtnColor,
+                    fontWeight: FontWeight.bold,fontSize: 14),)
+              ],
+            ),
             Container(
               width: MediaQuery.of(context).size.width/2.2,
               height: MediaQuery.of(context).size.height/4.4,

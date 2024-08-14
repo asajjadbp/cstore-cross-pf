@@ -32,6 +32,7 @@ class TableName {
   static const String tblSysVisitReqModules="sys_visit_required_modules";
   static const String tblSysModuleId = 'module_id';
   static const String tblSysVisitActivityType = 'visit_activty_type_id';
+  static const String tblSysKnowledgeShare = 'sys_knowledge_share';
 
   //-----******* Transcition tables ------*******
   static const String tbl_trans_photo = "trans_photo";
@@ -382,4 +383,51 @@ class TableName {
   static const String monthlyIncentives = "monthly_incentives";
   static const String monthlyDeduction = "monthly_deduction";
 
+
+
+
+
+
+
+
+
+  static const String tbl_trans_POS= "trans_proof_of_sale";
+  static const String tbl_trans_marketIssue= "market_issue";
+
+  static const String trans_pos_name = "name";
+  static const String trans_pos_email = "email";
+  static const String trans_pos_phone = "phone";
+  static const String trans_pos_amount = "amount";
+  static const String sys_issue_id = "issue_id";
+  static const String tblSysMarketIssue = 'sys_market_issues';
+
+
+
+  static const String client_id = "client_id";
+  static const String col_id = "id";
+  static const String type_id="type_id";
+  static const String gcs_status = "gcs_status";
+  static const String image_name = "image_name";
+  static const String working_id = "working_id";
+  static const String brand_id="brand_id";
+  static const String sku_id="sku_id";
+  static const String activity_status="act_status";
+  static const String upload_status="upload_status";
+  static const String en_name="en_name";
+  static const String ar_name="ar_name";
+  static const String reason_id="reason_id";
+  static const String col_quantity="quantity";
+  static const String pieces="pieces";
+  static const String chain_id="chain_id";
+  static const String orderBy = "order_by";
+
+
+
+  static const String sys_knowledge_title = "title";
+  static const String sys_knowledge_des = "description";
+  static const String sys_knowledge_addedBy = "added_by";
+  static const String sys_knowledge_fileName = "file_name";
+  static const String sys_knowledge_type = "type";
+  static const String sys_knowledge_active = "active";
+  static const String sys_issue_update_at = "updated_at";
 }

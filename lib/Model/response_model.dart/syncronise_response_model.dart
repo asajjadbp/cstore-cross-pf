@@ -9,6 +9,7 @@ import 'package:cstore/Model/response_model.dart/user_dashboard_model.dart';
 
 import '../database_model/PlanogramReasonModel.dart';
 import '../database_model/app_setting_model.dart';
+import '../database_model/knowledgeShare_model.dart';
 import '../database_model/pomo_plan_model.dart';
 import '../database_model/required_module_model.dart';
 import '../database_model/sys_brand_faces_model.dart';
@@ -76,6 +77,7 @@ class SyncroniseDetail {
   List<PromoPlanModel> sysPromoPlan;
   List<JourneyPlanDetail> sysJourneyPlan;
   List<UserDashboardModel> sysDashboard;
+  List<KnowledgeShareModel> knowledgeShareModel;
 
   SyncroniseDetail({
     required this.sysDropReason,
@@ -100,6 +102,7 @@ class SyncroniseDetail {
     required this.sysPromoPlan,
     required this.sysJourneyPlan,
     required this.sysDashboard,
+    required this.knowledgeShareModel,
   });
 
   factory SyncroniseDetail.fromJson(Map<String, dynamic> json) =>
@@ -151,6 +154,8 @@ class SyncroniseDetail {
             json["sys_jp"].map((x) => JourneyPlanDetail.fromJson(x))),
         sysDashboard: List<UserDashboardModel>.from(
             json["sys_dashboard"].map((x) => UserDashboardModel.fromJson(x))),
+        knowledgeShareModel: List<KnowledgeShareModel>.from(
+            json["sys_knowledge_share"].map((x) => KnowledgeShareModel.fromJson(x))),
 
       );
 
@@ -176,6 +181,7 @@ class SyncroniseDetail {
       "sys_promo_plan":  List<dynamic>.from(sysPromoPlan.map((x) => x.toJson())),
       "sys_jp":  List<dynamic>.from(sysJourneyPlan.map((x) => x.toJson())),
       "sys_dashboard":  List<dynamic>.from(sysDashboard.map((x) => x.toJson())),
+      "sys_knowledge_share":  List<dynamic>.from(knowledgeShareModel.map((x) => x.toJson())),
   };
 }
 
@@ -188,6 +194,7 @@ class SysAgencyDashboard {
   String? endDate;
   String accessTo;
   int status;
+  int orderBy;
 
   SysAgencyDashboard({
     required this.id,
@@ -198,6 +205,7 @@ class SysAgencyDashboard {
     required this.endDate,
     required this.status,
     required this.accessTo,
+    required this.orderBy,
   });
 
   factory SysAgencyDashboard.fromJson(Map<String, dynamic> json) =>
@@ -210,6 +218,7 @@ class SysAgencyDashboard {
         endDate: json["end_date"].toString(),
         status: json["status"],
         accessTo: json["access_to"].toString(),
+        orderBy: json['order_by'] ?? 0,
       );
 
   Map<String, dynamic> toJson() => {
@@ -221,6 +230,7 @@ class SysAgencyDashboard {
         "end_date": endDate,
         "status": status,
         "access_to": accessTo,
+        "order_by": orderBy,
       };
 }
 
