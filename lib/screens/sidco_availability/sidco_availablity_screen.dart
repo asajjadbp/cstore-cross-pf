@@ -45,7 +45,6 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
   String userName = "";
   String workingDate = "";
   String storeId = "";
-  String visitAvailExclude = "";
   String clientId = "";
   String imageBaseUrl = "";
 
@@ -255,7 +254,6 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
     storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
     clientId = sharedPreferences.getString(AppConstants.clientId)!;
-    visitAvailExclude = sharedPreferences.getString(AppConstants.availableExclude)!;
 
     getAvailableData();
     getClientData();

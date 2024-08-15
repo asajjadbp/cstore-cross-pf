@@ -44,7 +44,6 @@ class _AvailabilityState extends State<Availability> {
   String userName = "";
   String workingDate = "";
   String storeId = "";
-  String visitAvailExclude = "";
   String clientId = "";
   String imageBaseUrl = "";
 
@@ -254,7 +253,6 @@ class _AvailabilityState extends State<Availability> {
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
     storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
     clientId = sharedPreferences.getString(AppConstants.clientId)!;
-    visitAvailExclude = sharedPreferences.getString(AppConstants.availableExclude)!;
 
     getAvailableData();
     getClientData();

@@ -60,8 +60,6 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
           sharedPreferences.setString(AppConstants.storeEnNAme, journeyPlanDetail.enStoreName.toString());
           sharedPreferences.setString(AppConstants.storeArNAme, journeyPlanDetail.arStoreName.toString());
           sharedPreferences.setString(AppConstants.gcode, journeyPlanDetail.gcode.toString());
-          sharedPreferences.setString(AppConstants.availableExclude, journeyPlanDetail.avlExclude.toString());
-          sharedPreferences.setString(AppConstants.otherExclude, journeyPlanDetail.otherExclude.toString());
           sharedPreferences.setString(AppConstants.workingDate, journeyPlanDetail.workingDate.toString());
           sharedPreferences.setString(AppConstants.visitCheckIn, value['data'][0]['check_in'].toString());
           sharedPreferences.setString(AppConstants.visitActivity, journeyPlanDetail.visitActivity.toString());

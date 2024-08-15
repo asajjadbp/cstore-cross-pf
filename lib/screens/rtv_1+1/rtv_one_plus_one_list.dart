@@ -36,7 +36,6 @@ class _RtvOnePlusOneListScreenState extends State<RtvOnePlusOneListScreen> {
   bool isFilter = false;
   String workingId = "";
   String clientId = "";
-  String otherExcludes = "";
   String storeName = '';
   int totalPieces = 0;
   int selectedClientId = -1;
@@ -59,7 +58,6 @@ class _RtvOnePlusOneListScreenState extends State<RtvOnePlusOneListScreen> {
       workingId = sharedPreferences.getString(AppConstants.workingId)!;
       storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
       clientId = sharedPreferences.getString(AppConstants.clientId)!;
-      otherExcludes = sharedPreferences.getString(AppConstants.otherExclude)!;
     });
     getTransRTVOne(selectedClientId, selectedCategoryId, selectedSubCategoryId,
         selectedBrandId);
@@ -72,7 +70,6 @@ class _RtvOnePlusOneListScreenState extends State<RtvOnePlusOneListScreen> {
             workingId,
             client.toString(),
             clientId,
-            otherExcludes,
             brand.toString(),
             category.toString(),
             subcategory.toString())

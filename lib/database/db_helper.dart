@@ -3066,7 +3066,7 @@ class DatabaseHelper {
     print(insertQuery);
     return await db.rawInsert(insertQuery);
   }
-  static Future<int>  insertTransAvailability(String workingID,String clientId,String visitAvlExcludes,String now) async {
+  static Future<int>  insertTransAvailability(String workingID,String clientId,String now) async {
 
     String searchWhere = "";
     String avlExclSearchParam = await getAvlExcludesString(workingID);
@@ -3967,7 +3967,7 @@ class DatabaseHelper {
     });
   }
 
-  static Future<List<RTVShowModel>> getDataListRTV(String workingId, String clientId,String jpSessionClientIds,String otherExcludes,String brandId,String categoryId,String subCategoryId) async {
+  static Future<List<RTVShowModel>> getDataListRTV(String workingId, String clientId,String jpSessionClientIds,String brandId,String categoryId,String subCategoryId) async {
 
     String searchOtherExclude = "";
     String otherExclSearchParam = await getOtherExcludesString(workingId);
@@ -4875,7 +4875,6 @@ class DatabaseHelper {
       String workingId,
       String clientId,
       String jpSessionClientIds,
-      String otherExcludes,
       String brandId,
       String categoryId,
       String subCategoryId) async {

@@ -32,8 +32,6 @@ class AppConstants {
   static String  gcode= "gcode";
   static String  storeEnNAme= "storeEnNAme";
   static String  storeArNAme= "storeArNAme";
-  static String  availableExclude= "availableExclude";
-  static String  otherExclude= "otherExclude";
   static String  workingDate= "workingDate";
   static String visitCheckIn = "visitCheckIn";
   static String visitActivity = "visitActivity";

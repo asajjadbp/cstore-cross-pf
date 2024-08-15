@@ -108,7 +108,6 @@ class _GridDashBoardState extends State<GridDashBoard> {
   String workingId = "";
   String workingDate = "";
   String clientId = "";
-  String visitAvlExcludes = "";
   bool isUplaodStatus = false;
   String location = "";
   List<AgencyDashboardModel> allAgencyData = [];
@@ -142,7 +141,6 @@ class _GridDashBoardState extends State<GridDashBoard> {
       storeId = sharedPreferences.getString(AppConstants.storeId)!;
       workingId = sharedPreferences.getString(AppConstants.workingId)!;
       clientId  = sharedPreferences.getString(AppConstants.clientId)!;
-      visitAvlExcludes  = sharedPreferences.getString(AppConstants.availableExclude)!;
       workingDate = sharedPreferences.getString(AppConstants.workingDate)!;
       userRole = sharedPreferences.getString(AppConstants.userRole)!;
       visitActivity = sharedPreferences.getString(AppConstants.visitActivity)!;
@@ -1367,10 +1365,9 @@ class _GridDashBoardState extends State<GridDashBoard> {
 
                                          print(workingId);
                                          print(clientId);
-                                         print(visitAvlExcludes);
                                          var now = DateTime.now();
 
-                                         await DatabaseHelper.insertTransAvailability(workingId,clientId,visitAvlExcludes,now.toString()).then((value) {
+                                         await DatabaseHelper.insertTransAvailability(workingId,clientId,now.toString()).then((value) {
 
                                            Navigator.of(context).pushNamed(Availability.routename);
 
@@ -1431,10 +1428,9 @@ class _GridDashBoardState extends State<GridDashBoard> {
 
                                        print(workingId);
                                        print(clientId);
-                                       print(visitAvlExcludes);
                                        var now = DateTime.now();
 
-                                       await DatabaseHelper.insertTransAvailability(workingId,clientId,visitAvlExcludes,now.toString()).then((value) {
+                                       await DatabaseHelper.insertTransAvailability(workingId,clientId,now.toString()).then((value) {
 
                                          Navigator.of(context).pushNamed(SidcoAvailability.routename);
 

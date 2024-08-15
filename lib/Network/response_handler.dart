@@ -20,8 +20,8 @@ class ResponseHandler {
     // };
     var responseJson;
     try {
-      bool isVpnConnected = await vpnDetector();
-      if(isVpnConnected) throw FetchDataException("Please Disable Your Vpn");
+      // bool isVpnConnected = await vpnDetector();
+      // if(isVpnConnected) throw FetchDataException("Please Disable Your Vpn");
       final response = await http
           .post(
           url,
@@ -59,8 +59,8 @@ class ResponseHandler {
     // };
     var responseJson;
     try {
-      bool isVpnConnected = await vpnDetector();
-      if(isVpnConnected) throw FetchDataException("Please Disable Your Vpn");
+      // bool isVpnConnected = await vpnDetector();
+      // if(isVpnConnected) throw FetchDataException("Please Disable Your Vpn");
       final response = await http
           .post(url, body: jsonEncode(reqMap), headers: head)
           .timeout(const Duration(seconds: 45));

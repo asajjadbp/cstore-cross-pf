@@ -4,7 +4,6 @@ import 'package:cstore/screens/rtv_screen/view_rtv_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Database/db_helper.dart';
@@ -38,7 +37,6 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
   String workingId = "";
   String imageBaseUrl = "";
   String clientId = "";
-  String otherExcludes = "";
   String storeName = '';
   String userName = '';
   int totalPieces = 0;
@@ -156,7 +154,6 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
       storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
       userName = sharedPreferences.getString(AppConstants.userName)!;
       clientId = sharedPreferences.getString(AppConstants.clientId)!;
-      otherExcludes = sharedPreferences.getString(AppConstants.otherExclude)!;
       imageBaseUrl = sharedPreferences.getString(AppConstants.imageBaseUrl)!;
     });
     getClientData();
@@ -165,7 +162,7 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
   }
   Future<void> getTransRTVOne() async {
 
-    await DatabaseHelper.getDataListRTV(workingId,selectedClientId.toString(),clientId,otherExcludes,selectedBrandId.toString(),selectedCategoryId.toString(),selectedSubCategoryId.toString()).then((value) async {
+    await DatabaseHelper.getDataListRTV(workingId,selectedClientId.toString(),clientId,selectedBrandId.toString(),selectedCategoryId.toString(),selectedSubCategoryId.toString()).then((value) async {
       transData = value;
       await _loadImages().then((value) {
         setTransRTV();

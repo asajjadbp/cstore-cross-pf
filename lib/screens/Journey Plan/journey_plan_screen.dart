@@ -301,10 +301,6 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
     sharedPreferences.setString(
         AppConstants.gcode, journeyPlanDetail.gcode.toString());
     sharedPreferences.setString(
-        AppConstants.availableExclude, journeyPlanDetail.avlExclude.toString());
-    sharedPreferences.setString(
-        AppConstants.otherExclude, journeyPlanDetail.otherExclude.toString());
-    sharedPreferences.setString(
         AppConstants.workingDate, journeyPlanDetail.workingDate.toString());
     sharedPreferences.setString(
         AppConstants.visitCheckIn, journeyPlanDetail.checkIn.toString());

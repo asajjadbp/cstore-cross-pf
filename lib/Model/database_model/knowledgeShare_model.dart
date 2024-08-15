@@ -42,13 +42,13 @@ class KnowledgeShareModel {
     id = json[TableName.col_id] ?? 0;
     client_id = json[TableName.client_id] ?? 0;
     chain_id = json[TableName.chain_id] ?? 0;
-    title = json[TableName.sys_knowledge_title] ?? "";
-    description = json[TableName.sys_knowledge_des] ?? "";
-    added_by = json[TableName.sys_knowledge_addedBy] ?? "";
+    title = json[TableName.sys_knowledge_title].toString() == "null" ? "" : json[TableName.sys_knowledge_title].toString();
+    description = json[TableName.sys_knowledge_des].toString() == "null" ? "" : json[TableName.sys_knowledge_des].toString();
+    added_by = json[TableName.sys_knowledge_addedBy] .toString() == "null" ? "" : json[TableName.sys_knowledge_addedBy].toString();
     file_name = json[TableName.sys_knowledge_fileName] ?? 0;
-    type = json[TableName.sys_knowledge_type] ?? "";
-    active = json[TableName.sys_knowledge_type] ?? 0;
-    updated_at = json[TableName.sys_issue_update_at] ?? "";
+    type = json[TableName.sys_knowledge_type].toString() == "null" ? "" : json[TableName.sys_knowledge_type].toString();
+    active = json[TableName.sys_knowledge_active] ?? 0;
+    updated_at = json[TableName.sys_issue_update_at].toString() == "null" ? "" : json[TableName.sys_issue_update_at].toString();
   }
 
   Map<String, dynamic> toJson() => {

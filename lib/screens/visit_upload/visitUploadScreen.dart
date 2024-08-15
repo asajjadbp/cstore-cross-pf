@@ -68,7 +68,6 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
   String clientId = "";
   String checkInTime = "";
   List<File> _imageFiles = [];
-  String visitAvlExcludes = "";
   String workingDate="";
   String location = "";
   String visitActivity = "";
@@ -168,7 +167,6 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
     storeId = sharedPreferences.getString(AppConstants.storeId)!;
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
     clientId  = sharedPreferences.getString(AppConstants.clientId)!;
-    visitAvlExcludes  = sharedPreferences.getString(AppConstants.availableExclude)!;
     workingDate = sharedPreferences.getString(AppConstants.workingDate)!;
     userRole = sharedPreferences.getString(AppConstants.userRole)!;
     visitActivity = sharedPreferences.getString(AppConstants.visitActivity)!;
