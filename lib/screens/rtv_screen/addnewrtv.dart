@@ -117,7 +117,6 @@ class _addnewrtvscreenState extends State<addnewrtvscreen> {
                 working_id: int.parse(workingId)))
             .then((_) {
           ToastMessage.succesMessage(context, "Data store successfully");
-          selectedReasonId = -1;
           totalPieces.text = "";
           formattedDate="Select Date";
           imageFile = null;

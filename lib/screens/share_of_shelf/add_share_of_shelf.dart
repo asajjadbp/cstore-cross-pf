@@ -144,7 +144,7 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
       ToastMessage.errorMessage(context, "Please fill the form");
       return;
     }
-    if((double.parse( valueControllerActual.text)) >= (double.parse(valueControllerCatSpace.text))) {
+    if((double.parse( valueControllerActual.text)) > (double.parse(valueControllerCatSpace.text))) {
       ToastMessage.errorMessage(context, "Actual Space cannot be greater or equal than category space");
       return;
     }
@@ -281,87 +281,97 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
                           const SizedBox(
                             height: 15,
                           ),
-                          const Row(
+                          Row(
                             children: [
-                              Text(
-                                "Category Space ",
-                                style: TextStyle(
-                                    color: MyColors.appMainColor,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              Text("*", style: TextStyle(
-                                  color: MyColors.backbtnColor,
-                                  fontWeight: FontWeight.bold,fontSize: 14),)
+                              Expanded(child: Column(
+                                children: [
+                                  const Row(
+                                    children: [
+                                      Text(
+                                        "Category Space ",
+                                        style: TextStyle(
+                                            color: MyColors.appMainColor,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text("*", style: TextStyle(
+                                          color: MyColors.backbtnColor,
+                                          fontWeight: FontWeight.bold,fontSize: 14),)
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 0),
+                                    child: TextField(
+                                      showCursor: true,
+                                      enableInteractiveSelection:false,
+                                      onChanged: (value) {
+                                        print(value);
+                                      },
+                                      controller: valueControllerCatSpace,
+                                      keyboardType: TextInputType.number,
+                                      decoration: const InputDecoration(
+                                          prefixIconColor: MyColors.appMainColor,
+                                          focusColor: MyColors.appMainColor,
+                                          fillColor:MyColors.dropBorderColor,
+                                          labelStyle: TextStyle(color: MyColors.appMainColor),
+                                          focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  width: 1, color: MyColors.appMainColor)),
+                                          border: OutlineInputBorder(),
+                                          hintText: 'Enter Total'),
+                                      inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^[0-9.]*'))],
+                                    ),
+                                  ),
+                                ],
+                              )),
+                              const SizedBox(width: 5,),
+                              Expanded(child: Column(
+                                children: [
+                                  const Row(
+                                    children: [
+                                      Text(
+                                        "Actual Space ",
+                                        style: TextStyle(
+                                            color: MyColors.appMainColor,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text("*", style: TextStyle(
+                                          color: MyColors.backbtnColor,
+                                          fontWeight: FontWeight.bold,fontSize: 14),)
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 0),
+                                    child: TextField(
+                                      showCursor: true,
+                                      enableInteractiveSelection:false,
+                                      onChanged: (value) {
+                                        print(value);
+                                      },
+                                      controller: valueControllerActual,
+                                      keyboardType: TextInputType.number,
+                                      decoration: const InputDecoration(
+                                          prefixIconColor: MyColors.appMainColor,
+                                          focusColor: MyColors.appMainColor,
+                                          fillColor:MyColors.dropBorderColor,
+                                          labelStyle: TextStyle(color: MyColors.appMainColor,
+                                              height: 50.0),
+                                          focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  width: 1, color: MyColors.appMainColor)),
+                                          border: OutlineInputBorder(),
+                                          hintText: 'Enter Actual'),
+                                      inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^[0-9.]*'))],
+                                    ),
+                                  ),
+                                ],
+                              ))
                             ],
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 0),
-                            child: TextField(
-                              showCursor: true,
-                              enableInteractiveSelection:false,
-                              onChanged: (value) {
-                                print(value);
-                              },
-                              controller: valueControllerCatSpace,
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
-                                  prefixIconColor: MyColors.appMainColor,
-                                  focusColor: MyColors.appMainColor,
-                                  fillColor:MyColors.dropBorderColor,
-                                  labelStyle: TextStyle(color: MyColors.appMainColor),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          width: 1, color: MyColors.appMainColor)),
-                                  border: OutlineInputBorder(),
-                                  hintText: 'Enter Total'),
-                              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^[0-9.]*'))],
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          const Row(
-                            children: [
-                              Text(
-                                "Actual Space ",
-                                style: TextStyle(
-                                    color: MyColors.appMainColor,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              Text("*", style: TextStyle(
-                                  color: MyColors.backbtnColor,
-                                  fontWeight: FontWeight.bold,fontSize: 14),)
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 0),
-                            child: TextField(
-                              showCursor: true,
-                              enableInteractiveSelection:false,
-                              onChanged: (value) {
-                                print(value);
-                              },
-                              controller: valueControllerActual,
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
-                                  prefixIconColor: MyColors.appMainColor,
-                                  focusColor: MyColors.appMainColor,
-                                  fillColor:MyColors.dropBorderColor,
-                                  labelStyle: TextStyle(color: MyColors.appMainColor,
-                                      height: 50.0),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          width: 1, color: MyColors.appMainColor)),
-                                  border: OutlineInputBorder(),
-                                  hintText: 'Enter Actual'),
-                              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^[0-9.]*'))],
-                            ),
                           ),
                           const SizedBox(
                             height: 15,

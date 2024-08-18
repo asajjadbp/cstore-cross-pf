@@ -136,7 +136,7 @@ class _ProofOfSaleState extends State<ProofOfSale> {
                 email: valueControllerEmail.text,
                 phone: valueControllerPhone.text,
                 client_id: selectedClientId,
-                cat_id: selectedClientId,
+            category_id: selectedClientId,
                 qty: int.parse(valueControllerQuantity.text),
                 sku_id: selectedSkuId,
                 Amount: valueControllerAmount.text,

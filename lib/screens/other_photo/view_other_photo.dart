@@ -227,7 +227,7 @@ class _ViewOtherPhotoState extends State<ViewOtherPhoto> {
                             ],
                           ),
                         ),
-
+                        if(transData[i].upload_status != 1)
                         Align(
                             alignment: Alignment.topRight,
                             child: IconButton(

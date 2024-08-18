@@ -334,6 +334,7 @@ class TableName {
   ///Column Names Here
 
   static const String promoId = "promo_id";
+  static const String sysCategoryId = "category_id";
   static const String storeId = "store_id";
   static const String skuId = "sku_id";
   static const String from = "promo_from";

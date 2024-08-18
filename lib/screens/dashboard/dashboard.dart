@@ -453,16 +453,16 @@ class _DashBoardState extends State<DashBoard> {
                       TableRow(children: [
                         const Padding(
                           padding: EdgeInsets.only(left: 8.0, top: 8.0),
-                          child: Text('Out Of Plan'),
+                          child: Text('Special'),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(userDashboardModel.out_of_planned_visited
+                          child: Text(userDashboardModel.out_of_planned
                               .toString()),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(totalJP.toString()),
+                          child: Text(userDashboardModel.out_of_planned_visited.toString()),
                         ),
                         const Padding(
                           padding: EdgeInsets.all(8.0),

@@ -7,6 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
+import '../../Database/db_helper.dart';
+import '../../Database/table_name.dart';
 import '../../Model/response_model.dart/jp_response_model.dart';
 import '../utils/services/take_image_and_save_to_folder.dart';
 import '../widget/app_bar_widgets.dart';
@@ -67,7 +69,7 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
           setState(() {
         isLoading = false;
       });
-
+          callJp();
         ToastMessage.succesMessage(context, value['msg']);
 
         Navigator.of(context).pushNamed(GridDashBoard.routeName).then((value) => {
@@ -197,6 +199,27 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
       print("Upload GCS Error $e");
       ToastMessage.errorMessage(context, e.toString());
     }
+  }
+
+  Future callJp() async {
+    // try {
+    await JourneyPlanHTTP()
+        .getJourneyPlan(userName, token, baseUrl)
+        .then((value) async {
+
+      if (value.status) {
+        DatabaseHelper.delete_table(TableName.tblSysJourneyPlan);
+
+        await DatabaseHelper.insertSysJourneyPlanArray(value.data);
+
+      }
+    }).catchError((onError) {
+      print(onError.toString());
+      ToastMessage.errorMessage(context, onError.toString());
+    });
+    // } catch (error) {
+
+    // }
   }
 
   @override

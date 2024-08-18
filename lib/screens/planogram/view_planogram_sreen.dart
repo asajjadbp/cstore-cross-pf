@@ -201,6 +201,7 @@ class _ViewPlanogramScreenState extends State<ViewPlanogramScreen> {
                   itemCount: transData.length,
                   itemBuilder: (ctx, i) {
                     return PlanogramItemCard(
+                      uploadStatus: transData[i].upload_status,
                       itemTime: DateFormat('hh:mm aa').format(DateTime.parse(transData[i].dateTime)),
                         reason: transData[i].not_adherence_reason,
                         clientName: transData[i].client_name,

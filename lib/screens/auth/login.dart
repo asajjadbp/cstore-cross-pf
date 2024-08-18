@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cstore/Model/request_model.dart/login_request_model.dart';
 import 'package:cstore/Model/response_model.dart/login_response_model.dart';
 import 'package:cstore/Network/authentication.dart';
@@ -12,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../Database/db_helper.dart';
 import '../utils/app_constants.dart';
 import '../utils/appcolor.dart';
 

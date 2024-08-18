@@ -83,9 +83,9 @@ class JourneyPlan extends StatelessWidget {
                             height: 15,
                             alignment: Alignment.topCenter,
                             padding: const EdgeInsets.all(1),
-                            decoration: const BoxDecoration(
-                                color: MyColors.visitTypeBg,
-                                borderRadius: BorderRadius.only(
+                            decoration:  BoxDecoration(
+                                color: jp.visitType == "Planned" ? MyColors.visitTypeBg : MyColors.specialColor ,
+                                borderRadius: const BorderRadius.only(
                                   topRight: Radius.circular(10),
                                     topLeft: Radius.circular(10))),
                             child: Text(
@@ -126,7 +126,7 @@ class JourneyPlan extends StatelessWidget {
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                     disabledBackgroundColor: jp.visitStatus == "2" ? MyColors.greenColor : null,
-                                    backgroundColor: jp.visitStatus == "2" ? MyColors.greenColor : MyColors.appMainColor,
+                                    backgroundColor: jp.visitStatus == "1" ? MyColors.resumeColor : jp.visitStatus == "2" ? MyColors.greenColor : MyColors.appMainColor,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(5.0),)),
                                     onPressed: jp.isDrop == 1 ? null : jp.visitStatus == "2" ? null : () {
@@ -175,6 +175,7 @@ class JourneyPlan extends StatelessWidget {
                         ],
                       ),
                     ),
+                    if(jp.gcode.isNotEmpty)
                     InkWell(
                       onTap: (){
                         onLocationTap();

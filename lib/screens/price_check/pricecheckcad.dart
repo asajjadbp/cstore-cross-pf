@@ -12,8 +12,6 @@ class pricecheckcard extends StatelessWidget {
     required this.actStatus,
     required this.promo,
     required this.pricingValues,
-    required this.valueControllerPromo,
-    required this.valueControllerRegular,
     required this.rsp});
 
   final String image;
@@ -23,8 +21,8 @@ class pricecheckcard extends StatelessWidget {
   final String promo;
   final String rsp;
   final Function(String regular,String promo) pricingValues;
-  final TextEditingController valueControllerPromo;
-  final TextEditingController valueControllerRegular;
+  TextEditingController valueControllerPromo = TextEditingController();
+  TextEditingController valueControllerRegular = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -154,6 +152,9 @@ class pricecheckcard extends StatelessWidget {
                         ),
                         InkWell(
                           onTap: () {
+                            valueControllerPromo.text = promo.isEmpty ? "0" : promo;
+                            valueControllerRegular.text = regular.isEmpty ? "0" : regular;
+
                             showModalBottomSheet(
                               context: context,
                               isScrollControlled: true,

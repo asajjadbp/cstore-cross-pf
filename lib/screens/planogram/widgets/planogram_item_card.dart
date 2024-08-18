@@ -7,6 +7,7 @@ import '../../utils/appcolor.dart';
 class PlanogramItemCard extends StatelessWidget {
   const PlanogramItemCard(
       {super.key,
+      required this.uploadStatus,
       required this.itemTime,
       required this.reason,
       required this.clientName,
@@ -16,6 +17,7 @@ class PlanogramItemCard extends StatelessWidget {
       required this.onDelete});
 
   final File imageFile;
+  final int uploadStatus;
   final String brandName;
   final String isAdherence;
   final String clientName;
@@ -178,6 +180,7 @@ class PlanogramItemCard extends StatelessWidget {
                     ),
                   ),
                 ),
+                if(uploadStatus != 1)
                 Align(
                     alignment: Alignment.topRight,
                     child: IconButton(

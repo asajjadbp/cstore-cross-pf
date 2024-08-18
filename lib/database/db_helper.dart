@@ -732,36 +732,44 @@ class DatabaseHelper {
           " INTEGER" +
           ")");
 
-      await db.execute('CREATE TABLE ' +
-          TableName.tbl_trans_one_plus_one +
-          "(" +
-          TableName.col_id +
-          " INTEGER PRIMARY KEY AUTOINCREMENT," +
-          TableName.sku_id +
-          " INTEGER, " +
-          TableName.pieces +
-          " INTEGER, " +
-          TableName.trans_one_plus_one_doc_no +
-          " TEXT, " +
-          TableName.trans_one_plus_one_comment +
-          " TEXT, " +
-          TableName.trans_one_plus_one_type +
-          " TEXT, " +
-          TableName.image_name +
-          " TEXT, " +
-          TableName.trans_one_plus_one_doc_image +
-          " TEXT, " +
-          TableName.trans_date_time +
-          " TEXT, " +
-          TableName.upload_status +
-          " INTEGER, " +
-          TableName.gcs_status +
-          " INTEGER, " +
-          TableName.activity_status +
-          " INTEGER, " +
-          TableName.working_id +
-          " INTEGER" +
-          ")");
+      await db.execute(
+          'CREATE TABLE ' +
+              TableName.tbl_trans_one_plus_one +
+              ' (' +
+              TableName.col_id +
+              " INTEGER PRIMARY KEY AUTOINCREMENT," +
+              TableName.sku_id +
+              " INTEGER, " +
+              TableName.client_id +
+              " INTEGER, " +
+              TableName.pieces +
+              " INTEGER, " +
+              TableName.trans_one_plus_one_doc_no +
+              " TEXT, " +
+              TableName.trans_one_plus_one_comment +
+              " TEXT, " +
+              TableName.trans_one_plus_one_type +
+              " TEXT, " +
+              TableName.image_name +
+              " TEXT, " +
+              TableName.trans_one_plus_one_doc_image +
+              " TEXT, " +
+              TableName.trans_date_time +
+              " TEXT, " +
+              TableName.upload_status +
+              " INTEGER, " +
+              TableName.gcs_status +
+              " INTEGER, " +
+              TableName.activity_status +
+              " INTEGER, " +
+              TableName.working_id +
+              " INTEGER, " +
+              'CONSTRAINT unique_key UNIQUE (' +
+              TableName.workingId + ', ' +
+              TableName.trans_one_plus_one_doc_no + ', ' +
+              TableName.skuId +
+              ')' +
+              ')');
 
       // await db.execute('CREATE TABLE ' +
       //     TableName.tbl_trans_promoplan +
@@ -1022,29 +1030,28 @@ class DatabaseHelper {
     TableName.sys_issue_update_at +
     " TEXT" +
     ")");
-
-
-
-
-      // await db.execute(
-      //     'CREATE TABLE ${TableName.tbl_trans_POS} ('
-      //         '${TableName.col_id} INTEGER PRIMARY KEY, '
-      //         '${TableName.sku_id} INTEGER, '
-      //         '${TableName.trans_pos_name} TEXT, '
-      //         '${TableName.trans_pos_email} TEXT, '
-      //         '${TableName.trans_pos_phone} TEXT, '
-      //         '${TableName.trans_pos_amount} TEXT, '
-      //         '${TableName.client_id} INTEGER, '
-      //         '${TableName.cat_id} INTEGER, '
-      //         '${TableName.quantity} INTEGER, '
-      //         '${TableName.image_name} TEXT, '
-      //         '${TableName.working_id} INTEGER, '
-      //         '${TableName.upload_status} INTEGER, '
-      //         '${TableName.gcs_status} INTEGER, '
-      //         '${TableName.dateTime} TEXT, '
-      //         'UNIQUE(${TableName.dateTime}, ${TableName.sku_id})'
-      //         ')'
-      // );
+      await db.execute(
+          'CREATE TABLE ' +
+              TableName.tbl_trans_POS +
+              ' (' +
+              TableName.skuId + ' INTEGER, ' +
+              TableName.client_id + ' INTEGER, ' +
+              TableName.sysCategoryId + ' INTEGER, ' +
+              TableName.trans_pos_name + ' TEXT, ' +
+              TableName.trans_pos_email + ' TEXT, ' +
+              TableName.trans_pos_phone + ' TEXT, ' +
+              TableName.trans_pos_amount + ' TEXT, ' +
+              TableName.quantity + ' INTEGER, ' +
+              TableName.imageName + ' TEXT, ' +
+              TableName.uploadStatus + ' INTEGER, ' +
+              TableName.gcs_status + ' INTEGER, ' +
+              TableName.working_id + ' INTEGER, ' +
+              TableName.dateTime + ' INTEGER, ' +
+              'CONSTRAINT unique_key UNIQUE (' +
+              TableName.workingId + ', ' +
+              TableName.skuId +
+              ')' +
+              ')');
 
         });
 
@@ -2588,8 +2595,8 @@ class DatabaseHelper {
         client_name: sos[index][TableName.sys_client_name] as String,
         cat_en_name:sos[index]['cat_en_name'] as String,
         cat_ar_name:sos[index]['cat_ar_name'] as String,
-        brand_en_name:sos[index]['brand_en_name'] as String,
-        brand_ar_name:sos[index]['brand_ar_name'] as String,
+        brand_en_name:sos[index]['brand_en_name'] ?? "--",
+        brand_ar_name:sos[index]['brand_ar_name'] ?? "--",
         total_cat_space:sos[index]['total_space'] as String,
         actual_space:sos[index]['actual_space'] as String,
         unit:sos[index]['unit'].toString(),
@@ -4739,7 +4746,7 @@ class DatabaseHelper {
     final db = await initDataBase();
     final List<Map<String, dynamic>> dashboardMap = await db.rawQuery(
         "SELECT * FROM sys_dashboard WHERE user_id=$userId");
-
+    print("________ Dashboard Data Get ________________");
     print(jsonEncode(dashboardMap));
     print("________ Dashboard Data Getting ________________");
       return UserDashboardModel(
@@ -4747,7 +4754,7 @@ class DatabaseHelper {
         jp_planned: dashboardMap[0]['jp_planned'] ?? 0,
         jp_visited: dashboardMap[0]['jp_visited'] ?? 0,
         out_of_planned: dashboardMap[0]['out_of_planned'] ?? 0,
-        out_of_planned_visited: dashboardMap[0]['out_of_planned_visited'] ?? 0,
+        out_of_planned_visited: dashboardMap[0]['out_of_plan_visited'] ?? 0,
         jpc: dashboardMap[0]['jpc'] ?? 0,
         pro: dashboardMap[0]['pro'] ?? 0,
         working_hrs: dashboardMap[0]['working_hrs'] ?? 0,
@@ -4816,7 +4823,7 @@ class DatabaseHelper {
   }
   static Future<List<ShowProofOfSaleModel>> getTransPOS(
       String workingId) async {
-    print("__________________TransPlanogram__________________");
+    print("__________________Trans POS__________________");
 
     final db = await initDataBase();
     final List<Map<String, dynamic>> posData = await db.rawQuery(
@@ -4847,13 +4854,12 @@ class DatabaseHelper {
           phone: posData[index][TableName.trans_pos_phone] ?? "");
     });
   }
-
   static Future<List<Sys_PhotoTypeModel>> getSkusList(int catId) async {
     final db = await initDataBase();
     final List<Map<String, dynamic>> photoTypeMaps = await db.rawQuery(
-        "SELECT sys_product.en_name,sys_product.er_name from sys_product where sys_product.cat_id=$catId");
+        "SELECT sys_product.id,sys_product.en_name,sys_product.ar_name from sys_product where sys_product.category_id=$catId");
     print(jsonEncode(photoTypeMaps));
-    print("________Photo type List ________________");
+    print("________POS List ________________");
     return List.generate(photoTypeMaps.length, (index) {
       return Sys_PhotoTypeModel(
         id: photoTypeMaps[index]['id'] as int,

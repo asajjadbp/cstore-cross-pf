@@ -598,15 +598,13 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
                 shrinkWrap: true,
                 itemCount: filterTransData.length,
                 itemBuilder: (ctx, i) {
-                  promoController.insert(i, TextEditingController());
-                  regularController.insert(i, TextEditingController());
+                  // promoController.insert(i, TextEditingController());
+                  // regularController.insert(i, TextEditingController());
 
-                  promoController[i].text = filterTransData[i].promo_price;
-                  regularController[i].text = filterTransData[i].regular_price;
+                  // promoController[i].text = filterTransData[i].promo_price;
+                  // regularController[i].text = filterTransData[i].regular_price;
 
                   return pricecheckcard(
-                    valueControllerPromo: promoController[i],
-                    valueControllerRegular: regularController[i],
                     image:
                     "${imageBaseUrl}sku_pictures/${filterTransData[i].img_name}",
                     proName: filterTransData[i].pro_en_name,
@@ -646,8 +644,6 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
                   regularController[i].text = transData[i].regular_price;
 
                   return pricecheckcard(
-                    valueControllerPromo: promoController[i],
-                    valueControllerRegular: regularController[i],
                     image:
                         "${imageBaseUrl}sku_pictures/${transData[i].img_name}",
                     proName: transData[i].pro_en_name,

@@ -10,6 +10,7 @@ class ViewOSDcard extends StatelessWidget {
 
   ViewOSDcard({
     super.key,
+    required this.uploadStatus,
     required this.imageName,
     required this.brandName,
     required this.icon1,
@@ -23,6 +24,7 @@ class ViewOSDcard extends StatelessWidget {
 
   final File imageName;
   final String brandName;
+  final int uploadStatus;
   final String icon1;
   final String OSDCReason;
   final String icon2;
@@ -81,6 +83,7 @@ class ViewOSDcard extends StatelessWidget {
                             ),
                           ),
                         ),
+                        if(uploadStatus != 1)
                         InkWell(
                             onTap: () {
                               // Navigator.push(context, MaterialPageRoute(builder: (context) =>OSD_Screen (),));

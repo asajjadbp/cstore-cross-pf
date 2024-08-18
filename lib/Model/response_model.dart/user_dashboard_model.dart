@@ -68,7 +68,7 @@ class UserDashboardModel {
     jp_planned= json['jp_planned']??0;
     jp_visited=json['jp_visited']??0;
     out_of_planned= json['out_of_planned']??0;
-    out_of_planned_visited=json['out_of_planned_visited']??0;
+    out_of_planned_visited=json['out_of_plan_visited']??0;
     jpc= json['jpc'] ??0;
     pro= json['pro']??0;
     working_hrs= json['working_hrs']??0;
@@ -85,7 +85,7 @@ class UserDashboardModel {
     'jp_planned': jp_planned ,
     'jp_visited': jp_visited ,
     'out_of_planned': out_of_planned ,
-    'out_of_planned_visited': out_of_planned_visited ,
+    'out_of_plan_visited': out_of_planned_visited ,
     'jpc': jpc ,
     'pro': pro ,
     'working_hrs': working_hrs ,
@@ -102,7 +102,7 @@ class UserDashboardModel {
       'jp_planned': jp_planned ,
       'jp_visited': jp_visited ,
       'out_of_planned': out_of_planned ,
-      'out_of_planned_visited': out_of_planned_visited ,
+      'out_of_plan_visited': out_of_planned_visited ,
       'jpc': jpc ,
       'pro': pro ,
       'working_hrs': working_hrs ,
@@ -121,7 +121,7 @@ class UserDashboardModel {
       jp_planned: map['jp_planned'] as int,
       jp_visited: map['jp_visited'] as int,
       out_of_planned: map['out_of_planned'] as int,
-      out_of_planned_visited: map['out_of_planned_visited'] as int,
+      out_of_planned_visited: map['out_of_plan_visited'] as int,
       jpc: map['jpc'] as int,
       pro: map['pro'] as int,
       working_hrs: map['working_hrs'] as int,

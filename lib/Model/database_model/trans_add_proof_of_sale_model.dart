@@ -6,7 +6,7 @@ class TransAddProfOfSale {
   late String email;
   late String phone;
   late int client_id;
-  late int cat_id;
+  late int category_id;
   late int qty;
   late int sku_id;
   late String Amount;
@@ -20,7 +20,7 @@ class TransAddProfOfSale {
     email = json[TableName.trans_pos_email];
     phone = json[TableName.trans_pos_phone];
     client_id = json[TableName.client_id];
-    cat_id = json[TableName.cat_id];
+    category_id = json[TableName.sysCategoryId];
     qty = json[TableName.col_quantity];
     sku_id = json[TableName.sku_id];
     Amount = json[TableName.trans_pos_amount];
@@ -37,7 +37,7 @@ class TransAddProfOfSale {
     required this.email,
     required this.phone,
     required this.client_id,
-    required this.cat_id,
+    required this.category_id,
     required this.qty,
     required this.sku_id,
     required this.Amount,
@@ -54,7 +54,7 @@ class TransAddProfOfSale {
       'email': this.email,
       'phone': this.phone,
       'client_id': this.client_id,
-      'cat_id': this.cat_id,
+      'category_id': this.category_id,
       'qty': this.qty,
       'sku_id': this.sku_id,
       'Amount': this.Amount,
@@ -72,7 +72,7 @@ class TransAddProfOfSale {
       email: map['email'] as String,
       phone: map['phone'] as String,
       client_id: map['client_id'] as int,
-      cat_id: map['cat_id'] as int,
+      category_id: map['category_id'] as int,
       qty: map['qty'] as int,
       sku_id: map['sku_id'] as int,
       Amount: map['Amount'] as String,

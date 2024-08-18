@@ -28,7 +28,7 @@ final bool isRequired;
             ),
             Container(
               width: MediaQuery.of(context).size.width/2.2,
-              height: MediaQuery.of(context).size.height/4.4,
+              height: MediaQuery.of(context).size.height/5.4,
               child: InkWell(
                 onTap: () {
                   onSelectImage();
@@ -47,7 +47,7 @@ final bool isRequired;
             const Text("View Photo"),
             Container(
               width: MediaQuery.of(context).size.width/2.2,
-              height: MediaQuery.of(context).size.height/4.4,
+              height: MediaQuery.of(context).size.height/5.4,
               child: Card(
                 color: Colors.white,
                 elevation: 1,

@@ -200,6 +200,7 @@ class _ViewOSDCState extends State<ViewOSDC> {
                   itemCount: transData.length,
                   itemBuilder: (ctx, i) {
                     return ViewOSDcard(
+                      uploadStatus: transData[i].upload_status,
                       imageName:transData[i].imageFile as File,
                       brandName: transData[i].brand_en_name,
                       icon1: "assets/icons/Component 13.svg",
