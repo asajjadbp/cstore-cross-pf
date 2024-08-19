@@ -35,16 +35,16 @@ class TransPlanoGuideModel {
   });
   Map<String, Object?> toMap() {
     return {
-      TableName.cat_en_name: cat_en_name.toString(),
+      TableName.enName: cat_en_name.toString(),
       "cat_id": cat_id,
-      TableName.cat_ar_name: cat_ar_name.toString(),
+      TableName.arName: cat_ar_name.toString(),
       TableName.trans_planoguide_pog: pog.toString(),
-      TableName.trans_planoguide_imageName:imageName.toString(),
+      TableName.imageName:imageName.toString(),
       TableName.trans_planoguide_isAdherence: isAdherence.toString(),
       "client_id": client_id,
       TableName.trans_planoguide_skuImageName: skuImageName,
-      TableName.trans_planoguide_gcs_status: gcs_status,
-      TableName.trans_planoguide_upload_status: upload_status,
+      TableName.gcsStatus: gcs_status,
+      TableName.uploadStatus: upload_status,
       "activity_status": activity_status,
     };
   }

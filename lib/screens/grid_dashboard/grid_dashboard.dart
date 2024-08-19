@@ -9,6 +9,7 @@ import 'package:cstore/Network/sql_data_http_manager.dart';
 import 'package:cstore/screens/availability/availablity_screen.dart';
 import 'package:cstore/screens/freshness/Freshness.dart';
 import 'package:cstore/screens/planogram/planogram_screen.dart';
+import 'package:cstore/screens/proof_of_sale/proof_of_sale.dart';
 import 'package:cstore/screens/sidco_availability/sidco_availablity_screen.dart';
 import 'package:cstore/screens/utils/app_constants.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
@@ -42,6 +43,7 @@ import '../../Network/jp_http.dart';
 import '../before_fixing/before_fixing.dart';
 import '../brand_share/AddBrandShares.dart';
 import '../knowledge_share/knowledge_share_screen.dart';
+import '../market_issues_show/add_market_issue_screen.dart';
 import '../osdc/add_osdc.dart';
 import '../other_photo/add_other_photo.dart';
 import '../pick_list/pick_list.dart';
@@ -1349,6 +1351,8 @@ class _GridDashBoardState extends State<GridDashBoard> {
                                 crossAxisSpacing: 0,
                                 mainAxisSpacing: 10.0),
                             itemBuilder: (context, i) {
+                              print(agencyData[i].id);
+                              print(agencyData[i].en_name);
                               return Container(
                                 margin: const EdgeInsets.only(left: 4, right: 4),
                                 child: CardWidget(
@@ -1363,8 +1367,6 @@ class _GridDashBoardState extends State<GridDashBoard> {
                                        Navigator.of(context).pushNamed(ViewKnowledgeShare.routename);
                                      } else if(agencyData[i].id == 3) {
 
-                                         print(workingId);
-                                         print(clientId);
                                          var now = DateTime.now();
 
                                          await DatabaseHelper.insertTransAvailability(workingId,clientId,now.toString()).then((value) {
@@ -1386,7 +1388,7 @@ class _GridDashBoardState extends State<GridDashBoard> {
                                      } else if(agencyData[i].id == 6){
                                        Navigator.of(context).pushNamed(ShareOfShelf.routeName);
                                      }
-                                     else if(agencyData[i].en_name=="OffShelf Display"){
+                                     else if(agencyData[i].id == 12){
                                        Navigator.of(context).pushNamed(AddOSDC.routeName);
                                      }
                                      else if(agencyData[i].id == 9){
@@ -1414,7 +1416,7 @@ class _GridDashBoardState extends State<GridDashBoard> {
                                        });
                                      } else if(agencyData[i].id == 4) {
                                        Navigator.of(context).pushNamed(PickListScreen.routename);
-                                     } else if(agencyData[i].en_name == "Promo") {
+                                     } else if(agencyData[i].id == 13) {
                                        await DatabaseHelper.insertTransPromoPlan(workingId,int.parse(storeId)).then((value) {
                                          Navigator.of(context).pushNamed(PromoPlan_scrren.routeName);
                                        }).catchError((e) {
@@ -1424,7 +1426,13 @@ class _GridDashBoardState extends State<GridDashBoard> {
                                        });
                                      } else if(agencyData[i].id == 8) {
                                        Navigator.of(context).pushNamed(Freshness_Screen.routeName);
-                                     } else if(agencyData[i].id == 17) {
+                                     } else if(agencyData[i].id == 14) {
+                                       Navigator.of(context).pushNamed(RtvOnePlusOneListScreen.routeName);
+                                     } else if(agencyData[i].id == 19) {
+                                       Navigator.of(context).pushNamed(ProofOfSale.routeName);
+                                     } else if(agencyData[i].id == 18) {
+                                       Navigator.of(context).pushNamed(AddMarketIssue.routeName);
+                                     }  else if(agencyData[i].id == 17) {
 
                                        print(workingId);
                                        print(clientId);
@@ -1444,7 +1452,7 @@ class _GridDashBoardState extends State<GridDashBoard> {
                                      }
                                       // Navigator.of(context).pushNamed(BeforeFixing.routeName);
                                     },
-                                    imageUrl: agencyData[i].en_name.replaceAll(" ", "-"),
+                                    imageUrl: agencyData[i].id.toString(),
                                     // "assets/images/camera.png",
                                     cardName: agencyData[i].ar_name),
                               );
@@ -1489,9 +1497,9 @@ class _GridDashBoardState extends State<GridDashBoard> {
 
   Future <bool>  deleteVisitData() async {
 
-    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_availability,workingId);
-    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_planoguide,workingId);
-    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_BrandShare,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tblTransAvailability,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tblTransPlanoguide,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tblTransBrandShare,workingId);
 
     await deleteFolder(workingId);
 

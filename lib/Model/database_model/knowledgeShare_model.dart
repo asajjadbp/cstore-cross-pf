@@ -26,8 +26,8 @@ class KnowledgeShareModel {
 
   Map<String, dynamic> toMap() {
     return {
-      TableName.col_id: this.id,
-      TableName.client_id: this.client_id,
+      TableName.sysId: this.id,
+      TableName.clientIds: this.client_id,
       TableName.chain_id: this.chain_id,
       TableName.sys_knowledge_title: this.title,
       TableName.sys_knowledge_des: this.description,
@@ -39,21 +39,21 @@ class KnowledgeShareModel {
     };
   }
   KnowledgeShareModel.fromJson(Map<String, dynamic> json) {
-    id = json[TableName.col_id] ?? 0;
-    client_id = json[TableName.client_id] ?? 0;
+    id = json[TableName.sysId] ?? 0;
+    client_id = json[TableName.clientIds] ?? 0;
     chain_id = json[TableName.chain_id] ?? 0;
-    title = json[TableName.sys_knowledge_title].toString() == "null" ? "" : json[TableName.sys_knowledge_title].toString();
-    description = json[TableName.sys_knowledge_des].toString() == "null" ? "" : json[TableName.sys_knowledge_des].toString();
-    added_by = json[TableName.sys_knowledge_addedBy] .toString() == "null" ? "" : json[TableName.sys_knowledge_addedBy].toString();
+    title = json[TableName.sys_knowledge_title] ?? "";
+    description = json[TableName.sys_knowledge_des] ?? "";
+    added_by = json[TableName.sys_knowledge_addedBy] ?? "";
     file_name = json[TableName.sys_knowledge_fileName] ?? 0;
-    type = json[TableName.sys_knowledge_type].toString() == "null" ? "" : json[TableName.sys_knowledge_type].toString();
-    active = json[TableName.sys_knowledge_active] ?? 0;
-    updated_at = json[TableName.sys_issue_update_at].toString() == "null" ? "" : json[TableName.sys_issue_update_at].toString();
+    type = json[TableName.sys_knowledge_type] ?? "";
+    active = json[TableName.sys_knowledge_type] ?? 0;
+    updated_at = json[TableName.sys_issue_update_at] ?? "";
   }
 
   Map<String, dynamic> toJson() => {
-    TableName.col_id: this.id,
-    TableName.client_id: this.client_id,
+    TableName.sysId: this.id,
+    TableName.clientIds: this.client_id,
     TableName.chain_id: this.chain_id,
     TableName.sys_knowledge_title: this.title,
     TableName.sys_knowledge_des: this.description,

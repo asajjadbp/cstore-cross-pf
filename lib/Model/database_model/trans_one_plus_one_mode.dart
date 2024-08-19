@@ -19,20 +19,20 @@ class TransOnePlusOneModel {
   late int act_status;
   late int gcs_status;
   TransOnePlusOneModel.fromJson(Map<String, dynamic> json) {
-    id = json[TableName.col_id];
+    id = json[TableName.sysId];
     pieces = json[TableName.pieces];
-    pro_en_name = json[TableName.en_name];
-    pro_ar_name = json[TableName.ar_name];
+    pro_en_name = json[TableName.enName];
+    pro_ar_name = json[TableName.arName];
     doc_no = json[TableName.trans_one_plus_one_doc_no];
     comment = json[TableName.trans_one_plus_one_comment];
     type = json[TableName.trans_one_plus_one_type];
     date_time = json[TableName.dateTime];
     doc_image = json[TableName.trans_one_plus_one_doc_image];
-    image_name = json[TableName.image_name];
-    working_id = json[TableName.working_id];
-    upload_status = json[TableName.upload_status];
-    gcs_status = json[TableName.gcs_status];
-    act_status = json[TableName.activity_status];
+    image_name = json[TableName.imageName];
+    working_id = json[TableName.workingId];
+    upload_status = json[TableName.uploadStatus];
+    gcs_status = json[TableName.gcsStatus];
+    act_status = json[TableName.activityStatus];
     imageFile=null;
     imageFileDoc=null;
 

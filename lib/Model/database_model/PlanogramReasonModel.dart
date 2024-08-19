@@ -18,18 +18,18 @@ class PlanogramReasonModel{
 
   Map<String, Object?> toMap() {
     return {
-      TableName.planogram_reason_id:id,
-      TableName.planogram_reason_en_name: en_name,
-      TableName.planogram_reason_ar_name: ar_name,
-      TableName.planogram_status:status,
+      TableName.sysId:id,
+      TableName.enName: en_name,
+      TableName.arName: ar_name,
+      TableName.status:status,
     };
   }
 
   PlanogramReasonModel.fromJson(Map<String, dynamic> json) {
-    id = json[TableName.planogram_reason_id];
-    en_name = json[TableName.planogram_reason_en_name].toString();
-    ar_name = json[TableName.planogram_reason_ar_name].toString();
-    status = json[TableName.planogram_status];
+    id = json[TableName.sysId];
+    en_name = json[TableName.enName].toString();
+    ar_name = json[TableName.arName].toString();
+    status = json[TableName.status];
   }
 
   Map<String, dynamic> toJson() => {

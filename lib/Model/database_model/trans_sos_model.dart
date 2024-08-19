@@ -25,27 +25,27 @@ class TransSOSModel {
 
   Map<String, Object?> toMap() {
     return {
-      TableName.trans_sos_client_id: client_id,
-      TableName.trans_sos_cat_id: cat_id,
-      TableName.trans_sos_brand_id: brand_id,
+      TableName.clientIds: client_id,
+      TableName.sysCategoryId: cat_id,
+      TableName.brandId: brand_id,
       TableName.trans_sos_cat_space: category_space,
       TableName.trans_sos_actual_space: actual_space,
       TableName.trans_sos_unit: unit,
-      TableName.trans_date_time: date_time,
-      TableName.trans_sos_working_id:working_id,
-      'upload_status':uploadStatus,
+      TableName.dateTime: date_time,
+      TableName.workingId:working_id,
+      TableName.uploadStatus:uploadStatus,
     };
   }
 
   TransSOSModel.fromJson(Map<String, dynamic> json) {
-    client_id = json[TableName.trans_sos_client_id];
-    cat_id = json[TableName.trans_sos_cat_id];
-    brand_id = json[TableName.trans_sos_brand_id];
+    client_id = json[TableName.clientIds];
+    cat_id = json[TableName.sysCategoryId];
+    brand_id = json[TableName.brandId];
     category_space = json[TableName.trans_sos_cat_space];
     actual_space = json[TableName.trans_sos_actual_space];
     unit = json[TableName.trans_sos_unit];
-    date_time = json[TableName.trans_date_time];
-    working_id = json[TableName.trans_sos_working_id];
+    date_time = json[TableName.dateTime];
+    working_id = json[TableName.workingId];
     uploadStatus = json[TableName.uploadStatus];
 
   }

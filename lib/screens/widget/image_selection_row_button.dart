@@ -72,47 +72,51 @@ class ImageListButton extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        Container(
-          width: MediaQuery.of(context).size.width/2.2,
-          height: MediaQuery.of(context).size.height/4.4,
-          child: InkWell(
-            onTap: () {
-              onSelectImage();
-            },
-            child: Card(
-              color: Colors.white,
-              elevation: 1,
-              child: Image.asset("assets/icons/camera_icon.png"),
+        Expanded(
+          child: Card(
+            color: Colors.white,
+            elevation: 1,
+            child: Container(
+              height: MediaQuery.of(context).size.height/4.4,
+              child: InkWell(
+                onTap: () {
+                  onSelectImage();
+                },
+                child: Image.asset("assets/icons/camera_icon.png"),
+              ),
             ),
           ),
         ),
-        Container(
-          width: MediaQuery.of(context).size.width/2.2,
-          height: MediaQuery.of(context).size.height/4.4,
+        Expanded(
           child: InkWell(
             onTap: (){
               onGalleryList();
             },
-            child: Stack(
-              children: [
-                Card(
-                  color: Colors.white,
-                  elevation: 1,
-                  child: imageFile.isNotEmpty ? ListView.builder(
-                      itemCount: imageFile.length,
-                      physics:const NeverScrollableScrollPhysics(),
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context,index) {
-                        return Image.file(File(imageFile[index].path),fit: BoxFit.fill,height: MediaQuery.of(context).size.height/4.4,);
-                      }) :
-                  Image.asset("assets/icons/gallery_icon.png"),
-                ),
-                Center(
-                  child: Text("+${imageFile.length - 1 }",style: const TextStyle(color: MyColors.whiteColor,fontWeight: FontWeight.w500,fontSize: 25),),
+            child: Card(
+              color: Colors.white,
+              elevation: 1,
+              child: Container(
+                  height: MediaQuery.of(context).size.height/4.4,
+                color: Colors.white,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    imageFile.isNotEmpty ? ListView.builder(
+                        itemCount: imageFile.length,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context,index) {
+                          return Container(
+                              margin:const EdgeInsets.symmetric(
+                                horizontal: 5,
+                                vertical: 5
+                              ),
+                              child: Image.file(File(imageFile[index].path),fit: BoxFit.fill,height: MediaQuery.of(context).size.height/4.4,));
+                        }) : Image.asset("assets/icons/gallery_icon.png"),
+                  ],
                 )
-              ],
+              ),
             ),
-          )
+          ),
         ),
       ],
     );

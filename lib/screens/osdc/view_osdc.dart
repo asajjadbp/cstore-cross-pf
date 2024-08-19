@@ -10,6 +10,7 @@ import '../../Model/database_model/show_trans_osdc_model.dart';
 import '../utils/app_constants.dart';
 import '../utils/toast/toast.dart';
 import '../widget/ViewOSDcard.dart';
+import '../widget/app_bar_widgets.dart';
 import '../widget/loading.dart';
 
 class ViewOSDC extends StatefulWidget {
@@ -24,9 +25,11 @@ class ViewOSDC extends StatefulWidget {
 class _ViewOSDCState extends State<ViewOSDC> {
   List<File> _imageFiles = [];
   List<GetTransOSDCModel> transData = [];
-  bool isLoading = false;
+  List<GetTransImagesOSDCModel> transImagesList = [];
+  bool isLoading = true;
   String workingId = "";
   String storeName = '';
+  String userName = '';
 
   @override
   void initState() {
@@ -38,28 +41,50 @@ class _ViewOSDCState extends State<ViewOSDC> {
 
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
     storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    userName = sharedPreferences.getString(AppConstants.userName)!;
+
     getTransOSDCOne();
   }
   Future<void> getTransOSDCOne() async {
-    // setState(() {
-    //   isLoading = true;
-    // });
+    setState(() {
+      isLoading = true;
+    });
     await DatabaseHelper.getTransOSDC(workingId).then((value) async {
       transData = value;
+
+      getTransOSDImages();
+
+    });
+  }
+
+  Future<void> getTransOSDImages() async {
+
+    await DatabaseHelper.getTransOSDCImages(workingId).then((value) async {
+      transImagesList = value;
       await _loadImages().then((value) {
         setTransOSDC();
       });
-    });
-  }
-  void setTransOSDC() {
-    for (var trans in transData) {
-      String imageName = trans.img_name;
 
-      for (int i = 0; i < _imageFiles.length; i++) {
-        if (_imageFiles[i].path.endsWith(trans.img_name)) {
-          trans.imageFile = _imageFiles[i];
+      setState(() {
+        isLoading = false;
+      });
+
+    });
+
+  }
+
+  void setTransOSDC() {
+    for (int i = 0; i < transData.length; i++) {
+      for (int j = 0;j < transImagesList.length; j++) {
+        if(transData[i].id == transImagesList[j].id) {
+
+          for (int k = 0; k < _imageFiles.length; k++) {
+            if (_imageFiles[k].path.endsWith(transImagesList[j].imgName)) {
+
+              transData[i].imageFile = File(_imageFiles[k].path);
+            }
+          }
         }
-        print(_imageFiles[i].path.endsWith(trans.img_name));
       }
     }
     setState(() {
@@ -94,7 +119,7 @@ class _ViewOSDCState extends State<ViewOSDC> {
       final PermissionStatus permissionStatus = await _getPermission();
       if (permissionStatus == PermissionStatus.granted) {
         final String dirPath = (await getExternalStorageDirectory())!.path;
-        final String folderPath = '$dirPath/cstore/$workingId/${AppConstants.otherPhoto}';
+        final String folderPath = '$dirPath/cstore/$workingId/${AppConstants.osdc}';
         final file = File('$folderPath/$imgName');
 
         if (await file.exists()) {
@@ -112,7 +137,7 @@ class _ViewOSDCState extends State<ViewOSDC> {
     }
   }
   void deletePhoto(int recordId, String imgName) async {
-    await DatabaseHelper.deleteOneRecord(TableName.tbl_trans_osdc, recordId)
+    await DatabaseHelper.deleteOneRecord(TableName.tblTransOsdc, recordId)
         .then((_) async {
       await deleteImageFromLocal(imgName).then((_) {
         _loadImages();
@@ -126,66 +151,9 @@ class _ViewOSDCState extends State<ViewOSDC> {
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: const Color(0xFFF4F7FD),
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: const Color.fromRGBO(0, 77, 145, 1),
-        title: Container(
-          padding: EdgeInsets.only(
-            top: screenHeight / 70,
-          ),
-          height: screenHeight / 6,
-          width: screenWidth,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.only(bottom: screenHeight / 110),
-                      child: Icon(Icons.arrow_back),
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(left: 20),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Panda 251 King Road",
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        ),
-                        SizedBox(
-                          height: screenHeight / 200,
-                        ),
-                        const Text("OSD",
-                            style: TextStyle(color: Colors.white, fontSize: 12))
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Icon(
-                    Icons.search,
-                    size: 20,
-                    color: Colors.white,
-                  ),
-                  Text("09 May 2024",
-                      style: TextStyle(color: Colors.white, fontSize: 10))
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
+      appBar: generalAppBar(context, storeName, userName, (){
+        Navigator.of(context).pop();
+      }, (){print("filter Click");}, true, false, false),
       body: isLoading
           ? const Center(
               child: MyLoadingCircle(),

@@ -106,7 +106,7 @@ class _ShowProofOfSaleScreenState extends State<ShowProofOfSaleScreen> {
     }
   }
   void deletePhoto(int recordId, String imgName) async {
-    await DatabaseHelper.deleteOneRecord(TableName.tbl_trans_POS, recordId)
+    await DatabaseHelper.deleteOneRecord(TableName.tblTransPOS, recordId)
         .then((_) async {
       await deleteImageFromLocal(imgName).then((_) {
         _loadImages();

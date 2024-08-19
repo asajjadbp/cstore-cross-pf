@@ -35,17 +35,17 @@ class GetTransBeforeFixing {
   // columns in the database.
   Map<String, Object?> toMap() {
     return {
-      TableName.trans_photo_id: id,
+      TableName.sysId: id,
       TableName.sys_client_name: clientName,
       TableName.trans_photo_type_id: trans_photo_type_id,
-      TableName.trans_photo_name: img_name,
-      "client_id": client_id,
+      TableName.imageName: img_name,
+      TableName.clientIds: client_id,
       "cat_id": cat_id,
-      'date_time':dateTime,
-      TableName.trans_photo_gcs_status: gcs_status,
-      TableName.trans_upload_status: upload_status,
-      TableName.cat_en_name: categoryEnName,
-      TableName.cat_ar_name: categoryArName,
+      TableName.dateTime:dateTime,
+      TableName.gcsStatus: gcs_status,
+      TableName.uploadStatus: upload_status,
+      TableName.enName: categoryEnName,
+      TableName.arName: categoryArName,
     };
   }
 

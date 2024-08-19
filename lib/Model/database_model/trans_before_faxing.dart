@@ -22,18 +22,16 @@ class TransBeforeFaxingModel {
     required this.working_id,
   });
 
-  // Convert a Dog into a Map. The keys must correspond to the names of the
-  // columns in the database.
   Map<String, Object?> toMap() {
     return {
-      TableName.trans_photo_client_id: client_id,
+      TableName.clientIds: client_id,
       TableName.trans_photo_type_id: photo_type_id,
-      TableName.trans_photo_cat_id: cat_id,
-      TableName.trans_photo_name: img_name,
-      TableName.trans_photo_gcs_status: gcs_status,
-      TableName.trans_upload_status: upload_status,
-      TableName.trans_date_time: date_time,
-      TableName.trans_photo_working_id: working_id,
+      TableName.sysCategoryId: cat_id,
+      TableName.imageName: img_name,
+      TableName.gcsStatus: gcs_status,
+      TableName.uploadStatus: upload_status,
+      TableName.dateTime: date_time,
+      TableName.workingId: working_id,
     };
   }
 

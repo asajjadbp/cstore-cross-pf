@@ -16,17 +16,17 @@ class TransPricingModel {
 
   Map<String, Object?> toMap() {
     return {
-      TableName.trans_pricing_sku_id: sku_id,
+      TableName.skuId: sku_id,
       TableName.trans_pricing_regular: regular_price,
       TableName.trans_pricing_promo: promo_price,
-      TableName.trans_pricing_working_id: working_id,
+      TableName.workingId: working_id,
     };
   }
   TransPricingModel.fromJson(Map<String, dynamic> json) {
-    sku_id = json[TableName.trans_pricing_sku_id];
+    sku_id = json[TableName.skuId];
     regular_price = json[TableName.trans_pricing_regular];
     promo_price = json[TableName.trans_pricing_promo];
-    working_id = json[TableName.trans_pricing_working_id];
+    working_id = json[TableName.workingId];
 
   }
 }

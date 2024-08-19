@@ -13,20 +13,20 @@ class Sys_OSDCReasonModel {
 
   Map<String, Object?> toMap() {
     return {
-      TableName.sys_osdc_reason_id: id,
-      TableName.sys_osdc_reason_en_name: en_name.toString(),
-      TableName.sys_osdc_reason_ar_name: ar_name.toString(),
+      TableName.sysId: id,
+      TableName.enName: en_name.toString(),
+      TableName.arName: ar_name.toString(),
     };
   }
 
   Sys_OSDCReasonModel.fromJson(Map<String, dynamic> json) {
-    id = json[TableName.sys_osdc_reason_id];
-    en_name = json[TableName.sys_osdc_reason_en_name].toString();
-    ar_name = json[TableName.sys_osdc_reason_ar_name].toString();
+    id = json[TableName.sysId];
+    en_name = json[TableName.enName].toString();
+    ar_name = json[TableName.arName].toString();
   }
   Map<String, dynamic> toJson() => {
-    TableName.sys_osdc_reason_id: id,
-    TableName.sys_osdc_reason_en_name: en_name.toString(),
-    TableName.sys_osdc_reason_ar_name: ar_name.toString(),
+    TableName.sysId: id,
+    TableName.enName: en_name.toString(),
+    TableName.arName: ar_name.toString(),
   };
 }

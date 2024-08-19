@@ -25,11 +25,11 @@ class GetTransBeforeFixing {
   Map<String, Object?> toMap() {
     return {
       TableName.sys_client_name: clientName,
-      TableName.trans_photo_id: trans_photo_type_id,
-      TableName.trans_photo_name: img_name,
-      TableName.trans_photo_gcs_status: gcs_status,
-      TableName.cat_en_name: categoryEnName,
-      TableName.cat_ar_name: categoryArName,
+      TableName.type_id: trans_photo_type_id,
+      TableName.imageName: img_name,
+      TableName.gcsStatus: gcs_status,
+      TableName.enName: categoryEnName,
+      TableName.arName: categoryArName,
     };
   }
   @override

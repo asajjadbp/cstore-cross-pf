@@ -29,9 +29,9 @@ class SysProductPlacementModel {
 
   Map<String, Object?> toMap() {
     return {
-      TableName.sys_product_placement_id: skuId.toString(),
-      TableName.sys_product_placement_storeId: storeId.toString(),
-      TableName.sys_product_placement_cat_id: catId.toString(),
+      TableName.skuId: skuId.toString(),
+      TableName.storeId: storeId.toString(),
+      TableName.sysCategoryId: catId.toString(),
       TableName.sys_product_placement_pog: pog.toString(),
       TableName.sys_product_placement_h_facing:h_facing.toString(),
       TableName.sys_product_placement_h_facing:v_facing.toString(),
@@ -44,9 +44,9 @@ class SysProductPlacementModel {
   }
 
   SysProductPlacementModel.fromJson(Map<String, dynamic> json) {
-    skuId = json[TableName.sys_product_placement_id];
-    storeId = json[TableName.sys_product_placement_storeId];
-    catId = json[TableName.sys_product_placement_cat_id];
+    skuId = json[TableName.skuId];
+    storeId = json[TableName.storeId];
+    catId = json[TableName.sysCategoryId];
     pog = json[TableName.sys_store_pog].toString();
     h_facing = json[TableName.sys_product_placement_h_facing].toString();
     v_facing = json[TableName.sys_product_placement_v_facing].toString();
@@ -57,9 +57,9 @@ class SysProductPlacementModel {
     rank_x = json[TableName.sys_product_placement_rank_x].toString();
   }
   Map<String, dynamic> toJson() => {
-    TableName.sys_product_placement_id: skuId.toString(),
-    TableName.sys_product_placement_storeId: storeId.toString(),
-    TableName.sys_product_placement_cat_id: catId.toString(),
+    TableName.skuId: skuId.toString(),
+    TableName.storeId: storeId.toString(),
+    TableName.sysCategoryId: catId.toString(),
     TableName.sys_store_pog: pog.toString(),
     TableName.sys_product_placement_h_facing: h_facing.toString(),
     TableName.sys_product_placement_v_facing: h_facing.toString(),

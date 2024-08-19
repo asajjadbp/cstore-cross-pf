@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:googleapis/admob/v1.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Database/db_helper.dart';
 import '../../Model/database_model/category_model.dart';

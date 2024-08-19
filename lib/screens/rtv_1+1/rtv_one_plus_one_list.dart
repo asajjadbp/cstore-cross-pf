@@ -163,7 +163,7 @@ class _RtvOnePlusOneListScreenState extends State<RtvOnePlusOneListScreen> {
   }
 
   void deletePhoto(int recordId, String imgName) async {
-    await DatabaseHelper.deleteOneRecord(TableName.tbl_trans_osdc, recordId)
+    await DatabaseHelper.deleteOneRecord(TableName.tblTransOsdc, recordId)
         .then((_) async {
       await deleteImageFromLocal(imgName).then((_) {
         _loadImages();

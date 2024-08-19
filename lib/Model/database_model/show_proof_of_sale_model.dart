@@ -20,17 +20,17 @@ class ShowProofOfSaleModel {
   late String phone;
   File? imageFile;
   ShowProofOfSaleModel.fromJson(Map<String, dynamic> json) {
-    id = json[TableName.col_id];
-    sku_id = json[TableName.sku_id];
-    client_id = json[TableName.client_id];
+    id = json[TableName.sysId];
+    sku_id = json[TableName.skuId];
+    client_id = json[TableName.clientIds];
     qty = json[TableName.quantity];
-    gcs_status = json[TableName.gcs_status];
-    upload_status = json[TableName.upload_status];
+    gcs_status = json[TableName.gcsStatus];
+    upload_status = json[TableName.uploadStatus];
     cat_en_name = json['cat_en_name'];
     cat_ar_name = json['cat_ar_name'];
     pro_en_name = json['pro_en_name'];
     pro_en_name = json['pro_ar_name'];
-    image_name = json[TableName.image_name];
+    image_name = json[TableName.imageName];
     name = json[TableName.trans_pos_name];
     email = json[TableName.trans_pos_email];
     phone = json[TableName.trans_pos_phone];

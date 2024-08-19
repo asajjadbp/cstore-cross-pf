@@ -113,7 +113,7 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
               context, imageFile, imageName, workingId, AppConstants.rtv)
           .then((_) async {
         var now = DateTime.now();
-        var formattedTime = DateFormat('hh:mm:ss').format(now);
+        var formattedTime = DateFormat('hh:mm').format(now);
         await DatabaseHelper.insertTransRtvOnePlusOne(TransRtvOnePlusOneModel(
                 sku_id: widget.sku_id,
                 pieces: int.parse(totalPieces.text),
@@ -163,11 +163,11 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
           Navigator.of(context).pop();
         }, () {}, true, false, false),
         body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 15),
-                child: Text(
+          child: Container(
+            margin:const EdgeInsets.symmetric(horizontal: 10),
+            child: Column(
+              children: [
+                Text(
                   widget.SkuName,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
@@ -176,22 +176,18 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
                       fontSize: 14,
                       fontWeight: FontWeight.w700),
                 ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 6),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 5),
                       child: const Text(
                         "Pieces",
                         style: TextStyle(
                             fontSize: 14, fontWeight: FontWeight.w500),
-                      )),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 15, vertical: 3),
-                    child: TextField(
+                      ),
+                    ),
+                    TextField(
                       showCursor: true,
                       enableInteractiveSelection: false,
                       onChanged: (value) {},
@@ -213,47 +209,39 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
                             RegExp(r'^[0-9][0-9]*'))
                       ],
                     ),
-                  ),
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 6),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 5),
                       child: const Text(
                         "Type",
                         style: TextStyle(
                             fontSize: 14, fontWeight: FontWeight.w500),
-                      )),
-                  Container(
-                    margin:
-                        const EdgeInsets.symmetric(horizontal: 15, vertical: 3),
-                    child: UnitDropDown(
+                      ),
+                    ),
+                    UnitDropDown(
                         hintText: "Select type",
                         unitData: unitList,
                         onChange: (value) {
                           _selectedType = value;
-                        }),
-                  )
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 6),
+                        })
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 5),
                       child: const Text(
                         "Document No",
                         style: TextStyle(
                             fontSize: 14, fontWeight: FontWeight.w500),
-                      )),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 15, vertical: 3),
-                    child: TextField(
+                      ),
+                    ),
+                    TextField(
                         showCursor: true,
                         enableInteractiveSelection: false,
                         onChanged: (value) {
@@ -272,25 +260,20 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
                                     width: 1, color: MyColors.appMainColor)),
                             border: OutlineInputBorder(),
                             hintText: 'Enter document')),
-                  ),
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 6),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 5),
                       child: const Text(
                         "Comment",
                         style: TextStyle(
                             fontSize: 14, fontWeight: FontWeight.w500),
-                      )),
-                  Container(
-                    height: 100,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 15, vertical: 3),
-                    child: TextField(
+                      ),
+                    ),
+                    TextField(
                         showCursor: true,
                         enableInteractiveSelection: false,
                         onChanged: (value) {
@@ -309,12 +292,9 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
                                     width: 1, color: MyColors.appMainColor)),
                             border: OutlineInputBorder(),
                             hintText: 'Enter comment')),
-                  ),
-                ],
-              ),
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                child: Row(
+                  ],
+                ),
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
@@ -332,7 +312,7 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
                               )),
                           SizedBox(
                             width: MediaQuery.of(context).size.width / 2.2,
-                            height: 160,
+                            height: 120,
                             child: InkWell(
                               onTap: () {
                                 getImage("rtv");
@@ -366,7 +346,7 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
                               )),
                           SizedBox(
                             width: MediaQuery.of(context).size.width / 2.2,
-                            height: 160,
+                            height: 120,
                             child: InkWell(
                               onTap: () {
                                 getImage("doc");
@@ -389,89 +369,35 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
                     ),
                   ],
                 ),
-              ),
-              isBtnLoading
-                  ? const SizedBox(
-                      width: 60,
-                      height: 60,
-                      child: MyLoadingCircle(),
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            Navigator.of(context).pushNamed(ViewRtvOnePlusOneScreen.routeName);
-                          },
-                          child: Container(
-                              margin: const EdgeInsets.only(
-                                left: 15,
-                              ),
-                              height: screenHeight / 18,
-                              width: screenWidth / 3,
-                              decoration: BoxDecoration(
-                                  color: MyColors.greenColor,
-                                  borderRadius: BorderRadius.circular(5)),
-                              child: const Row(
-                                children: [
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  SizedBox(
-                                    width: 5,
-                                  ),
-                                  Text(
-                                    "Show",
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.white),
-                                  )
-                                ],
-                              )),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            saveStorePhotoData();
-                          },
-                          child: Container(
-                              margin: const EdgeInsets.only(
-                                right: 10,
-                              ),
-                              height: screenHeight / 18,
-                              width: screenWidth / 3,
-                              decoration: BoxDecoration(
-                                  color: const Color.fromRGBO(26, 91, 140, 1),
-                                  borderRadius: BorderRadius.circular(5)),
-                              child: const Row(
-                                children: [
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  Icon(
-                                    Icons.check_circle,
-                                    size: 35,
-                                    color: Colors.white,
-                                  ),
-                                  SizedBox(
-                                    width: 5,
-                                  ),
-                                  Text(
-                                    "Save",
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.white),
-                                  )
-                                ],
-                              )),
-                        ),
-                      ],
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 15),
+                  child: isBtnLoading
+                      ? const SizedBox(
+                          width: 60,
+                          height: 60,
+                          child: MyLoadingCircle(),
+                        )
+                      : ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: MyColors.appMainColor,
+                        minimumSize: Size(screenWidth, 45),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5))),
+                    onPressed: () {
+                      saveStorePhotoData();
+                      // Navigator.of(context).pushNamed();
+                    },
+                    child: const Text(
+                      "Save",
+                      style: TextStyle(color: Colors.white),
                     ),
-              const SizedBox(
-                height: 10,
-              ),
-            ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+              ],
+            ),
           ),
         ));
   }

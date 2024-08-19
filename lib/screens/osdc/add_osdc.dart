@@ -4,6 +4,7 @@ import 'package:cstore/Database/db_helper.dart';
 import 'package:cstore/screens/osdc/view_osdc.dart';
 import 'package:cstore/screens/utils/app_constants.dart';
 import 'package:cstore/screens/widget/drop_downs.dart';
+import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,12 +12,14 @@ import 'package:path/path.dart' as path;
 import '../../Model/database_model/sys_brand_model.dart';
 import '../../Model/database_model/sys_osdc_reason_model.dart';
 import '../../Model/database_model/sys_osdc_type_model.dart';
+import '../../Model/database_model/trans_osd_image_model.dart';
 import '../../Model/database_model/trans_osdc_model.dart';
 import '../Gallery/gallery_screen.dart';
 import '../utils/appcolor.dart';
 import '../utils/services/image_picker.dart';
 import '../utils/services/take_image_and_save_to_folder.dart';
 import '../utils/toast/toast.dart';
+import '../widget/app_bar_widgets.dart';
 import '../widget/image_selection_row_button.dart';
 
 class AddOSDC extends StatefulWidget {
@@ -81,10 +84,26 @@ class _AddOSDCState extends State<AddOSDC> {
       if (value == null) {
         return;
       }
+      print(value.path);
       imagesList.add(value);
       final String extension = path.extension(value.path);
       imagesNameList.add("${userName}_${DateTime.now().millisecondsSinceEpoch}$extension");
 
+      setState(() {});
+      // _takePhoto(value);
+    });
+  }
+
+  Future<void> galleyImage() async {
+    await ImageTakingService.galleryImageSelect().then((value) {
+      if (value == null || value.isEmpty) {
+        return;
+      }
+      for(int i = 0; i < value.length; i++) {
+        imagesList.add(value[i]!);
+        final String extension = path.extension(value[i]!.path);
+        imagesNameList.add("${userName}_${DateTime.now().millisecondsSinceEpoch}_$i$extension");
+      }
       setState(() {});
       // _takePhoto(value);
     });
@@ -119,10 +138,11 @@ class _AddOSDCState extends State<AddOSDC> {
   }
 
   void saveStorePhotoData() async {
+
     if (selectedBrandId == -1 ||
         selectedTypeId == -1 ||
         selectedReasonId == -1 ||
-        imageFile == null) {
+        imagesList.isEmpty) {
       ToastMessage.errorMessage(context, "Please fill the form and take image");
       return;
     }
@@ -130,26 +150,47 @@ class _AddOSDCState extends State<AddOSDC> {
       isBtnLoading = true;
     });
     try {
-      await takePicture(
-              context, imageFile, imageName, workingId, AppConstants.osdc)
-          .then((_) async {
-        imagesList.add(File(imageFile!.path));
-        var now = DateTime.now();
-        await DatabaseHelper.insertTransOSDC(TransOSDCModel(
-          brand_id: selectedBrandId,
-          type_id: selectedTypeId,
-          client_id: int.parse(clientId),
-          upload_status: 0,
-          reason_id: selectedReasonId,
-          quantity: int.parse(valueControllerQty.text),
-          working_id: int.parse(workingId),
-          date_time: now.toString(),
-          gcs_status: 0,
-        )).then((_) {
-          ToastMessage.succesMessage(context, "Data store successfully");
-          imageFile = null;
-        });
-      });
+     for(int i = 0; i<imagesList.length; i++) {
+      String osdcId = "";
+       await takePicture(
+           context, imagesList[i], imagesNameList[i], workingId, AppConstants.osdc)
+           .then((_) async {
+             print("IMAGE SAVE TO LOCAL FOLLDER");
+         var now = DateTime.now();
+         await DatabaseHelper.insertTransOSDC(TransOSDCModel(
+           brand_id: selectedBrandId,
+           type_id: selectedTypeId,
+           client_id: clientId,
+           upload_status: 0,
+           reason_id: selectedReasonId,
+           quantity: int.parse(valueControllerQty.text),
+           working_id: int.parse(workingId),
+           date_time: now.toString(),
+           gcs_status: 0,
+         )).then((value) {
+           print("______________ osdc data Saving _________________");
+           print(value);
+           osdcId = value.toString();
+           print("_________________________________________________");
+         });
+
+         ///image name storing
+         await DatabaseHelper.insertTransOSDCImage(TransOSDCImagesModel(
+           main_osd_id: osdcId,
+           image_name: imagesNameList[i],
+           working_id: int.parse(workingId),
+         )).then((_) {
+
+         });
+       });
+
+     }
+
+     ToastMessage.succesMessage(context, "Data store successfully");
+     imagesList.clear();
+     imagesNameList.clear();
+     valueControllerQty.clear();
+
       setState(() {
         isBtnLoading = false;
       });
@@ -157,6 +198,7 @@ class _AddOSDCState extends State<AddOSDC> {
       setState(() {
         isBtnLoading = false;
       });
+      print(error);
       ToastMessage.errorMessage(context, error.toString());
     }
   }
@@ -166,22 +208,9 @@ class _AddOSDCState extends State<AddOSDC> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-        appBar: AppBar(
-          title: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                storeName,
-                style: const TextStyle(fontSize: 16),
-              ),
-              const Text(
-                "OSDC",
-                style: TextStyle(fontSize: 12),
-              ),
-            ],
-          ),
-        ),
+        appBar: generalAppBar(context, storeName, userName, (){
+          Navigator.of(context).pop();
+        }, (){print("filter Click");}, true, false, false),
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -292,7 +321,7 @@ class _AddOSDCState extends State<AddOSDC> {
                     ImageListButton(
                         imageFile: imagesList,
                         onGalleryList: (){
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>NearestStoreGalleryScreen(imagesList: imagesList,)));
+                          galleyImage();
                         },
                         onSelectImage: () {
                           getImage();
@@ -301,8 +330,10 @@ class _AddOSDCState extends State<AddOSDC> {
                     const SizedBox(
                       height: 20,
                     ),
-
-                    ElevatedButton(
+                    isBtnLoading ? const SizedBox(
+                      height: 60,
+                      child:  MyLoadingCircle(),
+                    ) : ElevatedButton(
                       style: ElevatedButton.styleFrom(
                           backgroundColor: MyColors.appMainColor,
                           minimumSize: Size(screenWidth, 45),
@@ -331,7 +362,7 @@ class _AddOSDCState extends State<AddOSDC> {
                         Navigator.of(context).pushNamed(ViewOSDC.routename);
                       },
                       child: const Text(
-                        "View Before Fixing",
+                        "View OSD",
                         style: TextStyle(color: Colors.white),
                       ),
                     ),

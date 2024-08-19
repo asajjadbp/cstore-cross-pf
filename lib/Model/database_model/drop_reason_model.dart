@@ -17,10 +17,10 @@ class DropReasonModel {
   // columns in the database.
   Map<String, Object?> toMap() {
     return {
-      TableName.drop_id: id,
-      TableName.drop_en_name: en_name,
-      TableName.drop_ar_name: ar_name,
-      TableName.drop_status: status,
+      TableName.sysId: id,
+      TableName.enName: en_name,
+      TableName.arName: ar_name,
+      TableName.status: status,
     };
   }
 }

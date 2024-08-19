@@ -6,7 +6,7 @@ class TransOSDCModel {
   late int id;
   late int brand_id;
   late int type_id;
-  late int client_id;
+  late String client_id;
   late int reason_id;
   late int quantity;
   late int gcs_status;
@@ -27,28 +27,28 @@ class TransOSDCModel {
 
   Map<String, Object?> toMap() {
     return {
-      TableName.trans_osdc_brand_id: brand_id,
-      TableName.trans_osdc_type_id: type_id,
-      TableName.trans_osdc_client_id: client_id,
+      TableName.brandId: brand_id,
+      TableName.type_id: type_id,
+      TableName.clientIds: client_id,
       TableName.trans_osdc_reason_id: reason_id,
       TableName.trans_osdc_quantity: quantity,
-      TableName.trans_osdc_gcs_status: gcs_status,
-      TableName.trans_upload_status: upload_status,
-      TableName.trans_date_time: date_time,
-      TableName.trans_osdc_working_id:working_id,
+      TableName.gcsStatus: gcs_status,
+      TableName.uploadStatus: upload_status,
+      TableName.dateTime: date_time,
+      TableName.workingId:working_id,
     };
   }
 
   TransOSDCModel.fromJson(Map<String, dynamic> json) {
-    brand_id = json[TableName.trans_osdc_brand_id];
-    type_id = json[TableName.trans_osdc_type_id];
-    client_id = json[TableName.trans_osdc_client_id];
+    brand_id = json[TableName.brandId];
+    type_id = json[TableName.type_id];
+    client_id = json[TableName.clientIds];
     reason_id = json[TableName.trans_osdc_reason_id];
     quantity = json[TableName.trans_osdc_quantity];
-    gcs_status = json[TableName.trans_osdc_gcs_status];
-    upload_status = json[TableName.trans_upload_status];
-    date_time = json[TableName.trans_date_time];
-    working_id = json[TableName.trans_osdc_working_id];
+    gcs_status = json[TableName.gcsStatus];
+    upload_status = json[TableName.uploadStatus];
+    date_time = json[TableName.dateTime];
+    working_id = json[TableName.workingId];
 
   }
 }

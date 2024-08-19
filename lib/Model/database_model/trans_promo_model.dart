@@ -23,20 +23,20 @@ class TransPromoPlanModel {
     return {
       TableName.trans_promo_db_id: db_id,
       TableName.trans_promo_plan_id: promo_plane_id,
-      TableName.trans_promo_status: status,
+      TableName.status: status,
       TableName.trans_promo_reason: reason,
-      TableName.trans_promo_image_name: image_name,
-      TableName.trans_promo_working_id:working_id,
+      TableName.imageName: image_name,
+      TableName.workingId:working_id,
     };
   }
 
   TransPromoPlanModel.fromJson(Map<String, dynamic> json) {
     db_id = json[TableName.trans_promo_db_id];
     promo_plane_id = json[TableName.trans_promo_plan_id];
-    status = json[TableName.trans_promo_status];
+    status = json[TableName.status];
     reason = json[TableName.trans_promo_reason];
-    image_name = json[TableName.trans_promo_image_name];
-    working_id = json[TableName.trans_promo_working_id];
+    image_name = json[TableName.imageName];
+    working_id = json[TableName.workingId];
 
   }
 }

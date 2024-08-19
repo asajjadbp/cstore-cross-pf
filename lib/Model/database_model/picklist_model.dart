@@ -28,22 +28,22 @@ class PickListModel {
 
   PickListModel.fromJson(Map<String, dynamic> json) {
     picklist_id = json[TableName.picklist_id].toString();
-    store_id = json[TableName.picklist_store_id].toString();
-    category_id = json[TableName.picklist_category_id].toString();
+    store_id = json[TableName.storeId].toString();
+    category_id = json[TableName.sysCategoryId].toString();
     tmr_id = json[TableName.picklist_tmr_id].toString();
     tmr_name = json[TableName.picklist_tmr_name].toString();
     stocker_id = json[TableName.picklist_stocker_id].toString();
     stocker_name = json[TableName.picklist_stocker_name].toString();
     shift_time = json[TableName.picklist_shift_time].toString();
-    en_cat_name = json[TableName.picklist_en_cat_name].toString();
-    ar_cat_name = json[TableName.picklist_ar_cat_name].toString();
+    en_cat_name = json[TableName.enName].toString();
+    ar_cat_name = json[TableName.arName].toString();
     sku_picture = json[TableName.picklist_sku_picture].toString();
     en_sku_name = json[TableName.picklist_en_sku_name].toString();
     ar_sku_name = json[TableName.picklist_ar_sku_name].toString();
     req_pickList = json[TableName.picklist_req_picklist].toString();
     act_pickList = json[TableName.picklist_act_picklist].toString();
     pickList_ready = json[TableName.picklist_picklist_ready].toString();
-    upload_status = json[TableName.trans_upload_status];
+    upload_status = json[TableName.uploadStatus];
     pick_list_send_time = json[TableName.trans_avl_receive_time] ?? "";
     pick_list_receive_time = json['tmr_send_time'] ?? "";
     pick_list_reason = json['picklist_reason'] ?? "";

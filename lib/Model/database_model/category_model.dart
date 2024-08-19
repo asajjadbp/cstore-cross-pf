@@ -15,18 +15,18 @@ class CategoryModel {
 
   Map<String, Object?> toMap() {
     return {
-      TableName.cat_id: id,
-      TableName.cat_en_name: en_name,
-      TableName.cat_ar_name:ar_name,
-      TableName.cat_client_id: client,
+      TableName.sysCategoryId: id,
+      TableName.enName: en_name,
+      TableName.arName:ar_name,
+      TableName.clientIds: client,
     };
   }
 
   CategoryModel.fromJson(Map<String, dynamic> json) {
-    en_name = json[TableName.cat_id];
-    en_name = json[TableName.cat_en_name];
-    en_name = json[TableName.cat_ar_name];
-    client = json[TableName.cat_client_id];
+    en_name = json[TableName.sysCategoryId];
+    en_name = json[TableName.enName];
+    en_name = json[TableName.arName];
+    client = json[TableName.clientIds];
   }
 
 }

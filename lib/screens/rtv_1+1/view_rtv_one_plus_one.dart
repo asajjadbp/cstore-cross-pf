@@ -135,7 +135,7 @@ class _ViewRtvOnePlusOneScreenState extends State<ViewRtvOnePlusOneScreen> {
     }
   }
   void deletePhoto(int recordId, String imgName,String docImageName) async {
-    await DatabaseHelper.deleteOneRecord(TableName.tbl_trans_one_plus_one, recordId)
+    await DatabaseHelper.deleteOneRecord(TableName.tblTransOnePlusOne, recordId)
         .then((_) async {
       await deleteImageFromLocal(imgName,docImageName).then((_) {
         _loadImages();
@@ -153,58 +153,61 @@ class _ViewRtvOnePlusOneScreenState extends State<ViewRtvOnePlusOneScreen> {
       appBar: generalAppBar(context, storeName, "View RTV", (){
         Navigator.of(context).pop();
       }, (){print("filter Click");}, true, false, false),
-      body: isLoading
-          ? const Center(
-        child: MyLoadingCircle(),
-      )
-          : transData.isEmpty
-          ? const Center(
-        child: Text("No data found"),
-      )
-          : ListView.builder(
-        shrinkWrap: true,
-        itemCount: transData.length,
-        itemBuilder: (BuildContext context, int i) {
-          return ViewrtvOnePlusOnecard(
-            time: transData[i].date_time,
-            proName: transData[i].pro_en_name,
-            rtvImage:transData[i].imageFile as File,
-            type: transData[i].type,
-            piece: transData[i].pieces.toString(),
-            onDelete: (){
-              showDialog(context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: const Text("Are you sure you want to delete this item Permanently",
-                      style: TextStyle(
-                        fontSize: 13,
-                      ),),
-                    actions: [
-                      TextButton.icon(
-                        icon: const Icon(Icons.cancel_outlined),
-                        label: const Text("No"),
-                        onPressed: () {
-                          Navigator.of(context).pop(true);
-                        },
-                      ),
-                      TextButton.icon(
-                        icon: const Icon(Icons.check),
-                        label: const Text("Yes"),
-                        onPressed: () {
-                          deletePhoto(transData[i].id,transData[i].image_name,transData[i].doc_image);
-                          Navigator.of(context).pop(true);
-                        },
-                      ),
-                    ],
-                  );
-                },);
+      body: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 10),
+        child: isLoading
+            ? const Center(
+          child: MyLoadingCircle(),
+        )
+            : transData.isEmpty
+            ? const Center(
+          child: Text("No data found"),
+        )
+            : ListView.builder(
+          shrinkWrap: true,
+          itemCount: transData.length,
+          itemBuilder: (BuildContext context, int i) {
+            return ViewrtvOnePlusOnecard(
+              time: transData[i].date_time,
+              proName: transData[i].pro_en_name,
+              rtvImage:transData[i].imageFile as File,
+              type: transData[i].type,
+              piece: transData[i].pieces.toString(),
+              onDelete: (){
+                showDialog(context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text("Are you sure you want to delete this item Permanently",
+                        style: TextStyle(
+                          fontSize: 13,
+                        ),),
+                      actions: [
+                        TextButton.icon(
+                          icon: const Icon(Icons.cancel_outlined),
+                          label: const Text("No"),
+                          onPressed: () {
+                            Navigator.of(context).pop(true);
+                          },
+                        ),
+                        TextButton.icon(
+                          icon: const Icon(Icons.check),
+                          label: const Text("Yes"),
+                          onPressed: () {
+                            deletePhoto(transData[i].id,transData[i].image_name,transData[i].doc_image);
+                            Navigator.of(context).pop(true);
+                          },
+                        ),
+                      ],
+                    );
+                  },);
 
-            },
-            upload_status: transData[i].upload_status,
-            docImage: transData[i].imageFileDoc as File,
-            docNumber: transData[i].doc_no,
-            comment: transData[i].comment,);
-        },
+              },
+              upload_status: transData[i].upload_status,
+              docImage: transData[i].imageFileDoc as File,
+              docNumber: transData[i].doc_no,
+              comment: transData[i].comment,);
+          },
+        ),
       ),
     );
   }

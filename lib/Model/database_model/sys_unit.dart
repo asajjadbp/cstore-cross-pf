@@ -13,20 +13,20 @@ class SysUnitModel {
 
   Map<String, Object?> toMap() {
     return {
-      TableName.sys_photo_type_id: id,
-      TableName.sys_photo_type_en_name: en_name,
-      TableName.sys_photo_type_ar_name: ar_name,
+      TableName.sysId: id,
+      TableName.enName: en_name,
+      TableName.arName: ar_name,
     };
   }
 
   SysUnitModel.fromJson(Map<String, dynamic> json) {
-    id = json[TableName.sys_photo_type_id];
-    en_name = json[TableName.sys_photo_type_en_name].toString();
-    ar_name = json[TableName.sys_photo_type_ar_name].toString();
+    id = json[TableName.sysId];
+    en_name = json[TableName.enName].toString();
+    ar_name = json[TableName.arName].toString();
   }
   Map<String, dynamic> toJson() => {
-    TableName.sys_photo_type_id: id.toString(),
-    TableName.sys_photo_type_en_name: en_name.toString(),
-    TableName.sys_photo_type_ar_name: ar_name.toString(),
+    TableName.sysId: id.toString(),
+    TableName.enName: en_name.toString(),
+    TableName.arName: ar_name.toString(),
   };
 }

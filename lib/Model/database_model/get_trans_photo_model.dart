@@ -41,18 +41,18 @@ class GetTransPhotoModel {
   Map<String, Object?> toMap() {
     return {
       TableName.sys_client_name: clientName,
-      TableName.trans_photo_id: trans_photo_type_id,
-      TableName.trans_photo_name: img_name,
+      TableName.type_id: trans_photo_type_id,
+      TableName.imageName: img_name,
       "cat_id": cat_id,
       "client_id": client_id,
       "type_id" : type_id,
-      TableName.trans_photo_gcs_status: gcs_status,
-      TableName.trans_upload_status: upload_status,
-      TableName.cat_en_name: categoryEnName,
-      TableName.cat_ar_name: categoryArName,
+      TableName.gcsStatus: gcs_status,
+      TableName.uploadStatus: upload_status,
+      TableName.enName: categoryEnName,
+      TableName.arName: categoryArName,
       TableName.dateTime: dateTime,
-      TableName.sys_photo_type_en_name: type_en_name,
-      TableName.sys_photo_type_ar_name: type_ar_name,
+      TableName.enName: type_en_name,
+      TableName.arName: type_ar_name,
     };
   }
 

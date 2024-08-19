@@ -143,7 +143,7 @@ class _ViewPlanogramScreenState extends State<ViewPlanogramScreen> {
   }
 
   void deletePhoto(int recordId, String imgName) async {
-    await DatabaseHelper.deleteOneRecord(TableName.tbl_trans_planogram, recordId)
+    await DatabaseHelper.deleteOneRecord(TableName.tblTransPlanogram, recordId)
         .then((_) async {
       await deleteImageFromLocal(imgName).then((_) {
         _loadImages();

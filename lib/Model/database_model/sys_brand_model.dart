@@ -15,18 +15,18 @@ class SYS_BrandModel {
 
   Map<String, Object?> toMap() {
     return {
-      TableName.sys_brand_id: id,
-      TableName.sys_brand_en_name: en_name,
-      TableName.sys_brand_ar_name:ar_name,
-      TableName.sys_brand_client_id: client,
+      TableName.sysId: id,
+      TableName.enName: en_name,
+      TableName.arName:ar_name,
+      TableName.clientIds: client,
     };
   }
 
   SYS_BrandModel.fromJson(Map<String, dynamic> json) {
-    id = json[TableName.sys_brand_id];
-    en_name = json[TableName.sys_brand_en_name];
-    en_name = json[TableName.sys_brand_ar_name];
-    client = json[TableName.sys_brand_client_id];
+    id = json[TableName.sysId];
+    en_name = json[TableName.enName];
+    en_name = json[TableName.arName];
+    client = json[TableName.clientIds];
   }
 
 }

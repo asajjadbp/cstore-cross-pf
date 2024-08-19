@@ -44,40 +44,40 @@ class ShowPlanogramModel {
 
   Map<String, Object?> toMap() {
     return {
-      TableName.trans_planogram_id: id,
+      TableName.sysId: id,
       'client_id': client_id,
       'cat_id': cat_id,
       'reason_id': reason_id,
       'brand_id': brand_id,
       'date_time': dateTime,
-      TableName.cat_en_name: cat_en_name,
-      TableName.cat_ar_name: cat_ar_name,
+      TableName.enName: cat_en_name,
+      TableName.arName: cat_ar_name,
      TableName.sys_client_name:client_name,
-      TableName.sys_brand_en_name: brand_en_name,
-      TableName.sys_brand_ar_name: brand_ar_name,
-      TableName.trans_planogram_image_name: image_name,
-      TableName.trans_planogram_gcs_status: gcs_status,
-      TableName.trans_upload_status: upload_status,
+      TableName.enName: brand_en_name,
+      TableName.arName: brand_ar_name,
+      TableName.imageName: image_name,
+      TableName.gcsStatus: gcs_status,
+      TableName.uploadStatus: upload_status,
       TableName.trans_planogram_is_adherence: is_adherence,
       TableName.trans_planogram_reason_id: not_adherence_reason,
     };
   }
 
   ShowPlanogramModel.fromJson(Map<String, dynamic> json) {
-    id = json[TableName.trans_planogram_id];
+    id = json[TableName.sysId];
     client_id = json['client_id'];
     cat_id = json['cat_id'];
     brand_id = json['brand_id'];
     reason_id = json['reason_id'];
     dateTime = json['date_time'];
-    cat_en_name = json[TableName.cat_en_name];
-    cat_ar_name = json[TableName.cat_ar_name];
+    cat_en_name = json[TableName.enName];
+    cat_ar_name = json[TableName.arName];
     client_name = json[TableName.sys_client_name];
-    brand_en_name = json[TableName.sys_brand_en_name];
-    brand_ar_name = json[TableName.sys_brand_ar_name];
-    image_name = json[TableName.trans_planogram_image_name];
-    gcs_status = json[TableName.trans_planogram_gcs_status];
-    upload_status = json[TableName.trans_upload_status];
+    brand_en_name = json[TableName.enName];
+    brand_ar_name = json[TableName.arName];
+    image_name = json[TableName.imageName];
+    gcs_status = json[TableName.gcsStatus];
+    upload_status = json[TableName.uploadStatus];
     is_adherence = json[TableName.trans_planogram_is_adherence];
     not_adherence_reason = json[TableName.trans_planogram_reason_id];
   }

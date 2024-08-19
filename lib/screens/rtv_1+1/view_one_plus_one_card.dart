@@ -52,14 +52,12 @@ class ViewrtvOnePlusOnecard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  height: screenHeight / 35,
-                  width: screenWidth / 4.5,
                   decoration:  const BoxDecoration(
                       color: MyColors.appMainColor,
                       borderRadius:
                       BorderRadius.only(bottomRight: Radius.circular(10))),
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 12, top: 3),
+                    padding: const EdgeInsets.symmetric(horizontal: 5,vertical: 3),
                     child: Text(
                       time,
                       style: const TextStyle(
@@ -69,19 +67,20 @@ class ViewrtvOnePlusOnecard extends StatelessWidget {
                     ),
                   ),
                 ),
-                Container(
-                    margin: const EdgeInsets.only(top: 5),
-                    width: screenWidth/1.5,
-                    child: Text(
-                      proName,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                      style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: MyColors.appMainColor),
-                    )),
-                upload_status==0?InkWell(
+                Expanded(
+                  child: Container(
+                      margin: const EdgeInsets.only(top: 5,left: 5),
+                      child: Text(
+                        proName,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                        style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: MyColors.appMainColor),
+                      )),
+                ),
+                upload_status==0 ? InkWell(
                     onTap: () {
                       onDelete();
                     },
@@ -99,8 +98,8 @@ class ViewrtvOnePlusOnecard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   SizedBox(
-                    width: 130,
-                    height: 110,
+                    width: 100,
+                    height: 100,
                     child: ClipRRect(
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(6.0),
@@ -115,8 +114,8 @@ class ViewrtvOnePlusOnecard extends StatelessWidget {
                                 : Container())),
                   ),
                   SizedBox(
-                    width: 130,
-                    height: 110,
+                    width: 100,
+                    height: 100,
                     child: ClipRRect(
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(6.0),

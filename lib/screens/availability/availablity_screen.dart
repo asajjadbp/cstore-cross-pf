@@ -504,14 +504,8 @@ class _AvailabilityState extends State<Availability> {
         showModalBottomSheet<void>(
         isDismissible: false,
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topRight: Radius.circular(10),topLeft: Radius.circular(10))),
-        // context and builder are
-        // required properties in this widget
         context: context,
         builder: (BuildContext context) {
-          // we set up a container inside which
-          // we create center column and display text
-
-          // Returning SizedBox instead of a Container
           return WillPopScope(
               onWillPop: () async {
                 return false;
@@ -695,24 +689,6 @@ class _AvailabilityState extends State<Availability> {
       );
         }, true, selectedIndex == 0, false),
 
-
-      //
-      // AppBar(title: Column(
-      //   mainAxisAlignment: MainAxisAlignment.start,
-      //   crossAxisAlignment: CrossAxisAlignment.start,
-      //   children: [
-      //     Text(storeName,style: const TextStyle(fontSize: 16),),
-      //     selectedIndex == 0 ?
-      //     const Text("Availability",style: TextStyle(fontSize: 12),) : const Text("Pick List",style: TextStyle(fontSize: 12),),
-      //   ],
-      // ),
-      // actions: [
-      //   if(selectedIndex == 0)
-      //   IconButton(onPressed: (){
-      //
-      //   }, icon: const Icon(Icons.filter_alt_outlined,color: MyColors.whiteColor,))
-      // ],
-      // ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedIndex,
         onTap: (index) => changeIndex(index),
@@ -740,84 +716,6 @@ class _AvailabilityState extends State<Availability> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                    // InkWell(
-                    //   onTap: (){
-                    //     setState(() {
-                    //       currentSelectedValue = "All";
-                    //       isAll = true;
-                    //       isAvl = false;
-                    //       isNotAvl = false;
-                    //       isNotMarked = false;
-                    //     });
-                    //     searchFilteredList();
-                    //   },
-                    //   child: Container(
-                    //     padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-                    //     decoration: BoxDecoration(
-                    //       borderRadius: const BorderRadius.only(topLeft: Radius.circular(5),bottomLeft: Radius.circular(5)),
-                    //         color: isAll ? MyColors.appMainColor : MyColors.background,border: Border.all(color: MyColors.appMainColor)),
-                    //     child: Text("All",style: TextStyle(color: isAll ? MyColors.background : MyColors.appMainColor,fontSize: 12),),
-                    //   ),
-                    // ),
-                    //
-                    //   InkWell(
-                    //     onTap: (){
-                    //       setState(() {
-                    //         currentSelectedValue = "Available";
-                    //         isAll = false;
-                    //         isAvl = true;
-                    //         isNotAvl = false;
-                    //         isNotMarked = false;
-                    //       });
-                    //       searchFilteredList();
-                    //     },
-                    //   child: Container(
-                    //     padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-                    //     decoration: BoxDecoration(
-                    //         color: isAvl ? MyColors.appMainColor : MyColors.background,border: Border.all(color: MyColors.appMainColor)),
-                    //     child: Text("Available",style: TextStyle(color: isAvl ? MyColors.background : MyColors.appMainColor,fontSize: 12),),
-                    //   ),
-                    // ),
-                    //
-                    //   InkWell(
-                    //     onTap: (){
-                    //       setState(() {
-                    //         currentSelectedValue = "Not Available";
-                    //         isAll = false;
-                    //         isAvl = false;
-                    //         isNotAvl = true;
-                    //         isNotMarked = false;
-                    //       });
-                    //       searchFilteredList();
-                    //     },
-                    //   child: Container(
-                    //     padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-                    //     decoration: BoxDecoration(
-                    //         color: isNotAvl ? MyColors.appMainColor : MyColors.background,border: Border.all(color: MyColors.appMainColor)),
-                    //     child: Text("Not Available",style: TextStyle(color: isNotAvl ? MyColors.background : MyColors.appMainColor,fontSize: 12),),
-                    //   ),
-                    // ),
-                    //
-                    //   InkWell(
-                    //     onTap: (){
-                    //       setState(() {
-                    //         currentSelectedValue = 'Not Marked';
-                    //         isAll = false;
-                    //         isAvl = false;
-                    //         isNotAvl = false;
-                    //         isNotMarked = true;
-                    //       });
-                    //       searchFilteredList();
-                    //     },
-                    //   child: Container(
-                    //     padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-                    //     decoration: BoxDecoration(
-                    //         borderRadius: const BorderRadius.only(topRight: Radius.circular(5),bottomRight: Radius.circular(5)),
-                    //         color: isNotMarked ? MyColors.appMainColor : MyColors.background,border: Border.all(color: MyColors.appMainColor)),
-                    //     child: Text("Not Marked",style: TextStyle(color: isNotMarked ? MyColors.background : MyColors.appMainColor,fontSize: 12),),
-                    //   ),
-                    // )
-
                       Expanded(
                           child:  InkWell(
                             onTap: (){
@@ -1025,49 +923,6 @@ class _AvailabilityState extends State<Availability> {
                           )
                       ),
 
-                      // Expanded(
-                      //     child: PercentIndicator(
-                      //         titleText: "",
-                      //         isIcon: true,
-                      //         isMainColor: true,
-                      //         iconData: Icons.check_circle,
-                      //         percentValue: doneItems/availableData.length,
-                      //         percentText: doneItems.toString())
-                      // ),
-                      // Expanded(
-                      //     child: PercentIndicator(
-                      //         titleText: "",
-                      //         isMainColor: false,
-                      //         isIcon: true,
-                      //         iconData: Icons.close,
-                      //         percentValue: pendingItems/availableData.length,
-                      //         percentText: pendingItems.toString())
-                      // ),
-                      // Expanded(
-                      //     child: Card(
-                      //       shape: RoundedRectangleBorder(
-                      //           borderRadius: BorderRadius.circular(10)
-                      //       ),
-                      //       // decoration: BoxDecoration(
-                      //       //   borderRadius: BorderRadius.circular(10),
-                      //       //   border: Border.all(color: MyColors.appMainColor,width: 2)
-                      //       // ),
-                      //       child: Container(
-                      //         padding:const EdgeInsets.symmetric(vertical: 20),
-                      //         child: Column(
-                      //           crossAxisAlignment: CrossAxisAlignment.center,
-                      //           mainAxisAlignment: MainAxisAlignment.center,
-                      //           children: [
-                      //             const SizedBox(height: 10,),
-                      //             const Text("Total",style: TextStyle(color: MyColors.appMainColor,fontSize: 18),),
-                      //             const SizedBox(height: 5,),
-                      //             Text("${availableData.length}",style: const TextStyle(color: MyColors.appMainColor,fontSize: 18),),
-                      //             const SizedBox(height: 10,)
-                      //           ],
-                      //         ),
-                      //       ),
-                      //     )
-                      // )
                     ],
                   ),
                   Expanded(

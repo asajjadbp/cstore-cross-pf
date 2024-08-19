@@ -17,26 +17,26 @@ class Sys_RTVReasonModel {
 
   Map<String, Object?> toMap() {
     return {
-      TableName.sys_rtv_reason_id: id,
-      TableName.sys_rtv_reason_en_name: en_name,
-      TableName.sys_rtv_reason_ar_name: ar_name,
+      TableName.sysId: id,
+      TableName.enName: en_name,
+      TableName.arName: ar_name,
       TableName.sys_rtv_reason_calendar: calendar,
-      TableName.sys_rtv_reason_status: status,
+      TableName.status: status,
     };
   }
 
   Sys_RTVReasonModel.fromJson(Map<String, dynamic> json) {
-    id = json[TableName.sys_rtv_reason_id];
-    en_name = json[TableName.sys_rtv_reason_en_name].toString();
-    ar_name = json[TableName.sys_rtv_reason_ar_name].toString();
+    id = json[TableName.sysId];
+    en_name = json[TableName.enName].toString();
+    ar_name = json[TableName.arName].toString();
     calendar = json[TableName.sys_rtv_reason_calendar].toString();
-    status = json[TableName.sys_rtv_reason_status];
+    status = json[TableName.status];
   }
   Map<String, dynamic> toJson() => {
-    TableName.sys_rtv_reason_id: id,
-    TableName.sys_rtv_reason_en_name: en_name,
-    TableName.sys_rtv_reason_ar_name: ar_name,
+    TableName.sysId: id,
+    TableName.enName: en_name,
+    TableName.arName: ar_name,
     TableName.sys_rtv_reason_calendar: calendar,
-    TableName.sys_rtv_reason_status: status,
+    TableName.status: status,
   };
 }

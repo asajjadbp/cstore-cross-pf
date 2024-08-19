@@ -245,7 +245,7 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
   }
 
   void deletePhoto(int recordId, String imgName) async {
-    await DatabaseHelper.deleteOneRecord(TableName.tbl_trans_osdc, recordId).then((_) async {
+    await DatabaseHelper.deleteOneRecord(TableName.tblTransOsdc, recordId).then((_) async {
       await deleteImageFromLocal(imgName).then((_) {
         _loadImages();
         getTransRTVOne();

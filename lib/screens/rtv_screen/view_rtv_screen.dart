@@ -129,7 +129,7 @@ class _viewrtvScreenState extends State<viewrtvScreen> {
   }
 
   void deletePhoto(int recordId, String imgName) async {
-    await DatabaseHelper.deleteOneRecord(TableName.tbl_trans_rtv, recordId)
+    await DatabaseHelper.deleteOneRecord(TableName.tblTransRtv, recordId)
         .then((_) async {
       _loadImages();
       getTransRTVOne();

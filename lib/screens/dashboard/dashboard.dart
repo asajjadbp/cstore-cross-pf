@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cstore/screens/dashboard/widgets/dashboard_table_widget.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import 'package:cstore/screens/Journey%20Plan/journey_plan_screen.dart';
 import 'package:cstore/screens/utils/app_constants.dart';
@@ -383,132 +384,17 @@ class _DashBoardState extends State<DashBoard> {
                         fontSize: 14,
                         fontFamily: 'lato'),
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Table(
-                    border: TableBorder.all(
-                        borderRadius:
-                        const BorderRadius.all(Radius.circular(7)),
-                        color: MyColors.appMainColor),
-                    children: [
-                      const TableRow(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(5),
-                                  topRight: Radius.circular(5)),
-
-                              color: MyColors.appMainColor),
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.all(9.0),
-                              child: Text(
-                                "Visits",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text(
-                                "Planned",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text(
-                                "Finished",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text(
-                                "Hours",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            )
-                          ]),
-                      TableRow(children: [
-                        const Padding(
-                          padding: EdgeInsets.only(left: 8.0, top: 8.0),
-                          child: Text(
-                            'JP',
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(userDashboardModel.jp_planned.toString()),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text(userDashboardModel.jp_visited.toString()),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(userDashboardModel.working_hrs
-                              .toString()),
-                        ),
-                      ]),
-                      TableRow(children: [
-                        const Padding(
-                          padding: EdgeInsets.only(left: 8.0, top: 8.0),
-                          child: Text('Special'),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(userDashboardModel.out_of_planned
-                              .toString()),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(userDashboardModel.out_of_planned_visited.toString()),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text(""),
-                        ),
-                      ]),
-                      TableRow(
-                          decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(5),
-                                  bottomRight: Radius.circular(5)),
-                              color: MyColors.appMainColor2),
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(left: 8.0, top: 8.0),
-                              child: Text(
-                                'Total',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                totalPlanned.toString(),
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                userDashboardModel.jp_visited.toString(),
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                userDashboardModel.working_hrs.toString(),
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          ]),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 10,
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    child: TableWidget(
+                        jpPlanned: userDashboardModel.jp_planned,
+                        specialPlanned: userDashboardModel.out_of_planned,
+                        jpHours: userDashboardModel.working_hrs,
+                        totalPlanned: userDashboardModel.jp_planned + userDashboardModel.out_of_planned,
+                        jpFinished: userDashboardModel.jp_visited,
+                        specialFinished: userDashboardModel.out_of_planned_visited,
+                        totalFinished: userDashboardModel.jp_visited + userDashboardModel.out_of_planned_visited ,
+                        totalHours: userDashboardModel.working_hrs),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -523,35 +409,37 @@ class _DashBoardState extends State<DashBoard> {
                           "Efficiency"),
                     ],
                   ),
-                  const SizedBox(
-                    height: 10,
-
-                  ),
-                  const Text(
-                    "Activity",
-                    style: TextStyle(fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        fontFamily: 'lato'),
-                  ),
-                  Row(
-                    children: [
-                      cardActivity("Visit Pool", "assets/icons/jp_icon.svg"),
-                      cardActivity("Universe", "assets/icons/universe_icon.svg")
-                    ],
-                  ),
-                  Visibility(
-                    visible: false,
-                    child: Row(
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        cardActivity2(
-                            "Check in", "assets/icons/check_in_icon.svg"),
-                        cardActivity2(
-                            "check out", "assets/icons/check_out_icon.svg")
+                        const Text(
+                          "Activity",
+                          style: TextStyle(fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              fontFamily: 'lato'),
+                        ),
+                        Row(
+                          children: [
+                            cardActivity("Visit Pool", "assets/icons/jp_icon.svg"),
+                            cardActivity("Universe", "assets/icons/universe_icon.svg")
+                          ],
+                        ),
+                        Visibility(
+                          visible: false,
+                          child: Row(
+                            children: [
+                              cardActivity2(
+                                  "Check in", "assets/icons/check_in_icon.svg"),
+                              cardActivity2(
+                                  "check out", "assets/icons/check_out_icon.svg")
+                            ],
+                          ),
+                        ),
                       ],
                     ),
-                  ),
-                  const SizedBox(
-                    height: 10,
                   ),
                   const Text(
                     "MTD",

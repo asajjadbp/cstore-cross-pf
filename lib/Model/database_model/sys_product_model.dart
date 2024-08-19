@@ -31,16 +31,16 @@ class Sys_ProductModel {
 
   Map<String, Object?> toMap() {
     return {
-      TableName.sys_product_id: id,
-      TableName.sys_product_client_id: client_id,
-      TableName.sys_product_en_name: en_name,
-      TableName.sys_product_ar_name: ar_name,
+      TableName.sysId: id,
+      TableName.clientIds: client_id,
+      TableName.enName: en_name,
+      TableName.arName: ar_name,
       TableName.sys_product_image: image,
       TableName.sys_product_principal_id: principal_id,
       TableName.sys_product_cluster_id: cluster_id,
-      TableName.sys_product_cat_id: cat_id,
+      TableName.sysCategoryId: cat_id,
       TableName.sys_product_sub_cat_id: sub_cat_id,
-      TableName.sys_product_brand_id: brand_id,
+      TableName.brandId: brand_id,
       TableName.sys_product_rsp: rsp,
       TableName.sys_product_sku_weight: sku_weight,
 
@@ -48,31 +48,31 @@ class Sys_ProductModel {
   }
 
   Sys_ProductModel.fromJson(Map<String, dynamic> json) {
-    id = json[TableName.sys_product_id];
-    client_id = json[TableName.sys_product_client_id];
-    en_name = json[TableName.sys_product_en_name].toString();
-    ar_name = json[TableName.sys_product_ar_name].toString();
+    id = json[TableName.sysId];
+    client_id = json[TableName.clientIds];
+    en_name = json[TableName.enName].toString();
+    ar_name = json[TableName.arName].toString();
     image = json[TableName.sys_product_image].toString();
     principal_id = json[TableName.sys_product_principal_id].toString();
     cluster_id = json[TableName.sys_product_cluster_id].toString();
-    cat_id = json[TableName.sys_product_cat_id].toString();
+    cat_id = json[TableName.sysCategoryId].toString();
     sub_cat_id = json[TableName.sys_product_sub_cat_id].toString();
-    brand_id = json[TableName.sys_product_brand_id].toString();
+    brand_id = json[TableName.brandId].toString();
     rsp = json[TableName.sys_product_rsp].toString();
     sku_weight = json[TableName.sys_product_sku_weight].toString();
   }
 
   Map<String, dynamic> toJson() => {
-    TableName.sys_product_id: id,
-    TableName.sys_product_client_id: client_id,
-    TableName.sys_product_en_name: en_name,
-    TableName.sys_product_ar_name: ar_name,
+    TableName.sysId: id,
+    TableName.clientIds: client_id,
+    TableName.enName: en_name,
+    TableName.arName: ar_name,
     TableName.sys_product_image: image,
     TableName.sys_product_principal_id: principal_id,
     TableName.sys_product_cluster_id: cluster_id,
-    TableName.sys_product_cat_id: cat_id,
+    TableName.sysCategoryId: cat_id,
     TableName.sys_product_sub_cat_id: sub_cat_id,
-    TableName.sys_product_brand_id: brand_id,
+    TableName.brandId: brand_id,
     TableName.sys_product_rsp: rsp,
     TableName.sys_product_sku_weight: sku_weight,
   };

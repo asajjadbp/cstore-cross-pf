@@ -23,25 +23,25 @@ class TransAvlModel {
 
 
   Map<String, dynamic> toMap() => {
-    TableName.trans_avl_sku_id: sku_id,
+    TableName.skuId: sku_id,
     TableName.trans_avl_status: avl_status,
-    TableName.trans_avl_activity_status: activity_status,
+    TableName.activityStatus: activity_status,
     TableName.trans_avl_req_picklist: req_picklist,
     TableName.trans_avl_actual_picklist:actual_picklist,
     TableName.trans_avl_picklist_reason: picklist_reason,
     TableName.trans_avl_picklist_ready: picklist_ready,
-    TableName.trans_avl_working_id:working_id,};
+    TableName.workingId:working_id,};
 
 
   TransAvlModel.fromJson(Map<String, dynamic> json) {
-    sku_id = json[TableName.trans_avl_sku_id];
+    sku_id = json[TableName.skuId];
     avl_status = json[TableName.trans_avl_status];
-    activity_status = json[TableName.trans_sos_brand_id];
+    activity_status = json[TableName.brandId];
     req_picklist = json[TableName.trans_avl_req_picklist];
     actual_picklist = json[TableName.trans_avl_actual_picklist];
     picklist_reason = json[TableName.trans_avl_picklist_reason];
     picklist_ready = json[TableName.trans_avl_picklist_ready];
-    working_id = json[TableName.trans_avl_working_id];
+    working_id = json[TableName.workingId];
 
   }
 }

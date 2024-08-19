@@ -7,6 +7,8 @@ import 'package:cstore/screens/dashboard/dashboard.dart';
 import 'package:cstore/screens/freshness/Freshness.dart';
 import 'package:cstore/screens/freshness/ViewFreshness.dart';
 import 'package:cstore/screens/knowledge_share/knowledge_share_screen.dart';
+import 'package:cstore/screens/market_issues_show/add_market_issue_screen.dart';
+import 'package:cstore/screens/market_issues_show/market_issues_show.dart';
 import 'package:cstore/screens/osdc/add_osdc.dart';
 import 'package:cstore/screens/osdc/view_osdc.dart';
 import 'package:cstore/screens/other_photo/add_other_photo.dart';
@@ -148,9 +150,11 @@ class _MyAppState extends State<MyApp> {
         StockListScreen.routeName:(context)=>const StockListScreen(),
         SidcoAvailability.routename:(context)=>const SidcoAvailability(),
         ViewRtvOnePlusOneScreen.routeName:(context)=>const ViewRtvOnePlusOneScreen(),
-        RtvOnePlusOneListScreen.routeName:(context)=> RtvOnePlusOneListScreen(),
-        RtvOnePlusOneListScreen.routeName:(context)=> RtvOnePlusOneListScreen(),
-        ViewKnowledgeShare.routename:(context)=> ViewKnowledgeShare(),
+        RtvOnePlusOneListScreen.routeName:(context)=>const RtvOnePlusOneListScreen(),
+        ViewKnowledgeShare.routename:(context)=> const ViewKnowledgeShare(),
+        ProofOfSale.routeName:(context)=>const ProofOfSale(),
+        AddMarketIssue.routeName:(context)=>const AddMarketIssue(),
+        ViewMarketIssueScreen.routename:(context)=>const ViewMarketIssueScreen(),
       },
     );
   }

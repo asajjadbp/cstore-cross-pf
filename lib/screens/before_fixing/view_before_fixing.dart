@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cstore/screens/before_fixing/widgets/before_listng_card_item.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -146,7 +147,7 @@ class _ViewBeforeFixingState extends State<ViewBeforeFixing> {
               child: const Text("Yes"),
               onPressed: () async {
                 await DatabaseHelper.deleteOneRecord(
-                    TableName.tbl_trans_before_faxing, recordId)
+                    TableName.tblTransBeforeFaxing, recordId)
                     .then((_) async {
                   deleteImageFromLocal(imgName).then((_) {
                     _loadImages();
@@ -174,270 +175,145 @@ class _ViewBeforeFixingState extends State<ViewBeforeFixing> {
           ? const Center(
               child: MyLoadingCircle(),
             )
-          : transData.isEmpty
-              ? const Center(
-                  child: Text("No data found"),
-                )
-              : ListView.builder(
-                  itemCount: transData.length,
-                  itemBuilder: (ctx, i) {
-                    return Container(
-                      color: MyColors.background,
-                      margin:
-                          const EdgeInsets.only(left: 10, right: 10, top: 10),
-                      height: 120,
-                      child: Card(
-                        elevation: 1,
-                        color: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0)),
-                        child: Stack(
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  width: 96,
-                                  height: 100,
-                                  padding: const EdgeInsets.only(
-                                    left: 5,
-                                    top: 5,
-                                    bottom: 5.0,
-                                  ),
-                                  margin: EdgeInsets.symmetric(horizontal: 5),
-                                  child: ClipRRect(
-                                      borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(6.0),
-                                        bottomLeft: Radius.circular(6.0),
-                                        topRight: Radius.circular(6.0),
-                                        bottomRight: Radius.circular(6.0),
-                                      ), // Image border
-                                      child: FittedBox(
-                                          fit: BoxFit.cover,
-                                          child: transData[i].imageFile != null
-                                              ? Image.file(
-                                                  transData[i].imageFile as File)
-                                              : Container())),
-                                ),
-                                Expanded(
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Image.asset(
-                                              "assets/icons/client_icon.png"),
-                                          const SizedBox(
-                                            width: 5,
-                                          ),
-                                          Expanded(
-                                              child: Text(
-                                            transData[i].clientName,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w600),
-                                          ))
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          SvgPicture.asset(
-                                            "assets/icons/Component 13.svg",
-                                            width: 10,
-                                            height: 12,
-                                          ),
-                                          const SizedBox(
-                                            width: 5,
-                                          ),
-                                          Expanded(
-                                              child: Text(
-                                                  transData[i].categoryEnName,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                      fontWeight: FontWeight.w600)))
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                if(transData[i].upload_status != 1)
-                                Align(
-                                    alignment: Alignment.topRight,
-                                    child: IconButton(
-                                      onPressed: () {
-                                        deletePhoto(
-                                            transData[i].id, transData[i].img_name);
-                                      },
-                                      icon: const Icon(
-                                        Icons.delete,
-                                        color: Colors.red,
-                                      ),
-                                    ))
-                              ],
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: Container(
-                                padding: const EdgeInsets.all(5),
-                                decoration: const BoxDecoration(
-                                    color: MyColors.appMainColor,
-                                    borderRadius:
-                                    BorderRadius.only(bottomRight: Radius.circular(10))),
-                                child: Text(
-                                  DateFormat('hh:mm aa').format(DateTime.parse(transData[i].dateTime)),
-                                  style: const TextStyle(color: MyColors.whiteColor),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }),
-    );
-  }
-}
+          : Container(
+        margin: const EdgeInsets.only(left: 10, right: 10, top: 10),
+        color: MyColors.background,
+        child: transData.isEmpty
+                ? const Center(
+                    child: Text("No data found"),
+                  )
+                : ListView.builder(
+                    itemCount: transData.length,
+                    itemBuilder: (ctx, i) {
+                      return BeforeFixingCardItem(
+                          imageFile: transData[i].imageFile!,
+                          clientName: transData[i].clientName,
+                          categoryEnName: transData[i].categoryEnName,
+                          uploadStatus: transData[i].upload_status,
+                          dateTime: transData[i].dateTime,
+                          onDeleteTap: (){
+                            deletePhoto(
+                                transData[i].id, transData[i].img_name);
+                          });
 
-class MyCardWidget extends StatelessWidget {
-  final File image;
-  final String name;
-
-  // const MyCardWidget({super.key});
-  MyCardWidget({required this.image, required this.name});
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 10, left: 15),
-          child: Card(
-              elevation: 1,
-              semanticContainer: false,
-              child: Container(
-                // width: 320,
-                // height: 81,
-
-                decoration: BoxDecoration(
-                    color: Color(0xFFFFFFFF),
-                    border: Border.all(color: Colors.black12, width: 1),
-                    borderRadius: BorderRadius.circular(7)),
-                margin: EdgeInsets.only(),
-                child: Row(
-                  children: [
-                    Container(
-                      height: 81,
-                      width: 120,
-                      // margin: EdgeInsets.only(left: 5),
-                      child: FittedBox(
-                          fit: BoxFit.cover,
-                          child: Image.file(
-                            image,
-                            height: 66,
-                            width: 66,
-                          )
-                          // Image(
-                          //   image: AssetImage("assets/images/shelf-photo.png"),
-                          //   height: 66,
-                          //   width: 66,
-                          // ),
-                          ),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 00, left: 20),
-                            child: Row(
-                              children: [
-                                Text(
-                                  "client",
-                                  style: TextStyle(
-                                      fontSize: 14.0,
-                                      fontWeight: FontWeight.w400,
-                                      color: Color.fromRGBO(17, 93, 144, 1)),
-                                ),
-                                SizedBox(
-                                  width: 40,
-                                ),
-                                Text(
-                                  "Nivea",
-                                  style: TextStyle(
-                                      fontSize: 14.0,
-                                      fontWeight: FontWeight.w400,
-                                      color: Color.fromRGBO(17, 93, 144, 1)),
-                                ),
-                                SizedBox(
-                                  width: 60,
-                                ),
-                                // SvgPicture.asset("assets/svg_icons/delt.svg")
-                              ],
-                            ),
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.only(top: 5, left: 20),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    "category",
-                                    style: TextStyle(
-                                        fontSize: 13,
-                                        color: Color.fromRGBO(68, 68, 68, 1)),
-                                  ),
-                                  SizedBox(
-                                    width: 25,
-                                  ),
-                                  Text(
-                                    "Body lotion",
-                                    style: TextStyle(
-                                        fontSize: 13,
-                                        color: Color.fromRGBO(68, 68, 68, 1)),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              )),
-        ),
-        Positioned(
-          bottom: 4,
-          right: 4,
-          child: Container(
-            height: 18,
-            width: 78,
-            decoration: BoxDecoration(
-                color: Colors.blue,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(5),
-                    bottomRight: Radius.circular(5))),
-            child: Center(
-                child: Text(
-              " 11:30 PM",
-              style: TextStyle(fontSize: 10, color: Colors.white),
-            )),
+                      //   Card(
+                      //   elevation: 1,
+                      //   color: Colors.white,
+                      //   shape: RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.circular(10.0)),
+                      //   child: Stack(
+                      //     children: [
+                      //       Row(
+                      //         crossAxisAlignment: CrossAxisAlignment.center,
+                      //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //         children: [
+                      //           Container(
+                      //             width: 96,
+                      //             height: 100,
+                      //             padding: const EdgeInsets.only(
+                      //               left: 5,
+                      //               top: 5,
+                      //               bottom: 5.0,
+                      //             ),
+                      //             margin: EdgeInsets.symmetric(horizontal: 5),
+                      //             child: ClipRRect(
+                      //                 borderRadius: const BorderRadius.only(
+                      //                   topLeft: Radius.circular(6.0),
+                      //                   bottomLeft: Radius.circular(6.0),
+                      //                   topRight: Radius.circular(6.0),
+                      //                   bottomRight: Radius.circular(6.0),
+                      //                 ), // Image border
+                      //                 child: FittedBox(
+                      //                     fit: BoxFit.cover,
+                      //                     child: transData[i].imageFile != null
+                      //                         ? Image.file(
+                      //                             transData[i].imageFile as File)
+                      //                         : Container())),
+                      //           ),
+                      //           Expanded(
+                      //             child: Column(
+                      //               mainAxisAlignment:
+                      //                   MainAxisAlignment.spaceEvenly,
+                      //               crossAxisAlignment: CrossAxisAlignment.center,
+                      //               children: [
+                      //                 Row(
+                      //                   mainAxisAlignment: MainAxisAlignment.start,
+                      //                   crossAxisAlignment:
+                      //                       CrossAxisAlignment.center,
+                      //                   children: [
+                      //                     Image.asset(
+                      //                         "assets/icons/client_icon.png"),
+                      //                     const SizedBox(
+                      //                       width: 5,
+                      //                     ),
+                      //                     Expanded(
+                      //                         child: Text(
+                      //                       transData[i].clientName,
+                      //                       overflow: TextOverflow.ellipsis,
+                      //                       style: TextStyle(
+                      //                           fontWeight: FontWeight.w600),
+                      //                     ))
+                      //                   ],
+                      //                 ),
+                      //                 Row(
+                      //                   mainAxisAlignment: MainAxisAlignment.start,
+                      //                   crossAxisAlignment:
+                      //                       CrossAxisAlignment.center,
+                      //                   children: [
+                      //                     SvgPicture.asset(
+                      //                       "assets/icons/Component 13.svg",
+                      //                       width: 10,
+                      //                       height: 12,
+                      //                     ),
+                      //                     const SizedBox(
+                      //                       width: 5,
+                      //                     ),
+                      //                     Expanded(
+                      //                         child: Text(
+                      //                             transData[i].categoryEnName,
+                      //                             overflow: TextOverflow.ellipsis,
+                      //                             style: TextStyle(
+                      //                                 fontWeight: FontWeight.w600)))
+                      //                   ],
+                      //                 ),
+                      //               ],
+                      //             ),
+                      //           ),
+                      //           if(transData[i].upload_status != 1)
+                      //           Align(
+                      //               alignment: Alignment.topRight,
+                      //               child: IconButton(
+                      //                 onPressed: () {
+                      //                   deletePhoto(
+                      //                       transData[i].id, transData[i].img_name);
+                      //                 },
+                      //                 icon: const Icon(
+                      //                   Icons.delete,
+                      //                   color: Colors.red,
+                      //                 ),
+                      //               ))
+                      //         ],
+                      //       ),
+                      //       Positioned(
+                      //         bottom: 0,
+                      //         right: 0,
+                      //         child: Container(
+                      //           padding: const EdgeInsets.all(5),
+                      //           decoration: const BoxDecoration(
+                      //               color: MyColors.appMainColor,
+                      //               borderRadius:
+                      //               BorderRadius.only(bottomRight: Radius.circular(10))),
+                      //           child: Text(
+                      //             DateFormat('hh:mm aa').format(DateTime.parse(transData[i].dateTime)),
+                      //             style: const TextStyle(color: MyColors.whiteColor),
+                      //           ),
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // );
+                    }),
           ),
-        )
-      ],
     );
   }
 }

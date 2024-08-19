@@ -26,14 +26,14 @@ class ShowTransSOSModel {
 
   Map<String, Object?> toMap() {
     return {
-      TableName.trans_planogram_id: id,
-      TableName.cat_en_name: cat_en_name,
-      TableName.cat_ar_name: cat_ar_name,
+      TableName.sysId: id,
+      TableName.enName: cat_en_name,
+      TableName.arName: cat_ar_name,
       TableName.sys_client_name:client_name,
-      TableName.sys_brand_en_name: brand_en_name,
+      TableName.enName: brand_en_name,
       "total_cat_space": total_cat_space.toString(),
       "actual_space": actual_space.toString(),
-      TableName.sys_brand_ar_name: brand_ar_name,
+      TableName.arName: brand_ar_name,
      "unit": unit,
     };
   }
@@ -42,12 +42,12 @@ class ShowTransSOSModel {
 
 
   ShowTransSOSModel.fromJson(Map<String, dynamic> json) {
-    id = json[TableName.trans_planogram_id];
-    cat_en_name = json[TableName.cat_en_name];
-    cat_ar_name = json[TableName.cat_ar_name];
+    id = json[TableName.sysId];
+    cat_en_name = json[TableName.enName];
+    cat_ar_name = json[TableName.arName];
     client_name = json[TableName.sys_client_name];
-    brand_en_name = json[TableName.sys_brand_en_name];
-    brand_ar_name = json[TableName.sys_brand_ar_name];
+    brand_en_name = json[TableName.enName];
+    brand_ar_name = json[TableName.arName];
     total_cat_space = json["total_cat_space"].toString();
     actual_space = json["actual_space"].toString();
     unit = json["unit"];

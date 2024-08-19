@@ -70,7 +70,7 @@ class _ViewShareOfShelfState extends State<ViewShareOfShelf> {
   }
 
   void deleteSOS(int recordId) async {
-    await DatabaseHelper.deleteOneRecord(TableName.tbl_trans_sos, recordId)
+    await DatabaseHelper.deleteOneRecord(TableName.tblTransSos, recordId)
         .then((_) async {
       getTransSOSOne();
     });

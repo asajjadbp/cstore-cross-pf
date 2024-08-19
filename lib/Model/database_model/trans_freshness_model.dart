@@ -24,7 +24,7 @@ class TransFreshnessModel {
 
   Map<String, Object?> toMap() {
     return {
-      TableName.trans_pricing_sku_id: sku_id,
+      TableName.skuId: sku_id,
       TableName.trans_freshness_year: year,
       TableName.trans_freshness_jan: jan,
       TableName.trans_freshness_feb: feb,
@@ -39,7 +39,7 @@ class TransFreshnessModel {
       TableName.trans_freshness_nov: nov,
       TableName.trans_freshness_dec: dec,
       TableName.trans_freshness_specific_date: specific_date,
-      TableName.trans_upload_status: upload_status,
+      TableName.uploadStatus: upload_status,
       "sku_en_name": sku_en_name,
       "sku_ar_name": sku_ar_name,
       "client_id": sku_en_name,
@@ -48,7 +48,7 @@ class TransFreshnessModel {
   }
 
   TransFreshnessModel.fromJson(Map<String, dynamic> json) {
-    sku_id = json[TableName.trans_freshness_sku_id];
+    sku_id = json[TableName.skuId];
     year = json[TableName.trans_freshness_year];
     jan = json[TableName.trans_freshness_jan];
     feb = json[TableName.trans_freshness_feb];
@@ -64,7 +64,7 @@ class TransFreshnessModel {
     nov = json[TableName.trans_freshness_nov];
     dec = json[TableName.trans_freshness_dec];
     specific_date = json[TableName.trans_freshness_specific_date];
-    upload_status = json[TableName.trans_upload_status];
+    upload_status = json[TableName.uploadStatus];
     sku_en_name = json['sku_en_name'];
     sku_ar_name = json['sku_ar_name'];
     client_id = json['client_id'];

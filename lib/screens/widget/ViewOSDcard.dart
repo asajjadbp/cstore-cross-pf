@@ -39,9 +39,7 @@ class ViewOSDcard extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
     return Card(
-        semanticContainer: false,
         child: Container(
-          height: screenHeight / 6,
           decoration: BoxDecoration(
               color: const Color(0xFFFFFFFF),
               border: Border.all(color: MyColors.dropBorderColor, width: 1),
@@ -49,8 +47,8 @@ class ViewOSDcard extends StatelessWidget {
           child: Row(
             children: [
               Container(
-                width: 100,
-                height: 110,
+                width: 80,
+                height: 80,
                 margin: const EdgeInsets.only(left: 5),
                 child: ClipRRect(
                     borderRadius: const BorderRadius.only(
@@ -70,9 +68,9 @@ class ViewOSDcard extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Container(
-                          margin:EdgeInsets.only(left: 13),
-                          child: Expanded(
+                        Expanded(
+                          child: Container(
+                            margin:const EdgeInsets.symmetric(horizontal: 10),
                             child: Text(
                               brandName,
                               overflow: TextOverflow.ellipsis,
@@ -86,40 +84,38 @@ class ViewOSDcard extends StatelessWidget {
                         if(uploadStatus != 1)
                         InkWell(
                             onTap: () {
-                              // Navigator.push(context, MaterialPageRoute(builder: (context) =>OSD_Screen (),));
+                              onDelete();
                             },
-                            child: IconButton(
-                              onPressed: () {
-                                onDelete();
-                              },
-                              icon: const Icon(
+                            child:  const Icon(
                                 Icons.delete,
                                 color: Colors.red,
-                              ),
                             ))
                       ],
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 13),
-                          child: SvgPicture.asset(
-                            icon1,
-                            width: 10,
-                            height: 12,
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 5),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 13),
+                            child: SvgPicture.asset(
+                              icon1,
+                              width: 10,
+                              height: 12,
+                            ),
                           ),
-                        ),
-                        Expanded(
-                          child: Text(
-                            OSDCReason,
-                            style: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                color: Color.fromRGBO(68, 68, 68, 1)),
+                          Expanded(
+                            child: Text(
+                              OSDCReason,
+                              style: const TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color.fromRGBO(68, 68, 68, 1)),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -143,27 +139,30 @@ class ViewOSDcard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 13),
-                          child: SvgPicture.asset(
-                            icon3,
-                            width: 10,
-                            height: 12,
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 5),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 13),
+                            child: SvgPicture.asset(
+                              icon3,
+                              width: 10,
+                              height: 12,
+                            ),
                           ),
-                        ),
-                        Expanded(
-                          child: Text(
-                            Qty.toString(),
-                            style: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                color: Color.fromRGBO(68, 68, 68, 1)),
+                          Expanded(
+                            child: Text(
+                              Qty.toString(),
+                              style: const TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color.fromRGBO(68, 68, 68, 1)),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),

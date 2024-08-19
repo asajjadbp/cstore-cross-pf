@@ -25,26 +25,26 @@ class AgencyDashboardModel {
 
   Map<String, Object?> toMap() {
     return {
-      TableName.agency_dash_id: id,
-      TableName.agency_dash_en_name: en_name,
-      TableName.agency_dash_ar_name: ar_name,
+      TableName.sysId: id,
+      TableName.enName: en_name,
+      TableName.arName: ar_name,
       TableName.agency_dash_icon: icon,
       TableName.agency_dash_start_date: start_date,
       TableName.agency_dash_end_date: end_date,
-      TableName.agency_dash_status: status,
+      TableName.status: status,
       TableName.agency_dash_accessTo: accessTo,
     };
   }
 
   factory AgencyDashboardModel.fromJson(Map<String, dynamic> json) =>
       AgencyDashboardModel(
-          id: json[TableName.agency_dash_id],
-          en_name: json[TableName.agency_dash_en_name],
-          ar_name: json[TableName.agency_dash_ar_name],
+          id: json[TableName.sysId],
+          en_name: json[TableName.enName],
+          ar_name: json[TableName.arName],
           icon: json[TableName.agency_dash_icon],
           start_date: json[TableName.agency_dash_start_date],
           end_date: json[TableName.agency_dash_end_date],
-          status: json[TableName.agency_dash_status],
+          status: json[TableName.status],
           accessTo: json[TableName.agency_dash_accessTo],
       );
 }

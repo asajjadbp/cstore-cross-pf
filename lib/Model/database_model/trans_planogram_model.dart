@@ -27,29 +27,29 @@ class TransPlanogramModel {
 
   Map<String, Object?> toMap() {
     return {
-      TableName.trans_planogram_client_id: client_id,
-      TableName.trans_planogram_cat_id: cat_id,
-      TableName.trans_planogram_brand_id: brand_id,
-      TableName.trans_planogram_image_name: image_name,
-      TableName.trans_planogram_working_id: working_id,
+      TableName.clientIds: client_id,
+      TableName.sysCategoryId: cat_id,
+      TableName.brandId: brand_id,
+      TableName.imageName: image_name,
+      TableName.workingId: working_id,
       TableName.trans_planogram_is_adherence: is_adherence,
-      TableName.trans_planogram_gcs_status:gcs_status,
-      TableName.trans_upload_status:upload_status,
-      TableName.trans_date_time: date_time,
+      TableName.gcsStatus:gcs_status,
+      TableName.uploadStatus:upload_status,
+      TableName.dateTime: date_time,
       TableName.trans_planogram_reason_id: reason,
     };
   }
 
   TransPlanogramModel.fromJson(Map<String, dynamic> json) {
-    client_id = json[TableName.trans_planogram_client_id];
-    cat_id = json[TableName.trans_planogram_cat_id];
-    brand_id = json[TableName.trans_planogram_brand_id];
-    image_name = json[TableName.trans_planogram_image_name];
-    working_id = json[TableName.trans_planogram_working_id];
+    client_id = json[TableName.clientIds];
+    cat_id = json[TableName.sysCategoryId];
+    brand_id = json[TableName.brandId];
+    image_name = json[TableName.imageName];
+    working_id = json[TableName.workingId];
     is_adherence = json[TableName.trans_planogram_is_adherence];
-    gcs_status = json[TableName.trans_planogram_gcs_status];
-    upload_status = json[TableName.trans_upload_status];
-    date_time = json[TableName.trans_date_time];
+    gcs_status = json[TableName.gcsStatus];
+    upload_status = json[TableName.uploadStatus];
+    date_time = json[TableName.dateTime];
     reason = json[TableName.trans_planogram_reason_id];
   }
 }

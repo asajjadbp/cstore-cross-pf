@@ -25,6 +25,7 @@ import '../Model/database_model/required_module_model.dart';
 import '../Model/database_model/rtv_show_model.dart';
 import '../Model/database_model/show_before_fixing.dart';
 import '../Model/database_model/show_freshness_list_model.dart';
+import '../Model/database_model/show_market_issue_model.dart';
 import '../Model/database_model/show_planogram_model.dart';
 import '../Model/database_model/show_proof_of_sale_model.dart';
 import '../Model/database_model/show_trans_osdc_model.dart';
@@ -32,6 +33,7 @@ import '../Model/database_model/show_trans_rtv_model.dart';
 import '../Model/database_model/show_trans_sos.dart';
 import '../Model/database_model/sys_brand_faces_model.dart';
 import '../Model/database_model/sys_brand_model.dart';
+import '../Model/database_model/sys_market_issue_model.dart';
 import '../Model/database_model/sys_photo_type.dart';
 import '../Model/database_model/sys_product_model.dart';
 import '../Model/database_model/sys_product_placement_model.dart';
@@ -40,6 +42,7 @@ import '../Model/database_model/total_count_response_model.dart';
 import '../Model/database_model/trans_add_proof_of_sale_model.dart';
 import '../Model/database_model/trans_before_faxing.dart';
 import '../Model/database_model/trans_brand_shares_model.dart';
+import '../Model/database_model/trans_market_issue_model.dart';
 import '../Model/database_model/trans_osd_image_model.dart';
 import '../Model/database_model/trans_osdc_model.dart';
 import '../Model/database_model/trans_planogram_model.dart';
@@ -84,26 +87,26 @@ class DatabaseHelper {
         onCreate: (Database db, int version) async {
       // Create your tables here
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_sys_drop_reason +
+          TableName.tblSysDropReason +
           "(" +
-          TableName.drop_id +
+          TableName.sysId +
           " INTEGER PRIMARY KEY UNIQUE," +
-          TableName.drop_en_name +
+          TableName.enName +
           " TEXT, " +
-          TableName.drop_ar_name +
+          TableName.arName +
           " TEXT, " +
-          TableName.drop_status +
+          TableName.status +
           " INTEGER" +
           ")");
 
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_sys_agency_dashboard +
+          TableName.tblSysAgencyDashboard +
           "(" +
-          TableName.agency_dash_id +
+          TableName.sysId +
           " INTEGER PRIMARY KEY UNIQUE," +
-          TableName.agency_dash_en_name +
+          TableName.enName +
           " TEXT, " +
-          TableName.agency_dash_ar_name +
+          TableName.arName +
           " TEXT, " +
           TableName.agency_dash_icon +
           " TEXT, " +
@@ -115,38 +118,38 @@ class DatabaseHelper {
           " TEXT, " +
           TableName.orderBy +
           " INTEGER," +
-          TableName.agency_dash_status +
+          TableName.status +
           " INTEGER" +
           ")");
 
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_sys_category +
+          TableName.tblSysCategory +
           "(" +
-          TableName.cat_id +
+          TableName.sysId +
           " INTEGER PRIMARY KEY UNIQUE," +
-          TableName.cat_en_name +
+          TableName.enName +
           " TEXT, " +
-          TableName.cat_ar_name +
+          TableName.arName +
           " TEXT, " +
-          TableName.cat_client_id +
+          TableName.clientIds +
           " INTEGER" +
           ")");
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_sys_subcategory +
+          TableName.tblSysSubcategory +
           "(" +
-          TableName.cat_id +
+          TableName.sysId +
           " INTEGER PRIMARY KEY UNIQUE," +
-          TableName.cat_en_name +
+          TableName.enName +
           " TEXT, " +
-          TableName.cat_ar_name +
+          TableName.arName +
           " TEXT, " +
-          TableName.cat_client_id +
+          TableName.clientIds +
           " INTEGER" +
           ")");
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_sys_client +
+          TableName.tblSysClient +
           "(" +
-          TableName.sys_client_id +
+          TableName.clientIds +
           " INTEGER PRIMARY KEY UNIQUE," +
           TableName.sys_client_name +
           " TEXT, " +
@@ -167,91 +170,91 @@ class DatabaseHelper {
           ")");
 
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_sys_planogram_reason +
+          TableName.tblSysPlanogramReason +
           "(" +
-          TableName.planogram_reason_id +
+          TableName.sysId +
           " INTEGER PRIMARY KEY UNIQUE," +
-          TableName.planogram_reason_en_name +
+          TableName.enName +
           " TEXT, " +
-          TableName.planogram_reason_ar_name +
+          TableName.arName +
           " INTEGER, " +
-          TableName.planogram_status +
+          TableName.status +
           " INTEGER" +
           ")");
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_sys_brand +
+          TableName.tblSysBrand +
           "(" +
-          TableName.sys_brand_id +
+          TableName.sysId +
           " INTEGER PRIMARY KEY UNIQUE," +
-          TableName.sys_brand_en_name +
+          TableName.enName +
           " TEXT, " +
-          TableName.sys_brand_ar_name +
+          TableName.arName +
           " TEXT, " +
-          TableName.sys_brand_client_id +
+          TableName.clientIds +
           " INTEGER" +
           ")");
 
       ///Rtv Reason Table
 
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_sys_rtv_reason+
+          TableName.tblSysRtvReason+
           "(" +
-          TableName.sys_rtv_reason_id +
+          TableName.sysId +
           " INTEGER PRIMARY KEY UNIQUE," +
-          TableName.sys_rtv_reason_en_name +
+          TableName.enName +
           " TEXT, " +
-          TableName.sys_rtv_reason_ar_name +
+          TableName.arName +
           " TEXT, " +
           TableName.sys_rtv_reason_calendar +
           " INTEGER, " +
-          TableName.sys_rtv_reason_status +
+          TableName.status +
           " INTEGER" +
           ")");
 
 
       await db.execute('CREATE TABLE '+
-          TableName.tbl_sys_photo_type+
+          TableName.tblSysPhototype+
           "(" +
-          TableName.sys_photo_type_id +
+          TableName.sysId +
           " INTEGER PRIMARY KEY UNIQUE," +
-          TableName.sys_photo_type_en_name +
+          TableName.enName +
           " TEXT, " +
-          TableName.sys_photo_type_ar_name +
+          TableName.arName +
           " TEXT" +
           ")");
 
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_sys_osdc_type+
+          TableName.tblSysOsdcType+
           "(" +
-          TableName.sys_osdc_type_id +
+          TableName.sysId +
           " INTEGER PRIMARY KEY UNIQUE," +
-          TableName.sys_osdc_type_en_name +
+          TableName.enName +
           " TEXT, " +
-          TableName.sys_osdc_type_ar_name +
+          TableName.arName +
           " TEXT" +
           ")");
 
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_sys_osdc_reason+
+          TableName.tblSysOsdcReason+
           "(" +
-          TableName.sys_osdc_reason_id +
+          TableName.sysId +
           " INTEGER PRIMARY KEY UNIQUE," +
-          TableName.sys_osdc_reason_en_name +
+          TableName.enName +
           " TEXT, " +
-          TableName.sys_osdc_reason_ar_name +
+          TableName.arName +
           " TEXT" +
           ")");
 
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_sys_product+
+          TableName.tblSysProduct+
           "(" +
-          TableName.sys_product_id +
+          TableName.sysId +
           " INTEGER PRIMARY KEY UNIQUE," +
-          TableName.sys_product_client_id +
+          TableName.clientIds +
           " INTEGER, " +
-          TableName.sys_product_en_name +
+          TableName.enName +
           " TEXT, " +
-          TableName.sys_product_ar_name +
+          TableName.arName +
           " TEXT, " +
           TableName.sys_product_image +
           " TEXT, " +
@@ -259,11 +262,11 @@ class DatabaseHelper {
           " INTEGER, " +
           TableName.sys_product_cluster_id +
           " INTEGER, " +
-          TableName.sys_product_cat_id +
+          TableName.sysCategoryId +
           " INTEGER, " +
           TableName.sys_product_sub_cat_id +
           " INTEGER, " +
-          TableName.sys_product_brand_id +
+          TableName.brandId +
           " INTEGER, " +
           TableName.sys_product_rsp +
           " TEXT, " +
@@ -273,28 +276,28 @@ class DatabaseHelper {
 
       await db.execute(
           'CREATE TABLE ' +
-              TableName.tbl_sys_store_pog +
+              TableName.tblSysStorePog +
               ' (' +
-              TableName.trans_photo_client_id + ' INTEGER, ' +
-              TableName.sys_store_pog_storeid + ' INTEGER, ' +
-              TableName.sys_store_pog_catId + ' INTEGER, ' +
+              TableName.clientIds + ' INTEGER, ' +
+              TableName.storeId + ' INTEGER, ' +
+              TableName.sysCategoryId + ' INTEGER, ' +
               TableName.sys_store_pog + ' TEXT, ' +
               TableName.sys_store_pog_image + ' TEXT, ' +
               'CONSTRAINT unique_key UNIQUE (' +
-              TableName.sys_store_pog_storeid + ', ' +
-              TableName.sys_store_pog_catId + ', ' +
+              TableName.storeId + ', ' +
+              TableName.sysCategoryId + ', ' +
               TableName.sys_store_pog +
               ')' +
               ')');
 
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_sys_product_placement +
+          TableName.tblSysProductPlacement +
           "(" +
-          TableName.sys_product_placement_id +
+          TableName.skuId +
           " INTEGER, " +
-          TableName.sys_product_placement_storeId +
+          TableName.storeId +
           " INTEGER, " +
-          TableName.sys_product_placement_cat_id +
+          TableName.sysCategoryId +
           " INTEGER, " +
           TableName.sys_product_placement_pog +
           " TEXT, " +
@@ -313,51 +316,51 @@ class DatabaseHelper {
           TableName.sys_product_placement_rank_x +
           " TEXT, " +
           'CONSTRAINT unique_key UNIQUE (' +
-          TableName.sys_product_placement_storeId + ', ' +
-          TableName.sys_product_placement_id +
+          TableName.storeId + ', ' +
+          TableName.skuId +
           ')' +
           ')');
 
       await db.execute(
           'CREATE TABLE ' +
-              TableName.tbl_sys_brand_faces +
+              TableName.tblSysBrandFaces +
               ' (' +
-              TableName.sys_brand_faces_storeId + ' INTEGER, ' +
-              TableName.sys_client_id + ' INTEGER, ' +
-              TableName.sys_brand_faces_catId + ' INTEGER, ' +
-              TableName.sys_brand_faces_brandId + ' INTEGER, ' +
+              TableName.storeId + ' INTEGER, ' +
+              TableName.clientIds + ' INTEGER, ' +
+              TableName.sysCategoryId + ' INTEGER, ' +
+              TableName.brandId + ' INTEGER, ' +
               TableName.sys_brand_faces_givenFaces + ' INTEGER, ' +
               'CONSTRAINT unique_key UNIQUE (' +
-              TableName.sys_brand_faces_storeId + ', ' +
-              TableName.sys_brand_faces_catId + ', ' +
-              TableName.sys_brand_faces_brandId +
+              TableName.storeId + ', ' +
+              TableName.sysCategoryId + ', ' +
+              TableName.brandId +
               ')' +
               ')');
 
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_sys_sos_units+
+          TableName.tblSysSosUnits+
           "(" +
-          TableName.sys_osdc_type_id +
+          TableName.sysId +
           " INTEGER PRIMARY KEY UNIQUE," +
-          TableName.sys_osdc_type_en_name +
+          TableName.enName +
           " TEXT, " +
-          TableName.sys_osdc_type_ar_name +
+          TableName.arName +
           " TEXT" +
           ")");
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_sys_daily_checklist+
+          TableName.tblSysDailyChecklist+
           "(" +
-          TableName.sys_osdc_type_id +
+          TableName.sysId +
           " INTEGER PRIMARY KEY UNIQUE," +
-          TableName.sys_osdc_type_en_name +
+          TableName.enName +
           " TEXT, " +
-          TableName.sys_osdc_type_ar_name +
+          TableName.arName +
           " TEXT" +
           ")");
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_sys_app_setting+
+          TableName.tblSysAppSetting+
           "(" +
-          TableName.sys_app_settingId +
+          TableName.storeId +
           " INTEGER PRIMARY KEY UNIQUE," +
           TableName.sys_app_settingBgServices +
           " TEXT, " +
@@ -403,89 +406,89 @@ class DatabaseHelper {
 
       //---------***********create trans table here*************---------
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_trans_before_faxing +
+          TableName.tblTransBeforeFaxing +
           "(" +
-          TableName.trans_photo_id +
+          TableName.sysId +
           " INTEGER PRIMARY KEY AUTOINCREMENT," +
-          TableName.trans_photo_client_id +
+          TableName.clientIds +
           " INTEGER, " +
           TableName.trans_photo_type_id +
           " INTEGER, " +
-          TableName.trans_photo_cat_id +
+          TableName.sysCategoryId +
           " INTEGER, " +
-          TableName.trans_photo_name +
+          TableName.imageName +
           " TEXT, " +
-          TableName.trans_photo_gcs_status +
+          TableName.gcsStatus +
           " INTEGER, " +
-          TableName.trans_date_time +
+          TableName.dateTime +
           " TEXT, " +
-          TableName.trans_upload_status+
+          TableName.uploadStatus+
           " INTEGER, " +
-          TableName.trans_photo_working_id +
+          TableName.workingId +
           " INTEGER" +
           ")");
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_trans_photo +
+          TableName.tblTransPhoto +
           "(" +
-          TableName.trans_photo_id +
+          TableName.sysId +
           " INTEGER PRIMARY KEY AUTOINCREMENT," +
-          TableName.trans_photo_client_id +
+          TableName.clientIds +
           " INTEGER, " +
           TableName.trans_photo_type_id +
           " INTEGER, " +
-          TableName.trans_photo_cat_id +
+          TableName.sysCategoryId +
           " INTEGER, " +
-          TableName.trans_other_photo_type_id +
+          TableName.type_id +
           " INTEGER, " +
-          TableName.trans_photo_name +
+          TableName.imageName +
           " TEXT, " +
-          TableName.trans_photo_gcs_status +
+          TableName.gcsStatus +
           " INTEGER, " +
-          TableName.trans_date_time +
+          TableName.dateTime +
           " TEXT, " +
-          TableName.trans_upload_status+
+          TableName.uploadStatus+
           " INTEGER, " +
-          TableName.trans_photo_working_id +
+          TableName.workingId +
           " INTEGER" +
           ")");
 
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_trans_planogram +
+          TableName.tblTransPlanogram +
           "(" +
-          TableName.trans_planogram_id +
+          TableName.sysId +
           " INTEGER PRIMARY KEY AUTOINCREMENT," +
-          TableName.trans_planogram_client_id +
+          TableName.clientIds +
           " INTEGER, " +
-          TableName.trans_planogram_cat_id +
+          TableName.sysCategoryId +
           " INTEGER, " +
-          TableName.trans_planogram_brand_id +
+          TableName.brandId +
           " INTEGER, " +
-          TableName.trans_planogram_image_name +
+          TableName.imageName +
           " TEXT, " +
           TableName.trans_planogram_is_adherence +
           " INTEGER, " +
-          TableName.trans_planogram_gcs_status +
+          TableName.gcsStatus +
           " INTEGER, " +
           TableName.trans_planogram_reason_id +
           " INTEGER," +
-          TableName.trans_date_time +
+          TableName.dateTime +
           " TEXT, " +
-          TableName.trans_upload_status+
+          TableName.uploadStatus+
           " INTEGER, " +
-          TableName.trans_planogram_working_id +
+          TableName.workingId +
           " INTEGER" +
           ")");
 
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_trans_sos +
+          TableName.tblTransSos +
           "(" +
-          TableName.trans_sos_id +
+          TableName.sysId +
           " INTEGER PRIMARY KEY AUTOINCREMENT," +
-          TableName.trans_sos_client_id +
+          TableName.clientIds +
           " INTEGER, " +
-          TableName.trans_sos_cat_id +
+          TableName.sysCategoryId +
           " INTEGER, " +
-          TableName.trans_sos_brand_id +
+          TableName.brandId +
           " INTEGER, " +
           TableName.trans_sos_cat_space +
           " TEXT, " +
@@ -493,21 +496,21 @@ class DatabaseHelper {
           " TEXT, " +
           TableName.trans_sos_unit +
           " TEXT, " +
-          TableName.trans_date_time +
+          TableName.dateTime +
           " TEXT, " +
-          TableName.trans_upload_status+
+          TableName.uploadStatus+
           " INTEGER, " +
-          TableName.trans_sos_working_id +
+          TableName.workingId +
           " INTEGER" +
           ")");
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_trans_availability +
+          TableName.tblTransAvailability +
           "(" +
-          TableName.trans_avl_sku_id +
+          TableName.skuId +
           " INTEGER , " +
           TableName.trans_avl_status +
           " INTEGER, " +
-          TableName.trans_avl_activity_status +
+          TableName.transActivityStatus +
           " INTEGER, " +
           TableName.trans_avl_req_picklist +
           " INTEGER, " +
@@ -519,74 +522,74 @@ class DatabaseHelper {
           " INTEGER, " +
           TableName.trans_pick_upload_status +
           " INTEGER, " +
-          TableName.trans_avl_client_id +
+          TableName.clientIds +
           " INTEGER, " +
-          TableName.trans_date_time +
+          TableName.dateTime +
           " TEXT, " +
           TableName.trans_avl_picker_name +
           " TEXT, " +
-          TableName.trans_upload_status +
+          TableName.uploadStatus +
           " INTEGER, " +
-          TableName.trans_avl_working_id +
+          TableName.workingId +
           " INTEGER, " +
           TableName.trans_avl_send_time +
           " TEXT, " +
           TableName.trans_avl_receive_time +
           " TEXT, " +
           'CONSTRAINT unique_key UNIQUE (' +
-          TableName.trans_avl_sku_id + ', ' +
-          TableName.trans_avl_working_id +
+          TableName.skuId + ', ' +
+          TableName.workingId +
           ')'+')');
 
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_trans_rtv +
+          TableName.tblTransRtv +
           "(" +
-          TableName.trans_rtv_id +
+          TableName.sysId +
           " INTEGER PRIMARY KEY UNIQUE, " +
-          TableName.trans_rtv_sku_id +
+          TableName.skuId +
           " INTEGER " +
-          TableName.trans_rtv_type_id +
+          TableName.type_id +
           " INTEGER, " +
           TableName.trans_rtv_reason +
           " INTEGER, " +
-          TableName.trans_rtv_pieces +
+          TableName.pieces +
           " INTEGER, " +
           TableName.trans_rtv_expire_date+
           " TEXT, " +
-          TableName.trans_rtv_image_name +
+          TableName.imageName +
           " TEXT, " +
           TableName.trans_rtv_activity_status +
           " INTEGER, " +
-          TableName.trans_rtv_gcs_status +
+          TableName.gcsStatus +
           " INTEGER, " +
-          TableName.trans_date_time +
+          TableName.dateTime +
           " TEXT, " +
-          TableName.trans_upload_status+
+          TableName.uploadStatus+
           " INTEGER, " +
-          TableName.trans_rtv_working_id +
+          TableName.workingId +
           " INTEGER" +
           ")");
 
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_trans_pricing +
+          TableName.tblTransPricing +
           "(" +
-          TableName.trans_pricing_sku_id +
+          TableName.skuId +
           " INTEGER , " +
           TableName.trans_pricing_regular +
           " TEXT, " +
           TableName.trans_pricing_promo +
           " TEXT, " +
-          TableName.trans_date_time +
+          TableName.dateTime +
           " TEXT, " +
-          TableName.trans_upload_status +
+          TableName.uploadStatus +
           " INTEGER, " +
           TableName.trans_rtv_activity_status +
           " INTEGER, " +
-          TableName.trans_pricing_working_id +
+          TableName.workingId +
           " INTEGER, " +
           'CONSTRAINT unique_key UNIQUE (' +
-          TableName.trans_pricing_sku_id + ', ' +
-          TableName.trans_pricing_working_id +
+          TableName.skuId + ', ' +
+          TableName.workingId +
           ')' +
           ')');
 
@@ -621,11 +624,11 @@ class DatabaseHelper {
           ")");
 
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_trans_freshness +
+          TableName.tblTransFreshness +
           "(" +
-          TableName.trans_pricing_sku_id +
+          TableName.skuId +
           " INTEGER , " +
-          TableName.trans_osdc_client_id +
+          TableName.clientIds +
           " INTEGER , " +
           TableName.trans_freshness_year +
           " INTEGER, " +
@@ -655,213 +658,151 @@ class DatabaseHelper {
           " INTEGER, " +
           TableName.trans_freshness_specific_date +
           " INTEGER, " +
-          TableName.trans_freshness_date_time +
+          TableName.dateTime +
           " TEXT, " +
-          TableName.trans_upload_status +
+          TableName.uploadStatus +
           " INTEGER, " +
-          TableName.trans_freshness_working_id +
+          TableName.workingId +
           " INTEGER, " +
           'CONSTRAINT unique_key UNIQUE (' +
-          TableName.trans_freshness_date_time +
+          TableName.dateTime +
           ', ' +
-          TableName.trans_freshness_working_id +
+          TableName.workingId +
           ')' +
           ')');
 
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_trans_stock +
+          TableName.tblTransStock +
           "(" +
-          TableName.trans_stock_sku_id +
+          TableName.skuId +
           " INTEGER, " +
           TableName.trans_stock_cases +
           " INTEGER, " +
-          TableName.trans_avl_client_id +
+          TableName.clientIds +
           " INTEGER, " +
           TableName.trans_stock_outer +
           " INTEGER, " +
-          TableName.trans_stock_pieces +
+          TableName.pieces +
           " INTEGER, " +
-          TableName.trans_upload_status +
+          TableName.uploadStatus +
           " INTEGER, " +
           TableName.trans_rtv_activity_status +
           " INTEGER, " +
-          TableName.trans_date_time +
+          TableName.dateTime +
           " INTEGER, " +
-          TableName.trans_pricing_working_id +
+          TableName.workingId +
           " INTEGER, " +
           'CONSTRAINT unique_key UNIQUE (' +
-          TableName.trans_date_time +
+          TableName.dateTime +
           ', ' +
-          TableName.trans_pricing_working_id +
+          TableName.workingId +
           ')' +
           ')');
 
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_trans_osdc +
+          TableName.tblTransOsdc +
           "(" +
-          TableName.trans_osdc_id+
+          TableName.sysId+
           " INTEGER PRIMARY KEY AUTOINCREMENT," +
-          TableName.trans_osdc_brand_id +
+          TableName.brandId +
           " INTEGER, " +
           TableName.trans_osdc_reason_id+
           " INTEGER, " +
           TableName.trans_osdc_quantity+
           " INTEGER, " +
-          TableName.trans_osdc_gcs_status+
+          TableName.gcsStatus+
           " INTEGER, " +
-          TableName.trans_osdc_type_id+
+          TableName.type_id+
           " INTEGER, " +
-          TableName.trans_osdc_client_id+
+          TableName.clientIds+
           " INTEGER, " +
-          TableName.trans_date_time +
+          TableName.dateTime +
           " TEXT, " +
-          TableName.trans_upload_status+
+          TableName.uploadStatus+
           " INTEGER, " +
-          TableName.trans_osdc_working_id +
+          TableName.workingId +
           " INTEGER" +
           ")");
 
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_trans_osdc_images +
+          TableName.tblTransOsdcImages +
           "(" +
-          TableName.trans_osdc_images_id+
+          TableName.sysId+
           " INTEGER PRIMARY KEY AUTOINCREMENT," +
           TableName.trans_osdc_main_id +
           " INTEGER, " +
-          TableName.trans_osdc_imagesName+
+          TableName.workingId +
+          " INTEGER, " +
+          TableName.imageName+
           " INTEGER" +
           ")");
-
-      await db.execute(
-          'CREATE TABLE ' +
-              TableName.tbl_trans_one_plus_one +
-              ' (' +
-              TableName.col_id +
-              " INTEGER PRIMARY KEY AUTOINCREMENT," +
-              TableName.sku_id +
-              " INTEGER, " +
-              TableName.client_id +
-              " INTEGER, " +
-              TableName.pieces +
-              " INTEGER, " +
-              TableName.trans_one_plus_one_doc_no +
-              " TEXT, " +
-              TableName.trans_one_plus_one_comment +
-              " TEXT, " +
-              TableName.trans_one_plus_one_type +
-              " TEXT, " +
-              TableName.image_name +
-              " TEXT, " +
-              TableName.trans_one_plus_one_doc_image +
-              " TEXT, " +
-              TableName.trans_date_time +
-              " TEXT, " +
-              TableName.upload_status +
-              " INTEGER, " +
-              TableName.gcs_status +
-              " INTEGER, " +
-              TableName.activity_status +
-              " INTEGER, " +
-              TableName.working_id +
-              " INTEGER, " +
-              'CONSTRAINT unique_key UNIQUE (' +
-              TableName.workingId + ', ' +
-              TableName.trans_one_plus_one_doc_no + ', ' +
-              TableName.skuId +
-              ')' +
-              ')');
-
-      // await db.execute('CREATE TABLE ' +
-      //     TableName.tbl_trans_promoplan +
-      //     "(" +
-      //     TableName.trans_promo_id+
-      //     " INTEGER PRIMARY KEY AUTOINCREMENT," +
-      //     TableName.trans_promo_db_id +
-      //     " INTEGER, " +
-      //     TableName.trans_promo_plan_id +
-      //     " INTEGER, " +
-      //     TableName.trans_promo_status+
-      //     " INTEGER, " +
-      //     TableName.trans_promo_reason+
-      //     " TEXT, " +
-      //     TableName.trans_promo_image_name+
-      //     " TEXT, " +
-      //     TableName.trans_date_time +
-      //     " TEXT, " +
-      //     TableName.trans_upload_status+
-      //     " INTEGER, " +
-      //     TableName.trans_promo_working_id +
-      //     " INTEGER" +
-      //     ")");
-
-
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_trans_planoguide +
+          TableName.tblTransPlanoguide +
           "(" +
-          TableName.trans_planoguide_id +
+          TableName.sysId +
           " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-          TableName.trans_planoguide_catId +
+          TableName.sysCategoryId +
           " INTEGER, " +
-          TableName.sys_client_id +
+          TableName.clientIds +
           " INTEGER, " +
-          TableName.trans_planoguide_storeId +
+          TableName.storeId +
           " INTEGER, " +
           TableName.trans_planoguide_pog +
           " TEXT, " +
           TableName.trans_planoguide_isAdherence +
           " TEXT, " +
-          TableName.trans_planoguide_imageName +
+          TableName.imageName +
           " TEXT, " +
           TableName.trans_planoguide_skuImageName +
           " TEXT, " +
-          TableName.trans_planoguide_dateTime +
+          TableName.dateTime +
           " TEXT, " +
-          TableName.trans_planoguide_upload_status +
+          TableName.uploadStatus +
           " INTEGER, " +
-          TableName.trans_planoguide_activity_status +
+          TableName.transActivityStatus +
           " INTEGER, " +
-          TableName.trans_planoguide_gcs_status +
+          TableName.gcsStatus +
           " INTEGER, " +
-          TableName.trans_planoguide_working_id +
+          TableName.workingId +
           " INTEGER, " +
           'CONSTRAINT unique_key UNIQUE (' +
-          TableName.trans_planoguide_storeId + ', ' +
-          TableName.trans_planoguide_catId + ', ' +
+          TableName.storeId + ', ' +
+          TableName.sysCategoryId + ', ' +
           TableName.trans_planoguide_pog + ', ' +
-          TableName.trans_planoguide_working_id +
+          TableName.workingId +
           ')' +
           ')');
 
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_trans_BrandShare +
+          TableName.tblTransBrandShare +
           "(" +
-          TableName.trans_brand_shares_id +
+          TableName.sysId +
           " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-          TableName.trans_brand_shares_catId +
+          TableName.sysCategoryId +
           " INTEGER, " +
-          TableName.sys_client_id +
+          TableName.clientIds +
           " INTEGER, " +
           TableName.trans_brand_shares_storeId +
           " INTEGER, " +
-          TableName.trans_brand_shares_brandId +
+          TableName.brandId +
           " INTEGER, " +
           TableName.trans_brand_shares_givenFaces +
           " TEXT, " +
           TableName.trans_brand_shares_actualFaces +
           " TEXT, " +
-          TableName.trans_brand_shares_dateTime +
+          TableName.dateTime +
           " TEXT, " +
-          TableName.trans_brand_shares_uploadStauts +
+          TableName.uploadStatus +
           " INTEGER, " +
-          TableName.trans_planoguide_activity_status +
+          TableName.transActivityStatus +
           " INTEGER, " +
-          TableName.trans_brand_shares_workingId +
+          TableName.workingId +
           " INTEGER, " +
           'CONSTRAINT unique_key UNIQUE (' +
           TableName.trans_brand_shares_storeId + ', ' +
-          TableName.trans_brand_shares_brandId + ', ' +
-          TableName.trans_brand_shares_catId + ', ' +
-          TableName.trans_planoguide_working_id +
+          TableName.brandId + ', ' +
+          TableName.sysCategoryId + ', ' +
+          TableName.workingId +
           ')' +
           ')');
 
@@ -869,13 +810,13 @@ class DatabaseHelper {
       ///PickList Addition
 
       await db.execute('CREATE TABLE ' +
-          TableName.tbl_picklist +
+          TableName.tblPicklist +
           "(" +
           TableName.picklist_id +
           " INTEGER PRIMARY KEY UNIQUE," +
-          TableName.picklist_store_id +
+          TableName.storeId +
           " INTEGER,"+
-          TableName.picklist_category_id +
+          TableName.sysCategoryId +
           " INTEGER,"+
           TableName.picklist_tmr_id +
           " INTEGER,"+
@@ -887,9 +828,9 @@ class DatabaseHelper {
           " TEXT," +
           TableName.picklist_shift_time  +
           " TEXT," +
-          TableName.picklist_en_cat_name +
+          TableName.enName +
           " TEXT," +
-          TableName.picklist_ar_cat_name  +
+          TableName.arName  +
           " TEXT," +
           TableName.picklist_sku_picture  +
           " TEXT," +
@@ -901,7 +842,7 @@ class DatabaseHelper {
           " INTEGER,"+
           TableName.picklist_req_picklist    +
           " INTEGER,"+
-          TableName.trans_upload_status +
+          TableName.uploadStatus +
           " INTEGER, " +
           TableName.picklist_picklist_ready  +
           " INTEGER, "+
@@ -1009,13 +950,13 @@ class DatabaseHelper {
       await db.execute('CREATE TABLE ' +
     TableName.tblSysKnowledgeShare +
     "(" +
-    TableName.col_id +
+    TableName.sysId +
     " INTEGER PRIMARY KEY UNIQUE," +
     TableName.sys_knowledge_title +
     " TEXT, " +
     TableName.sys_knowledge_des +
     " TEXT, " +
-    TableName.client_id +
+    TableName.clientIds +
     " INTEGER, " +
     TableName.chain_id +
     " INTEGER, " +
@@ -1030,12 +971,13 @@ class DatabaseHelper {
     TableName.sys_issue_update_at +
     " TEXT" +
     ")");
+
       await db.execute(
           'CREATE TABLE ' +
-              TableName.tbl_trans_POS +
+              TableName.tblTransPOS +
               ' (' +
               TableName.skuId + ' INTEGER, ' +
-              TableName.client_id + ' INTEGER, ' +
+              TableName.clientIds + ' INTEGER, ' +
               TableName.sysCategoryId + ' INTEGER, ' +
               TableName.trans_pos_name + ' TEXT, ' +
               TableName.trans_pos_email + ' TEXT, ' +
@@ -1044,14 +986,91 @@ class DatabaseHelper {
               TableName.quantity + ' INTEGER, ' +
               TableName.imageName + ' TEXT, ' +
               TableName.uploadStatus + ' INTEGER, ' +
-              TableName.gcs_status + ' INTEGER, ' +
-              TableName.working_id + ' INTEGER, ' +
+              TableName.gcsStatus + ' INTEGER, ' +
+              TableName.workingId + ' INTEGER, ' +
               TableName.dateTime + ' INTEGER, ' +
               'CONSTRAINT unique_key UNIQUE (' +
               TableName.workingId + ', ' +
               TableName.skuId +
               ')' +
               ')');
+
+      await db.execute(
+          'CREATE TABLE ' +
+              TableName.tblTransOnePlusOne +
+              ' (' +
+              TableName.sysId +
+              " INTEGER PRIMARY KEY AUTOINCREMENT," +
+              TableName.skuId +
+              " INTEGER, " +
+              TableName.clientIds +
+              " INTEGER, " +
+              TableName.pieces +
+              " INTEGER, " +
+              TableName.trans_one_plus_one_doc_no +
+              " TEXT, " +
+              TableName.trans_one_plus_one_comment +
+              " TEXT, " +
+              TableName.trans_one_plus_one_type +
+              " TEXT, " +
+              TableName.imageName +
+              " TEXT, " +
+              TableName.trans_one_plus_one_doc_image +
+              " TEXT, " +
+              TableName.dateTime +
+              " TEXT, " +
+              TableName.uploadStatus +
+              " INTEGER, " +
+              TableName.gcsStatus +
+              " INTEGER, " +
+              TableName.activityStatus +
+              " INTEGER, " +
+              TableName.workingId +
+              " INTEGER, " +
+              'CONSTRAINT unique_key UNIQUE (' +
+              TableName.workingId + ', ' +
+              TableName.trans_one_plus_one_doc_no + ', ' +
+              TableName.skuId +
+              ')' +
+              ')');
+
+
+      await db.execute('CREATE TABLE ' +
+          TableName.tblSysMarketIssue +
+          "(" +
+          TableName.sysId +
+          " INTEGER PRIMARY KEY UNIQUE," +
+          TableName.trans_pos_name +
+          " TEXT, " +
+          TableName.status +
+          " INTEGER, " +
+          TableName.sys_issue_update_at +
+          " TEXT" +
+          ")");
+
+      await db.execute('CREATE TABLE ' +
+          TableName.tblTransMarketIssue +
+          "(" +
+          TableName.sysId +
+          " INTEGER PRIMARY KEY AUTOINCREMENT," +
+          TableName.sys_issue_id +
+          " INTEGER, " +
+          TableName.clientIds +
+          " INTEGER, " +
+          TableName.trans_one_plus_one_comment +
+          " TEXT, " +
+          TableName.imageName +
+          " TEXT, " +
+          TableName.dateTime +
+          " TEXT, " +
+          TableName.uploadStatus +
+          " INTEGER, " +
+          TableName.gcsStatus +
+          " INTEGER, " +
+          TableName.workingId +
+          " INTEGER" +
+          ")");
+
 
         });
 
@@ -1084,13 +1103,13 @@ class DatabaseHelper {
         TableName.sys_app_settingPicklisTime: data.isPicklistTime.toString(),
       };
       bool isDuplicate = await hasDuplicateEntry(
-          db, TableName.tbl_sys_app_setting, fields);
+          db, TableName.tblSysAppSetting, fields);
 
       if (isDuplicate) {
         print("Error: Duplicate entry App Setting type");
       } else {
         await db.insert(
-          TableName.tbl_sys_app_setting,
+          TableName.tblSysAppSetting,
           {
             TableName.sys_app_settingBgServices: data.isBgServices.toString(),
             TableName.sys_app_settingBgServiceMinute: data.isBgMinute.toString(),
@@ -1252,7 +1271,6 @@ class DatabaseHelper {
     }
     return false;
   }
-
   ///Insert Dashboard to system table
   static Future<bool> insertSysDashboardArray(List<UserDashboardModel> modelList) async {
     var db = await initDataBase();
@@ -1309,28 +1327,27 @@ class DatabaseHelper {
     }
     return false;
   }
-
   static Future<bool> insertDailyCheckListArray(List<Sys_OSDCTypeModel> modelList) async {
     var db = await initDataBase();
 
     for (Sys_OSDCTypeModel data in modelList) {
       Map<String, dynamic> fields = {
-        TableName.sys_osdc_type_id: data.id,
-        TableName.sys_osdc_type_en_name: data.en_name.toString(),
-        TableName.sys_osdc_type_ar_name: data.ar_name.toString(),
+        TableName.sysId: data.id,
+        TableName.enName: data.en_name.toString(),
+        TableName.arName: data.ar_name.toString(),
       };
       bool isDuplicate = await hasDuplicateEntry(
-          db, TableName.tbl_sys_daily_checklist, fields);
+          db, TableName.tblSysDailyChecklist, fields);
 
       if (isDuplicate) {
         print("Error: Duplicate entry DailyCheckList type");
       } else {
         await db.insert(
-          TableName.tbl_sys_daily_checklist,
+          TableName.tblSysDailyChecklist,
           {
-            TableName.sys_osdc_type_id: data.id,
-            TableName.sys_osdc_type_en_name: data.en_name.toString(),
-            TableName.sys_osdc_type_ar_name: data.ar_name.toString(),
+            TableName.sysId: data.id,
+            TableName.enName: data.en_name.toString(),
+            TableName.arName: data.ar_name.toString(),
           },
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
@@ -1343,22 +1360,22 @@ class DatabaseHelper {
 
     for (Sys_OSDCTypeModel data in modelList) {
       Map<String, dynamic> fields = {
-        TableName.sys_osdc_type_id: data.id,
-        TableName.sys_osdc_type_en_name: data.en_name.toString(),
-        TableName.sys_osdc_type_ar_name: data.ar_name.toString(),
+        TableName.sysId: data.id,
+        TableName.enName: data.en_name.toString(),
+        TableName.arName: data.ar_name.toString(),
       };
       bool isDuplicate = await hasDuplicateEntry(
-          db, TableName.tbl_sys_sos_units, fields);
+          db, TableName.tblSysSosUnits, fields);
 
       if (isDuplicate) {
         print("Error: Duplicate entry sos unit type");
       } else {
         await db.insert(
-          TableName.tbl_sys_sos_units,
+          TableName.tblSysSosUnits,
           {
-            TableName.sys_osdc_type_id: data.id,
-            TableName.sys_osdc_type_en_name: data.en_name.toString(),
-            TableName.sys_osdc_type_ar_name: data.ar_name.toString(),
+            TableName.sysId: data.id,
+            TableName.enName: data.en_name.toString(),
+            TableName.arName: data.ar_name.toString(),
           },
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
@@ -1371,9 +1388,9 @@ class DatabaseHelper {
     var db = await initDataBase();
     for (SysClient data in modelList) {
       await db.insert(
-        TableName.tbl_sys_client,
+        TableName.tblSysClient,
         {
-          TableName.sys_client_id: data.clientId,
+          TableName.clientIds: data.clientId,
           TableName.sys_client_name: data.clientName,
           TableName.sys_client_logo: data.logo,
           TableName.sys_client_classification: data.isClassification,
@@ -1393,32 +1410,32 @@ class DatabaseHelper {
 
     for (SysAgencyDashboard data in modelList) {
       Map<String, dynamic> fields = {
-        TableName.agency_dash_id: data.id,
-        TableName.agency_dash_en_name: data.enName,
-        TableName.agency_dash_ar_name: data.arName,
+        TableName.sysId: data.id,
+        TableName.enName: data.enName,
+        TableName.arName: data.arName,
         TableName.agency_dash_start_date: data.startDate,
         TableName.agency_dash_end_date: data.endDate,
         TableName.agency_dash_icon: data.iconSvg,
-        TableName.agency_dash_status: data.status,
+        TableName.status: data.status,
         TableName.agency_dash_accessTo: data.accessTo,
         TableName.orderBy: data.orderBy,
       };
       bool isDuplicate = await hasDuplicateEntry(
-          db, TableName.tbl_sys_agency_dashboard, fields);
+          db, TableName.tblSysAgencyDashboard, fields);
 
       if (isDuplicate) {
         print("Error: Duplicate entry drop reason");
       } else {
         await db.insert(
-          TableName.tbl_sys_agency_dashboard,
+          TableName.tblSysAgencyDashboard,
           {
-            TableName.agency_dash_id: data.id,
-            TableName.agency_dash_en_name: data.enName,
-            TableName.agency_dash_ar_name: data.arName,
+            TableName.sysId: data.id,
+            TableName.enName: data.enName,
+            TableName.arName: data.arName,
             TableName.agency_dash_start_date: data.startDate,
             TableName.agency_dash_end_date: data.endDate,
             TableName.agency_dash_icon: data.iconSvg,
-            TableName.agency_dash_status: data.status,
+            TableName.status: data.status,
             TableName.agency_dash_accessTo: data.accessTo,
             TableName.orderBy: data.orderBy,
           },
@@ -1433,24 +1450,24 @@ class DatabaseHelper {
 
     for (Sys data in modelList) {
       Map<String, dynamic> fields = {
-        TableName.drop_id: data.id,
-        TableName.drop_en_name: data.enName,
-        TableName.drop_ar_name: data.arName,
-        TableName.drop_status: data.status,
+        TableName.sysId: data.id,
+        TableName.enName: data.enName,
+        TableName.arName: data.arName,
+        TableName.status: data.status,
       };
       bool isDuplicate = await hasDuplicateEntry(
-          db, TableName.tbl_sys_drop_reason, fields);
+          db, TableName.tblSysDropReason, fields);
 
       if (isDuplicate) {
         print("Error: Duplicate entry drop reason");
       } else {
         await db.insert(
-          TableName.tbl_sys_drop_reason,
+          TableName.tblSysDropReason,
           {
-            TableName.drop_id: data.id,
-            TableName.drop_en_name: data.enName,
-            TableName.drop_ar_name: data.arName,
-            TableName.drop_status: data.status,
+            TableName.sysId: data.id,
+            TableName.enName: data.enName,
+            TableName.arName: data.arName,
+            TableName.status: data.status,
           },
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
@@ -1463,24 +1480,24 @@ class DatabaseHelper {
 
     for (CategoryResModel data in modelList) {
       Map<String, dynamic> fields = {
-        TableName.sys_brand_id: data.id,
-        TableName.sys_brand_en_name: data.enName,
-        TableName.sys_brand_ar_name: data.arName,
-        TableName.sys_brand_client_id: data.clientId,
+        TableName.sysId: data.id,
+        TableName.enName: data.enName,
+        TableName.arName: data.arName,
+        TableName.clientIds: data.clientId,
       };
       bool isDuplicate = await hasDuplicateEntry(
-          db, TableName.tbl_sys_brand, fields);
+          db, TableName.tblSysBrand, fields);
 
       if (isDuplicate) {
         print("Error: Duplicate entry sys brand");
       } else {
         await db.insert(
-          TableName.tbl_sys_brand,
+          TableName.tblSysBrand,
           {
-            TableName.sys_brand_id: data.id,
-            TableName.sys_brand_en_name: data.enName,
-            TableName.sys_brand_ar_name: data.arName,
-            TableName.sys_brand_client_id: data.clientId,
+            TableName.sysId: data.id,
+            TableName.enName: data.enName,
+            TableName.arName: data.arName,
+            TableName.clientIds: data.clientId,
           },
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
@@ -1493,25 +1510,25 @@ class DatabaseHelper {
 
     for (PlanogramReasonModel data in modelList) {
       Map<String, dynamic> fields = {
-        TableName.planogram_reason_id: data.id,
-        TableName.planogram_reason_en_name: data.en_name,
-        TableName.planogram_reason_ar_name: data.ar_name,
-        TableName.planogram_status: data.status,
+        TableName.sysId: data.id,
+        TableName.enName: data.en_name,
+        TableName.arName: data.ar_name,
+        TableName.status: data.status,
 
       };
       bool isDuplicate = await hasDuplicateEntry(
-          db, TableName.tbl_sys_planogram_reason, fields);
+          db, TableName.tblSysPlanogramReason, fields);
 
       if (isDuplicate) {
         print("Error: Duplicate entry sys plano reason");
       } else {
         await db.insert(
-          TableName.tbl_sys_planogram_reason,
+          TableName.tblSysPlanogramReason,
           {
-            TableName.planogram_reason_id: data.id,
-            TableName.planogram_reason_en_name: data.en_name,
-            TableName.planogram_reason_ar_name: data.ar_name,
-            TableName.planogram_status: data.status,
+            TableName.sysId: data.id,
+            TableName.enName: data.en_name,
+            TableName.arName: data.ar_name,
+            TableName.status: data.status,
           },
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
@@ -1519,32 +1536,31 @@ class DatabaseHelper {
     }
     return false;
   }
-
   static Future<bool> insertSysRTVReasonArray(List<Sys_RTVReasonModel> modelList) async {
     var db = await initDataBase();
 
     for (Sys_RTVReasonModel data in modelList) {
       Map<String, dynamic> fields = {
-        TableName.sys_rtv_reason_id: data.id,
-        TableName.sys_rtv_reason_en_name: data.en_name,
-        TableName.sys_rtv_reason_ar_name: data.ar_name,
+        TableName.sysId: data.id,
+        TableName.enName: data.en_name,
+        TableName.arName: data.ar_name,
         TableName.sys_rtv_reason_calendar: data.calendar,
-        TableName.sys_rtv_reason_status: data.status,
+        TableName.status: data.status,
       };
       bool isDuplicate = await hasDuplicateEntry(
-          db, TableName.tbl_sys_rtv_reason, fields);
+          db, TableName.tblSysRtvReason, fields);
 
       if (isDuplicate) {
         print("Error: Duplicate entry RTV reason");
       } else {
         await db.insert(
-          TableName.tbl_sys_rtv_reason,
+          TableName.tblSysRtvReason,
           {
-            TableName.sys_rtv_reason_id: data.id,
-            TableName.sys_rtv_reason_en_name: data.en_name,
-            TableName.sys_rtv_reason_ar_name: data.ar_name,
+            TableName.sysId: data.id,
+            TableName.enName: data.en_name,
+            TableName.arName: data.ar_name,
             TableName.sys_rtv_reason_calendar: data.calendar,
-            TableName.sys_rtv_reason_status: data.status,
+            TableName.status: data.status,
           },
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
@@ -1557,22 +1573,22 @@ class DatabaseHelper {
 
     for (Sys_PhotoTypeModel data in modelList) {
       Map<String, dynamic> fields = {
-        TableName.sys_photo_type_id: data.id,
-        TableName.sys_photo_type_en_name: data.en_name,
-        TableName.sys_photo_type_ar_name: data.ar_name,
+        TableName.sysId: data.id,
+        TableName.enName: data.en_name,
+        TableName.arName: data.ar_name,
       };
       bool isDuplicate = await hasDuplicateEntry(
-          db, TableName.tbl_sys_photo_type, fields);
+          db, TableName.tblSysPhototype, fields);
 
       if (isDuplicate) {
         print("Error: Duplicate entry photo type");
       } else {
         await db.insert(
-          TableName.tbl_sys_photo_type,
+          TableName.tblSysPhototype,
           {
-            TableName.sys_photo_type_id: data.id,
-            TableName.sys_photo_type_en_name: data.en_name,
-            TableName.sys_photo_type_ar_name: data.ar_name,
+            TableName.sysId: data.id,
+            TableName.enName: data.en_name,
+            TableName.arName: data.ar_name,
           },
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
@@ -1585,22 +1601,22 @@ class DatabaseHelper {
 
     for (Sys_OSDCTypeModel data in modelList) {
       Map<String, dynamic> fields = {
-        TableName.sys_osdc_type_id: data.id,
-        TableName.sys_osdc_type_en_name: data.en_name.toString(),
-        TableName.sys_osdc_type_ar_name: data.ar_name.toString(),
+        TableName.sysId: data.id,
+        TableName.enName: data.en_name,
+        TableName.arName: data.ar_name,
       };
       bool isDuplicate = await hasDuplicateEntry(
-          db, TableName.tbl_sys_osdc_type, fields);
+          db, TableName.tblSysOsdcType, fields);
 
       if (isDuplicate) {
         print("Error: Duplicate entry osdc type");
       } else {
         await db.insert(
-          TableName.tbl_sys_osdc_type,
+          TableName.tblSysOsdcType,
           {
-            TableName.sys_osdc_type_id: data.id,
-            TableName.sys_osdc_type_en_name: data.en_name.toString(),
-            TableName.sys_osdc_type_ar_name: data.ar_name.toString(),
+            TableName.sysId: data.id,
+            TableName.enName: data.en_name.toString(),
+            TableName.arName: data.ar_name.toString(),
           },
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
@@ -1613,22 +1629,22 @@ class DatabaseHelper {
 
     for (Sys_OSDCReasonModel data in modelList) {
       Map<String, dynamic> fields = {
-        TableName.sys_osdc_reason_id: data.id,
-        TableName.sys_osdc_reason_en_name: data.en_name.toString(),
-        TableName.sys_osdc_reason_ar_name: data.ar_name.toString(),
+        TableName.sysId: data.id,
+        TableName.enName: data.en_name.toString(),
+        TableName.arName: data.ar_name.toString(),
       };
       bool isDuplicate = await hasDuplicateEntry(
-          db, TableName.tbl_sys_osdc_reason, fields);
+          db, TableName.tblSysOsdcReason, fields);
 
       if (isDuplicate) {
         print("Error: Duplicate entry osdc");
       } else {
         await db.insert(
-          TableName.tbl_sys_osdc_reason,
+          TableName.tblSysOsdcReason,
           {
-            TableName.sys_osdc_reason_id: data.id,
-            TableName.sys_osdc_reason_en_name: data.en_name.toString(),
-            TableName.sys_osdc_reason_ar_name: data.ar_name.toString(),
+            TableName.sysId: data.id,
+            TableName.enName: data.en_name.toString(),
+            TableName.arName: data.ar_name.toString(),
           },
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
@@ -1641,24 +1657,24 @@ class DatabaseHelper {
 
     for (CategoryResModel data in modelList) {
       Map<String, dynamic> fields = {
-        TableName.cat_id: data.id,
-        TableName.cat_client_id: data.clientId,
-        TableName.cat_en_name: data.enName,
-        TableName.cat_ar_name: data.arName,
+        TableName.sysId: data.id,
+        TableName.clientIds: data.clientId,
+        TableName.enName: data.enName,
+        TableName.arName: data.arName,
       };
       bool isDuplicate = await hasDuplicateEntry(
-          db, TableName.tbl_sys_category, fields);
+          db, TableName.tblSysCategory, fields);
 
       if (isDuplicate) {
         print("Error: Duplicate entry sys category");
       } else {
         await db.insert(
-          TableName.tbl_sys_category,
+          TableName.tblSysCategory,
           {
-            TableName.cat_id: data.id,
-            TableName.cat_client_id: data.clientId,
-            TableName.cat_en_name: data.enName,
-            TableName.cat_ar_name: data.arName,
+            TableName.sysId: data.id,
+            TableName.clientIds: data.clientId,
+            TableName.enName: data.enName,
+            TableName.arName: data.arName,
           },
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
@@ -1671,24 +1687,24 @@ class DatabaseHelper {
 
     for (CategoryResModel data in modelList) {
       Map<String, dynamic> fields = {
-        TableName.cat_id: data.id,
-        TableName.cat_client_id: data.clientId,
-        TableName.cat_en_name: data.enName,
-        TableName.cat_ar_name: data.arName,
+        TableName.sysId: data.id,
+        TableName.clientIds: data.clientId,
+        TableName.enName: data.enName,
+        TableName.arName: data.arName,
       };
       bool isDuplicate = await hasDuplicateEntry(
-          db, TableName.tbl_sys_subcategory, fields);
+          db, TableName.tblSysSubcategory, fields);
 
       if (isDuplicate) {
         print("Error: Duplicate entry sys sub category");
       } else {
         await db.insert(
-          TableName.tbl_sys_subcategory,
+          TableName.tblSysSubcategory,
           {
-            TableName.cat_id: data.id,
-            TableName.cat_client_id: data.clientId,
-            TableName.cat_en_name: data.enName,
-            TableName.cat_ar_name: data.arName,
+            TableName.sysId: data.id,
+            TableName.clientIds: data.clientId,
+            TableName.enName: data.enName,
+            TableName.arName: data.arName,
           },
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
@@ -1700,38 +1716,38 @@ class DatabaseHelper {
     var db = await initDataBase();
     for (Sys_ProductModel data in modelList) {
       Map<String, dynamic> fields = {
-        TableName.sys_product_id: data.id,
-        TableName.sys_product_client_id: data.client_id,
-        TableName.sys_product_en_name: data.en_name,
-        TableName.sys_product_ar_name: data.ar_name,
+        TableName.sysId: data.id,
+        TableName.clientIds: data.client_id,
+        TableName.enName: data.en_name,
+        TableName.arName: data.ar_name,
         TableName.sys_product_image: data.image,
         TableName.sys_product_principal_id: data.principal_id,
         TableName.sys_product_cluster_id: data.cluster_id,
-        TableName.sys_product_cat_id: data.cat_id,
+        TableName.sysCategoryId: data.cat_id,
         TableName.sys_product_sub_cat_id: data.sub_cat_id,
-        TableName.sys_product_brand_id: data.brand_id,
+        TableName.brandId: data.brand_id,
         TableName.sys_product_rsp: data.rsp,
         TableName.sys_product_sku_weight: data.sku_weight,
       };
       bool isDuplicate = await hasDuplicateEntry(
-          db, TableName.tbl_sys_product, fields);
+          db, TableName.tblSysProduct, fields);
 
       if (isDuplicate) {
         print("Error: Duplicate entry sys product");
       } else {
         await db.insert(
-          TableName.tbl_sys_product,
+          TableName.tblSysProduct,
           {
-            TableName.sys_product_id: data.id,
-            TableName.sys_product_client_id: data.client_id,
-            TableName.sys_product_en_name: data.en_name,
-            TableName.sys_product_ar_name: data.ar_name,
+            TableName.sysId: data.id,
+            TableName.clientIds: data.client_id,
+            TableName.enName: data.en_name,
+            TableName.arName: data.ar_name,
             TableName.sys_product_image: data.image,
             TableName.sys_product_principal_id: data.principal_id,
             TableName.sys_product_cluster_id: data.cluster_id,
-            TableName.sys_product_cat_id: data.cat_id,
+            TableName.sysCategoryId: data.cat_id,
             TableName.sys_product_sub_cat_id: data.sub_cat_id,
-            TableName.sys_product_brand_id: data.brand_id,
+            TableName.brandId: data.brand_id,
             TableName.sys_product_rsp: data.rsp,
             TableName.sys_product_sku_weight: data.sku_weight,
           },
@@ -1748,24 +1764,24 @@ class DatabaseHelper {
       print("PoG Arraya");
       print(jsonEncode(data));
       Map<String, dynamic> fields = {
-        TableName.sys_store_pog_storeid: data.storeId,
-        TableName.sys_client_id: data.clientId,
-        TableName.sys_store_pog_catId: data.catId.toString(),
+        TableName.storeId: data.storeId,
+        TableName.clientIds: data.clientId,
+        TableName.sysCategoryId: data.catId.toString(),
         TableName.sys_store_pog: data.pog.toString(),
         TableName.sys_store_pog_image: data.pogImage.toString(),
       };
       bool isDuplicate = await hasDuplicateEntry(
-          db, TableName.tbl_sys_store_pog, fields);
+          db, TableName.tblSysStorePog, fields);
 
       if (isDuplicate) {
         print("Error: Duplicate store pog");
       } else {
         await db.insert(
-          TableName.tbl_sys_store_pog,
+          TableName.tblSysStorePog,
           {
-            TableName.sys_store_pog_storeid: data.storeId,
-            TableName.sys_client_id:data.clientId,
-            TableName.sys_store_pog_catId: data.catId.toString(),
+            TableName.storeId: data.storeId,
+            TableName.clientIds: data.clientId,
+            TableName.sysCategoryId: data.catId.toString(),
             TableName.sys_store_pog: data.pog.toString(),
             TableName.sys_store_pog_image: data.pogImage.toString(),
           },
@@ -1780,9 +1796,9 @@ class DatabaseHelper {
 
     for (SysProductPlacementModel data in modelList) {
       Map<String, dynamic> fields = {
-        TableName.sys_product_placement_id:data.skuId,
-        TableName.sys_product_placement_storeId: data.storeId,
-        TableName.sys_product_placement_cat_id: data.catId.toString(),
+        TableName.skuId:data.skuId,
+        TableName.storeId: data.storeId,
+        TableName.sysCategoryId: data.catId.toString(),
         TableName.sys_product_placement_pog: data.pog.toString(),
         TableName.sys_product_placement_h_facing: data.h_facing.toString(),
         TableName.sys_product_placement_v_facing: data.v_facing.toString(),
@@ -1793,17 +1809,17 @@ class DatabaseHelper {
         TableName.sys_product_placement_rank_x: data.rank_x.toString(),
       };
       bool isDuplicate = await hasDuplicateEntry(
-          db, TableName.tbl_sys_product_placement, fields);
+          db, TableName.tblSysProductPlacement, fields);
 
       if (isDuplicate) {
         print("Error: Duplicate store pog");
       } else {
         await db.insert(
-          TableName.tbl_sys_product_placement,
+          TableName.tblSysProductPlacement,
           {
-            TableName.sys_product_placement_id:data.skuId,
-            TableName.sys_product_placement_storeId: data.storeId,
-            TableName.sys_product_placement_cat_id: data.catId.toString(),
+            TableName.skuId:data.skuId,
+            TableName.storeId: data.storeId,
+            TableName.sysCategoryId: data.catId.toString(),
             TableName.sys_product_placement_pog: data.pog.toString(),
             TableName.sys_product_placement_h_facing: data.h_facing.toString(),
             TableName.sys_product_placement_v_facing: data.v_facing.toString(),
@@ -1829,25 +1845,25 @@ class DatabaseHelper {
       print("Brand Face Array");
       print(jsonEncode(data));
       Map<String, dynamic> fields = {
-        TableName.sys_brand_faces_storeId: data.storeId,
-        TableName.sys_client_id:  data.clientId,
-        TableName.sys_brand_faces_catId: data.catId.toString(),
-        TableName.sys_brand_faces_brandId: data.brand_id.toString(),
+        TableName.storeId: data.storeId,
+        TableName.clientIds:  data.clientId,
+        TableName.sysCategoryId: data.catId.toString(),
+        TableName.brandId: data.brand_id.toString(),
         TableName.sys_brand_faces_givenFaces: data.given_faces.toString(),
       };
       bool isDuplicate = await hasDuplicateEntry(
-          db, TableName.tbl_sys_brand_faces, fields);
+          db, TableName.tblSysBrandFaces, fields);
 
       if (isDuplicate) {
         print("Error: Duplicate store Shelf Share");
       } else {
         await db.insert(
-          TableName.tbl_sys_brand_faces,
+          TableName.tblSysBrandFaces,
           {
-            TableName.sys_brand_faces_storeId: data.storeId,
-            TableName.sys_client_id:data.clientId,
-            TableName.sys_brand_faces_catId: data.catId.toString(),
-            TableName.sys_brand_faces_brandId: data.brand_id.toString(),
+            TableName.storeId: data.storeId,
+            TableName.clientIds:  data.clientId,
+            TableName.sysCategoryId: data.catId.toString(),
+            TableName.brandId: data.brand_id.toString(),
             TableName.sys_brand_faces_givenFaces: data.given_faces.toString(),
           },
           conflictAlgorithm: ConflictAlgorithm.replace,
@@ -1859,7 +1875,7 @@ class DatabaseHelper {
   static Future<void> insertClient(ClientModel model) async {
     var db = await initDataBase();
     await db.insert(
-      TableName.tbl_sys_client,
+      TableName.tblSysClient,
       model.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -1867,7 +1883,7 @@ class DatabaseHelper {
   static Future<void> insertAgencyDashboard(AgencyDashboardModel dashmodel) async {
     var db = await initDataBase();
     await db.insert(
-      TableName.tbl_sys_agency_dashboard,
+      TableName.tblSysAgencyDashboard,
       dashmodel.toMap(),
       conflictAlgorithm: ConflictAlgorithm.abort,
     );
@@ -1875,7 +1891,7 @@ class DatabaseHelper {
   static Future<void> insertDropReason(DropReasonModel model) async {
     var db = await initDataBase();
     await db.insert(
-      TableName.tbl_sys_drop_reason,
+      TableName.tblSysDropReason,
       model.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -1883,7 +1899,7 @@ class DatabaseHelper {
   static Future<void> insertBeforeFaxing(TransBeforeFaxingModel beforeFaxing) async {
     var db = await initDataBase();
     await db.insert(
-      TableName.tbl_trans_before_faxing,
+      TableName.tblTransBeforeFaxing,
       beforeFaxing.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -2021,10 +2037,10 @@ class DatabaseHelper {
   static Future<List<TransPlanoGuideModel>> getPlanoGuideDataList(String workingId) async {
     final db = await initDataBase();
     String rawQuery = "SELECT trans_planoguide.id as trans_plano_id,trans_planoguide.client_id,sys_category.en_name as cat_en_name,"
-        "trans_planoguide.cat_id,trans_planoguide.activity_status,sys_category.ar_name as cat_ar_name,trans_planoguide.pog as pog,trans_planoguide.imageName,trans_planoguide.isAdherence,trans_planoguide.skuImageName,trans_planoguide.upload_status,trans_planoguide.gcs_status "
+        "trans_planoguide.category_id,trans_planoguide.activity_status,sys_category.ar_name as cat_ar_name,trans_planoguide.pog as pog,trans_planoguide.imageName,trans_planoguide.isAdherence,trans_planoguide.skuImageName,trans_planoguide.upload_status,trans_planoguide.gcs_status "
         " FROM trans_planoguide"
-        " join sys_category on sys_category.id=trans_planoguide.cat_id"
-        " WHERE working_id=$workingId ORDER BY trans_planoguide.cat_id,pog ASC";
+        " join sys_category on sys_category.id=trans_planoguide.category_id"
+        " WHERE working_id=$workingId ORDER BY trans_planoguide.category_id,pog ASC";
 
     print("PLANOGUIDE QUERY");
     print(rawQuery);
@@ -2034,7 +2050,7 @@ class DatabaseHelper {
     return List.generate(planoguideMap.length, (index) {
       return TransPlanoGuideModel(
         id: planoguideMap[index]['trans_plano_id'] as int,
-        cat_id: planoguideMap[index]['cat_id'] as int,
+        cat_id: planoguideMap[index]['category_id'] as int,
         cat_en_name: planoguideMap[index]['cat_en_name'] ?? "",
         cat_ar_name: planoguideMap[index]['cat_ar_name'] ?? "",
         pog: planoguideMap[index]['pog'] ?? "",
@@ -2054,9 +2070,9 @@ class DatabaseHelper {
   static Future<List<TransPlanoGuideModel>> getPlanoGuideFilteredDataList(String workingId,int activityStatus,String isAdhere) async {
     final db = await initDataBase();
     String rawQuery = "SELECT trans_planoguide.id as trans_plano_id,trans_planoguide.client_id,sys_category.en_name as cat_en_name,"
-        "trans_planoguide.cat_id,trans_planoguide.activity_status,sys_category.ar_name as cat_ar_name,trans_planoguide.pog as pog,trans_planoguide.imageName,trans_planoguide.isAdherence,trans_planoguide.skuImageName,trans_planoguide.upload_status,trans_planoguide.gcs_status "
+        "trans_planoguide.category_id,trans_planoguide.activity_status,sys_category.ar_name as cat_ar_name,trans_planoguide.pog as pog,trans_planoguide.imageName,trans_planoguide.isAdherence,trans_planoguide.skuImageName,trans_planoguide.upload_status,trans_planoguide.gcs_status "
         " FROM trans_planoguide"
-        " join sys_category on sys_category.id=trans_planoguide.cat_id"
+        " join sys_category on sys_category.id=trans_planoguide.category_id"
         " WHERE working_id=$workingId AND activity_status=$activityStatus AND isAdherence=$isAdhere ORDER BY trans_planoguide.cat_id,pog ASC";
 
     print("PLANOGUIDE QUERY");
@@ -2067,7 +2083,7 @@ class DatabaseHelper {
     return List.generate(planoguideMap.length, (index) {
       return TransPlanoGuideModel(
         id: planoguideMap[index]['trans_plano_id'] as int,
-        cat_id: planoguideMap[index]['cat_id'] as int,
+        cat_id: planoguideMap[index]['category_id'] as int,
         cat_en_name: planoguideMap[index]['cat_en_name'] ?? "",
         cat_ar_name: planoguideMap[index]['cat_ar_name'] ?? "",
         pog: planoguideMap[index]['pog'] ?? "",
@@ -2086,7 +2102,7 @@ class DatabaseHelper {
 
   static Future<List<SavePlanoguideListData>> getActivityStatusPlanoGuideDataList(String workingId) async {
     final db = await initDataBase();
-    String rawQuery = "SELECT id,client_id,cat_id As category_id,pog,isAdherence as is_adh,skuImageName as image_name "
+    String rawQuery = "SELECT id,client_id,category_id As category_id,pog,isAdherence as is_adh,skuImageName as image_name "
         " FROM trans_planoguide WHERE working_id=$workingId AND activity_status=1 AND upload_status=0";
 
     print("PLANOGUIDE QUERY");
@@ -2184,7 +2200,7 @@ class DatabaseHelper {
   static Future<List<AgencyDashboardModel>> getAgencyDashboard() async {
     var db = await initDataBase();
     final List<Map<String, dynamic>> agencyDashboard =
-        await db.rawQuery("SELECT *from ${TableName.tbl_sys_agency_dashboard} ORDER BY order_by ASC");
+        await db.rawQuery("SELECT *from ${TableName.tblSysAgencyDashboard} ORDER BY order_by ASC");
     print(agencyDashboard);
     return List.generate(agencyDashboard.length, (index) {
       return AgencyDashboardModel.fromJson(agencyDashboard[index]);
@@ -2195,10 +2211,10 @@ class DatabaseHelper {
     var db = await initDataBase();
     final List<Map<String, dynamic>> transphoto =
     await db.rawQuery(
-        "SELECT  trans_photo.id,trans_photo.client_id,trans_photo.cat_id,trans_photo.date_time,trans_photo.type_id,trans_photo.upload_status,sys_client.client_name ,sys_category.en_name as cat_en_name ,sys_category.ar_name as cat_ar_name ,trans_photo.gcs_status,sys_photo_type.en_name as type_en_name,sys_photo_type.ar_name as type_ar_name,"
+        "SELECT  trans_photo.id,trans_photo.client_id,trans_photo.category_id,trans_photo.date_time,trans_photo.type_id,trans_photo.upload_status,sys_client.client_name ,sys_category.en_name as cat_en_name ,sys_category.ar_name as cat_ar_name ,trans_photo.gcs_status,sys_photo_type.en_name as type_en_name,sys_photo_type.ar_name as type_ar_name,"
             "trans_photo.image_name FROM trans_photo "
             "JOIN sys_client on sys_client.client_id=trans_photo.client_id "
-            "JOIN sys_category on sys_category.id=trans_photo.cat_id "
+            "JOIN sys_category on sys_category.id=trans_photo.category_id "
             " JOIN sys_photo_type on sys_photo_type.id=trans_photo.type_id "
             "WHERE trans_photo.photo_type_id=1 AND trans_photo.working_id=$workingId ORDER BY sys_category.en_name,sys_photo_type.en_name ASC");
 
@@ -2207,14 +2223,14 @@ class DatabaseHelper {
         trans_photo_type_id: transphoto[index]['id'],
         dateTime: transphoto[index]['date_time']??"",
         clientName: transphoto[index][TableName.sys_client_name] as String,
-        img_name: transphoto[index][TableName.trans_photo_name] as String,
+        img_name: transphoto[index][TableName.imageName] as String,
         imageFile: null,
-        cat_id: transphoto[index]['cat_id'] as int,
+        cat_id: transphoto[index]['category_id'] as int,
         client_id: transphoto[index]['client_id'] as int,
         type_id: transphoto[index]['type_id'] as int,
         categoryArName: transphoto[index]["cat_ar_name"] as String,
         categoryEnName: transphoto[index]["cat_en_name"] as String,
-        gcs_status: transphoto[index][TableName.trans_photo_gcs_status] as int,
+        gcs_status: transphoto[index][TableName.gcsStatus] as int,
         type_ar_name: transphoto[index]["type_en_name"] as String,
         type_en_name: transphoto[index]["type_ar_name"] as String,
         upload_status: transphoto[index]["upload_status"] as int,
@@ -2226,7 +2242,7 @@ class DatabaseHelper {
   static Future<OtherPhotoCountModel> getOtherPhotoCountData(String workingId) async {
     final db = await initDataBase();
     final List<Map<String, dynamic>> result = (await db.rawQuery("SELECT count(id) AS total_photo_items, "
-        "COUNT(DISTINCT cat_id) as total_categories, "
+        "COUNT(DISTINCT category_id) as total_categories, "
         "sum(CASE WHEN upload_status = 0 THEN 1 ELSE 0 END) As total_not_uploaded, "
         "sum(CASE WHEN upload_status = 1 THEN 1 ELSE 0 END) As total_uploaded "
         "FROM trans_photo WHERE working_id=$workingId"));
@@ -2307,21 +2323,22 @@ class DatabaseHelper {
     var db = await initDataBase();
     final List<Map<String, dynamic>> transOsdc =
     await db.rawQuery(
-        "SELECT trans_osdc.id as osdc_id,trans_osdc.gcs_status,trans_osdc.upload_status,trans_osdc.image_name,trans_osdc.quantity,sys_brand.en_name as brand_en_name,sys_brand.ar_name as brand_ar_name,"
+        "SELECT trans_osdc.id as osdc_id,trans_osdc.working_id as working_id,trans_osdc.gcs_status,trans_osdc.upload_status,trans_osdc.quantity,sys_brand.en_name as brand_en_name,sys_brand.ar_name as brand_ar_name,"
         "sys_osdc_reason.en_name as reason_en_name,sys_osdc_reason.ar_name as reason_ar_name,sys_osdc_reason.ar_name as osdc_ar_name,sys_osdc_type.en_name as type_en_name,sys_osdc_type.ar_name as type_ar_name "
        " FROM trans_osdc "
     "JOIN sys_brand on sys_brand.id=trans_osdc.brand_id "
     "JOIN sys_osdc_reason on sys_osdc_reason.id=trans_osdc.reason_id "
     "JOIN sys_osdc_type on sys_osdc_type.id=trans_osdc.type_id WHERE trans_osdc.working_id=$workingId");
 
+    print(jsonEncode(transOsdc));
+    print("--------------OSDC SHOW-----------");
+
     return List.generate(transOsdc.length, (index) {
-      print("--------------OSDC SHOW-----------");
-      print(jsonEncode(transOsdc));
-      print("--------------OSDC SHOW-----------");
+
       return GetTransOSDCModel(
         id: transOsdc[index]['osdc_id'] as int,
         quantity: transOsdc[index]["quantity"] as int,
-        img_name: transOsdc[index][TableName.trans_photo_name] as String,
+        img_name: "",
         imageFile: null,
         gcs_status: transOsdc[index]['gcs_status'] as int,
         upload_status: transOsdc[index]['upload_status'] as int,
@@ -2335,23 +2352,39 @@ class DatabaseHelper {
     });
   }
 
+  static Future<List<GetTransImagesOSDCModel>> getTransOSDCImages(String workingId) async {
+    var db = await initDataBase();
+    final List<Map<String, dynamic>> transImageOsdc =
+    await db.rawQuery("SELECT * FROM trans_osdc_images WHERE working_id=$workingId");
+
+    print(jsonEncode(transImageOsdc));
+    print("--------------OSDC IMAGE SHOW-----------");
+
+    return List.generate(transImageOsdc.length, (index) {
+      return GetTransImagesOSDCModel(
+        id: transImageOsdc[index][TableName.trans_osdc_main_id],
+        imgName: transImageOsdc[index][TableName.imageName],
+      );
+    });
+  }
+
   static Future<List<DropReasonModel>> getDropReason() async {
     var db = await initDataBase();
     final List<Map<String, dynamic>> dropreason =
-        await db.rawQuery("SELECT *from ${TableName.tbl_sys_drop_reason}");
+        await db.rawQuery("SELECT *from ${TableName.tblSysDropReason}");
     return List.generate(dropreason.length, (index) {
       return DropReasonModel(
-        id: dropreason[index][TableName.drop_id] as int,
-        en_name: dropreason[index][TableName.drop_en_name] as String,
-        ar_name: dropreason[index][TableName.drop_ar_name] as String,
-        status: dropreason[index][TableName.drop_status] as int,
+        id: dropreason[index][TableName.sysId] as int,
+        en_name: dropreason[index][TableName.enName] as String,
+        ar_name: dropreason[index][TableName.arName] as String,
+        status: dropreason[index][TableName.status] as int,
       );
     });
   }
 
   Future<bool> checkDataExists(Database database) async {
     List<Map<String, dynamic>> result = await database
-        .rawQuery('SELECT * FROM ${TableName.tbl_sys_drop_reason}');
+        .rawQuery('SELECT * FROM ${TableName.tblSysDropReason}');
     return result.isNotEmpty;
   }
 
@@ -2359,17 +2392,17 @@ class DatabaseHelper {
     final db = await initDataBase();
     print("____________REASON LIST_____________");
     final List<Map<String, dynamic>> planogram_reason = await db
-        .rawQuery("SELECT * FROM ${TableName.tbl_sys_planogram_reason}");
+        .rawQuery("SELECT * FROM ${TableName.tblSysPlanogramReason}");
 
     print(jsonEncode(planogram_reason));
     return List.generate(planogram_reason.length, (index) {
       return PlanogramReasonModel(
-        en_name: planogram_reason[index][TableName.planogram_reason_en_name]
+        en_name: planogram_reason[index][TableName.enName]
             as String,
-        ar_name: planogram_reason[index][TableName.planogram_reason_ar_name]
+        ar_name: planogram_reason[index][TableName.arName]
             as String,
-        id: planogram_reason[index][TableName.planogram_reason_id] as int,
-        status: planogram_reason[index][TableName.planogram_status] as int,
+        id: planogram_reason[index][TableName.sysId] as int,
+        status: planogram_reason[index][TableName.status] as int,
       );
     });
   }
@@ -2379,11 +2412,11 @@ class DatabaseHelper {
 
     final db = await initDataBase();
     final List<Map<String, dynamic>> planogram = await db.rawQuery(
-        "SELECT trans_planogram.id,trans_planogram.client_id,trans_planogram.date_time,trans_planogram.cat_id,trans_planogram.brand_id,trans_planogram.reason_id,trans_planogram.gcs_status,trans_planogram.upload_status,sys_client.client_name,sys_category.en_name as cat_en_name,sys_category.ar_name as cat_ar_name, sys_brand.en_name as brand_en_name, sys_brand.ar_name as brand_ar_name,is_adherence,image_name, "
+        "SELECT trans_planogram.id,trans_planogram.client_id,trans_planogram.date_time,trans_planogram.category_id,trans_planogram.brand_id,trans_planogram.reason_id,trans_planogram.gcs_status,trans_planogram.upload_status,sys_client.client_name,sys_category.en_name as cat_en_name,sys_category.ar_name as cat_ar_name, sys_brand.en_name as brand_en_name, sys_brand.ar_name as brand_ar_name,is_adherence,image_name, "
             "CASE WHEN sys_planogram_reason.id >0 then sys_planogram_reason.en_name  else 0 END as not_adh_reason "
             "FROM trans_planogram "
             "JOIN sys_client on sys_client.client_id=trans_planogram.client_id "
-            "JOIN sys_category on sys_category.id=trans_planogram.cat_id "
+            "JOIN sys_category on sys_category.id=trans_planogram.category_id "
             "LEFT JOIN sys_brand on sys_brand.id=trans_planogram.brand_id "
             "LEFT JOIN sys_planogram_reason on sys_planogram_reason.id=trans_planogram.reason_id "
             "WHERE trans_planogram.working_id=$workingId ORDER BY sys_category.en_name,sys_brand.en_name ASC");
@@ -2394,7 +2427,7 @@ class DatabaseHelper {
         id:planogram[index]['id'] as int,
         dateTime:planogram[index]['date_time'] ?? "",
         client_id: planogram[index]['client_id'] as int,
-        cat_id: planogram[index]['cat_id'] as int,
+        cat_id: planogram[index]['category_id'] as int,
         reason_id: planogram[index]['reason_id'] as int,
         brand_id: planogram[index]['brand_id'] as int,
         client_name: planogram[index][TableName.sys_client_name] as String,
@@ -2418,7 +2451,7 @@ class DatabaseHelper {
   static Future<PlanogramCountModel> getTransPlanogramCountData(String workingId) async {
     final db = await initDataBase();
     final List<Map<String, dynamic>> result = (await db.rawQuery("SELECT count(id) AS total_palnogram_items, "
-        "COUNT(DISTINCT cat_id) as total_categories, "
+        "COUNT(DISTINCT category_id) as total_categories, "
         "SUM(CASE WHEN is_adherence = 1 THEN 1 ELSE 0 END) AS total_adhere, "
         "SUM(CASE WHEN is_adherence = 0 THEN 1 ELSE 0 END) AS total_not_adhere, "
         "sum(CASE WHEN upload_status = 0 THEN 1 ELSE 0 END) As total_not_uploaded, "
@@ -2468,7 +2501,7 @@ class DatabaseHelper {
 
   static Future<List<SavePlanogramPhotoData>> getTransPlanogramApiUploadDataList(String workingId) async {
     final db = await initDataBase();
-    String rawQuery = "SELECT id,is_adherence,reason_id,brand_id,cat_id As category_id, image_name,client_id "
+    String rawQuery = "SELECT id,is_adherence,reason_id,brand_id,category_id As category_id, image_name,client_id "
         " FROM trans_planogram WHERE working_id=$workingId AND upload_status=0";
 
     print("Trans Planogram QUERY");
@@ -2584,7 +2617,7 @@ class DatabaseHelper {
         "SELECT trans_sos.id,sys_client.client_name,sys_category.en_name as cat_en_name,sys_category.ar_name as cat_ar_name, sys_brand.en_name as brand_en_name, sys_brand.ar_name as brand_ar_name,trans_sos.unit,trans_sos.cat_space as total_space,trans_sos.actual_space "
             " FROM trans_sos "
             "JOIN sys_client on sys_client.client_id=trans_sos.client_id "
-            "JOIN sys_category on sys_category.id=trans_sos.cat_id "
+            "JOIN sys_category on sys_category.id=trans_sos.category_id "
             "LEFT JOIN sys_brand on sys_brand.id=trans_sos.brand_id "
             "WHERE trans_sos.working_id=$workingId ORDER BY sys_category.en_name,sys_brand.en_name ASC");
     print(jsonEncode(sos));
@@ -2595,8 +2628,8 @@ class DatabaseHelper {
         client_name: sos[index][TableName.sys_client_name] as String,
         cat_en_name:sos[index]['cat_en_name'] as String,
         cat_ar_name:sos[index]['cat_ar_name'] as String,
-        brand_en_name:sos[index]['brand_en_name'] ?? "--",
-        brand_ar_name:sos[index]['brand_ar_name'] ?? "--",
+        brand_en_name:sos[index]['brand_en_name'] as String,
+        brand_ar_name:sos[index]['brand_ar_name'] as String,
         total_cat_space:sos[index]['total_space'] as String,
         actual_space:sos[index]['actual_space'] as String,
         unit:sos[index]['unit'].toString(),
@@ -2609,7 +2642,7 @@ class DatabaseHelper {
   static Future<SosCountModel> getSosCountData(String workingId) async {
     final db = await initDataBase();
     final List<Map<String, dynamic>> result = (await db.rawQuery("SELECT count(id) AS total_sos_items, "
-        "COUNT(DISTINCT cat_id) as total_categories, "
+        "COUNT(DISTINCT category_id) as total_categories, "
         "sum(CASE WHEN upload_status = 0 THEN 1 ELSE 0 END) As total_not_uploaded, "
         "sum(CASE WHEN upload_status = 1 THEN 1 ELSE 0 END) As total_uploaded "
         "FROM trans_sos WHERE working_id=$workingId"));
@@ -2625,7 +2658,7 @@ class DatabaseHelper {
 
   static Future<List<SaveSosData>> getSosApiUploadDataList(String workingId) async {
     final db = await initDataBase();
-    String rawQuery = "SELECT id, client_id, cat_id As category_id, brand_id ,unit,cat_space ,actual_space "
+    String rawQuery = "SELECT id, client_id, category_id As category_id, brand_id ,unit,cat_space ,actual_space "
         " FROM trans_sos WHERE working_id=$workingId AND upload_status=0";
 
     print("SOS QUERY");
@@ -2674,14 +2707,14 @@ class DatabaseHelper {
           dateTime: transbefore[index]['date_time'] ?? "",
           trans_photo_type_id: transbefore[index]['photo_type_id'],
           clientName: transbefore[index][TableName.sys_client_name] as String,
-          img_name: transbefore[index][TableName.trans_photo_name] as String,
+          img_name: transbefore[index][TableName.imageName] as String,
           imageFile: null,
-          client_id: transbefore[index][TableName.cat_client_id],
+          client_id: transbefore[index][TableName.clientIds],
           cat_id: transbefore[index]['cat_id'],
-          categoryArName: transbefore[index][TableName.cat_ar_name] as String,
-          categoryEnName: transbefore[index][TableName.cat_en_name] as String,
-          gcs_status: transbefore[index][TableName.trans_photo_gcs_status] as int,
-          upload_status: transbefore[index][TableName.trans_upload_status] as int
+          categoryArName: transbefore[index][TableName.arName] as String,
+          categoryEnName: transbefore[index][TableName.enName] as String,
+          gcs_status: transbefore[index][TableName.gcsStatus] as int,
+          upload_status: transbefore[index][TableName.uploadStatus] as int
       );
     });
   }
@@ -2690,7 +2723,7 @@ class DatabaseHelper {
   static Future<BeforeFixingCountModel> getBeforeFixingCountData(String workingId) async {
     final db = await initDataBase();
     final List<Map<String, dynamic>> result = (await db.rawQuery("SELECT count(id) AS total_before_fixing, "
-        "COUNT(DISTINCT cat_id) as total_categories, "
+        "COUNT(DISTINCT category_id) as total_categories, "
         "sum(CASE WHEN upload_status = 0 THEN 1 ELSE 0 END) As total_not_uploaded, "
         "sum(CASE WHEN upload_status = 1 THEN 1 ELSE 0 END) As total_uploaded "
         "FROM trans_before_fixing WHERE working_id=$workingId"));
@@ -2737,7 +2770,7 @@ class DatabaseHelper {
 
   static Future<List<SaveOtherPhotoData>> getBeforeFixingApiUploadDataList(String workingId) async {
     final db = await initDataBase();
-    String rawQuery = "SELECT id,client_id,cat_id As category_id,photo_type_id, image_name "
+    String rawQuery = "SELECT id,client_id,category_id As category_id,photo_type_id, image_name "
         " FROM trans_before_fixing WHERE working_id=$workingId AND upload_status=0";
 
     print("Before Fixing QUERY");
@@ -2951,10 +2984,22 @@ class DatabaseHelper {
 
 
   //   ---******insertTrans Data Start-----********
+
+
+  static Future<void> insertTransMarketIssue(
+      TransMarketIssueModel marketIssueModel) async {
+    var db = await initDataBase();
+    await db.insert(
+      TableName.tbl_trans_marketIssue,
+      marketIssueModel.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
   static Future<void> insertTransPhoto(TransPhotoModel transPhotoModel) async {
     var db = await initDataBase();
     await db.insert(
-      TableName.tbl_trans_photo,
+      TableName.tblTransPhoto,
       transPhotoModel.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -2962,7 +3007,7 @@ class DatabaseHelper {
   static Future<void> insertTransPlanogram(TransPlanogramModel transPlanogramModel) async {
     var db = await initDataBase();
     await db.insert(
-      TableName.tbl_trans_planogram,
+      TableName.tblTransPlanogram,
       transPlanogramModel.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -2994,7 +3039,7 @@ class DatabaseHelper {
   static Future<void> insertTransSOS(TransSOSModel transSOSModel) async {
     var db = await initDataBase();
     await db.insert(
-      TableName.tbl_trans_sos,
+      TableName.tblTransSos,
       transSOSModel.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -3002,39 +3047,33 @@ class DatabaseHelper {
   static Future<void> insertTransPricing(TransPricingModel pricingModel) async {
     var db = await initDataBase();
     await db.insert(
-      TableName.tbl_trans_pricing,
+      TableName.tblTransPricing,
       pricingModel.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
-  // static Future<void> insertTransFreshness(TransFreshnessModel transFreshnessModel) async {
-  //   var db = await initDataBase();
-  //   await db.insert(
-  //     TableName.tbl_trans_freshness,
-  //     transFreshnessModel.toMap(),
-  //     conflictAlgorithm: ConflictAlgorithm.replace,
-  //   );
-  // }
   static Future<void> insertTransStock(TransStockModel transStockModel) async {
     var db = await initDataBase();
     await db.insert(
-      TableName.tbl_trans_stock,
+      TableName.tblTransStock,
       transStockModel.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
-  static Future<void> insertTransOSDC(TransOSDCModel transOSDCModel) async {
+  static Future<int> insertTransOSDC(TransOSDCModel transOSDCModel) async {
     var db = await initDataBase();
-    await db.insert(
-      TableName.tbl_trans_osdc,
+    final osdcId = await db.insert(
+      TableName.tblTransOsdc,
       transOSDCModel.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+
+    return osdcId;
   }
   static Future<void> insertTransOSDCImage(TransOSDCImagesModel transOSDCImage) async {
     var db = await initDataBase();
     await db.insert(
-      TableName.tbl_trans_osdc_images,
+      TableName.tblTransOsdcImages,
       transOSDCImage.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -3042,7 +3081,7 @@ class DatabaseHelper {
   static Future<void> insertTransOnePlusOne(TransOnePlusOneModel transOnePlusOneModel) async {
     var db = await initDataBase();
     await db.insert(
-      TableName.tbl_trans_one_plus_one,
+      TableName.tblTransOnePlusOne,
       transOnePlusOneModel.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -3056,7 +3095,7 @@ class DatabaseHelper {
   //   );
   // }
   static Future<int>  insertTransPlanoguide(String workingID) async {
-    String insertQuery = "INSERT OR IGNORE INTO trans_planoguide (client_id,store_id, cat_id, pog, isAdherence, imageName, date_time,activity_status, gcs_status, upload_status, working_id) "
+    String insertQuery = "INSERT OR IGNORE INTO trans_planoguide (client_id,store_id, category_id, pog, isAdherence, imageName, date_time,activity_status, gcs_status, upload_status, working_id) "
         " SELECT client_id,store_id, category_id, pog,-1, pog_image, CURRENT_TIMESTAMP,0,0, 0,$workingID"
         " FROM sys_store_pog";
     var db = await initDataBase();
@@ -3104,7 +3143,7 @@ class DatabaseHelper {
     print("________CLIENT List ________________");
     return List.generate(clientMaps.length, (index) {
       return ClientModel(
-        client_id: clientMaps[index][TableName.sys_client_id] as int,
+        client_id: clientMaps[index][TableName.clientIds] as int,
         client_name: clientMaps[index][TableName.sys_client_name] as String,
         // logo: clientMaps[index][TableName.sys_client_logo] as String,
         // classification:
@@ -3133,7 +3172,7 @@ class DatabaseHelper {
         id: categoryMaps[index]['cat_id'] as int,
         en_name: categoryMaps[index]['cat_en_name'] as String,
         ar_name: categoryMaps[index]['cat_ar_name'] as String,
-        client: categoryMaps[index][TableName.cat_client_id] as int,
+        client: categoryMaps[index][TableName.clientIds] as int,
       );
     });
   }
@@ -3161,7 +3200,7 @@ class DatabaseHelper {
         id: categoryMaps[index]['cat_id'] as int,
         en_name: categoryMaps[index]['cat_en_name'] as String,
         ar_name: categoryMaps[index]['cat_ar_name'] as String,
-        client: categoryMaps[index][TableName.cat_client_id] as int,
+        client: categoryMaps[index][TableName.clientIds] as int,
       );
     });
   }
@@ -3200,10 +3239,10 @@ class DatabaseHelper {
     print("________BRAND List ________________");
     return List.generate(brandMaps.length, (index) {
       return SYS_BrandModel(
-        id: brandMaps[index][TableName.sys_brand_id] as int,
-        en_name: brandMaps[index][TableName.sys_brand_en_name] as String,
-        ar_name: brandMaps[index][TableName.sys_brand_ar_name] as String,
-        client: brandMaps[index][TableName.sys_brand_client_id] as int,
+        id: brandMaps[index][TableName.sysId] as int,
+        en_name: brandMaps[index][TableName.enName] as String,
+        ar_name: brandMaps[index][TableName.arName] as String,
+        client: brandMaps[index][TableName.clientIds] as int,
       );
     });
   }
@@ -3217,10 +3256,10 @@ class DatabaseHelper {
     print("________BRAND List ________________");
     return List.generate(brandMaps.length, (index) {
       return SYS_BrandModel(
-        id: brandMaps[index][TableName.sys_brand_id] as int,
-        en_name: brandMaps[index][TableName.sys_brand_en_name] as String,
-        ar_name: brandMaps[index][TableName.sys_brand_ar_name] as String,
-        client: brandMaps[index][TableName.sys_brand_client_id] as int,
+        id: brandMaps[index][TableName.sysId] as int,
+        en_name: brandMaps[index][TableName.enName] as String,
+        ar_name: brandMaps[index][TableName.arName] as String,
+        client: brandMaps[index][TableName.clientIds] as int,
       );
     });
   }
@@ -3259,9 +3298,9 @@ class DatabaseHelper {
     print("________OSDC Reason List ________________");
     return List.generate(osdcReasonMaps.length, (index) {
       return Sys_OSDCReasonModel(
-        id: osdcReasonMaps[index][TableName.sys_osdc_reason_id] as int,
-        en_name: osdcReasonMaps[index][TableName.sys_osdc_reason_en_name] as String,
-        ar_name: osdcReasonMaps[index][TableName.sys_osdc_reason_ar_name] as String,
+        id: osdcReasonMaps[index][TableName.sysId] as int,
+        en_name: osdcReasonMaps[index][TableName.enName] as String,
+        ar_name: osdcReasonMaps[index][TableName.arName] as String,
       );
     });
   }
@@ -3273,9 +3312,9 @@ class DatabaseHelper {
     print("________ SOS Unit List ________________");
     return List.generate(osdcTypeMaps.length, (index) {
       return Sys_OSDCTypeModel(
-        id: osdcTypeMaps[index][TableName.sys_osdc_type_id] as int,
-        en_name: osdcTypeMaps[index][TableName.sys_osdc_type_en_name] as String,
-        ar_name: osdcTypeMaps[index][TableName.sys_osdc_type_ar_name] as String,
+        id: osdcTypeMaps[index][TableName.sysId] as int,
+        en_name: osdcTypeMaps[index][TableName.enName] as String,
+        ar_name: osdcTypeMaps[index][TableName.arName] as String,
       );
     });
   }
@@ -3287,9 +3326,9 @@ class DatabaseHelper {
     print("________ App Setting List ________________");
     return List.generate(osdcTypeMaps.length, (index) {
       return Sys_OSDCTypeModel(
-        id: osdcTypeMaps[index][TableName.sys_osdc_type_id] as int,
-        en_name: osdcTypeMaps[index][TableName.sys_osdc_type_en_name] as String,
-        ar_name: osdcTypeMaps[index][TableName.sys_osdc_type_ar_name] as String,
+        id: osdcTypeMaps[index][TableName.sysId] as int,
+        en_name: osdcTypeMaps[index][TableName.enName] as String,
+        ar_name: osdcTypeMaps[index][TableName.arName] as String,
       );
     });
   }
@@ -3301,9 +3340,9 @@ class DatabaseHelper {
     print("________ SOS Unit List ________________");
     return List.generate(osdcTypeMaps.length, (index) {
       return Sys_OSDCTypeModel(
-        id: osdcTypeMaps[index][TableName.sys_osdc_type_id] as int,
-        en_name: osdcTypeMaps[index][TableName.sys_osdc_type_en_name] as String,
-        ar_name: osdcTypeMaps[index][TableName.sys_osdc_type_ar_name] as String,
+        id: osdcTypeMaps[index][TableName.sysId] as int,
+        en_name: osdcTypeMaps[index][TableName.enName] as String,
+        ar_name: osdcTypeMaps[index][TableName.arName] as String,
       );
     });
   }
@@ -3315,9 +3354,9 @@ class DatabaseHelper {
     print("________OSDC Type List ________________");
     return List.generate(osdcTypeMaps.length, (index) {
       return Sys_OSDCTypeModel(
-        id: osdcTypeMaps[index][TableName.sys_osdc_type_id] as int,
-        en_name: osdcTypeMaps[index][TableName.sys_osdc_type_en_name] as String,
-        ar_name: osdcTypeMaps[index][TableName.sys_osdc_type_ar_name] as String,
+        id: osdcTypeMaps[index][TableName.sysId] as int,
+        en_name: osdcTypeMaps[index][TableName.enName] as String,
+        ar_name: osdcTypeMaps[index][TableName.arName] as String,
       );
     });
   }
@@ -3367,9 +3406,6 @@ class DatabaseHelper {
       );
     });
   }
-
-  //int pickListId,int storeId,int catId,int tmrId,String tmrName,int stockerId,String stockerName,String shiftTime,String enCatName,String arCatName,String skuPicture,String enSkuName,String arSkuName,int reqPickList, int actPickList, int pickListReady
-
   static Future<int> insertPickListByQuery (String queryBulkInsertion) async {
   String insertQuery = "INSERT OR IGNORE INTO picklist (working_id,picklist_id,store_id, category_id, tmr_id,tmr_name,stocker_id,stocker_name,shift_time,en_cat_name,ar_cat_name,sku_picture,en_sku_name,ar_sku_name,req_picklist,act_picklist,picklist_ready,upload_status,pick_list_send_time,pick_list_receive_time,picklist_reason)"
                         "VALUES $queryBulkInsertion";
@@ -3403,12 +3439,12 @@ class DatabaseHelper {
   //       TableName.picklist_picklist_ready: data.pickList_ready.toString(),
   //     };
   //     bool isDuplicate = await hasDuplicateEntry(
-  //         db, TableName.tbl_picklist, fields);
+  //         db, TableName.tblPicklist, fields);
   //     if (isDuplicate) {
   //       print("Error: Duplicate entry picklist reason");
   //     } else {
   //       await db.insert(
-  //         TableName.tbl_picklist,
+  //         TableName.tblPicklist,
   //         {
   //           TableName.picklist_id: data.picklist_id.toString(),
   //           TableName.picklist_store_id: data.store_id.toString(),
@@ -3949,7 +3985,7 @@ class DatabaseHelper {
   static Future<void> insertTransRtvData(TransRtvModel transRtvModel) async {
     var db = await initDataBase();
     await db.insert(
-      TableName.tbl_trans_rtv,
+      TableName.tblTransRtv,
       transRtvModel.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -3965,11 +4001,11 @@ class DatabaseHelper {
     print("________ RTV Reason List ________________");
     return List.generate(brandMaps.length, (index) {
       return Sys_RTVReasonModel(
-        id: brandMaps[index][TableName.sys_rtv_reason_id] as int,
-        en_name: brandMaps[index][TableName.sys_rtv_reason_en_name] as String,
-        ar_name: brandMaps[index][TableName.sys_rtv_reason_ar_name] as String,
+        id: brandMaps[index][TableName.sysId] as int,
+        en_name: brandMaps[index][TableName.enName] as String,
+        ar_name: brandMaps[index][TableName.arName] as String,
         calendar: brandMaps[index][TableName.sys_rtv_reason_calendar].toString(),
-        status: brandMaps[index][TableName.sys_rtv_reason_status] as int,
+        status: brandMaps[index][TableName.status] as int,
       );
     });
   }
@@ -4746,7 +4782,7 @@ class DatabaseHelper {
     final db = await initDataBase();
     final List<Map<String, dynamic>> dashboardMap = await db.rawQuery(
         "SELECT * FROM sys_dashboard WHERE user_id=$userId");
-    print("________ Dashboard Data Get ________________");
+
     print(jsonEncode(dashboardMap));
     print("________ Dashboard Data Getting ________________");
       return UserDashboardModel(
@@ -4754,7 +4790,7 @@ class DatabaseHelper {
         jp_planned: dashboardMap[0]['jp_planned'] ?? 0,
         jp_visited: dashboardMap[0]['jp_visited'] ?? 0,
         out_of_planned: dashboardMap[0]['out_of_planned'] ?? 0,
-        out_of_planned_visited: dashboardMap[0]['out_of_plan_visited'] ?? 0,
+        out_of_planned_visited: dashboardMap[0]['out_of_planned_visited'] ?? 0,
         jpc: dashboardMap[0]['jpc'] ?? 0,
         pro: dashboardMap[0]['pro'] ?? 0,
         working_hrs: dashboardMap[0]['working_hrs'] ?? 0,
@@ -4785,7 +4821,7 @@ class DatabaseHelper {
           enStoreName: journeyPlanMap[index]["en_store_name"].toString(),
           arStoreName: journeyPlanMap[index]["ar_store_name"].toString(),
           gcode: journeyPlanMap[index]["gcode"].toString(),
-          clientIds: journeyPlanMap[index]["client_ids"].toString(),
+          clientIds: journeyPlanMap[index]["client_id"].toString(),
           userId: journeyPlanMap[index]["user_id"] ?? 0,
           checkIn: journeyPlanMap[index]["check_in"] ?? '',
           checkOut: journeyPlanMap[index]["check_out"] ?? '',
@@ -4816,14 +4852,14 @@ class DatabaseHelper {
       TransAddProfOfSale transAddProfOfSale) async {
     var db = await initDataBase();
     await db.insert(
-      TableName.tbl_trans_POS,
+      TableName.tblTransPOS,
       transAddProfOfSale.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
   static Future<List<ShowProofOfSaleModel>> getTransPOS(
       String workingId) async {
-    print("__________________Trans POS__________________");
+    print("__________________TransPlanogram__________________");
 
     final db = await initDataBase();
     final List<Map<String, dynamic>> posData = await db.rawQuery(
@@ -4837,29 +4873,30 @@ class DatabaseHelper {
 
     return List.generate(posData.length, (index) {
       return ShowProofOfSaleModel(
-          id: posData[index][TableName.col_id] ?? 0,
-          sku_id: posData[index][TableName.sku_id] ?? 0,
-          client_id: posData[index][TableName.client_id] ?? 0,
+          id: posData[index][TableName.sysId] ?? 0,
+          sku_id: posData[index][TableName.skuId] ?? 0,
+          client_id: posData[index][TableName.clientIds] ?? 0,
           qty: posData[index][TableName.quantity] ?? 0,
-          gcs_status: posData[index][TableName.gcs_status] ?? 0,
-          upload_status: posData[index][TableName.upload_status] ?? 0,
+          gcs_status: posData[index][TableName.gcsStatus] ?? 0,
+          upload_status: posData[index][TableName.uploadStatus] ?? 0,
           cat_en_name: posData[index]['cat_en_name'] ?? "",
           cat_ar_name: posData[index]['cat_ar_name'] ?? "",
           pro_en_name: posData[index]['pro_en_name'] ?? "",
           pro_ar_name: posData[index]['pro_en_name'] ?? "",
-          image_name: posData[index][TableName.image_name] ?? "",
+          image_name: posData[index][TableName.imageName] ?? "",
           name: posData[index][TableName.trans_pos_name] ?? "",
           email: posData[index][TableName.trans_pos_email] ?? "",
           amount: posData[index][TableName.trans_pos_amount] ?? "",
           phone: posData[index][TableName.trans_pos_phone] ?? "");
     });
   }
+
   static Future<List<Sys_PhotoTypeModel>> getSkusList(int catId) async {
     final db = await initDataBase();
     final List<Map<String, dynamic>> photoTypeMaps = await db.rawQuery(
         "SELECT sys_product.id,sys_product.en_name,sys_product.ar_name from sys_product where sys_product.category_id=$catId");
     print(jsonEncode(photoTypeMaps));
-    print("________POS List ________________");
+    print("________Photo type List ________________");
     return List.generate(photoTypeMaps.length, (index) {
       return Sys_PhotoTypeModel(
         id: photoTypeMaps[index]['id'] as int,
@@ -4872,7 +4909,7 @@ class DatabaseHelper {
       TransRtvOnePlusOneModel transRtvModel) async {
     var db = await initDataBase();
     await db.insert(
-      TableName.tbl_trans_one_plus_one,
+      TableName.tblTransOnePlusOne,
       transRtvModel.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -4981,8 +5018,8 @@ class DatabaseHelper {
         "Select * FROM sys_knowledge_share WHERE client_id in($clientId)");
     return List.generate(knowledgeList.length, (index) {
       return KnowledgeShareModel(
-          id:knowledgeList[index][TableName.col_id] ?? 0,
-          client_id: knowledgeList[index][TableName.client_id] ?? 0,
+          id:knowledgeList[index][TableName.sysId] ?? 0,
+          client_id: knowledgeList[index][TableName.clientIds] ?? 0,
           chain_id: knowledgeList[index][TableName.chain_id] ?? 0,
           title: knowledgeList[index][TableName.sys_knowledge_title] ?? "",
           description: knowledgeList[index][TableName.sys_knowledge_des] ?? "",
@@ -5000,10 +5037,10 @@ class DatabaseHelper {
 
     for (KnowledgeShareModel data in modelList) {
       Map<String, dynamic> fields = {
-        TableName.col_id: data.id,
+        TableName.sysId: data.id,
         TableName.sys_knowledge_title: data.title,
         TableName.sys_knowledge_des: data.description,
-        TableName.client_id: data.client_id,
+        TableName.clientIds: data.client_id,
         TableName.chain_id: data.chain_id,
         TableName.sys_knowledge_addedBy: data.added_by,
         TableName.sys_knowledge_fileName: data.file_name,
@@ -5020,10 +5057,10 @@ class DatabaseHelper {
         await db.insert(
           TableName.tblSysKnowledgeShare,
           {
-            TableName.col_id: data.id,
+            TableName.sysId: data.id,
             TableName.sys_knowledge_title: data.title,
             TableName.sys_knowledge_des: data.description,
-            TableName.client_id: data.client_id,
+            TableName.clientIds: data.client_id,
             TableName.chain_id: data.chain_id,
             TableName.sys_knowledge_addedBy: data.added_by,
             TableName.sys_knowledge_fileName: data.file_name,
@@ -5041,7 +5078,75 @@ class DatabaseHelper {
     return false;
   }
 
+  static Future<List<ShowMarketIssueModel>> getTransMarketIssue(
+      String workingId) async {
+    print("__________________TransPlanogram__________________");
 
+    final db = await initDataBase();
+    final List<Map<String, dynamic>> issueData = await db.rawQuery(
+        "Select market_issue.*,sys_market_issues.name,sys_market_issues.updated_at"
+            "  From market_issue"
+            " JOIN sys_market_issues on sys_market_issues.id = market_issue.issue_id"
+            " WHERE working_id=$workingId");
+    print(jsonEncode(issueData));
+    return List.generate(issueData.length, (index) {
+      return ShowMarketIssueModel(
+          id: issueData[index][TableName.sysId] ?? 0,
+          image: issueData[index][TableName.imageName] ?? "",
+          Issuetype: issueData[index]["name"] ?? "",
+          gcs_status: issueData[index][TableName.gcsStatus] ?? 0,
+          upload_status: issueData[index][TableName.uploadStatus] ?? 0,
+          comment: issueData[index][TableName.trans_one_plus_one_comment] ?? "",
+          update_at: issueData[index][TableName.sys_issue_update_at] ?? "");
+    });
+  }
+
+
+  static Future<List<sysMarketIssueModel>> getMarketIssueDropDownList() async {
+    final db = await initDataBase();
+    final List<Map<String, dynamic>> issueModel =
+    await db.rawQuery("SELECT *FROM sys_market_issues WHERE status=1");
+    return List.generate(issueModel.length, (index) {
+      return sysMarketIssueModel(
+          id: issueModel[index]['id'] ?? 0,
+          name: issueModel[index]['name'] ?? "",
+          status: issueModel[index]['status'] ?? 0,
+          updated_at: issueModel[index]['updated_at'] ?? "");
+    });
+  }
+
+
+
+  static Future<bool> insertMarketIssueArray(
+      List<sysMarketIssueModel> modelList) async {
+    var db = await initDataBase();
+    for (sysMarketIssueModel data in modelList) {
+      Map<String, dynamic> fields = {
+        TableName.sysId: data.id,
+        TableName.trans_pos_name: data.name,
+        TableName.status: data.status,
+        TableName.sys_issue_update_at: data.updated_at,
+      };
+      bool isDuplicate =
+      await hasDuplicateEntry(db, TableName.tblSysMarketIssue, fields);
+
+      if (isDuplicate) {
+        print("Error: Duplicate entry market issue");
+      } else {
+        await db.insert(
+          TableName.tblSysMarketIssue,
+          {
+            TableName.sysId: data.id,
+            TableName.trans_pos_name: data.name,
+            TableName.status: data.status,
+            TableName.sys_issue_update_at: data.updated_at,
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+    }
+    return false;
+  }
 
 
 

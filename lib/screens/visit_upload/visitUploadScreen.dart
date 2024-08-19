@@ -2175,20 +2175,20 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
   Future <bool>  deleteVisitData() async {
 
-    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_availability,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tblTransAvailability,workingId);
     ///Due to working_id issue
-    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_picklist,workingId);
-    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_planoguide,workingId);
-    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_BrandShare,workingId);
-    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_rtv,workingId);
-    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_pricing,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tblPicklist,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tblTransPlanoguide,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tblTransBrandShare,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tblTransRtv,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tblTransPricing,workingId);
     await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbTransPromoPlan,workingId);
-    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_freshness,workingId);
-    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_stock,workingId);
-    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_before_faxing,workingId);
-    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_photo,workingId);
-    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_sos,workingId);
-    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tbl_trans_planogram,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tblTransFreshness,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tblTransStock,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tblTransBeforeFaxing,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tblTransPhoto,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tblTransSos,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tblTransPlanogram,workingId);
 
     await deleteFolder(workingId);
 

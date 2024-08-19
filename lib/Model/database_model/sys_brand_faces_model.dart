@@ -17,26 +17,26 @@ class SysBrandFacesModel {
 
   Map<String, Object?> toMap() {
     return {
-      TableName.sys_brand_faces_storeId: storeId,
-     TableName.sys_client_id:clientId,
-      TableName.sys_brand_faces_catId: catId.toString(),
-      TableName.sys_brand_faces_brandId: brand_id.toString(),
+      TableName.storeId: storeId,
+     TableName.clientIds:clientId,
+      TableName.sysCategoryId: catId.toString(),
+      TableName.brandId: brand_id.toString(),
       TableName.sys_brand_faces_givenFaces:given_faces.toString(),
     };
   }
 
   SysBrandFacesModel.fromJson(Map<String, dynamic> json) {
-    storeId = json[TableName.sys_brand_faces_storeId];
-    clientId = json[TableName.sys_client_id];
-    catId = json[TableName.sys_brand_faces_catId];
-    brand_id = json[TableName.sys_brand_faces_brandId];
+    storeId = json[TableName.storeId];
+    clientId = json[TableName.clientIds];
+    catId = json[TableName.sysCategoryId];
+    brand_id = json[TableName.brandId];
     given_faces = json[TableName.sys_brand_faces_givenFaces].toString();
   }
   Map<String, dynamic> toJson() => {
-    TableName.sys_brand_faces_storeId: storeId.toString(),
-   TableName.sys_client_id:clientId,
-    TableName.sys_brand_faces_catId: catId.toString(),
-    TableName.sys_brand_faces_brandId: brand_id.toString(),
+    TableName.storeId: storeId.toString(),
+   TableName.clientIds:clientId,
+    TableName.sysCategoryId: catId.toString(),
+    TableName.brandId: brand_id.toString(),
     TableName.sys_brand_faces_givenFaces: given_faces.toString(),
   };
 

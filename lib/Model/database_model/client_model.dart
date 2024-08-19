@@ -26,7 +26,7 @@ class ClientModel {
 
   Map<String, Object?> toMap() {
     return {
-      TableName.sys_client_id: client_id,
+      TableName.clientIds: client_id,
       TableName.sys_client_name: client_name ?? "",
       // TableName.sys_client_logo: logo ?? "",
       // TableName.sys_client_classification: classification,

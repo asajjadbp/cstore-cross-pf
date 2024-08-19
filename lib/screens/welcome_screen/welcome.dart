@@ -130,31 +130,32 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
         syncroniseData = value.data;
         ToastMessage.succesMessage(context, "Data synchronization started now");
 
-        ///Table Deletion
-        DatabaseHelper.delete_table(TableName.tbl_sys_agency_dashboard);
-        DatabaseHelper.delete_table(TableName.tbl_sys_category);
-        DatabaseHelper.delete_table(TableName.tbl_sys_client);
-        DatabaseHelper.delete_table(TableName.tbl_sys_drop_reason);
-        DatabaseHelper.delete_table(TableName.tbl_sys_brand);
-        DatabaseHelper.delete_table(TableName.tbl_sys_planogram_reason);
-        DatabaseHelper.delete_table(TableName.tbl_sys_rtv_reason);
-        DatabaseHelper.delete_table(TableName.tbl_sys_product);
-        DatabaseHelper.delete_table(TableName.tbl_sys_photo_type);
-        DatabaseHelper.delete_table(TableName.tbl_sys_osdc_type);
-        DatabaseHelper.delete_table(TableName.tbl_sys_osdc_reason);
+       ///Table Deletion
+       DatabaseHelper.delete_table(TableName.tblSysAgencyDashboard);
+       DatabaseHelper.delete_table(TableName.tblSysCategory);
+       DatabaseHelper.delete_table(TableName.tblSysClient);
+       DatabaseHelper.delete_table(TableName.tblSysDropReason);
+       DatabaseHelper.delete_table(TableName.tblSysBrand);
+       DatabaseHelper.delete_table(TableName.tblSysPlanogramReason);
+       DatabaseHelper.delete_table(TableName.tblSysRtvReason);
+       DatabaseHelper.delete_table(TableName.tblSysProduct);
+       DatabaseHelper.delete_table(TableName.tblSysPhototype);
+       DatabaseHelper.delete_table(TableName.tblSysOsdcType);
+       DatabaseHelper.delete_table(TableName.tblSysOsdcReason);
 
-        DatabaseHelper.delete_table(TableName.tbl_sys_product_placement);
-        DatabaseHelper.delete_table(TableName.tbl_sys_brand_faces);
-        DatabaseHelper.delete_table(TableName.tbl_sys_store_pog);
-        DatabaseHelper.delete_table(TableName.tbl_sys_app_setting);
-        DatabaseHelper.delete_table(TableName.tbl_sys_daily_checklist);
-        DatabaseHelper.delete_table(TableName.tbl_sys_sos_units);
-        DatabaseHelper.delete_table(TableName.tblSysVisitReqModules);
-        DatabaseHelper.delete_table(TableName.tblSysPromoPlan);
-        DatabaseHelper.delete_table(TableName.tblSysJourneyPlan);
-        DatabaseHelper.delete_table(TableName.tblSysDashboard);
+       DatabaseHelper.delete_table(TableName.tblSysProductPlacement);
+       DatabaseHelper.delete_table(TableName.tblSysBrandFaces);
+       DatabaseHelper.delete_table(TableName.tblSysStorePog);
+       DatabaseHelper.delete_table(TableName.tblSysAppSetting);
+       DatabaseHelper.delete_table(TableName.tblSysDailyChecklist);
+       DatabaseHelper.delete_table(TableName.tblSysSosUnits);
+       DatabaseHelper.delete_table(TableName.tblSysVisitReqModules);
+       DatabaseHelper.delete_table(TableName.tblSysPromoPlan);
+       DatabaseHelper.delete_table(TableName.tblSysJourneyPlan);
+       DatabaseHelper.delete_table(TableName.tblSysDashboard);
 
-        ///Table Insertion
+
+       ///Table Insertion
        var isDashboardPlan = await DatabaseHelper.insertSysDashboardArray(syncroniseData[0].sysDashboard);
        var isJourneyPlan = await DatabaseHelper.insertSysJourneyPlanArray(syncroniseData[0].sysJourneyPlan);
         var isAgencyDash=await DatabaseHelper.insertAgencyDashArray(syncroniseData[0].sysAgencyDashboard);

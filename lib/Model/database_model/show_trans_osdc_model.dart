@@ -50,3 +50,23 @@ class GetTransOSDCModel {
   }
 
 }
+
+class GetTransImagesOSDCModel {
+  late int id;
+  late String imgName;
+
+
+  GetTransImagesOSDCModel(
+      {required this.id,
+        required this.imgName,
+      });
+
+  Map<String, Object?> toMap() {
+    return {
+      TableName.trans_osdc_main_id: id.toString(),
+      TableName.imageName: imgName.toString(),
+
+    };
+  }
+
+}

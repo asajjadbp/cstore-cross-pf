@@ -19,15 +19,15 @@ class TransAddProfOfSale {
     name = json[TableName.trans_pos_name];
     email = json[TableName.trans_pos_email];
     phone = json[TableName.trans_pos_phone];
-    client_id = json[TableName.client_id];
+    client_id = json[TableName.clientIds];
     category_id = json[TableName.sysCategoryId];
     qty = json[TableName.col_quantity];
-    sku_id = json[TableName.sku_id];
+    sku_id = json[TableName.skuId];
     Amount = json[TableName.trans_pos_amount];
-    upload_status = json[TableName.upload_status];
-    gcs_status = json[TableName.gcs_status];
-    working_id = json[TableName.working_id];
-    image_name = json[TableName.image_name];
+    upload_status = json[TableName.uploadStatus];
+    gcs_status = json[TableName.gcsStatus];
+    working_id = json[TableName.workingId];
+    image_name = json[TableName.imageName];
     date_time = json[TableName.dateTime];
 
   }

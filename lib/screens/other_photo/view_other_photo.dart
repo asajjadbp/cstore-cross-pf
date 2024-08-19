@@ -129,7 +129,7 @@ class _ViewOtherPhotoState extends State<ViewOtherPhoto> {
   }
 
   void deletePhoto(int recordId, String imgName) async {
-    await DatabaseHelper.deleteOneRecord(TableName.tbl_trans_photo, recordId)
+    await DatabaseHelper.deleteOneRecord(TableName.tblTransPhoto, recordId)
         .then((_) async {
       await deleteImageFromLocal(imgName).then((_) {
         _loadImages();

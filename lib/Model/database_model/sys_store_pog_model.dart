@@ -17,25 +17,25 @@ class SysStorePogModel {
 
   Map<String, Object?> toMap() {
     return {
-      TableName.sys_store_pog_storeid: storeId.toString(),
-      TableName.sys_client_id:  clientId,
-      TableName.sys_store_pog_catId: catId.toString(),
+      TableName.storeId: storeId.toString(),
+      TableName.clientIds:  clientId,
+      TableName.sysCategoryId: catId.toString(),
       TableName.sys_store_pog: pog.toString(),
       TableName.sys_store_pog_image: pogImage.toString(),
     };
   }
 
   SysStorePogModel.fromJson(Map<String, dynamic> json) {
-    storeId = json[TableName.sys_store_pog_storeid];
-    clientId = json[TableName.sys_client_id];
-    catId = json[TableName.sys_store_pog_catId];
+    storeId = json[TableName.storeId];
+    clientId = json[TableName.clientIds];
+    catId = json[TableName.sysCategoryId];
     pog = json[TableName.sys_store_pog].toString();
     pogImage = json[TableName.sys_store_pog_image].toString();
   }
   Map<String, dynamic> toJson() => {
-    TableName.sys_store_pog_storeid: storeId,
-    TableName.sys_client_id : clientId,
-    TableName.sys_store_pog_catId: catId.toString(),
+    TableName.storeId: storeId,
+    TableName.clientIds : clientId,
+    TableName.sysCategoryId: catId.toString(),
     TableName.sys_store_pog: pog.toString(),
     TableName.sys_store_pog_image: pogImage.toString(),
   };
