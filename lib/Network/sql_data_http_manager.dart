@@ -17,6 +17,10 @@ import '../Model/request_model.dart/ready_pick_list_request.dart';
 import '../Model/request_model.dart/save_api_pricing_data_request.dart';
 import '../Model/request_model.dart/save_api_rtv_data_request.dart';
 import '../Model/request_model.dart/save_freshness_request_model.dart';
+import '../Model/request_model.dart/save_market_issue_request.dart';
+import '../Model/request_model.dart/save_one_plus_one_request.dart';
+import '../Model/request_model.dart/save_osd_request.dart';
+import '../Model/request_model.dart/save_pos_request.dart';
 import '../Model/request_model.dart/save_promo_plan_request_model.dart';
 import '../Model/request_model.dart/save_stock_request_model.dart';
 import '../Model/request_model.dart/sos_end_api_request_model.dart';
@@ -189,6 +193,38 @@ class SqlHttpManager {
     print(url);
     print(jsonEncode(saveStockData));
     var response = await _handler.postWithJson(Uri.parse(url), saveStockData.toJson(), token);
+    return response;
+  }
+
+  Future<dynamic> savePos(String token, String baseUrl,SavePosData savePosData) async {
+    final url = baseUrl + Api.postPosData;
+    print(url);
+    print(jsonEncode(savePosData));
+    var response = await _handler.postWithJson(Uri.parse(url), savePosData.toJson(), token);
+    return response;
+  }
+
+  Future<dynamic> saveOnePlusOne(String token, String baseUrl,SaveOnePlusOneData saveOnePlusOneData) async {
+    final url = baseUrl + Api.postOnePlusOneData;
+    print(url);
+    print(jsonEncode(saveOnePlusOneData));
+    var response = await _handler.postWithJson(Uri.parse(url), saveOnePlusOneData.toJson(), token);
+    return response;
+  }
+
+  Future<dynamic> saveMarketIssue(String token, String baseUrl,SaveMarketIssueData saveMarketIssueData) async {
+    final url = baseUrl + Api.postMarketIssueData;
+    print(url);
+    print(jsonEncode(saveMarketIssueData));
+    var response = await _handler.postWithJson(Uri.parse(url), saveMarketIssueData.toJson(), token);
+    return response;
+  }
+
+  Future<dynamic> saveOsd(String token, String baseUrl,SaveOsdData saveOsdData) async {
+    final url = baseUrl + Api.postOSDData;
+    print(url);
+    print(jsonEncode(saveOsdData));
+    var response = await _handler.postWithJson(Uri.parse(url), saveOsdData.toJson(), token);
     return response;
   }
 

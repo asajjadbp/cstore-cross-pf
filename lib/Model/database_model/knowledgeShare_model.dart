@@ -31,9 +31,9 @@ class KnowledgeShareModel {
       TableName.chain_id: this.chain_id,
       TableName.sys_knowledge_title: this.title,
       TableName.sys_knowledge_des: this.description,
-      TableName.sys_knowledge_addedBy: this.added_by,
-      TableName.sys_knowledge_fileName: this.file_name,
-      TableName.sys_knowledge_type: this.type,
+      TableName.sysKnowledgeAddedBy: this.added_by,
+      TableName.sysKnowledgeFileName: this.file_name,
+      TableName.sysKnowledgeType: this.type,
       TableName.sysKnowledgeActive: this.active,
       TableName.sysIssueUpdateAt: this.updated_at,
     };
@@ -44,10 +44,10 @@ class KnowledgeShareModel {
     chain_id = json[TableName.chain_id] ?? 0;
     title = json[TableName.sys_knowledge_title] ?? "";
     description = json[TableName.sys_knowledge_des] ?? "";
-    added_by = json[TableName.sys_knowledge_addedBy] ?? "";
-    file_name = json[TableName.sys_knowledge_fileName] ?? 0;
-    type = json[TableName.sys_knowledge_type] ?? "";
-    active = json[TableName.sys_knowledge_type] ?? 0;
+    added_by = json[TableName.sysKnowledgeAddedBy] ?? "";
+    file_name = json[TableName.sysKnowledgeFileName] ?? 0;
+    type = json[TableName.sysKnowledgeType] ?? "";
+    active = json[TableName.sysKnowledgeType] ?? 0;
     updated_at = json[TableName.sysIssueUpdateAt] ?? "";
   }
 
@@ -57,9 +57,9 @@ class KnowledgeShareModel {
     TableName.chain_id: this.chain_id,
     TableName.sys_knowledge_title: this.title,
     TableName.sys_knowledge_des: this.description,
-    TableName.sys_knowledge_addedBy: this.added_by,
-    TableName.sys_knowledge_fileName: this.file_name,
-    TableName.sys_knowledge_type: this.type,
+    TableName.sysKnowledgeAddedBy: this.added_by,
+    TableName.sysKnowledgeFileName: this.file_name,
+    TableName.sysKnowledgeType: this.type,
     TableName.sysKnowledgeActive: this.active,
     TableName.sysIssueUpdateAt: this.updated_at,
   };

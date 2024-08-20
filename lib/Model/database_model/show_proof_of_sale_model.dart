@@ -19,6 +19,8 @@ class ShowProofOfSaleModel {
   late String email;
   late String phone;
   File? imageFile;
+  String? dateTime;
+
   ShowProofOfSaleModel.fromJson(Map<String, dynamic> json) {
     id = json[TableName.sysId];
     sku_id = json[TableName.skuId];
@@ -35,6 +37,7 @@ class ShowProofOfSaleModel {
     email = json[TableName.trans_pos_email];
     phone = json[TableName.trans_pos_phone];
     amount = json[TableName.trans_pos_amount];
+    dateTime = json[TableName.dateTime];
   }
   ShowProofOfSaleModel({
     required this.id,
@@ -53,5 +56,6 @@ class ShowProofOfSaleModel {
     required this.amount,
     required this.phone,
     this.imageFile,
+    required this.dateTime
   });
 }

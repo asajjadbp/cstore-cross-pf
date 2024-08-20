@@ -41,6 +41,7 @@ class _ProofOfSaleState extends State<ProofOfSale> {
   TextEditingController valueControllerAmount = TextEditingController();
   TextEditingController valueControllerQuantity = TextEditingController();
   int selectedSkuId = -1;
+  String userName = "";
   final GlobalKey<FormFieldState> clientKey = GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> skuKey = GlobalKey<FormFieldState>();
   int selectedClientId = -1;
@@ -58,6 +59,7 @@ class _ProofOfSaleState extends State<ProofOfSale> {
   var imageName = "";
   File? imageFile;
   final GlobalKey<FormFieldState> categoryKey = GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> typeKey = GlobalKey<FormFieldState>();
   @override
   void initState() {
     getUserData();
@@ -66,6 +68,7 @@ class _ProofOfSaleState extends State<ProofOfSale> {
   getUserData() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    userName = sharedPreferences.getString(AppConstants.userName)!;
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
     clientId = sharedPreferences.getString(AppConstants.clientId)!;
     setState(() {});
@@ -85,6 +88,7 @@ class _ProofOfSaleState extends State<ProofOfSale> {
   }
   void getSkusData(int catId) async {
     selectedSkuId = -1;
+    typeKey.currentState!.reset();
     skuDataList = [Sys_PhotoTypeModel(en_name: "", ar_name: "", id: -1)];
     setState(() {
       isSKusLoading = true;
@@ -106,7 +110,7 @@ class _ProofOfSaleState extends State<ProofOfSale> {
       imageFile = value;
 
       final String extension = path.extension(imageFile!.path);
-      imageName = "${DateTime.now().millisecondsSinceEpoch}$extension";
+      imageName = "${userName}_${DateTime.now().millisecondsSinceEpoch}$extension";
       setState(() {});
       // _takePhoto(value);
     });
@@ -114,11 +118,8 @@ class _ProofOfSaleState extends State<ProofOfSale> {
   void saveStorePhotoData() async {
     if (selectedClientId == -1 ||
         selectedSkuId == -1 ||
-        valueControllerName == "" ||
-        valueControllerEmail == "" ||
-        valueControllerPhone == "" ||
-        valueControllerQuantity == "" ||
-        valueControllerAmount == "" ||
+        valueControllerQuantity.text == "" ||
+        valueControllerAmount.text == "" ||
         imageFile == null) {
       ToastMessage.errorMessage(context, "Please fill the form and take image");
       return;
@@ -187,251 +188,248 @@ class _ProofOfSaleState extends State<ProofOfSale> {
       }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
 
       }),
-      body: SingleChildScrollView(
-        child: Container(
-          margin: const EdgeInsets.only(left: 10, right: 10, top: 30),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+      body: Container(
+        margin: const EdgeInsets.only(left: 10, right: 10, top: 10),
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        const Text(
-                          "Name*",
-                          style: TextStyle(
-                              color: MyColors.appMainColor,
-                              fontWeight: FontWeight.bold),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Name",
+                              style: TextStyle(
+                                  color: MyColors.appMainColor,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Container(
+                              height: 55,
+                              color: Colors.white,
+                              child: TextField(
+                                showCursor: true,
+                                enableInteractiveSelection: false,
+                                onChanged: (value) {},
+                                controller: valueControllerName,
+                                keyboardType: TextInputType.text,
+                                decoration: const InputDecoration(
+                                    prefixIconColor: MyColors.appMainColor,
+                                    focusColor: MyColors.appMainColor,
+                                    fillColor: MyColors.dropBorderColor,
+                                    labelStyle:
+                                        TextStyle(color: MyColors.appMainColor),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            width: 1,
+                                            color: MyColors.appMainColor)),
+                                    border: OutlineInputBorder(),
+                                    hintText: 'Enter name'),
+                              ),
+                            ),
+                          ],
                         ),
-                        Container(
-                          margin: const EdgeInsets.symmetric(vertical: 5),
-                          height: 55,
-                          color: Colors.white,
-                          child: TextField(
-                            showCursor: true,
-                            enableInteractiveSelection: false,
-                            onChanged: (value) {},
-                            controller: valueControllerName,
-                            keyboardType: TextInputType.text,
-                            decoration: const InputDecoration(
-                                prefixIconColor: MyColors.appMainColor,
-                                focusColor: MyColors.appMainColor,
-                                fillColor: MyColors.dropBorderColor,
-                                labelStyle:
-                                    TextStyle(color: MyColors.appMainColor),
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        width: 1,
-                                        color: MyColors.appMainColor)),
-                                border: OutlineInputBorder(),
-                                hintText: 'Enter name'),
-                          ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Email",
+                              style: TextStyle(
+                                  color: MyColors.appMainColor,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Container(
+                              height: 55,
+                              color: MyColors.whiteColor,
+                              child: TextField(
+                                showCursor: true,
+                                enableInteractiveSelection: false,
+                                onChanged: (value) {},
+                                controller: valueControllerEmail,
+                                keyboardType: TextInputType.emailAddress,
+                                decoration: const InputDecoration(
+                                    prefixIconColor: MyColors.appMainColor,
+                                    focusColor: MyColors.appMainColor,
+                                    fillColor: MyColors.dropBorderColor,
+                                    labelStyle:
+                                        TextStyle(color: MyColors.appMainColor),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            width: 1,
+                                            color: MyColors.appMainColor)),
+                                    border: OutlineInputBorder(),
+                                    hintText: 'Enter email'),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(
-                    width: 7,
-                  ),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 5),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Phone Number",
+                            style: TextStyle(
+                                color: MyColors.appMainColor,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Container(
+                           height: 55,
+                            color: Colors.white,
+                            child: TextField(
+                              showCursor: true,
+                              enableInteractiveSelection: false,
+                              onChanged: (value) {},
+                              controller: valueControllerPhone,
+                              keyboardType: TextInputType.number,
+                              decoration: const InputDecoration(
+                                  prefixIconColor: MyColors.appMainColor,
+                                  focusColor: MyColors.appMainColor,
+                                  fillColor: MyColors.dropBorderColor,
+                                  labelStyle:
+                                      TextStyle(color: MyColors.appMainColor),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          width: 1,
+                                          color: MyColors.appMainColor)),
+                                  border: OutlineInputBorder(),
+                                  hintText: 'Enter phone'),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'^[0-9][0-9]*'))
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        const Text(
-                          "Email*",
-                          style: TextStyle(
-                              color: MyColors.appMainColor,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.symmetric(vertical: 5),
-                          height: 55,
-                          color: Colors.white,
-                          child: TextField(
-                            showCursor: true,
-                            enableInteractiveSelection: false,
-                            onChanged: (value) {},
-                            controller: valueControllerEmail,
-                            keyboardType: TextInputType.emailAddress,
-                            decoration: const InputDecoration(
-                                prefixIconColor: MyColors.appMainColor,
-                                focusColor: MyColors.appMainColor,
-                                fillColor: MyColors.dropBorderColor,
-                                labelStyle:
-                                    TextStyle(color: MyColors.appMainColor),
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        width: 1,
-                                        color: MyColors.appMainColor)),
-                                border: OutlineInputBorder(),
-                                hintText: 'Enter email'),
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Row(
+                                children: [
+                                  Text(
+                                    "Phone Amount",
+                                    style: TextStyle(
+                                        color: MyColors.appMainColor,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
+                                ],
+                              ),
+                              Container(
+                                height: 55,
+                                color: Colors.white,
+                                child: TextField(
+                                  showCursor: true,
+                                  enableInteractiveSelection: false,
+                                  onChanged: (value) {},
+                                  controller: valueControllerAmount,
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(
+                                      prefixIconColor: MyColors.appMainColor,
+                                      focusColor: MyColors.appMainColor,
+                                      fillColor: MyColors.dropBorderColor,
+                                      labelStyle:
+                                      TextStyle(color: MyColors.appMainColor),
+                                      focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              width: 1,
+                                              color: MyColors.appMainColor)),
+                                      border: OutlineInputBorder(),
+                                      hintText: 'Enter amount'),
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp(r'^[0-9][0-9]*'))
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Phone Number*",
-                          style: TextStyle(
-                              color: MyColors.appMainColor,
-                              fontWeight: FontWeight.bold),
+                        const SizedBox(
+                          width: 5,
                         ),
-                        Container(
-                          margin: const EdgeInsets.symmetric(vertical: 5),
-                          height: 55,
-                          color: Colors.white,
-                          child: TextField(
-                            showCursor: true,
-                            enableInteractiveSelection: false,
-                            onChanged: (value) {},
-                            controller: valueControllerPhone,
-                            keyboardType: TextInputType.number,
-                            decoration: const InputDecoration(
-                                prefixIconColor: MyColors.appMainColor,
-                                focusColor: MyColors.appMainColor,
-                                fillColor: MyColors.dropBorderColor,
-                                labelStyle:
-                                    TextStyle(color: MyColors.appMainColor),
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        width: 1,
-                                        color: MyColors.appMainColor)),
-                                border: OutlineInputBorder(),
-                                hintText: 'Enter phone'),
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(
-                                  RegExp(r'^[0-9][0-9]*'))
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Row(
+                                children: [
+                                  Text(
+                                    "Quantity",
+                                    style: TextStyle(
+                                        color: MyColors.appMainColor,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
+                                ],
+                              ),
+                              Container(
+                                height: 55,
+                                color: Colors.white,
+                                child: TextField(
+                                  showCursor: true,
+                                  enableInteractiveSelection: false,
+                                  onChanged: (value) {},
+                                  controller: valueControllerQuantity,
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(
+                                      prefixIconColor: MyColors.appMainColor,
+                                      focusColor: MyColors.appMainColor,
+                                      fillColor: MyColors.dropBorderColor,
+                                      labelStyle:
+                                      TextStyle(color: MyColors.appMainColor),
+                                      focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              width: 1,
+                                              color: MyColors.appMainColor)),
+                                      border: OutlineInputBorder(),
+                                      hintText: 'Enter qty'),
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp(r'^[0-9][0-9]*'))
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(
-                    width: 7,
-                  ),
-                  Expanded(
-                    child: Column(
+                    Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Quantity*",
-                          style: TextStyle(
-                              color: MyColors.appMainColor,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.symmetric(vertical: 5),
-                          height: 55,
-                          color: Colors.white,
-                          child: TextField(
-                            showCursor: true,
-                            enableInteractiveSelection: false,
-                            onChanged: (value) {},
-                            controller: valueControllerQuantity,
-                            keyboardType: TextInputType.number,
-                            decoration: const InputDecoration(
-                                prefixIconColor: MyColors.appMainColor,
-                                focusColor: MyColors.appMainColor,
-                                fillColor: MyColors.dropBorderColor,
-                                labelStyle:
-                                    TextStyle(color: MyColors.appMainColor),
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        width: 1,
-                                        color: MyColors.appMainColor)),
-                                border: OutlineInputBorder(),
-                                hintText: 'Enter qty*'),
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(
-                                  RegExp(r'^[0-9][0-9]*'))
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Phone Amount*",
-                          style: TextStyle(
-                              color: MyColors.appMainColor,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.symmetric(vertical: 5),
-                          height: 55,
-                          color: Colors.white,
-                          child: TextField(
-                            showCursor: true,
-                            enableInteractiveSelection: false,
-                            onChanged: (value) {},
-                            controller: valueControllerAmount,
-                            keyboardType: TextInputType.number,
-                            decoration: const InputDecoration(
-                                prefixIconColor: MyColors.appMainColor,
-                                focusColor: MyColors.appMainColor,
-                                fillColor: MyColors.dropBorderColor,
-                                labelStyle:
-                                TextStyle(color: MyColors.appMainColor),
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        width: 1,
-                                        color: MyColors.appMainColor)),
-                                border: OutlineInputBorder(),
-                                hintText: 'Enter amount'),
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(
-                                  RegExp(r'^[0-9][0-9]*'))
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 7,
-                  ),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Client*",
-                          style: TextStyle(
-                              color: MyColors.appMainColor,
-                              fontWeight: FontWeight.bold),
+                        const Row(
+                          children: [
+                            Text(
+                              "Client",
+                              style: TextStyle(
+                                  color: MyColors.appMainColor,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
+                          ],
                         ),
                         ClientListDropDown(
                             clientKey: clientKey,
@@ -444,90 +442,100 @@ class _ProofOfSaleState extends State<ProofOfSale> {
                             }),
                       ],
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Category*",
-                    style: TextStyle(
-                        color: MyColors.appMainColor,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  isCategoryLoading
-                      ? Center(
-                    child: Container(
-                      height: 60,
-                      child: const MyLoadingCircle(),
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 5),
+                      color: MyColors.whiteColor,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Row(
+                            children: [
+                              Text(
+                                "Category",
+                                style: TextStyle(
+                                    color: MyColors.appMainColor,
+                                    fontWeight: FontWeight.bold),
+                              ),
+
+                              Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
+                            ],
+                          ),
+                          isCategoryLoading
+                              ? Center(
+                            child: Container(
+                              height: 60,
+                              child: const MyLoadingCircle(),
+                            ),
+                          )
+                              : CategoryDropDown(categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
+                            selectedCategoryId = value.id;
+                            getSkusData(selectedCategoryId);
+                            setState(() {
+
+                            });
+                          }),
+
+                        ],
+                      ),
                     ),
-                  )
-                      : CategoryDropDown(categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
-                    selectedCategoryId = value.id;
-                    getSkusData(selectedCategoryId);
-                    setState(() {
 
-                    });
-                  }),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Row(
+                          children: [
+                            Text(
+                              "Sku's",
+                              style: TextStyle(
+                                  color: MyColors.appMainColor,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
+                          ],
+                        ),
+                        TypeDropDown(
+                          typeKey: typeKey,
+                            hintText: "Select sku",
+                            photoData: skuDataList,
+                            onChange: (value) {
+                              selectedSkuId = value.id;
+                              setState(() {});
+                            }),
+                      ],
+                    ),
 
-                ],
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Sku's*",
-                    style: TextStyle(
-                        color: MyColors.appMainColor,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  TypeDropDown(
-                      hintText: "Select sku",
-                      photoData: skuDataList,
-                      onChange: (value) {
-                        selectedSkuId = value.id;
-                        setState(() {});
-                      }),
-                ],
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              ImageRowButton(
-                  imageFile: imageFile,
-                  onSelectImage: () {
-                    getImage();
-                  },
-                isRequired: false,),
-              const SizedBox(
-                height: 8,
-              ),
+                    Container(
+                      margin:const EdgeInsets.symmetric(vertical: 5),
+                      child: ImageRowButton(
+                          imageFile: imageFile,
+                          onSelectImage: () {
+                            getImage();
+                          },
+                        isRequired: true,),
+                    ),
 
-              BigElevatedButton(
-                  buttonName: "Save",
-                  submit: (){
-                    saveStorePhotoData();
-                  },
-                  isBlueColor: true),
+                    isBtnLoading ? const SizedBox(
+                      height: 60,
+                    ) : BigElevatedButton(
+                        buttonName: "Save",
+                        submit: (){
+                          saveStorePhotoData();
+                        },
+                        isBlueColor: true),
 
-              BigElevatedButton(
-                  buttonName: "View POS",
-                  submit: (){
-                    Navigator.of(context).pushNamed(ShowProofOfSaleScreen.routename);
-                  },
-                  isBlueColor: true),
-
-            ],
-          ),
+                  ],
+                ),
+              ),
+            ),
+            BigElevatedButton(
+                buttonName: "View POS",
+                submit: (){
+                  Navigator.of(context).pushNamed(ShowProofOfSaleScreen.routename);
+                },
+                isBlueColor: false),
+          ],
         ),
       ),
     );

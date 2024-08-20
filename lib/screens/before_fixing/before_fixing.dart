@@ -164,10 +164,10 @@ class _BeforeFixingState extends State<BeforeFixing> {
       }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
       }),
       body: isLoading
-          ? Center(
-              child: Container(
+          ? const Center(
+              child: SizedBox(
                 height: 60,
-                child: const MyLoadingCircle(),
+                child: MyLoadingCircle(),
               ),
             )
           : Container(
@@ -178,70 +178,76 @@ class _BeforeFixingState extends State<BeforeFixing> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        const Text(
-                          "Client",
-                          style: TextStyle(
-                              color: MyColors.appMainColor,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        // dropdownwidget("Company Name"),
-                        ClientListDropDown(
-                            clientKey: clientKey,
-                            hintText: "Client", clientData: clientData, onChange: (value){
-                          selectedClientId = value.client_id;
-                          getCategoryData(selectedClientId);
-                          setState(() {
+                        Container(
+                          margin: const EdgeInsets.symmetric(vertical: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Client",
+                                style: TextStyle(
+                                    color: MyColors.appMainColor,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              ClientListDropDown(
+                                  clientKey: clientKey,
+                                  hintText: "Client", clientData: clientData, onChange: (value){
+                                selectedClientId = value.client_id;
+                                getCategoryData(selectedClientId);
+                                setState(() {
 
-                          });
-                        }),
+                                });
+                              }),
+                            ],
+                          ),
+                        ),
                         const SizedBox(
                           height: 10,
                         ),
-                        const Text(
-                          "Category",
-                          style: TextStyle(
-                              color: MyColors.appMainColor,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        isCategoryLoading
-                            ? Center(
-                          child: Container(
-                            height: 60,
-                            child: const MyLoadingCircle(),
-                          ),
-                        )
-                            : CategoryDropDown(categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Category",
+                              style: TextStyle(
+                                  color: MyColors.appMainColor,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            isCategoryLoading
+                                ? const Center(
+                              child: SizedBox(
+                                height: 60,
+                                child: MyLoadingCircle(),
+                              ),
+                            )
+                                : CategoryDropDown(categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
                               selectedCategoryId = value.id;
                               setState(() {
 
                               });
-                        }),
-                        const SizedBox(
-                          height: 20,
+                            }),
+                          ],
                         ),
 
-                        ImageRowButton(
-                            isRequired: false,
-                            imageFile: imageFile, onSelectImage: (){
-                          getImage();
-                        }),
-                        const SizedBox(
-                          height: 20,
+                        Container(
+                          margin:const EdgeInsets.symmetric(vertical: 10),
+                          child: ImageRowButton(
+                              isRequired: false,
+                              imageFile: imageFile, onSelectImage: (){
+                            getImage();
+                          }),
                         ),
                         isBtnLoading
-                            ? Center(
-                          child: Container(
+                            ? const Center(
+                          child: SizedBox(
                             height: 60,
-                            child: const MyLoadingCircle(),
+                            child: MyLoadingCircle(),
                           ),
                         )
                             : BigElevatedButton(

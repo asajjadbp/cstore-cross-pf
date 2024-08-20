@@ -279,15 +279,17 @@ class PlanoReasonDropDown extends StatelessWidget {
     );
   }
 }
-class TypeDropDown extends StatelessWidget {const TypeDropDown({super.key,required this.hintText,required this.photoData,required this.onChange});
+class TypeDropDown extends StatelessWidget {const TypeDropDown({super.key,required this.hintText,required this.photoData,required this.onChange,required this.typeKey});
 
   final String hintText;
   final List<Sys_PhotoTypeModel> photoData;
   final Function (Sys_PhotoTypeModel typeModel) onChange;
+final GlobalKey<FormFieldState> typeKey;
 
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField2<Sys_PhotoTypeModel>(
+      key: typeKey,
       decoration: InputDecoration(
         isDense: true,
         filled: true,

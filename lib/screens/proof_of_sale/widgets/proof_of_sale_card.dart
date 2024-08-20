@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 
 import '../../promoplane/widgets/promo_plan_card_row_item.dart';
 import '../../utils/appcolor.dart';
@@ -17,6 +18,7 @@ class ProofOfSaleCard extends StatelessWidget {
     required this.phone,
     required this.amount,
     required this.upload_status,
+    required this.time,
     required this.Qty,
     required this.onDelete,
   });
@@ -27,6 +29,7 @@ class ProofOfSaleCard extends StatelessWidget {
   final String name;
   final String phone;
   final String amount;
+  final String time;
   final int Qty;
   final int upload_status;
   final Function onDelete;
@@ -52,21 +55,17 @@ class ProofOfSaleCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  height: screenHeight / 35,
-                  width: screenWidth / 4.5,
+                  padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 5),
                   decoration:  const BoxDecoration(
                       color: MyColors.appMainColor,
                       borderRadius:
                       BorderRadius.only(bottomRight: Radius.circular(10))),
-                  child: const Padding(
-                    padding: EdgeInsets.only(left: 12, top: 3),
-                    child: Text(
-                      "",
-                      style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white),
-                    ),
+                  child:  Text(
+                    DateFormat("HH:mm").format(DateTime.parse(time)),
+                    style:const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white),
                   ),
                 ),
                 Container(
@@ -124,7 +123,7 @@ class ProofOfSaleCard extends StatelessWidget {
                 height: 00,
                 thickness: 1,
                 color: Color.fromRGBO(26, 91, 140, 1)),
-            PromoPlanCardRowItems(title: "Name",value: name,isWhiteBackGround: false,),
+            PromoPlanCardRowItems(title: "Name",value: name.isEmpty? "----" : name,isWhiteBackGround: false,),
             const Divider(
                 height: 00,
                 thickness: 1,

@@ -54,9 +54,9 @@ class TableName {
 
 
   //----*******Transtion table column-----******
-  static const String trans_photo_type_id = "photo_type_id";
-  static const String trans_planogram_is_adherence="is_adherence";
-  static const String trans_planogram_reason_id="reason_id";
+  static const String transPhotoTypeId = "photo_type_id";
+  static const String transPlanogramIsAdherence="is_adherence";
+  static const String transPlanogramReasonId="reason_id";
 
   static const String trans_sos_cat_space="cat_space";
   static const String trans_sos_actual_space="actual_space";
@@ -254,9 +254,9 @@ class TableName {
 
   static const String sys_knowledge_title = "title";
   static const String sys_knowledge_des = "description";
-  static const String sys_knowledge_addedBy = "added_by";
-  static const String sys_knowledge_fileName = "file_name";
-  static const String sys_knowledge_type = "type";
+  static const String sysKnowledgeAddedBy = "added_by";
+  static const String sysKnowledgeFileName = "file_name";
+  static const String sysKnowledgeType = "type";
   static const String sysKnowledgeActive = "active";
   static const String sysIssueUpdateAt = "updated_at";
 }

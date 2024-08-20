@@ -58,8 +58,8 @@ class ShowPlanogramModel {
       TableName.imageName: image_name,
       TableName.gcsStatus: gcs_status,
       TableName.uploadStatus: upload_status,
-      TableName.trans_planogram_is_adherence: is_adherence,
-      TableName.trans_planogram_reason_id: not_adherence_reason,
+      TableName.transPlanogramIsAdherence: is_adherence,
+      TableName.transPlanogramReasonId: not_adherence_reason,
     };
   }
 
@@ -78,8 +78,8 @@ class ShowPlanogramModel {
     image_name = json[TableName.imageName];
     gcs_status = json[TableName.gcsStatus];
     upload_status = json[TableName.uploadStatus];
-    is_adherence = json[TableName.trans_planogram_is_adherence];
-    not_adherence_reason = json[TableName.trans_planogram_reason_id];
+    is_adherence = json[TableName.transPlanogramIsAdherence];
+    not_adherence_reason = json[TableName.transPlanogramReasonId];
   }
 
   @override

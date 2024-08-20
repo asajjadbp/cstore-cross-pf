@@ -44,6 +44,7 @@ class _AddOtherPhotoState extends State<AddOtherPhoto> {
 
   final GlobalKey<FormFieldState> categoryKey = GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> clientKey = GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> typeKey = GlobalKey<FormFieldState>();
   String clientId = "";
   String workingId = "";
   String storeName = "";
@@ -202,80 +203,86 @@ class _AddOtherPhotoState extends State<AddOtherPhoto> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const Text(
-                    "Client",
-                    style: TextStyle(
-                        color: MyColors.appMainColor,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  // dropdownwidget("Company Name"),
-                  ClientListDropDown(
-                      clientKey: clientKey,
-                      hintText: "Client", clientData: clientData, onChange: (value){
-                    selectedClientId = value.client_id;
-                    getCategoryData(selectedClientId);
-                    setState(() {
+                  Container(
+                    margin:const EdgeInsets.symmetric(vertical: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Client",
+                          style: TextStyle(
+                              color: MyColors.appMainColor,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        // dropdownwidget("Company Name"),
+                        ClientListDropDown(
+                            clientKey: clientKey,
+                            hintText: "Client", clientData: clientData, onChange: (value){
+                          selectedClientId = value.client_id;
+                          getCategoryData(selectedClientId);
+                          setState(() {
 
-                    });
-                  }),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const Text(
-                    "Category",
-                    style: TextStyle(
-                        color: MyColors.appMainColor,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-
-                  isCategoryLoading
-                      ? Center(
-                    child: Container(
-                      height: 60,
-                      child: const MyLoadingCircle(),
+                          });
+                        }),
+                      ],
                     ),
-                  )
-                      : CategoryDropDown(categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
-                    selectedCategoryId = value.id;
-                    setState(() {
-
-                    });
-                  }),
-
-                  const SizedBox(
-                    height: 5,
                   ),
-                  const Text(
-                    "Type",
-                    style: TextStyle(
-                        color: MyColors.appMainColor,
-                        fontWeight: FontWeight.bold),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Category",
+                        style: TextStyle(
+                            color: MyColors.appMainColor,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+
+                      isCategoryLoading
+                          ? Center(
+                        child: Container(
+                          height: 60,
+                          child: const MyLoadingCircle(),
+                        ),
+                      )
+                          : CategoryDropDown(categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
+                        selectedCategoryId = value.id;
+                        setState(() {
+
+                        });
+                      }),
+                    ],
                   ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  // dropdownwidget("Company Name"),
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Type",
+                          style: TextStyle(
+                              color: MyColors.appMainColor,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        // dropdownwidget("Company Name"),
 
-                  TypeDropDown(hintText: "Type", photoData: photoTypeData, onChange: (value){
-                    selectedTypeId =value.id;
-                    setState(() {
-                    });
-                  }),
-
-
-
-
-                  const SizedBox(
-                    height: 10,
+                        TypeDropDown(
+                            typeKey: typeKey,
+                            hintText: "Type", photoData: photoTypeData, onChange: (value){
+                          selectedTypeId =value.id;
+                          setState(() {
+                          });
+                        }),
+                      ],
+                    ),
                   ),
 
                   ImageRowButton(
@@ -283,23 +290,22 @@ class _AddOtherPhotoState extends State<AddOtherPhoto> {
                       imageFile: imageFile, onSelectImage: (){
                     getImage();
                   }),
-                  const SizedBox(
-                    height: 20,
+                  Container(
+                    margin:const EdgeInsets.symmetric(vertical: 10),
+                    child: isBtnLoading
+                        ? const Center(
+                      child: SizedBox(
+                        height: 60,
+                        child: MyLoadingCircle(),
+                      ),
+                    )
+                        : BigElevatedButton(
+                        buttonName: "Save",
+                        submit: (){
+                          saveStorePhotoData();
+                        },
+                        isBlueColor: true),
                   ),
-                  isBtnLoading
-                      ? Center(
-                    child: Container(
-                      height: 60,
-                      child: const MyLoadingCircle(),
-                    ),
-                  )
-                      : BigElevatedButton(
-                      buttonName: "Save",
-                      submit: (){
-                        saveStorePhotoData();
-                      },
-                      isBlueColor: true),
-
 
                 ],
               ),

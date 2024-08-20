@@ -330,7 +330,7 @@ class _AddOSDCState extends State<AddOSDC> {
                                          borderSide: BorderSide(
                                              width: 1, color: MyColors.appMainColor)),
                                      border: OutlineInputBorder(),
-                                     hintText: 'Enter Qty*'),
+                                     hintText: 'Enter Qty'),
                                  inputFormatters: [
                                    FilteringTextInputFormatter.allow(
                                        RegExp(r'^[0-9][0-9]*'))

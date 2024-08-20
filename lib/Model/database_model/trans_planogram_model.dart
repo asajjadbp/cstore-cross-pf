@@ -32,11 +32,11 @@ class TransPlanogramModel {
       TableName.brandId: brand_id,
       TableName.imageName: image_name,
       TableName.workingId: working_id,
-      TableName.trans_planogram_is_adherence: is_adherence,
+      TableName.transPlanogramIsAdherence: is_adherence,
       TableName.gcsStatus:gcs_status,
       TableName.uploadStatus:upload_status,
       TableName.dateTime: date_time,
-      TableName.trans_planogram_reason_id: reason,
+      TableName.transPlanogramReasonId: reason,
     };
   }
 
@@ -46,10 +46,10 @@ class TransPlanogramModel {
     brand_id = json[TableName.brandId];
     image_name = json[TableName.imageName];
     working_id = json[TableName.workingId];
-    is_adherence = json[TableName.trans_planogram_is_adherence];
+    is_adherence = json[TableName.transPlanogramIsAdherence];
     gcs_status = json[TableName.gcsStatus];
     upload_status = json[TableName.uploadStatus];
     date_time = json[TableName.dateTime];
-    reason = json[TableName.trans_planogram_reason_id];
+    reason = json[TableName.transPlanogramReasonId];
   }
 }

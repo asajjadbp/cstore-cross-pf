@@ -100,9 +100,9 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
     if (imageFile == null ||
         docImageFile == null ||
         _selectedType == "" ||
-        edDocNumber.text == null ||
-        totalPieces.text == null ||
-        totalPieces.text == null) {
+        edDocNumber.text.isEmpty ||
+        totalPieces.text.isEmpty ||
+        totalPieces.text.isEmpty) {
       ToastMessage.errorMessage(context, "Please fill the form and take image");
       return;
     }
@@ -114,7 +114,7 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
               context, imageFile, imageName, workingId, AppConstants.rtv)
           .then((_) async {
         var now = DateTime.now();
-        var formattedTime = DateFormat('hh:mm').format(now);
+        var formattedTime = DateFormat('HH:mm').format(now);
         await DatabaseHelper.insertTransRtvOnePlusOne(TransRtvOnePlusOneModel(
                 sku_id: widget.sku_id,
                 pieces: int.parse(totalPieces.text),

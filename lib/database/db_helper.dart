@@ -412,7 +412,7 @@ class DatabaseHelper {
           " INTEGER PRIMARY KEY AUTOINCREMENT," +
           TableName.clientIds +
           " INTEGER, " +
-          TableName.trans_photo_type_id +
+          TableName.transPhotoTypeId +
           " INTEGER, " +
           TableName.sysCategoryId +
           " INTEGER, " +
@@ -434,7 +434,7 @@ class DatabaseHelper {
           " INTEGER PRIMARY KEY AUTOINCREMENT," +
           TableName.clientIds +
           " INTEGER, " +
-          TableName.trans_photo_type_id +
+          TableName.transPhotoTypeId +
           " INTEGER, " +
           TableName.sysCategoryId +
           " INTEGER, " +
@@ -465,11 +465,11 @@ class DatabaseHelper {
           " INTEGER, " +
           TableName.imageName +
           " TEXT, " +
-          TableName.trans_planogram_is_adherence +
+          TableName.transPlanogramIsAdherence +
           " INTEGER, " +
           TableName.gcsStatus +
           " INTEGER, " +
-          TableName.trans_planogram_reason_id +
+          TableName.transPlanogramReasonId +
           " INTEGER," +
           TableName.dateTime +
           " TEXT, " +
@@ -960,11 +960,11 @@ class DatabaseHelper {
     " INTEGER, " +
     TableName.chain_id +
     " INTEGER, " +
-    TableName.sys_knowledge_addedBy +
+    TableName.sysKnowledgeAddedBy +
     " TEXT, " +
-    TableName.sys_knowledge_fileName +
+    TableName.sysKnowledgeFileName +
     " TEXT, " +
-    TableName.sys_knowledge_type +
+    TableName.sysKnowledgeType +
     " TEXT, " +
     TableName.sysKnowledgeActive +
     " TEXT, " +
@@ -4859,7 +4859,6 @@ class DatabaseHelper {
   }
   static Future<List<ShowProofOfSaleModel>> getTransPOS(
       String workingId) async {
-    print("__________________TransPlanogram__________________");
 
     final db = await initDataBase();
     final List<Map<String, dynamic>> posData = await db.rawQuery(
@@ -4869,6 +4868,7 @@ class DatabaseHelper {
             " JOIN sys_product on sys_product.id = trans_proof_of_sale.sku_id"
             " JOIN sys_category on sys_category.id = sys_product.category_id"
             " WHERE working_id=$workingId");
+    print("__________________TransPos__________________");
     print(jsonEncode(posData));
 
     return List.generate(posData.length, (index) {
@@ -4876,6 +4876,7 @@ class DatabaseHelper {
           id: posData[index][TableName.sysId] ?? 0,
           sku_id: posData[index][TableName.skuId] ?? 0,
           client_id: posData[index][TableName.clientIds] ?? 0,
+          dateTime: posData[index][TableName.dateTime] ?? "",
           qty: posData[index][TableName.quantity] ?? 0,
           gcs_status: posData[index][TableName.gcsStatus] ?? 0,
           upload_status: posData[index][TableName.uploadStatus] ?? 0,
@@ -5023,9 +5024,9 @@ class DatabaseHelper {
           chain_id: knowledgeList[index][TableName.chain_id] ?? 0,
           title: knowledgeList[index][TableName.sys_knowledge_title] ?? "",
           description: knowledgeList[index][TableName.sys_knowledge_des] ?? "",
-          added_by: knowledgeList[index][TableName.sys_knowledge_addedBy] ?? "",
-          file_name: knowledgeList[index][TableName.sys_knowledge_fileName] ?? "",
-          type: knowledgeList[index][TableName.sys_knowledge_type] ?? "",
+          added_by: knowledgeList[index][TableName.sysKnowledgeAddedBy] ?? "",
+          file_name: knowledgeList[index][TableName.sysKnowledgeFileName] ?? "",
+          type: knowledgeList[index][TableName.sysKnowledgeType] ?? "",
           active: knowledgeList[index][TableName.sysKnowledgeActive] ?? "",
           updated_at: knowledgeList[index][TableName.sysIssueUpdateAt] ?? "");
     });
@@ -5042,9 +5043,9 @@ class DatabaseHelper {
         TableName.sys_knowledge_des: data.description,
         TableName.clientIds: data.client_id,
         TableName.chain_id: data.chain_id,
-        TableName.sys_knowledge_addedBy: data.added_by,
-        TableName.sys_knowledge_fileName: data.file_name,
-        TableName.sys_knowledge_type: data.type,
+        TableName.sysKnowledgeAddedBy: data.added_by,
+        TableName.sysKnowledgeFileName: data.file_name,
+        TableName.sysKnowledgeType: data.type,
         TableName.sysKnowledgeActive: data.active,
         TableName.sysIssueUpdateAt: data.updated_at,
       };
@@ -5062,9 +5063,9 @@ class DatabaseHelper {
             TableName.sys_knowledge_des: data.description,
             TableName.clientIds: data.client_id,
             TableName.chain_id: data.chain_id,
-            TableName.sys_knowledge_addedBy: data.added_by,
-            TableName.sys_knowledge_fileName: data.file_name,
-            TableName.sys_knowledge_type: data.type,
+            TableName.sysKnowledgeAddedBy: data.added_by,
+            TableName.sysKnowledgeFileName: data.file_name,
+            TableName.sysKnowledgeType: data.type,
             TableName.sysKnowledgeActive: data.active,
             TableName.sysIssueUpdateAt: data.updated_at,
           },

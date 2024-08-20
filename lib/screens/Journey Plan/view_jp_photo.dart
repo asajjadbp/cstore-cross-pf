@@ -233,9 +233,6 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
   Widget build(BuildContext context) {
     final routeArg = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     journeyPlanDetail = routeArg['visitItem'];
-    print("___________JP DETILS ________________");
-    print(jsonEncode(journeyPlanDetail));
-    print("___________JP DETILS ________________");
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
@@ -252,10 +249,9 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
             children: [
               Column(
                 children: [
-                  const SizedBox(
-                    height: 15,
-                  ),
+
                   Container(
+                    margin:const EdgeInsets.symmetric(vertical: 15),
                     height: screenHeight * 0.3,
                     width: screenWidth,
                     child: Card(
@@ -266,9 +262,7 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 15,
-                  ),
+
                   Card(
                     child: TextField(
                         controller: commentText,

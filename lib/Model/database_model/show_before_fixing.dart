@@ -37,7 +37,7 @@ class GetTransBeforeFixing {
     return {
       TableName.sysId: id,
       TableName.sys_client_name: clientName,
-      TableName.trans_photo_type_id: trans_photo_type_id,
+      TableName.transPhotoTypeId: trans_photo_type_id,
       TableName.imageName: img_name,
       TableName.clientIds: client_id,
       "cat_id": cat_id,

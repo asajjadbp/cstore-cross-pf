@@ -189,39 +189,36 @@ class _AddMarketIssueState extends State<AddMarketIssue> {
                             }),
                       ],
                     ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Row(
-                          children: [
-                            Text(
-                              "Market Issue",
-                              style: TextStyle(
-                                  color: MyColors.appMainColor,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              " *",
-                              style: TextStyle(
-                                  color: MyColors.backbtnColor,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        MarketIssueDropDown(hintText: "Select issue",
-                            reasonData: marketIssueModel,
-                            onChange:  (value) {
-                              selectedIssueId = value.id;
-                              setState(() {});
-                            })
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 8,
+                    Container(
+                      margin:const EdgeInsets.symmetric(vertical: 10),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Row(
+                            children: [
+                              Text(
+                                "Market Issue",
+                                style: TextStyle(
+                                    color: MyColors.appMainColor,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                " *",
+                                style: TextStyle(
+                                    color: MyColors.backbtnColor,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                          MarketIssueDropDown(hintText: "Select issue",
+                              reasonData: marketIssueModel,
+                              onChange:  (value) {
+                                selectedIssueId = value.id;
+                                setState(() {});
+                              })
+                        ],
+                      ),
                     ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,

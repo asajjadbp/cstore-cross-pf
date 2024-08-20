@@ -14,7 +14,7 @@ import '../widget/app_bar_widgets.dart';
 import '../widget/loading.dart';
 
 class ShowProofOfSaleScreen extends StatefulWidget {
-  static const routename = "view_osdc_route";
+  static const routename = "view_pos_route";
 
   const ShowProofOfSaleScreen({super.key});
 
@@ -39,17 +39,17 @@ class _ShowProofOfSaleScreenState extends State<ShowProofOfSaleScreen> {
 
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
     storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
-    getTransOSDCOne();
+    getTransPosOne();
   }
-  Future<void> getTransOSDCOne() async {
+  Future<void> getTransPosOne() async {
     await DatabaseHelper.getTransPOS(workingId).then((value) async {
       transData = value;
       await _loadImages().then((value) {
-        setTransOSDC();
+        setTransPos();
       });
     });
   }
-  void setTransOSDC() {
+  void setTransPos() {
     for (var trans in transData) {
       for (int i = 0; i < _imageFiles.length; i++) {
         if (_imageFiles[i].path.endsWith(trans.image_name)) {
@@ -110,7 +110,7 @@ class _ShowProofOfSaleScreenState extends State<ShowProofOfSaleScreen> {
         .then((_) async {
       await deleteImageFromLocal(imgName).then((_) {
         _loadImages();
-        getTransOSDCOne();
+        getTransPosOne();
       });
     });
   }
@@ -138,6 +138,7 @@ class _ShowProofOfSaleScreenState extends State<ShowProofOfSaleScreen> {
           itemBuilder: (ctx, i) {
             return ProofOfSaleCard(
                 imageName:transData[i].imageFile as File,
+                time:transData[i].dateTime!,
                 proName: transData[i].pro_en_name,
                 catName: transData[i].cat_en_name,
                 name: transData[i].name,

@@ -153,6 +153,7 @@ class _MyAppState extends State<MyApp> {
         RtvOnePlusOneListScreen.routeName:(context)=>const RtvOnePlusOneListScreen(),
         ViewKnowledgeShare.routename:(context)=> const ViewKnowledgeShare(),
         ProofOfSale.routeName:(context)=>const ProofOfSale(),
+        ShowProofOfSaleScreen.routename:(context)=>const ShowProofOfSaleScreen(),
         AddMarketIssue.routeName:(context)=>const AddMarketIssue(),
         ViewMarketIssueScreen.routename:(context)=>const ViewMarketIssueScreen(),
       },

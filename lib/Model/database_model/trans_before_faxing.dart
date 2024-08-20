@@ -25,7 +25,7 @@ class TransBeforeFaxingModel {
   Map<String, Object?> toMap() {
     return {
       TableName.clientIds: client_id,
-      TableName.trans_photo_type_id: photo_type_id,
+      TableName.transPhotoTypeId: photo_type_id,
       TableName.sysCategoryId: cat_id,
       TableName.imageName: img_name,
       TableName.gcsStatus: gcs_status,
