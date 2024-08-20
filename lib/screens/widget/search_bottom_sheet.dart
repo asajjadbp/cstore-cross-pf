@@ -217,7 +217,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                             ElevatedButton(
                                 onPressed: () {
                                   menuState(() {
-                                    Navigator.of(context).pop();
+                                  
                                     clientKey.currentState!.reset();
                                     categoryKey.currentState!.reset();
                                     subCategoryKey.currentState!.reset();
@@ -360,7 +360,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                                 selectedCategoryId,
                                 selectedSubCategoryId,
                                 selectedBrandId);
-                            Navigator.of(context).pop();
+
                           },
                           child: const Text(
                             "Search",

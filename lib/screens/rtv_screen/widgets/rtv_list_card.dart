@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:flutter/material.dart';
-import '../widget/loading.dart';
+import '../../widget/loading.dart';
 
 class Rtvcard extends StatelessWidget {
   Rtvcard({

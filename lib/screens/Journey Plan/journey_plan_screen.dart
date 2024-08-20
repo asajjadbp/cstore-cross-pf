@@ -155,7 +155,9 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
       backgroundColor: MyColors.background,
       appBar: generalAppBar(context, userName, "Visit Pool", (){
         Navigator.of(context).pop();
-      }, (){print("filter Click");}, true, false, true),
+      }, true, false, true,(int getClient, int getCat, int getSubCat, int getBrand) {
+
+      }),
       body: isLoading
           ? const Center(
         child: MyLoadingCircle(),

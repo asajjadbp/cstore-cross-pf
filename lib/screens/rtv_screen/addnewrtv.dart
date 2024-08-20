@@ -1,14 +1,11 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cstore/screens/rtv_screen/view_rtv_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart' as path;
 import '../../Database/db_helper.dart';
 import '../../Model/database_model/sys_rtv_reason_model.dart';
-import '../../Model/database_model/trans_before_faxing.dart';
 import '../../Model/database_model/trans_rtv_model.dart';
 import '../utils/app_constants.dart';
 import '../utils/appcolor.dart';
@@ -143,7 +140,8 @@ class _addnewrtvscreenState extends State<addnewrtvscreen> {
         backgroundColor: const Color(0xFFF4F7FD),
         appBar: generalAppBar(context, storeName, userName, (){
           Navigator.of(context).pop();
-        }, (){print("filter Click");}, true, false, false),
+        }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
+        }),
         body: SingleChildScrollView(
           child: Column(
             children: [

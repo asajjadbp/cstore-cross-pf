@@ -218,7 +218,9 @@ class _PickListScreenState extends State<PickListScreen> {
     return Scaffold(
       appBar: generalAppBar(context, storeName, userName, (){
         Navigator.of(context).pop();
-      }, (){print("filter Click");}, true, false, false),
+      }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
+
+      }),
       body: Container(
         margin: const EdgeInsets.symmetric(horizontal: 5),
         child:isLoading ? const MyLoadingCircle() : isError ? Column(

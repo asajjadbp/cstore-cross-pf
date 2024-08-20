@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../widget/loading.dart';
+import '../../widget/loading.dart';
 
 class VisitAvlUploadScreenCard extends StatelessWidget {
   const VisitAvlUploadScreenCard({

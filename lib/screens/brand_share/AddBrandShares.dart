@@ -11,7 +11,7 @@ import '../utils/toast/toast.dart';
 import '../widget/app_bar_widgets.dart';
 import '../widget/loading.dart';
 import '../widget/percent_indicator.dart';
-import 'BrandSharesCard.dart';
+import 'widgets/BrandSharesCard.dart';
 
 class BrandShares_Screen extends StatefulWidget {
   static const routename = "shelfShare_screem";
@@ -116,7 +116,9 @@ class BrandShares_ScreenState extends State<BrandShares_Screen> {
         backgroundColor: const Color(0xFFF4F7FD),
         appBar: generalAppBar(context, storeName, userName, (){
           Navigator.of(context).pop();
-        }, (){print("filter Click");}, true, false, false),
+        }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
+
+        }),
         body: isLoading ? const Center(child: MyLoadingCircle(),) : transData.isEmpty
             ? const Center(
                 child: Text("No data found"),

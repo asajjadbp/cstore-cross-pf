@@ -18,6 +18,7 @@ import '../utils/services/image_picker.dart';
 import '../utils/services/take_image_and_save_to_folder.dart';
 import '../utils/toast/toast.dart';
 import '../widget/app_bar_widgets.dart';
+import '../widget/elevated_buttons.dart';
 import '../widget/image_selection_row_button.dart';
 
 class BeforeFixing extends StatefulWidget {
@@ -160,7 +161,8 @@ class _BeforeFixingState extends State<BeforeFixing> {
     return Scaffold(
       appBar: generalAppBar(context, storeName, userName, (){
         Navigator.of(context).pop();
-      }, (){print("filter Click");}, true, false, false),
+      }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
+      }),
       body: isLoading
           ? Center(
               child: Container(
@@ -242,42 +244,26 @@ class _BeforeFixingState extends State<BeforeFixing> {
                             child: const MyLoadingCircle(),
                           ),
                         )
-                            : ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: MyColors.appMainColor,
-                                    minimumSize: Size(screenWidth, 45),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(5))),
-                                onPressed: () {
-                                  saveStorePhotoData();
-                                  // Navigator.of(context).pushNamed();
-                                },
-                                child: const Text(
-                                  "Save",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
+                            : BigElevatedButton(
+                            isBlueColor: true,
+                            buttonName:  "Save",
+                            submit: (){
+                              saveStorePhotoData();
+                            })
 
                       ],
                     ),
                   ),
                   Container(
                     margin: const EdgeInsets.only(bottom: 10),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(255, 39, 136, 42),
-                          minimumSize: Size(screenWidth, 45),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5))),
-                      onPressed: () {
-                        Navigator.of(context)
-                            .pushNamed(ViewBeforeFixing.routename);
-                      },
-                      child: const Text(
-                        "View Before Fixing",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
+                    child: BigElevatedButton(
+                        isBlueColor: false,
+                        buttonName: "View Before Fixing",
+                        submit: (){
+                          Navigator.of(context)
+                              .pushNamed(ViewBeforeFixing.routename);
+                        })
+
                   ),
                 ],
               ),

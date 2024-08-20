@@ -44,7 +44,7 @@ import '../utils/services/getting_gps.dart';
 import '../utils/services/take_image_and_save_to_folder.dart';
 import '../utils/toast/toast.dart';
 import '../widget/app_bar_widgets.dart';
-import 'VisitUploadScreencard.dart';
+import 'widgets/VisitUploadScreencard.dart';
 
 class VisitUploadScreen extends StatefulWidget {
   static const routeName = "/visit_upload_screen";
@@ -200,7 +200,9 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       backgroundColor: const Color(0xFFF4F7FD),
       appBar: generalAppBar(context, storeName, userName, (){
         Navigator.of(context).pop();
-      }, (){print("filter Click");}, true, false, false),
+      }, true, false, false, (int getClient, int getCat, int getSubCat, int getBrand) {
+
+      }),
       body: Column(
         children: [
           Container(

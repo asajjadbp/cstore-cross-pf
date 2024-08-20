@@ -8,25 +8,25 @@ class sysMarketIssueModel {
 
   Map<String, Object?> toMap() {
     return {
-      TableName.col_id: id,
-      TableName.sys_issue_name: name,
-      TableName.drop_status: status,
-      TableName.sys_issue_update_at: updated_at,
+      TableName.sysId: id,
+      TableName.trans_pos_name: name,
+      TableName.status: status,
+      TableName.sysIssueUpdateAt: updated_at,
     };
   }
 
   Map<String, dynamic> toJson() => {
-        TableName.col_id: id,
-        TableName.sys_issue_name: name,
-        TableName.drop_status: status,
-        TableName.sys_issue_update_at: updated_at,
+        TableName.sysId: id,
+        TableName.trans_pos_name: name,
+        TableName.status: status,
+        TableName.sysIssueUpdateAt: updated_at,
       };
 
   sysMarketIssueModel.fromJson(Map<String, dynamic> json) {
-    id = json[TableName.col_id];
-    name = json[TableName.sys_issue_name];
-    status = json[TableName.drop_status];
-    updated_at = json[TableName.sys_issue_update_at];
+    id = json[TableName.sysId];
+    name = json[TableName.trans_pos_name];
+    status = json[TableName.status];
+    updated_at = json[TableName.sysIssueUpdateAt];
   }
 
   sysMarketIssueModel({

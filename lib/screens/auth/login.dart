@@ -3,8 +3,11 @@ import 'dart:convert';
 import 'package:cstore/Model/request_model.dart/login_request_model.dart';
 import 'package:cstore/Model/response_model.dart/login_response_model.dart';
 import 'package:cstore/Network/authentication.dart';
+import 'package:cstore/screens/auth/widgets/password_text_field.dart';
+import 'package:cstore/screens/auth/widgets/user_name_text_field.dart';
 import 'package:cstore/screens/utils/toast/toast.dart';
 import 'package:cstore/screens/welcome_screen/welcome.dart';
+import 'package:cstore/screens/widget/elevated_buttons.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -143,159 +146,103 @@ class _LoginState extends State<Login> {
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: SingleChildScrollView(
-        child: SingleChildScrollView(
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height,
-            child: Stack(children: [
-              Positioned(
-                left: 0,
-                child: Container(
-                  color: Colors.white,
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * 0.99,
-                  child: Padding(
-                    padding:
-                    const EdgeInsets.only(left: 20, right: 20, top: 25),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            height: screenHeight * 0.08,
-                          ),
-                          Center(
-                            child: SizedBox(
-                                width: 200,
-                                height: 200,
-                                child: Image.asset("assets/images/logo.png")),
-                          ),
-                          const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 5),
-                              child: Align(
-                                alignment: Alignment.topLeft,
-                                child: Text(
-                                  'LOGIN',
-                                  style: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height,
+          child: Stack(children: [
+            Positioned(
+              left: 0,
+              child: Container(
+                color: Colors.white,
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.99,
+                child: Padding(
+                  padding:
+                  const EdgeInsets.only(left: 20, right: 20, top: 25),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: screenHeight * 0.01,
+                        ),
+                        Center(
+                          child: SizedBox(
+                              width: 200,
+                              height: 200,
+                              child: Image.asset("assets/images/logo.png")),
+                        ),
+                        const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 5),
+                            child: Align(
+                              alignment: Alignment.topLeft,
+                              child: Text(
+                                'LOGIN',
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
 
-                                  ),
-                                ),
-                              )),
-                          const SizedBox(
-                            height: 6,
-                          ),
-                          const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 5),
-                              child: Align(
-                                alignment: Alignment.topLeft,
-                                child: Text(
-                                  'Please Login to continue',
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w400,
-
-                                  ),
-                                ),
-                              )),
-                          SizedBox(
-                            height: screenHeight * 0.02,
-                          ),
-                          Column(
-                            children: [
-                              SizedBox(
-                                child: TextFormField(
-                                  textInputAction: TextInputAction.next,
-                                  decoration: const InputDecoration(
-                                      prefixIcon: Icon(Icons.person),
-                                      focusColor: MyColors.appMainColor,
-                                      hintText: "username",
-                                      filled: true,
-                                      fillColor:MyColors.dropBorderColor,
-                                      border: OutlineInputBorder()),
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return "Please enter your username";
-                                    }
-                                    return null;
-                                  },
-                                  onSaved: (newValue) {
-                                    userName = newValue.toString();
-                                  },
                                 ),
                               ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              SizedBox(
-                                child: TextFormField(
-                                  obscureText: true,
-                                  textInputAction: TextInputAction.done,
-                                  decoration: const InputDecoration(
-                                      prefixIcon: Icon(Icons.lock),
-                                      hintText: "password",
-                                      filled: true,
-                                      fillColor:MyColors.dropBorderColor,
-                                      border: OutlineInputBorder()),
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return "Please enter your password";
-                                    }
-                                    return null;
-                                  },
-                                  onSaved: (newValue) {
-                                    password = newValue.toString();
-                                  },
+                            )),
+
+                         Container(
+                            margin:const EdgeInsets.symmetric(horizontal: 5,vertical: 6),
+                            child: const Align(
+                              alignment: Alignment.topLeft,
+                              child: Text(
+                                'Please Login to continue',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w400,
+
                                 ),
                               ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              isLoading
-                                  ? const Center(
-                                  child: SizedBox(
-                                      height: 60, child: MyLoadingCircle()))
-                                  : ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                  const Color.fromRGBO(0, 77, 145, 1),
-                                  minimumSize: Size(screenWidth, 45),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                      BorderRadius.circular(0)),
-                                ),
-                                onPressed: submitForm,
-                                child: const Text(
-                                  "Login",style: TextStyle(color: MyColors.whiteColor),
-                                ),
-                              ),
-                            ],
-                          ),
+                            )),
+                        Column(
+                          children: [
+                           UserNameTextField(userName: (value) {
+                             userName = value.toString();
+                           }),
+                            Container(
+                              margin: const EdgeInsets.symmetric(vertical: 10),
+                              child: PasswordTextField(password: (value) {
+                                password = value.toString();
+                              }),
+                            ),
+                            isLoading
+                                ? const Center(
+                                child: SizedBox(
+                                    height: 60, child: MyLoadingCircle()))
+                                :  BigElevatedButton(
+                                isBlueColor: true,
+                                buttonName:  "Login",
+                                submit: submitForm)
+                          ],
+                        ),
 
-                          Container(
-                              margin: const EdgeInsets.symmetric(vertical: 30),
-                              child: Column(
-                                children: [
-                                  SvgPicture.network(agencyPhoto),
+                        Container(
+                            margin: const EdgeInsets.symmetric(vertical: 30),
+                            child: Column(
+                              children: [
+                                SvgPicture.network(agencyPhoto),
 
-                                  Container(
-                                    margin:const EdgeInsets.symmetric(vertical: 10),
-                                    child: Text(agencyName),),
-                                  Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    alignment: Alignment.center,
-                                    child: Text("Version: $currentVersion",style: const TextStyle(color: MyColors.appMainColor),),)
-                                ],
-                              )),
+                                Container(
+                                  margin:const EdgeInsets.symmetric(vertical: 10),
+                                  child: Text(agencyName),),
+                                Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  alignment: Alignment.center,
+                                  child: Text("Version: $currentVersion",style: const TextStyle(color: MyColors.appMainColor),),)
+                              ],
+                            )),
 
-                        ],
-                      ),
+                      ],
                     ),
                   ),
                 ),
               ),
-            ]),
-          ),
+            ),
+          ]),
         ),
       ),
     );

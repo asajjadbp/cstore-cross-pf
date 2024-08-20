@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:cstore/screens/other_photo/widgets/other_photo_card.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -144,158 +145,35 @@ class _ViewOtherPhotoState extends State<ViewOtherPhoto> {
       backgroundColor:MyColors.background ,
       appBar: generalAppBar(context, storeName, userName, (){
         Navigator.of(context).pop();
-      }, (){print("filter Click");}, true, false, false),
-      body: isLoading
-          ? const Center(
-        child: MyLoadingCircle(),
-      )
-          : transData.isEmpty
-          ? const Center(
-        child: Text("No data found"),
-      )
-          : ListView.builder(
-          itemCount: transData.length,
-          itemBuilder: (ctx, i) {
-            return Container(
-              margin: const EdgeInsets.only(left: 10, right: 10, top: 5),
-              child: Card(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0)),
-                child: Stack(
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          width: 96,
-                          height: 100,
-                          padding: const EdgeInsets.all(6),
-                          margin: const EdgeInsets.symmetric(horizontal: 5),
-                          child: ClipRRect(
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(6.0),
-                                bottomLeft: Radius.circular(6.0),
-                                topRight: Radius.circular(6.0),
-                                bottomRight: Radius.circular(6.0),
-                              ), // Image border
-                              child: FittedBox(
-                                  fit: BoxFit.cover, child: Image.file(transData[i].imageFile as File))),
-                        ),
-                        const SizedBox(width: 5,),
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Image.asset("assets/icons/client_icon.png"),
-                                  const SizedBox(width: 10,),
-                                  Expanded(child: Text(transData[i].clientName,overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(fontSize: 12,fontWeight: FontWeight.w500)))
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SvgPicture.asset(
-                                    "assets/icons/Component 13.svg",
-                                    width: 10,
-                                    height: 12,
-                                  ),
-                                  const SizedBox(width: 5,),
-                                  Expanded(child: Text(transData[i].categoryEnName,overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(fontSize: 12,fontWeight: FontWeight.w500)))
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Image.asset("assets/icons/pick_list_icon_blue.png",width: 14,height: 14,),
-                                  const SizedBox(width: 5,),
-                                  Expanded(child: Text(transData[i].type_en_name,overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(fontSize: 12,fontWeight: FontWeight.w500),))
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        if(transData[i].upload_status != 1)
-                        Align(
-                            alignment: Alignment.topRight,
-                            child: IconButton(
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text(
-                                        "Are you sure you want to delete this item Permanently",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          child: const Text("No"),
-                                          onPressed: () {
-                                            Navigator.of(context).pop(true);
-                                          },
-                                        ),
-                                        TextButton(
-                                          child: const Text("Yes"),
-                                          onPressed: () {
-                                            deletePhoto(transData[i].trans_photo_type_id,
-                                                transData[i].img_name);
-                                            Navigator.of(context).pop(true);
-                                          },
-                                        )
-                                      ],
-                                    );
-                                  },
-                                );
+      }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
 
-                              },
-                              icon: const Icon(
-                                Icons.delete,
-                                color: Colors.red,
-                              ),
-                            )
-                          // Icon(
-                          //   Icons.delete,
-                          //   color: Colors.red,
-                          // ),
-                        )
-                      ],
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        padding: const EdgeInsets.all(5),
-                        decoration: const BoxDecoration(
-                            color: MyColors.appMainColor,
-                            borderRadius:
-                            BorderRadius.only(bottomRight: Radius.circular(10))),
-                        child: Text(
-                          DateFormat('hh:mm aa').format(DateTime.parse(transData[i].dateTime)),
-                          style: const TextStyle(color: MyColors.whiteColor),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }),
+      }),
+      body: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 10),
+        child: isLoading
+            ? const Center(
+          child: MyLoadingCircle(),
+        )
+            : transData.isEmpty
+            ? const Center(
+          child: Text("No data found"),
+        )
+            : ListView.builder(
+            itemCount: transData.length,
+            itemBuilder: (ctx, i) {
+              return OtherPhotoCard(
+                  imageFile: transData[i].imageFile!,
+                  clientName: transData[i].clientName,
+                  categoryName: transData[i].categoryEnName,
+                  typeName: transData[i].type_en_name,
+                  uploadStatus: transData[i].upload_status,
+                  dateTime: transData[i].dateTime,
+                  onDeleteTap: () {
+                    Navigator.of(context).pop(true);
+                  });
+
+            }),
+      ),
     );
   }
 }

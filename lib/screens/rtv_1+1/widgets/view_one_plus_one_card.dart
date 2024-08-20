@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:flutter/material.dart';
 
-import '../promoplane/widgets/promo_plan_card_row_item.dart';
+import '../../promoplane/widgets/promo_plan_card_row_item.dart';
 
 class ViewrtvOnePlusOnecard extends StatelessWidget {
   const ViewrtvOnePlusOnecard({

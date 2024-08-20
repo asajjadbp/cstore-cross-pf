@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:cstore/screens/rtv_screen/rtv_list_card.dart';
+import 'package:cstore/screens/rtv_screen/widgets/rtv_list_card.dart';
 import 'package:cstore/screens/rtv_screen/view_rtv_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -17,6 +17,7 @@ import '../utils/appcolor.dart';
 import '../utils/toast/toast.dart';
 import '../widget/app_bar_widgets.dart';
 import '../widget/drop_downs.dart';
+import '../widget/elevated_buttons.dart';
 import '../widget/loading.dart';
 import '../widget/percent_indicator.dart';
 import 'addnewrtv.dart';
@@ -277,198 +278,24 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
       backgroundColor:MyColors.background,
       appBar: generalAppBar(context, storeName, userName, (){
         Navigator.of(context).pop();
-      }, (){
+      }, true, true, false,(int getClient, int getCat, int getSubCat, int getBrand) {
+
         setState(() {
           isFilter = false;
         });
-        showModalBottomSheet<void>(
-          isDismissible: false,
-          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topRight: Radius.circular(10),topLeft: Radius.circular(10))),
-          context: context,
-          builder: (BuildContext context) {
-            return WillPopScope(
-                onWillPop: () async {
-                  return false;
-                },
-                child: StatefulBuilder(
-                    builder: (BuildContext context1, StateSetter menuState) {
 
-                      return Container(
-                        height: MediaQuery.of(context).size.height * 0.90,
-                        decoration: const BoxDecoration(borderRadius: BorderRadius.only(topRight: Radius.circular(10),topLeft: Radius.circular(10))),
-                        margin: const EdgeInsets.only(right: 10,left: 10,bottom: 10),
-                        child: SingleChildScrollView(
+        selectedClientId = getClient;
+        selectedCategoryId = getCat;
+        selectedSubCategoryId = getSubCat;
+        selectedBrandId = getBrand;
 
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Row(
-                                children: [
-                                  const Expanded(
-                                    child: Text(
-                                      "Filter",
-                                      style: TextStyle(
-                                          color: MyColors.appMainColor,
-                                          fontSize: 25,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                  ElevatedButton(onPressed: (){
-                                    menuState(() {
-                                      clientKey.currentState!.reset();
-                                      categoryKey.currentState!.reset();
-                                      subCategoryKey.currentState!.reset();
-                                      brandKey.currentState!.reset();
+        getTransRTVOne();
 
-                                      selectedClientId = -1;
-                                      selectedCategoryId = -1;
-                                      selectedSubCategoryId = -1;
-                                      selectedBrandId = -1;
+        setState(() {
 
-                                      initialClientItem = clientData[0];
-                                      initialCategoryItem = categoryData[0];
-                                      initialSubCategoryItem = subCategoryData[0];
-                                      initialBrandItem = brandData[0];
-                                    });
-                                  }, child: const Text("Reset Filter",style: TextStyle(color: MyColors.whiteColor),))
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              const Text(
-                                "Client",
-                                style: TextStyle(
-                                    color: MyColors.appMainColor,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              // dropdownwidget("Company Name"),
-                              ClientListDropDownWithInitialValue(
-                                  clientKey: clientKey,
-                                  initialValue: initialClientItem,
-                                  hintText: "Client", clientData: clientData, onChange: (value){
-                                selectedClientId = value.client_id;
-                                initialClientItem = value;
-                                getCategoryData(selectedClientId,menuState);
-                                getSubCategoryData(selectedClientId,menuState);
-                                getBrandData(selectedClientId,menuState);
-                                menuState(() {
-
-                                });
-                              }),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              const Text(
-                                "Category",
-                                style: TextStyle(
-                                    color: MyColors.appMainColor,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              isCategoryLoading
-                                  ? Center(
-                                child: Container(
-                                  height: 60,
-                                  child: const MyLoadingCircle(),
-                                ),
-                              )
-                                  : CategoryDropDownWithInitialValue(
-                                  initialValue: initialCategoryItem,
-                                  categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
-                                selectedCategoryId = value.id;
-                                initialCategoryItem = value;
-                                getSubCategoryData(
-                                    selectedClientId, menuState);
-                                getBrandData(selectedClientId,menuState);
-                                menuState(() {
-
-                                });
-                              }),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              const Text(
-                                "Sub Category",
-                                style: TextStyle(
-                                    color: MyColors.appMainColor,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              isSubCategoryLoading
-                                  ? Center(
-                                child: Container(
-                                  height: 60,
-                                  child: const MyLoadingCircle(),
-                                ),
-                              )
-                                  : CategoryDropDownWithInitialValue(
-                                  initialValue: initialSubCategoryItem,
-                                  categoryKey:subCategoryKey,hintText: "Sub Category", categoryData: subCategoryData, onChange: (value){
-                                selectedSubCategoryId = value.id;
-                                initialSubCategoryItem = value;
-                                menuState(() {
-
-                                });
-                              }),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              const Text(
-                                "Brand",
-                                style: TextStyle(
-                                    color: MyColors.appMainColor,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              SysBrandDropDownWithInitialValue(
-                                  initialValue: initialBrandItem,
-                                  brandKey:brandKey,hintText: "Brand", brandData: brandData, onChange: (value){
-                                selectedBrandId = value.id;
-                                initialBrandItem = value;
-                                menuState(() {
-
-                                });
-                              }),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: MyColors.appMainColor,
-                                    minimumSize: Size(screenWidth, 45),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(5))),
-                                onPressed: () {
-                                  getTransRTVOne();
-                                  getRtvCount();
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text(
-                                  "Search",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }
-                )
-            );
-          },
-        );
-      }, true, true, false),
+        });
+        Navigator.of(context).pop();
+      }),
       body: Padding(
         padding: const EdgeInsets.all(5),
         child: Column(
@@ -674,40 +501,47 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
                     },
                   ),
             ),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const viewrtvScreen(),
-                  ),
-                ).then((value) {
-                  getStoreDetails();
-                  getRtvCount();
-
-                });
-              },
-              child: Container(
-                margin: const EdgeInsets.only(left: 5, right: 5),
-                height: screenHeight / 19,
-                decoration: const BoxDecoration(
-                  color: Color.fromRGBO(91, 149, 75, 1),
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(left: 10),
-                      child: const Text(
-                        "View RTVS",
-                        style: TextStyle(fontSize: 18, color: Colors.white),
-                      ),
+            BigElevatedButton(
+                buttonName: "View RTVS",
+                submit: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const viewrtvScreen(),
                     ),
-                  ],
-                ),
-              ),
-            ),
+                  ).then((value) {
+                    getStoreDetails();
+                    getRtvCount();
+
+                  });
+                },
+                isBlueColor: false),
+
+            // InkWell(
+            //   onTap: () {
+            //
+            //   },
+            //   child: Container(
+            //     margin: const EdgeInsets.only(left: 5, right: 5),
+            //     height: screenHeight / 19,
+            //     decoration: const BoxDecoration(
+            //       color: Color.fromRGBO(91, 149, 75, 1),
+            //       borderRadius: BorderRadius.all(Radius.circular(5)),
+            //     ),
+            //     child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.center,
+            //       children: [
+            //         Container(
+            //           margin: const EdgeInsets.only(left: 10),
+            //           child: const Text(
+            //             "View RTVS",
+            //             style: TextStyle(fontSize: 18, color: Colors.white),
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),

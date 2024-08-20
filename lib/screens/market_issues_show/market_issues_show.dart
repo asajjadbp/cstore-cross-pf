@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:cstore/screens/market_issues_show/view_market_issue_card.dart';
+import 'package:cstore/screens/market_issues_show/widgets/view_market_issue_card.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -105,7 +105,7 @@ class _ViewMarketIssueScreenState extends State<ViewMarketIssueScreen> {
     }
   }
   void deletePhoto(int recordId, String imgName) async {
-    await DatabaseHelper.deleteOneRecord(TableName.tbl_trans_marketIssue, recordId)
+    await DatabaseHelper.deleteOneRecord(TableName.tblTransMarketIssue, recordId)
         .then((_) async {
       await deleteImageFromLocal(imgName).then((_) {
         _loadImages();
@@ -119,7 +119,9 @@ class _ViewMarketIssueScreenState extends State<ViewMarketIssueScreen> {
       backgroundColor: const Color(0xFFF4F7FD),
       appBar: generalAppBar(context, storeName, "View Market Issue", (){
         Navigator.of(context).pop();
-      }, (){}, true, false, false),
+      }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
+
+      }),
       body: isLoading
           ? const Center(
         child: MyLoadingCircle(),

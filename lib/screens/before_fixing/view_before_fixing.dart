@@ -170,7 +170,8 @@ class _ViewBeforeFixingState extends State<ViewBeforeFixing> {
       backgroundColor: MyColors.background,
       appBar: generalAppBar(context, storeName, userName, (){
         Navigator.of(context).pop();
-      }, (){print("filter Click");}, true, false, false),
+      }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
+      }),
       body: isLoading
           ? const Center(
               child: MyLoadingCircle(),
@@ -195,123 +196,6 @@ class _ViewBeforeFixingState extends State<ViewBeforeFixing> {
                             deletePhoto(
                                 transData[i].id, transData[i].img_name);
                           });
-
-                      //   Card(
-                      //   elevation: 1,
-                      //   color: Colors.white,
-                      //   shape: RoundedRectangleBorder(
-                      //       borderRadius: BorderRadius.circular(10.0)),
-                      //   child: Stack(
-                      //     children: [
-                      //       Row(
-                      //         crossAxisAlignment: CrossAxisAlignment.center,
-                      //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //         children: [
-                      //           Container(
-                      //             width: 96,
-                      //             height: 100,
-                      //             padding: const EdgeInsets.only(
-                      //               left: 5,
-                      //               top: 5,
-                      //               bottom: 5.0,
-                      //             ),
-                      //             margin: EdgeInsets.symmetric(horizontal: 5),
-                      //             child: ClipRRect(
-                      //                 borderRadius: const BorderRadius.only(
-                      //                   topLeft: Radius.circular(6.0),
-                      //                   bottomLeft: Radius.circular(6.0),
-                      //                   topRight: Radius.circular(6.0),
-                      //                   bottomRight: Radius.circular(6.0),
-                      //                 ), // Image border
-                      //                 child: FittedBox(
-                      //                     fit: BoxFit.cover,
-                      //                     child: transData[i].imageFile != null
-                      //                         ? Image.file(
-                      //                             transData[i].imageFile as File)
-                      //                         : Container())),
-                      //           ),
-                      //           Expanded(
-                      //             child: Column(
-                      //               mainAxisAlignment:
-                      //                   MainAxisAlignment.spaceEvenly,
-                      //               crossAxisAlignment: CrossAxisAlignment.center,
-                      //               children: [
-                      //                 Row(
-                      //                   mainAxisAlignment: MainAxisAlignment.start,
-                      //                   crossAxisAlignment:
-                      //                       CrossAxisAlignment.center,
-                      //                   children: [
-                      //                     Image.asset(
-                      //                         "assets/icons/client_icon.png"),
-                      //                     const SizedBox(
-                      //                       width: 5,
-                      //                     ),
-                      //                     Expanded(
-                      //                         child: Text(
-                      //                       transData[i].clientName,
-                      //                       overflow: TextOverflow.ellipsis,
-                      //                       style: TextStyle(
-                      //                           fontWeight: FontWeight.w600),
-                      //                     ))
-                      //                   ],
-                      //                 ),
-                      //                 Row(
-                      //                   mainAxisAlignment: MainAxisAlignment.start,
-                      //                   crossAxisAlignment:
-                      //                       CrossAxisAlignment.center,
-                      //                   children: [
-                      //                     SvgPicture.asset(
-                      //                       "assets/icons/Component 13.svg",
-                      //                       width: 10,
-                      //                       height: 12,
-                      //                     ),
-                      //                     const SizedBox(
-                      //                       width: 5,
-                      //                     ),
-                      //                     Expanded(
-                      //                         child: Text(
-                      //                             transData[i].categoryEnName,
-                      //                             overflow: TextOverflow.ellipsis,
-                      //                             style: TextStyle(
-                      //                                 fontWeight: FontWeight.w600)))
-                      //                   ],
-                      //                 ),
-                      //               ],
-                      //             ),
-                      //           ),
-                      //           if(transData[i].upload_status != 1)
-                      //           Align(
-                      //               alignment: Alignment.topRight,
-                      //               child: IconButton(
-                      //                 onPressed: () {
-                      //                   deletePhoto(
-                      //                       transData[i].id, transData[i].img_name);
-                      //                 },
-                      //                 icon: const Icon(
-                      //                   Icons.delete,
-                      //                   color: Colors.red,
-                      //                 ),
-                      //               ))
-                      //         ],
-                      //       ),
-                      //       Positioned(
-                      //         bottom: 0,
-                      //         right: 0,
-                      //         child: Container(
-                      //           padding: const EdgeInsets.all(5),
-                      //           decoration: const BoxDecoration(
-                      //               color: MyColors.appMainColor,
-                      //               borderRadius:
-                      //               BorderRadius.only(bottomRight: Radius.circular(10))),
-                      //           child: Text(
-                      //             DateFormat('hh:mm aa').format(DateTime.parse(transData[i].dateTime)),
-                      //             style: const TextStyle(color: MyColors.whiteColor),
-                      //           ),
-                      //         ),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // );
                     }),
           ),
     );

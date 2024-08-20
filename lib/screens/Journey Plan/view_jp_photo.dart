@@ -242,7 +242,8 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
     return Scaffold(
       appBar: generalAppBar(context, journeyPlanDetail.enStoreName, "Start Visit", (){
         Navigator.of(context).pop();
-      }, (){print("filter Click");}, true, false, false),
+      }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
+      }),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.only(left: 10, right: 10),

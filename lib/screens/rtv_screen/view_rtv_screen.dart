@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:cstore/screens/rtv_screen/view_rtv_card.dart';
+import 'package:cstore/screens/rtv_screen/widgets/view_rtv_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:path_provider/path_provider.dart';
@@ -144,7 +144,9 @@ class _viewrtvScreenState extends State<viewrtvScreen> {
       backgroundColor: const Color(0xFFF4F7FD),
       appBar: generalAppBar(context, storeName, userName, (){
         Navigator.of(context).pop();
-      }, (){print("filter Click");}, true, false, false),
+      }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
+
+      }),
       body: isLoading
           ? const Center(
               child: MyLoadingCircle(),

@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../Database/table_name.dart';
 import '../auth/login.dart';
 import '../widget/app_bar_widgets.dart';
+import '../widget/elevated_buttons.dart';
 import '../widget/loading.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -179,6 +180,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
         var isSOSUnit=await  DatabaseHelper.insertSOSUnitArray(syncroniseData[0].sysSosUnit);
         var isPromoPlan = await DatabaseHelper.insertSysPromoPlanArray(syncroniseData[0].sysPromoPlan);
         await DatabaseHelper.insertSysKnowledgeShareArray(syncroniseData[0].knowledgeShareModel);
+        await DatabaseHelper.insertMarketIssueArray(syncroniseData[0].sysMarketIssue);
 
         setState(() {
           isLoading = isJourneyPlan && isDashboardPlan && isAgencyDash && isCategory && isSubCategory
@@ -246,7 +248,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
             );
           },
         );
-      }, (){print("filter Click");}, false, false, true),
+      }, false, false, true,(int getClient, int getCat, int getSubCat, int getBrand) {
+      }),
       body: Container(
         margin: const EdgeInsets.only(left: 15, right: 15),
         child: Column(
@@ -302,20 +305,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
                       ),
                     )
                   ],
-                ) : ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromRGBO(0, 77, 145, 1),
-                    minimumSize: Size(screenWidth, 45),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(0)),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).popAndPushNamed(DashBoard.routeName);
-                  },
-                  child: const Text(
-                    "Next",style: TextStyle(color: MyColors.whiteColor),
-                  ),
-                ),
+                ) : BigElevatedButton(
+                    isBlueColor: true,
+                    buttonName:  "Next",
+                    submit: (){
+                      Navigator.of(context).popAndPushNamed(DashBoard.routeName);
+                    })
               ),
             )
           ],

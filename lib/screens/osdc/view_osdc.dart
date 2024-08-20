@@ -9,7 +9,7 @@ import '../../Database/table_name.dart';
 import '../../Model/database_model/show_trans_osdc_model.dart';
 import '../utils/app_constants.dart';
 import '../utils/toast/toast.dart';
-import '../widget/ViewOSDcard.dart';
+import 'widgets/ViewOSDcard.dart';
 import '../widget/app_bar_widgets.dart';
 import '../widget/loading.dart';
 
@@ -153,7 +153,9 @@ class _ViewOSDCState extends State<ViewOSDC> {
       backgroundColor: const Color(0xFFF4F7FD),
       appBar: generalAppBar(context, storeName, userName, (){
         Navigator.of(context).pop();
-      }, (){print("filter Click");}, true, false, false),
+      },  true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
+
+      }),
       body: isLoading
           ? const Center(
               child: MyLoadingCircle(),

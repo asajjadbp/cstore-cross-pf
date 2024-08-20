@@ -14,6 +14,7 @@ import '../utils/services/take_image_and_save_to_folder.dart';
 import '../utils/toast/toast.dart';
 import '../widget/app_bar_widgets.dart';
 import '../widget/drop_downs.dart';
+import '../widget/elevated_buttons.dart';
 import '../widget/loading.dart';
 import 'package:intl/intl.dart';
 
@@ -161,7 +162,20 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
         backgroundColor: const Color(0xFFF4F7FD),
         appBar: generalAppBar(context, storeName, "Add 1+1", () {
           Navigator.of(context).pop();
-        }, () {}, true, false, false),
+        }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
+
+          // selectedClientId = getClient;
+          // selectedCategoryId = getCat;
+          // selectedSubCategoryId = getSubCat;
+          // selectedBrandId = getBrand;
+          //
+          // getTransFreshnessOne();
+          //
+          // setState(() {
+          //
+          // });
+          // Navigator.of(context).pop();
+        }),
         body: SingleChildScrollView(
           child: Container(
             margin:const EdgeInsets.symmetric(horizontal: 10),
@@ -377,21 +391,28 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
                           height: 60,
                           child: MyLoadingCircle(),
                         )
-                      : ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: MyColors.appMainColor,
-                        minimumSize: Size(screenWidth, 45),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5))),
-                    onPressed: () {
-                      saveStorePhotoData();
-                      // Navigator.of(context).pushNamed();
-                    },
-                    child: const Text(
-                      "Save",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
+                      : BigElevatedButton(
+                      buttonName: "Save",
+                      submit: (){
+                        saveStorePhotoData();
+                      },
+                      isBlueColor: true),
+
+                  // ElevatedButton(
+                  //   style: ElevatedButton.styleFrom(
+                  //       backgroundColor: MyColors.appMainColor,
+                  //       minimumSize: Size(screenWidth, 45),
+                  //       shape: RoundedRectangleBorder(
+                  //           borderRadius: BorderRadius.circular(5))),
+                  //   onPressed: () {
+                  //     saveStorePhotoData();
+                  //     // Navigator.of(context).pushNamed();
+                  //   },
+                  //   child: const Text(
+                  //     "Save",
+                  //     style: TextStyle(color: Colors.white),
+                  //   ),
+                  // ),
                 ),
                 const SizedBox(
                   height: 10,

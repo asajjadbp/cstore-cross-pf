@@ -7,7 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../Database/db_helper.dart';
 import '../../Database/table_name.dart';
 import '../../Model/database_model/trans_one_plus_one_mode.dart';
-import 'view_one_plus_one_card.dart';
+import 'widgets/view_one_plus_one_card.dart';
 import '../utils/app_constants.dart';
 import '../utils/toast/toast.dart';
 import '../widget/app_bar_widgets.dart';
@@ -152,7 +152,9 @@ class _ViewRtvOnePlusOneScreenState extends State<ViewRtvOnePlusOneScreen> {
       backgroundColor: const Color(0xFFF4F7FD),
       appBar: generalAppBar(context, storeName, "View RTV", (){
         Navigator.of(context).pop();
-      }, (){print("filter Click");}, true, false, false),
+      }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
+
+      }),
       body: Container(
         margin: const EdgeInsets.symmetric(horizontal: 10),
         child: isLoading

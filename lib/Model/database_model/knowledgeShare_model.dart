@@ -34,8 +34,8 @@ class KnowledgeShareModel {
       TableName.sys_knowledge_addedBy: this.added_by,
       TableName.sys_knowledge_fileName: this.file_name,
       TableName.sys_knowledge_type: this.type,
-      TableName.sys_knowledge_active: this.active,
-      TableName.sys_issue_update_at: this.updated_at,
+      TableName.sysKnowledgeActive: this.active,
+      TableName.sysIssueUpdateAt: this.updated_at,
     };
   }
   KnowledgeShareModel.fromJson(Map<String, dynamic> json) {
@@ -48,7 +48,7 @@ class KnowledgeShareModel {
     file_name = json[TableName.sys_knowledge_fileName] ?? 0;
     type = json[TableName.sys_knowledge_type] ?? "";
     active = json[TableName.sys_knowledge_type] ?? 0;
-    updated_at = json[TableName.sys_issue_update_at] ?? "";
+    updated_at = json[TableName.sysIssueUpdateAt] ?? "";
   }
 
   Map<String, dynamic> toJson() => {
@@ -60,7 +60,7 @@ class KnowledgeShareModel {
     TableName.sys_knowledge_addedBy: this.added_by,
     TableName.sys_knowledge_fileName: this.file_name,
     TableName.sys_knowledge_type: this.type,
-    TableName.sys_knowledge_active: this.active,
-    TableName.sys_issue_update_at: this.updated_at,
+    TableName.sysKnowledgeActive: this.active,
+    TableName.sysIssueUpdateAt: this.updated_at,
   };
 }

@@ -16,6 +16,7 @@ import '../../Model/database_model/trans_sos_model.dart';
 import '../utils/appcolor.dart';
 import '../utils/toast/toast.dart';
 import '../widget/app_bar_widgets.dart';
+import '../widget/elevated_buttons.dart';
 
 class ShareOfShelf extends StatefulWidget {
   static const routeName = "/ShareOfShelf_route";
@@ -182,7 +183,9 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
       backgroundColor: MyColors.background,
       appBar: generalAppBar(context, storeName, userName, (){
         Navigator.of(context).pop();
-      }, (){print("filter Click");}, true, false, false),
+      }, true, false, false, (int getClient, int getCat, int getSubCat, int getBrand) {
+
+      }),
       body: Column(
         children: [
           Expanded(
@@ -406,20 +409,12 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
                               child: const MyLoadingCircle(),
                             ),
                           )
-                              : ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: MyColors.appMainColor,
-                                minimumSize: Size(screenWidth, 50),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5))),
-                            onPressed: () {
-                              StoreUnitDataDB();
-                            },
-                            child: const Text(
-                              "Save",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
+                              :  BigElevatedButton(
+                              buttonName: "Save",
+                              submit: (){
+                                StoreUnitDataDB();
+                              },
+                              isBlueColor: true),
 
                         ],
                       ),
@@ -430,21 +425,29 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
           ),
           Container(
             margin:const  EdgeInsets.only(bottom: 10,left: 5,right: 5),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 39, 136, 42),
-                  minimumSize: Size(screenWidth, 50),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5))),
-              onPressed: () {
-                Navigator.of(context)
-                    .pushNamed(ViewShareOfShelf.routename);
-              },
-              child: const Text(
-                "View Share Of Shelf",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
+            child: BigElevatedButton(
+                buttonName: "View Share Of Shelf",
+                submit: (){
+                  Navigator.of(context)
+                      .pushNamed(ViewShareOfShelf.routename);
+                },
+                isBlueColor: false),
+
+            // ElevatedButton(
+            //   style: ElevatedButton.styleFrom(
+            //       backgroundColor: const Color.fromARGB(255, 39, 136, 42),
+            //       minimumSize: Size(screenWidth, 50),
+            //       shape: RoundedRectangleBorder(
+            //           borderRadius: BorderRadius.circular(5))),
+            //   onPressed: () {
+            //     Navigator.of(context)
+            //         .pushNamed(ViewShareOfShelf.routename);
+            //   },
+            //   child: const Text(
+            //     "View Share Of Shelf",
+            //     style: TextStyle(color: Colors.white),
+            //   ),
+            // ),
           ),
         ],
       ),

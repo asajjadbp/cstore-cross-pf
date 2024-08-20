@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../utils/appcolor.dart';
+import '../../utils/appcolor.dart';
 
 class ViewMarketIssueCard extends StatelessWidget {
   ViewMarketIssueCard({
@@ -30,8 +30,8 @@ class ViewMarketIssueCard extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 90,
-            height: 90,
+            width: 80,
+            height: 80,
             margin: const EdgeInsets.all(5),
             child: ClipRRect(
                 borderRadius: const BorderRadius.only(
@@ -52,18 +52,19 @@ class ViewMarketIssueCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                        width:screenWidth/2,
-                        margin: const EdgeInsets.symmetric(horizontal: 8,vertical: 5),
-                        child: Text(
-                          marketIssue,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
-                          style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: MyColors.appMainColor),
-                        )),
+                    Expanded(
+                      child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 8,vertical: 5),
+                          child: Text(
+                            marketIssue,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                            style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: MyColors.appMainColor),
+                          )),
+                    ),
                     InkWell(
                         onTap: () {
                           onDelete();
@@ -85,7 +86,7 @@ class ViewMarketIssueCard extends StatelessWidget {
                     ),
                     Expanded(
                       child: Text(
-                        comment,
+                        comment.isEmpty ? "---" : comment,
                         style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,

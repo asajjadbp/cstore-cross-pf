@@ -14,12 +14,12 @@ import '../../Model/database_model/sys_osdc_reason_model.dart';
 import '../../Model/database_model/sys_osdc_type_model.dart';
 import '../../Model/database_model/trans_osd_image_model.dart';
 import '../../Model/database_model/trans_osdc_model.dart';
-import '../Gallery/gallery_screen.dart';
 import '../utils/appcolor.dart';
 import '../utils/services/image_picker.dart';
 import '../utils/services/take_image_and_save_to_folder.dart';
 import '../utils/toast/toast.dart';
 import '../widget/app_bar_widgets.dart';
+import '../widget/elevated_buttons.dart';
 import '../widget/image_selection_row_button.dart';
 
 class AddOSDC extends StatefulWidget {
@@ -210,164 +210,170 @@ class _AddOSDCState extends State<AddOSDC> {
     return Scaffold(
         appBar: generalAppBar(context, storeName, userName, (){
           Navigator.of(context).pop();
-        }, (){print("filter Click");}, true, false, false),
-        body: SingleChildScrollView(
+        }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
+
+        }),
+        body: Container(
+          margin:const EdgeInsets.symmetric(horizontal: 10),
           child: Column(
             children: [
-              Container(
-                margin: const EdgeInsets.only(left: 10, right: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    const Text(
-                      "Brand",
-                      style: TextStyle(
-                          color: MyColors.appMainColor,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    OsdcBrandDropDown(
-                        hintText: "Brand",
-                        osdcBrandData: brandData,
-                        onChange: (value) {
-                          selectedBrandId = value.id;
-                          setState(() {});
-                        }),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    const Text(
-                      "Type",
-                      style: TextStyle(
-                          color: MyColors.appMainColor,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    OsdcTypeDropDown(
-                        hintText: "OSDC Type",
-                        osdcTypeData: typeData,
-                        onChange: (value) {
-                          selectedTypeId = value.id;
-                          setState(() {});
-                        }),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    const Text(
-                      "Reason",
-                      style: TextStyle(
-                          color: MyColors.appMainColor,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    OsdcReasonDropDown(
-                        hintText: "OSDC Reason",
-                        osdcReasonData: reasonData,
-                        onChange: (value) {
-                          selectedReasonId = value.id;
-                          setState(() {});
-                        }),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    const Text(
-                      "Quantity",
-                      style: TextStyle(
-                          color: MyColors.appMainColor,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 0),
-                      child: TextField(
-                        showCursor: true,
-                        enableInteractiveSelection: false,
-                        onChanged: (value) {
-                          print(value);
-                        },
-                        controller: valueControllerQty,
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                            prefixIconColor: MyColors.appMainColor,
-                            focusColor: MyColors.appMainColor,
-                            fillColor: MyColors.dropBorderColor,
-                            labelStyle: TextStyle(
-                                color: MyColors.appMainColor, height: 50.0),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    width: 1, color: MyColors.appMainColor)),
-                            border: OutlineInputBorder(),
-                            hintText: 'Enter Qty*'),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(
-                              RegExp(r'^[0-9][0-9]*'))
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    ImageListButton(
-                        imageFile: imagesList,
-                        onGalleryList: (){
-                          galleyImage();
-                        },
-                        onSelectImage: () {
-                          getImage();
-                        }),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(left: 10, right: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                           Container(
+                             margin:const EdgeInsets.symmetric(vertical: 10),
+                             child: Column(
+                               mainAxisAlignment: MainAxisAlignment.start,
+                               crossAxisAlignment: CrossAxisAlignment.start,
+                               children: [
+                                 const Text(
+                                   "Brand",
+                                   style: TextStyle(
+                                       color: MyColors.appMainColor,
+                                       fontWeight: FontWeight.bold),
+                                 ),
+                                 const SizedBox(
+                                   height: 5,
+                                 ),
+                                 OsdcBrandDropDown(
+                                     hintText: "Brand",
+                                     osdcBrandData: brandData,
+                                     onChange: (value) {
+                                       selectedBrandId = value.id;
+                                       setState(() {});
+                                     }),
+                               ],
+                             ),
+                           ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  "Type",
+                                  style: TextStyle(
+                                      color: MyColors.appMainColor,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                OsdcTypeDropDown(
+                                    hintText: "OSDC Type",
+                                    osdcTypeData: typeData,
+                                    onChange: (value) {
+                                      selectedTypeId = value.id;
+                                      setState(() {});
+                                    }),
+                              ],
+                            ),
 
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    isBtnLoading ? const SizedBox(
-                      height: 60,
-                      child:  MyLoadingCircle(),
-                    ) : ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: MyColors.appMainColor,
-                          minimumSize: Size(screenWidth, 45),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10))),
-                      onPressed: () {
-                        saveStorePhotoData();
-                        // Navigator.of(context).pushNamed();
-                      },
-                      child: const Text(
-                        "Save",
-                        style: TextStyle(color: Colors.white),
+                            Container(
+                              margin:const EdgeInsets.symmetric(vertical: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    "Reason",
+                                    style: TextStyle(
+                                        color: MyColors.appMainColor,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  OsdcReasonDropDown(
+                                      hintText: "OSDC Reason",
+                                      osdcReasonData: reasonData,
+                                      onChange: (value) {
+                                        selectedReasonId = value.id;
+                                        setState(() {});
+                                      }),
+                                ],
+                              ),
+                            ),
+                           Column(
+                             mainAxisAlignment: MainAxisAlignment.start,
+                             crossAxisAlignment: CrossAxisAlignment.start,
+                             children: [
+                               const Text(
+                                 "Quantity",
+                                 style: TextStyle(
+                                     color: MyColors.appMainColor,
+                                     fontWeight: FontWeight.bold),
+                               ),
+                               const SizedBox(
+                                 height: 5,
+                               ),
+                               TextField(
+                                 showCursor: true,
+                                 enableInteractiveSelection: false,
+                                 onChanged: (value) {
+                                   print(value);
+                                 },
+                                 controller: valueControllerQty,
+                                 keyboardType: TextInputType.number,
+                                 decoration: const InputDecoration(
+                                     prefixIconColor: MyColors.appMainColor,
+                                     focusColor: MyColors.appMainColor,
+                                     fillColor: MyColors.dropBorderColor,
+                                     labelStyle: TextStyle(
+                                         color: MyColors.appMainColor, height: 50.0),
+                                     focusedBorder: OutlineInputBorder(
+                                         borderSide: BorderSide(
+                                             width: 1, color: MyColors.appMainColor)),
+                                     border: OutlineInputBorder(),
+                                     hintText: 'Enter Qty*'),
+                                 inputFormatters: [
+                                   FilteringTextInputFormatter.allow(
+                                       RegExp(r'^[0-9][0-9]*'))
+                                 ],
+                               ),
+                             ],
+                           ),
+                            Container(
+                              margin: const EdgeInsets.symmetric(vertical: 10),
+                              child: ImageListButton(
+                                  imageFile: imagesList,
+                                  onGalleryList: (){
+                                    galleyImage();
+                                  },
+                                  onSelectImage: () {
+                                    getImage();
+                                  }),
+                            ),
+
+                            isBtnLoading ? const SizedBox(
+                              height: 60,
+                              child:  MyLoadingCircle(),
+                            ) : BigElevatedButton(
+                                buttonName: "Save",
+                                submit: (){
+                                  saveStorePhotoData();
+                                },
+                                isBlueColor: true),
+                          ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromARGB(255, 39, 136, 42),
-                          minimumSize: Size(screenWidth, 45),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10))),
-                      onPressed: () {
-                        Navigator.of(context).pushNamed(ViewOSDC.routename);
-                      },
-                      child: const Text(
-                        "View OSD",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
+              ),
+              Container(
+                margin:const EdgeInsets.symmetric(vertical: 10),
+                child: BigElevatedButton(
+                    buttonName: "View OSD",
+                    submit: (){
+                      Navigator.of(context).pushNamed(ViewOSDC.routename);
+                    },
+                    isBlueColor: false),
               ),
             ],
           ),

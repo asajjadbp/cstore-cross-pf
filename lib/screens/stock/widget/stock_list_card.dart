@@ -2,7 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../widget/loading.dart';
+import '../../widget/elevated_buttons.dart';
+import '../../widget/loading.dart';
 
 class StockListCard extends StatelessWidget {
 
@@ -279,42 +280,16 @@ class StockListCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    InkWell(
-                      onTap: () {
-                        stockCheckValues(valueControllerCases.text,valueControllerOuter.text,valueControllerPieces.text,);
-                      },
-                      child: Container(
-                          margin: const EdgeInsets.only(
-                              left: 15, right: 15, top: 10),
-                          height: screenHeight / 15,
-                          decoration: BoxDecoration(
-                              color: const Color.fromRGBO(
-                                  26, 91, 140, 1),
-                              borderRadius:
-                              BorderRadius.circular(5)),
-                          child: const Row(
-                            mainAxisAlignment:
-                            MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.check_circle,
-                                size: 35,
-                                color: Colors.white,
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Text(
-                                "Save",
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight:
-                                    FontWeight.w400,
-                                    color: Colors.white),
-                              )
-                            ],
-                          )),
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 5),
+                      child: BigElevatedButton(
+                          buttonName: "Save",
+                          submit: (){
+                            stockCheckValues(valueControllerCases.text,valueControllerOuter.text,valueControllerPieces.text,);
+                          },
+                          isBlueColor: true),
                     ),
+
                   ],
                 ),
               ),

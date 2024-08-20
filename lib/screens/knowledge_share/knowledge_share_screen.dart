@@ -15,8 +15,8 @@ import '../utils/app_constants.dart';
 import '../utils/toast/toast.dart';
 import '../widget/app_bar_widgets.dart';
 import '../widget/loading.dart';
-import 'knowledge_share_card.dart';
-import 'knowledge_share_card.dart';
+import 'widgets/knowledge_share_card.dart';
+import 'widgets/knowledge_share_card.dart';
 
 class ViewKnowledgeShare extends StatefulWidget {
   static const routename = "knowledgeShare";
@@ -62,7 +62,9 @@ class _ViewKnowledgeShareState extends State<ViewKnowledgeShare> {
         backgroundColor:MyColors.background,
         appBar: generalAppBar(context, storeName, "Knowledge Share", () {
           Navigator.of(context).pop();
-        }, () {}, true, false, false),
+        }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
+
+        }),
         body: ListView.builder(
             padding: const EdgeInsets.only(left: 8, right: 8, top: 10),
             shrinkWrap: true,

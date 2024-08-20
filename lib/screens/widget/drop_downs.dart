@@ -6,6 +6,7 @@ import '../../Model/database_model/PlanogramReasonModel.dart';
 import '../../Model/database_model/category_model.dart';
 import '../../Model/database_model/client_model.dart';
 import '../../Model/database_model/drop_reason_model.dart';
+import '../../Model/database_model/sys_market_issue_model.dart';
 import '../../Model/database_model/sys_osdc_reason_model.dart';
 import '../../Model/database_model/sys_osdc_type_model.dart';
 import '../../Model/database_model/sys_photo_type.dart';
@@ -993,6 +994,73 @@ class RtvReasonDropDown extends StatelessWidget {
         value: item,
         child: Text(
           item.en_name,
+          style: const TextStyle(
+            fontSize: 14,
+          ),
+        ),
+      ))
+          .toList(),
+      validator: (value) {
+        if (value == null) {
+          return 'Please select driver name';
+        }
+        return null;
+      },
+      onChanged: (value) {
+        onChange(value!);
+      },
+      onSaved: (value) {},
+      buttonStyleData: const ButtonStyleData(
+        height: 50,
+        padding: EdgeInsets.only(left: 20, right: 10),
+      ),
+      iconStyleData: const IconStyleData(
+        icon: Icon(
+          Icons.arrow_drop_down,
+          color: Colors.black45,
+        ),
+        iconSize: 30,
+      ),
+      dropdownStyleData: DropdownStyleData(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+        ),
+      ),
+    );
+  }
+}
+
+
+class MarketIssueDropDown extends StatelessWidget {
+  const MarketIssueDropDown({super.key,required this.hintText,required this.reasonData,required this.onChange});
+
+  final String hintText;
+  final List<sysMarketIssueModel> reasonData;
+  final Function (sysMarketIssueModel typeModel) onChange;
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField2<sysMarketIssueModel>(
+      decoration: InputDecoration(
+        isDense: true,
+        filled: true,
+        // fillColor: const Color.fromARGB(255, 226, 226, 226),
+        contentPadding: EdgeInsets.zero,
+        // // fillColor: Colors.white,
+        fillColor: MyColors.dropBorderColor,
+        // border: InputBorder.none
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+      ),
+      isExpanded: true,
+      hint: Text(
+        hintText,
+        style: const TextStyle(fontSize: 14),
+      ),
+      items: reasonData
+          .map((item) => DropdownMenuItem<sysMarketIssueModel>(
+        value: item,
+        child: Text(
+          item.name,
           style: const TextStyle(
             fontSize: 14,
           ),

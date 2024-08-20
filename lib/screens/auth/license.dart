@@ -2,6 +2,7 @@
 import 'package:cstore/Network/license_http_manager.dart';
 import 'package:cstore/model/response_model.dart/license_response.dart';
 import 'package:cstore/screens/auth/login.dart';
+import 'package:cstore/screens/auth/widgets/license_key_text_field.dart';
 import 'package:cstore/screens/utils/app_constants.dart';
 import 'package:cstore/screens/utils/toast/toast.dart';
 import 'package:cstore/screens/widget/loading.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../utils/appcolor.dart';
+import '../widget/elevated_buttons.dart';
 
 
 class LicenseKey extends StatefulWidget {
@@ -91,11 +93,6 @@ class _LicenseKeyState extends State<LicenseKey> {
                         height: 150,
                         width: 150,
                       )
-                      // CircleAvatar(
-                      //   radius: 50,
-                      //   backgroundColor: Colors.white,
-                      //   backgroundImage: AssetImage("assets/images/logo2.png"),
-                      // )
                     ],
                   ),
                 ),
@@ -122,43 +119,17 @@ class _LicenseKeyState extends State<LicenseKey> {
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 25),
                           ),
-                          // const SizedBox(
-                          //   height: 6,
-                          // ),
-                          // const Text(
-                          //   "Login with your credentials",
-                          //   style: TextStyle(fontSize: 15),
-                          // ),
                           SizedBox(
                             height: screenHeight * 0.05,
                           ),
                           Column(
                             children: [
 
-                              SizedBox(
-                                child: Form(
-                                  key: _formKey,
-                                  child: TextFormField(
-                                    // obscureText: true,
-                                    textInputAction: TextInputAction.done,
-                                    decoration: const InputDecoration(
-                                        prefixIcon: Icon(Icons.key),
-                                        hintText: "Key",
-                                        filled: true,
-                                        fillColor:
-                                            Color.fromARGB(255, 223, 218, 218),
-                                        border: InputBorder.none),
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return "Please enter your license key";
-                                      }
-                                      return null;
-                                    },
-                                    onSaved: (newValue) {
-                                      licensekey = newValue.toString();
-                                    },
-                                  ),
-                                ),
+                              Form(
+                                key: _formKey,
+                                child : LicenseKeyTextField(licenseKey: (value) {
+                                  licensekey = value.toString();
+                                })
                               ),
                               const SizedBox(
                                 height: 80,
@@ -166,23 +137,10 @@ class _LicenseKeyState extends State<LicenseKey> {
                               isLoading
                                   ? const SizedBox(
                                       height: 60, child: MyLoadingCircle())
-                                  // const Center(
-                                  //     child: CircularProgressIndicator(),
-                                  //   )
-                                  : ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            const Color.fromRGBO(0, 77, 145, 1),
-                                        minimumSize: Size(screenWidth, 45),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(0)),
-                                      ),
-                                      onPressed: submitForm,
-                                      child:  const Text(
-                                        "Submit",style: TextStyle(color: MyColors.whiteColor),
-                                      ),
-                                    ),
+                                  : BigElevatedButton(
+                                  isBlueColor: true,
+                                  buttonName:  "Submit",
+                                  submit: submitForm)
                             ],
                           ),
                         ],

@@ -8,6 +8,8 @@ import 'package:cstore/screens/widget/drop_downs.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
 
+import '../widget/elevated_buttons.dart';
+
 class PromoPlanCard extends StatelessWidget {
   PromoPlanCard({super.key,
     required this.promoReason,required this.promoStatus,required this.actStatus,required this.modalImage,
@@ -197,26 +199,35 @@ class PromoPlanCard extends StatelessWidget {
                 ],
               ),
             ),
-            isBtnLoading ? const Center(child: SizedBox(height: 60,child: MyLoadingCircle(),),) : InkWell(
-              onTap: () {
-                onSaveClick();
-              },
-              child: Container(
-                alignment: Alignment.center,
-                  height: screenHeight / 18,
-                  width: screenWidth,
-                  margin:const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                  decoration: BoxDecoration(
-                      color: const Color.fromRGBO(26, 91, 140, 1),
-                      borderRadius: BorderRadius.circular(5)),
-                  child: const Text(
-                    "Save",
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.white),
-                  )),
-            ),
+            isBtnLoading
+                ? const Center(child: SizedBox(height: 60,child: MyLoadingCircle(),),)
+                : BigElevatedButton(
+                buttonName: "Save",
+                submit: (){
+                  onSaveClick();
+                },
+                isBlueColor: true),
+
+            // InkWell(
+            //   onTap: () {
+            //     onSaveClick();
+            //   },
+            //   child: Container(
+            //     alignment: Alignment.center,
+            //       height: screenHeight / 18,
+            //       width: screenWidth,
+            //       margin:const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+            //       decoration: BoxDecoration(
+            //           color: const Color.fromRGBO(26, 91, 140, 1),
+            //           borderRadius: BorderRadius.circular(5)),
+            //       child: const Text(
+            //         "Save",
+            //         style: TextStyle(
+            //             fontSize: 18,
+            //             fontWeight: FontWeight.w400,
+            //             color: Colors.white),
+            //       )),
+            // ),
           ],
         ),
       ),

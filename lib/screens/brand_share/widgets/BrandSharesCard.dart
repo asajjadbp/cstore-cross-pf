@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../utils/appcolor.dart';
-import '../widget/check_list_comment_field.dart';
-import '../widget/loading.dart';
+import '../../utils/appcolor.dart';
+import '../../widget/check_list_comment_field.dart';
+import '../../widget/elevated_buttons.dart';
+import '../../widget/loading.dart';
 
 class Shelf_SharesCard extends StatelessWidget {
   final String fieldName1;
@@ -173,20 +174,12 @@ class Shelf_SharesCard extends StatelessWidget {
             )
                 : Container(
               margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 5),
-                  child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                    backgroundColor: MyColors.appMainColor,
-                    minimumSize: Size(screenWidth, 40),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5))),
-              onPressed: () {
-                  onSaveClick();
-              },
-              child: const Text(
-                  "Save",
-                  style: TextStyle(color: Colors.white),
-              ),
-            ),
+                  child: BigElevatedButton(
+                      isBlueColor: false,
+                      buttonName: "Save",
+                      submit: (){
+                        onSaveClick();
+                      })
                 ),
 
           ],

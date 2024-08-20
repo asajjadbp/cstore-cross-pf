@@ -159,7 +159,8 @@ class _ViewPlanogramScreenState extends State<ViewPlanogramScreen> {
       backgroundColor: MyColors.background,
       appBar: generalAppBar(context, storeName, userName, (){
         Navigator.of(context).pop();
-      }, (){print("filter Click");}, true, false, false),
+      }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
+      }),
       body: Container(
         margin:const EdgeInsets.symmetric(horizontal: 10),
         child: isLoading

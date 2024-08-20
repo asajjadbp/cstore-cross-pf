@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 class TableName {
-  final GlobalKey<ScaffoldState> drawerKey = new GlobalKey<ScaffoldState>();
   /// Database name
   static const String dbName = "cstore_pro.db";
 
@@ -258,6 +257,6 @@ class TableName {
   static const String sys_knowledge_addedBy = "added_by";
   static const String sys_knowledge_fileName = "file_name";
   static const String sys_knowledge_type = "type";
-  static const String sys_knowledge_active = "active";
-  static const String sys_issue_update_at = "updated_at";
+  static const String sysKnowledgeActive = "active";
+  static const String sysIssueUpdateAt = "updated_at";
 }

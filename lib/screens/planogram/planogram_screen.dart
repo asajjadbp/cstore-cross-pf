@@ -22,6 +22,8 @@ import '../widget/app_bar_widgets.dart';
 import '../widget/drop_downs.dart';
 import 'package:path/path.dart' as path;
 
+import '../widget/elevated_buttons.dart';
+
 class PlanogramScreen extends StatefulWidget {
   static const routeName = "/Planogramroute";
   const PlanogramScreen({super.key});
@@ -243,7 +245,9 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
     return Scaffold(
       appBar: generalAppBar(context, storeName, userName, (){
         Navigator.of(context).pop();
-      }, (){print("filter Click");}, true, false, false),
+      }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
+
+      }),
       body: Stack(
         children: [
           isLoading
@@ -385,43 +389,29 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
                            }),
                          ],
                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        ImageRowButton(
-                            isRequired: true,
-                            imageFile: imageFile, onSelectImage: (){
-                          getImage();
-                        }),
 
-                        const SizedBox(
-                          height: 20,
+                        Container(
+                          margin: const EdgeInsets.symmetric(vertical: 10),
+                          child: ImageRowButton(
+                              isRequired: true,
+                              imageFile: imageFile, onSelectImage: (){
+                            getImage();
+                          }),
                         ),
+
+
                         isBtnLoading
-                            ? Container(
+                            ? const SizedBox(
                           height: 60,
-                          child: Center(
-                            child: Container(
-                              height: 60,
-                              child: const MyLoadingCircle(),
-                            ),
-                          ),
+                          child: MyLoadingCircle(),
                         )
-                            : ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: MyColors.appMainColor,
-                              minimumSize: Size(screenWidth, 45),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10))),
-                          onPressed: () {
-                            saveStorePhotoData();
-                            // Navigator.of(context).pushNamed();
-                          },
-                          child: const Text(
-                            "Save",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
+                            : BigElevatedButton(
+                            buttonName: "Save",
+                            submit: (){
+                              saveStorePhotoData();
+                            },
+                            isBlueColor: true),
+
 
                       ],
                     ),
@@ -429,21 +419,14 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
                 ),
                 Container(
                   margin: const EdgeInsets.only(bottom: 10),
-                  child:  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Color.fromARGB(255, 39, 136, 42),
-                        minimumSize: Size(screenWidth, 45),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10))),
-                    onPressed: () {
-                      Navigator.of(context)
-                          .pushNamed(ViewPlanogramScreen.routename);
-                    },
-                    child: const Text(
-                      "View Planogram",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
+                  child:  BigElevatedButton(
+                      buttonName: "View Planogram",
+                      submit: (){
+                        Navigator.of(context)
+                            .pushNamed(ViewPlanogramScreen.routename);
+                      },
+                      isBlueColor: false),
+
                 )
               ],
             ),

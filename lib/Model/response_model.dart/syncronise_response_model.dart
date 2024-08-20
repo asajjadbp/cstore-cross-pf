@@ -13,6 +13,7 @@ import '../database_model/knowledgeShare_model.dart';
 import '../database_model/pomo_plan_model.dart';
 import '../database_model/required_module_model.dart';
 import '../database_model/sys_brand_faces_model.dart';
+import '../database_model/sys_market_issue_model.dart';
 import '../database_model/sys_osdc_reason_model.dart';
 import '../database_model/sys_osdc_type_model.dart';
 import '../database_model/sys_photo_type.dart';
@@ -78,6 +79,7 @@ class SyncroniseDetail {
   List<JourneyPlanDetail> sysJourneyPlan;
   List<UserDashboardModel> sysDashboard;
   List<KnowledgeShareModel> knowledgeShareModel;
+  List<sysMarketIssueModel> sysMarketIssue;
 
   SyncroniseDetail({
     required this.sysDropReason,
@@ -103,6 +105,7 @@ class SyncroniseDetail {
     required this.sysJourneyPlan,
     required this.sysDashboard,
     required this.knowledgeShareModel,
+    required this.sysMarketIssue,
   });
 
   factory SyncroniseDetail.fromJson(Map<String, dynamic> json) =>
@@ -156,6 +159,8 @@ class SyncroniseDetail {
             json["sys_dashboard"].map((x) => UserDashboardModel.fromJson(x))),
         knowledgeShareModel: List<KnowledgeShareModel>.from(
             json["sys_knowledge_share"].map((x) => KnowledgeShareModel.fromJson(x))),
+        sysMarketIssue: List<sysMarketIssueModel>.from(
+            json["sys_market_issues"].map((x) => sysMarketIssueModel.fromJson(x))),
 
       );
 
@@ -182,6 +187,7 @@ class SyncroniseDetail {
       "sys_jp":  List<dynamic>.from(sysJourneyPlan.map((x) => x.toJson())),
       "sys_dashboard":  List<dynamic>.from(sysDashboard.map((x) => x.toJson())),
       "sys_knowledge_share":  List<dynamic>.from(knowledgeShareModel.map((x) => x.toJson())),
+      "sys_market_issues":  List<dynamic>.from(sysMarketIssue.map((x) => x.toJson())),
   };
 }
 

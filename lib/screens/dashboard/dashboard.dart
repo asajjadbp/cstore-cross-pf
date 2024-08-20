@@ -363,7 +363,9 @@ class _DashBoardState extends State<DashBoard> {
               );
             },
           );
-        }, (){print("filter Click");}, false, false, true),
+        },  false, false, true,(int getClient, int getCat, int getSubCat, int getBrand) {
+
+        }),
         body: isLoading
             ? const Center(
           child: MyLoadingCircle(),

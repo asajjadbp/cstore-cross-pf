@@ -966,9 +966,9 @@ class DatabaseHelper {
     " TEXT, " +
     TableName.sys_knowledge_type +
     " TEXT, " +
-    TableName.sys_knowledge_active +
+    TableName.sysKnowledgeActive +
     " TEXT, " +
-    TableName.sys_issue_update_at +
+    TableName.sysIssueUpdateAt +
     " TEXT" +
     ")");
 
@@ -1044,7 +1044,7 @@ class DatabaseHelper {
           " TEXT, " +
           TableName.status +
           " INTEGER, " +
-          TableName.sys_issue_update_at +
+          TableName.sysIssueUpdateAt +
           " TEXT" +
           ")");
 
@@ -2073,7 +2073,7 @@ class DatabaseHelper {
         "trans_planoguide.category_id,trans_planoguide.activity_status,sys_category.ar_name as cat_ar_name,trans_planoguide.pog as pog,trans_planoguide.imageName,trans_planoguide.isAdherence,trans_planoguide.skuImageName,trans_planoguide.upload_status,trans_planoguide.gcs_status "
         " FROM trans_planoguide"
         " join sys_category on sys_category.id=trans_planoguide.category_id"
-        " WHERE working_id=$workingId AND activity_status=$activityStatus AND isAdherence=$isAdhere ORDER BY trans_planoguide.cat_id,pog ASC";
+        " WHERE working_id=$workingId AND activity_status=$activityStatus AND isAdherence=$isAdhere ORDER BY trans_planoguide.category_id,pog ASC";
 
     print("PLANOGUIDE QUERY");
     print(rawQuery);
@@ -2696,7 +2696,7 @@ class DatabaseHelper {
         "SELECT  trans_before_fixing.id ,sys_client.client_name ,sys_category.en_name ,sys_category.ar_name,sys_category.id as cat_id,sys_category.client_id,"
             " trans_before_fixing.gcs_status,trans_before_fixing.upload_status,trans_before_fixing.photo_type_id,trans_before_fixing.date_time ,trans_before_fixing.image_name FROM trans_before_fixing "
             "JOIN sys_client on sys_client.client_id=trans_before_fixing.client_id "
-            "JOIN sys_category on sys_category.id=trans_before_fixing.cat_id "
+            "JOIN sys_category on sys_category.id=trans_before_fixing.category_id "
             "WHERE trans_before_fixing.photo_type_id=1 AND trans_before_fixing.working_id=$workingId ORDER BY sys_category.en_name ASC");
 
     return List.generate(transbefore.length, (index) {
@@ -2990,7 +2990,7 @@ class DatabaseHelper {
       TransMarketIssueModel marketIssueModel) async {
     var db = await initDataBase();
     await db.insert(
-      TableName.tbl_trans_marketIssue,
+      TableName.tblTransMarketIssue,
       marketIssueModel.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -5026,8 +5026,8 @@ class DatabaseHelper {
           added_by: knowledgeList[index][TableName.sys_knowledge_addedBy] ?? "",
           file_name: knowledgeList[index][TableName.sys_knowledge_fileName] ?? "",
           type: knowledgeList[index][TableName.sys_knowledge_type] ?? "",
-          active: knowledgeList[index][TableName.sys_knowledge_active] ?? "",
-          updated_at: knowledgeList[index][TableName.sys_issue_update_at] ?? "");
+          active: knowledgeList[index][TableName.sysKnowledgeActive] ?? "",
+          updated_at: knowledgeList[index][TableName.sysIssueUpdateAt] ?? "");
     });
   }
 
@@ -5045,8 +5045,8 @@ class DatabaseHelper {
         TableName.sys_knowledge_addedBy: data.added_by,
         TableName.sys_knowledge_fileName: data.file_name,
         TableName.sys_knowledge_type: data.type,
-        TableName.sys_knowledge_active: data.active,
-        TableName.sys_issue_update_at: data.updated_at,
+        TableName.sysKnowledgeActive: data.active,
+        TableName.sysIssueUpdateAt: data.updated_at,
       };
 
       bool isDuplicate =
@@ -5065,8 +5065,8 @@ class DatabaseHelper {
             TableName.sys_knowledge_addedBy: data.added_by,
             TableName.sys_knowledge_fileName: data.file_name,
             TableName.sys_knowledge_type: data.type,
-            TableName.sys_knowledge_active: data.active,
-            TableName.sys_issue_update_at: data.updated_at,
+            TableName.sysKnowledgeActive: data.active,
+            TableName.sysIssueUpdateAt: data.updated_at,
           },
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
@@ -5081,23 +5081,22 @@ class DatabaseHelper {
   static Future<List<ShowMarketIssueModel>> getTransMarketIssue(
       String workingId) async {
     print("__________________TransPlanogram__________________");
-
     final db = await initDataBase();
     final List<Map<String, dynamic>> issueData = await db.rawQuery(
-        "Select market_issue.*,sys_market_issues.name,sys_market_issues.updated_at"
-            "  From market_issue"
-            " JOIN sys_market_issues on sys_market_issues.id = market_issue.issue_id"
+        "Select trans_market_issue.*,sys_market_issues.name,sys_market_issues.updated_at"
+            "  From trans_market_issue"
+            " JOIN sys_market_issues on sys_market_issues.id = trans_market_issue.issue_id"
             " WHERE working_id=$workingId");
     print(jsonEncode(issueData));
     return List.generate(issueData.length, (index) {
       return ShowMarketIssueModel(
           id: issueData[index][TableName.sysId] ?? 0,
           image: issueData[index][TableName.imageName] ?? "",
-          Issuetype: issueData[index]["name"] ?? "",
+          Issuetype: issueData[index][TableName.trans_pos_name] ?? "",
           gcs_status: issueData[index][TableName.gcsStatus] ?? 0,
           upload_status: issueData[index][TableName.uploadStatus] ?? 0,
           comment: issueData[index][TableName.trans_one_plus_one_comment] ?? "",
-          update_at: issueData[index][TableName.sys_issue_update_at] ?? "");
+          update_at: issueData[index][TableName.sysIssueUpdateAt] ?? "");
     });
   }
 
@@ -5125,7 +5124,7 @@ class DatabaseHelper {
         TableName.sysId: data.id,
         TableName.trans_pos_name: data.name,
         TableName.status: data.status,
-        TableName.sys_issue_update_at: data.updated_at,
+        TableName.sysIssueUpdateAt: data.updated_at,
       };
       bool isDuplicate =
       await hasDuplicateEntry(db, TableName.tblSysMarketIssue, fields);
@@ -5139,7 +5138,7 @@ class DatabaseHelper {
             TableName.sysId: data.id,
             TableName.trans_pos_name: data.name,
             TableName.status: data.status,
-            TableName.sys_issue_update_at: data.updated_at,
+            TableName.sysIssueUpdateAt: data.updated_at,
           },
           conflictAlgorithm: ConflictAlgorithm.replace,
         );

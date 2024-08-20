@@ -5,8 +5,9 @@ import 'package:datepicker_dropdown/datepicker_dropdown.dart';
 import 'package:datepicker_dropdown/order_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../widget/drop_downs.dart';
-import '../widget/loading.dart';
+import '../../widget/drop_downs.dart';
+import '../../widget/elevated_buttons.dart';
+import '../../widget/loading.dart';
 class FreshnessListCard extends StatelessWidget {
   FreshnessListCard(
       {super.key,
@@ -50,15 +51,14 @@ class FreshnessListCard extends StatelessWidget {
             return Padding(
               padding: MediaQuery.of(context).viewInsets,
               child: Container(
-                margin: const EdgeInsets.only(top: 15),
-                height: screenHeight / 2.36,
+                margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+                height: screenHeight / 2.8,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Container(
-                      margin: const EdgeInsets.only(
-                          left: 15, right: 15),
+                      margin:const EdgeInsets.symmetric(vertical: 5),
                       child: Row(
                         mainAxisAlignment:
                         MainAxisAlignment.spaceBetween,
@@ -89,74 +89,78 @@ class FreshnessListCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Container(
-                      width: screenWidth / 1.4,
-                      margin: const EdgeInsets.only(
-                          left: 15, top: 35),
-                      child: const Row(
-                        mainAxisAlignment:
-                        MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("Year",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400,
-                                fontFamily: 'lato',
-                              )),
-                          Text("Month",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400,
-                                fontFamily: 'lato',
-                              )),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 3),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Expanded(
-                            child: SizedBox(
-                              height: screenHeight/15,
-                              child: DropdownDatePicker(
-                                dateformatorder: OrderFormat.YDM, // default is myd
-                                inputDecoration: InputDecoration(
-                                    enabledBorder: const OutlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.grey, width: 1.0),
-                                    ),
-                                    border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10))), // optional
-                                isDropdownHideUnderline: false, // optional
-                                isFormValidator: true, // optional
-                                startYear: DateTime.now().year, // optional
-                                endYear: DateTime.now().year + 5, // optional
-                                width: 3, // optional
-                                showDay: false,
-                                showMonth: false,
-                                monthFlex: 1,
-                                textStyle: const TextStyle(fontSize: 12),
-                                // selectedDay: 14, // optional
-                                selectedMonth: 10, // optional
-                                // selectedYear: DateTime.now().year, // optional
-                                onChangedYear: (value) => _selectedYear=value!,
+                    Row(
+                      mainAxisAlignment:
+                      MainAxisAlignment.spaceAround,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("Year",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                    fontFamily: 'lato',
+                                  )),
+
+                              SizedBox(
+                                height: 50,
+                                child: DropdownDatePicker(
+                                  boxDecoration: const BoxDecoration(color: MyColors.whiteColor),
+                                  dateformatorder: OrderFormat.YDM, // default is myd
+                                  inputDecoration: InputDecoration(
+                                      enabledBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                                      ),
+                                      focusedBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                                      ),
+                                      border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(10))), // optional
+                                  isDropdownHideUnderline: false, // optional
+                                  isFormValidator: true, // optional
+                                  startYear: DateTime.now().year, // optional
+                                  endYear: DateTime.now().year + 5, // optional
+                                  width: 3, // optional
+                                  showDay: false,
+                                  showMonth: false,
+                                  monthFlex: 1,
+                                  textStyle: const TextStyle(fontSize: 11),
+                                  hintTextStyle: const TextStyle(fontSize: 11),
+                                  // selectedDay: 14, // optional
+                                  selectedMonth: 10, // optional
+                                  // selectedYear: DateTime.now().year, // optional
+                                  onChangedYear: (value) => _selectedYear=value!,
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                          const SizedBox(width: 5,),
-                          Expanded(
-                            child: UnitDropDown(hintText: "Month", unitData: unitList, onChange: (value){
-                              _selectedMonth = value;
-                              print("Month is $_selectedMonth");
-                            }),
-                          )
-                        ],
-                      ),
+                        ),
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("Month",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                    fontFamily: 'lato',
+                                  )),
+
+                              UnitDropDown(hintText: "Month", unitData: unitList, onChange: (value){
+                                _selectedMonth = value;
+                                print("Month is $_selectedMonth");
+                              }),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                     Container(
-                      padding: const EdgeInsets.only(left: 15, right: 15),
-                      color: Colors.white,
+                      margin: const EdgeInsets.symmetric(vertical: 15),
                       child: TextField(
                         showCursor: true,
                         enableInteractiveSelection: false,
@@ -181,49 +185,62 @@ class FreshnessListCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    InkWell(
-                      onTap: () {
-                        if(_selectedYear.isEmpty || _selectedMonth.isEmpty) {
-                          ToastMessage.errorMessage(context, "Please Select a valid year and month");
-                        } else {
+                    BigElevatedButton(
+                        isBlueColor: true,
+                        buttonName: "Save",
+                        submit: (){
+                          if(_selectedYear.isEmpty || _selectedMonth.isEmpty) {
+                            ToastMessage.errorMessage(context, "Please Select a valid year and month");
+                          } else {
 
-                          freshnessDate(valueControllerPieces.text,
-                              _selectedMonth,
-                              int.parse(_selectedYear));
-                        }
-                      },
-                      child: Container(
-                          margin: const EdgeInsets.only(
-                              left: 15, right: 15, top: 10),
-                          height: screenHeight / 15,
-                          decoration: BoxDecoration(
-                              color: const Color.fromRGBO(
-                                  26, 91, 140, 1),
-                              borderRadius:
-                              BorderRadius.circular(5)),
-                          child: const Row(
-                            mainAxisAlignment:
-                            MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.check_circle,
-                                size: 35,
-                                color: Colors.white,
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Text(
-                                "Save",
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight:
-                                    FontWeight.w400,
-                                    color: Colors.white),
-                              )
-                            ],
-                          )),
-                    ),
+                            freshnessDate(valueControllerPieces.text,
+                                _selectedMonth,
+                                int.parse(_selectedYear));
+                          }
+                        }),
+                    // InkWell(
+                    //   onTap: () {
+                    //     if(_selectedYear.isEmpty || _selectedMonth.isEmpty) {
+                    //       ToastMessage.errorMessage(context, "Please Select a valid year and month");
+                    //     } else {
+                    //
+                    //       freshnessDate(valueControllerPieces.text,
+                    //           _selectedMonth,
+                    //           int.parse(_selectedYear));
+                    //     }
+                    //   },
+                    //   child: Container(
+                    //       margin: const EdgeInsets.only(
+                    //           left: 15, right: 15, top: 10),
+                    //       height: screenHeight / 15,
+                    //       decoration: BoxDecoration(
+                    //           color: const Color.fromRGBO(
+                    //               26, 91, 140, 1),
+                    //           borderRadius:
+                    //           BorderRadius.circular(5)),
+                    //       child: const Row(
+                    //         mainAxisAlignment:
+                    //         MainAxisAlignment.center,
+                    //         children: [
+                    //           Icon(
+                    //             Icons.check_circle,
+                    //             size: 35,
+                    //             color: Colors.white,
+                    //           ),
+                    //           SizedBox(
+                    //             width: 10,
+                    //           ),
+                    //           Text(
+                    //             "Save",
+                    //             style: TextStyle(
+                    //                 fontSize: 18,
+                    //                 fontWeight:
+                    //                 FontWeight.w400,
+                    //                 color: Colors.white),
+                    //           )
+                    //         ],
+                    //       )),
+                    // ),
                   ],
                 ),
               ),

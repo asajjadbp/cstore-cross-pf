@@ -5,7 +5,7 @@ import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../widget/loading.dart';
+import '../../widget/loading.dart';
 
 class Viewrtvcard extends StatelessWidget {
   const Viewrtvcard({

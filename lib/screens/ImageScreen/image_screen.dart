@@ -73,8 +73,8 @@ class _PdfScreenState extends State<PdfScreen> {
     return Scaffold(
       appBar: generalAppBar(context, storeName, userName , (){
         Navigator.of(context).pop();
-      }, (){
-      }, true, false, false),
+      }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
+      }),
       body: Container(
         margin: const EdgeInsets.all(5),
         color: MyColors.whiteColor,

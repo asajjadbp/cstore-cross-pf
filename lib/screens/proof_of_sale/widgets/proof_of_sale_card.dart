@@ -4,8 +4,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../promoplane/widgets/promo_plan_card_row_item.dart';
-import '../utils/appcolor.dart';
+import '../../promoplane/widgets/promo_plan_card_row_item.dart';
+import '../../utils/appcolor.dart';
 
 class ProofOfSaleCard extends StatelessWidget {
   ProofOfSaleCard({

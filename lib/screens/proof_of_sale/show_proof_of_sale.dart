@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:cstore/screens/proof_of_sale/proof_of_sale_card.dart';
+import 'package:cstore/screens/proof_of_sale/widgets/proof_of_sale_card.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -120,7 +120,9 @@ class _ShowProofOfSaleScreenState extends State<ShowProofOfSaleScreen> {
       backgroundColor: const Color(0xFFF4F7FD),
       appBar: generalAppBar(context, storeName, "View POS", (){
         Navigator.of(context).pop();
-      }, (){}, true, false, false),
+      }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
+
+      }),
       body: isLoading
           ? const Center(
         child: MyLoadingCircle(),

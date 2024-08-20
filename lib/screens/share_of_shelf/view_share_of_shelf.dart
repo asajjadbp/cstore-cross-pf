@@ -9,7 +9,7 @@ import '../../Database/table_name.dart';
 import '../../Model/database_model/show_trans_sos.dart';
 import '../utils/app_constants.dart';
 import '../widget/app_bar_widgets.dart';
-import '../widget/shareofshellshow.dart';
+import 'widgets/shareofshellshow.dart';
 
 class ViewShareOfShelf extends StatefulWidget {
   static const routename = "view_sos";
@@ -84,7 +84,9 @@ class _ViewShareOfShelfState extends State<ViewShareOfShelf> {
       backgroundColor: const Color(0xFFF4F7FD),
       appBar: generalAppBar(context, storeName, userName, (){
         Navigator.of(context).pop();
-      }, (){print("filter Click");}, true, false, false),
+      }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
+
+      }),
       body: transData.isEmpty ? const Center(child: Text("No Data Available"),) : ListView.builder(
           padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
           shrinkWrap: true,

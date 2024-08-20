@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:cstore/screens/rtv_1+1/view_rtv_one_plus_one.dart';
-import 'package:cstore/screens/rtv_screen/rtv_list_card.dart';
+import 'package:cstore/screens/rtv_screen/widgets/rtv_list_card.dart';
 import 'package:cstore/screens/rtv_screen/view_rtv_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -14,9 +14,11 @@ import '../rtv_screen/addnewrtv.dart';
 import '../utils/app_constants.dart';
 import '../utils/appcolor.dart';
 import '../utils/toast/toast.dart';
+import '../widget/app_bar_widgets.dart';
+import '../widget/elevated_buttons.dart';
 import '../widget/loading.dart';
 import '../widget/search_bottom_sheet.dart';
-import '1+1_list_ard.dart';
+import 'widgets/1+1_list_ard.dart';
 import 'add_new_rtv_1+1.dart';
 
 class RtvOnePlusOneListScreen extends StatefulWidget {
@@ -35,6 +37,7 @@ class _RtvOnePlusOneListScreenState extends State<RtvOnePlusOneListScreen> {
   bool isLoading = false;
   bool isFilter = false;
   String workingId = "";
+  String userName = "";
   String clientId = "";
   String storeName = '';
   int totalPieces = 0;
@@ -58,6 +61,7 @@ class _RtvOnePlusOneListScreenState extends State<RtvOnePlusOneListScreen> {
       workingId = sharedPreferences.getString(AppConstants.workingId)!;
       storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
       clientId = sharedPreferences.getString(AppConstants.clientId)!;
+      userName = sharedPreferences.getString(AppConstants.userName)!;
     });
     getTransRTVOne(selectedClientId, selectedCategoryId, selectedSubCategoryId,
         selectedBrandId);
@@ -187,28 +191,12 @@ class _RtvOnePlusOneListScreenState extends State<RtvOnePlusOneListScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: MyColors.background,
-      appBar: AppBar(
-        title: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              storeName,
-              style: const TextStyle(fontSize: 13),
-            ),
-            const Text(
-              "1+1",
-              style: TextStyle(fontSize: 12),
-            ),
-          ],
-        ),
-        actions: [
-          SearchBottomSheet(searchFilterData:
-              (int getClient, int getCat, int getSubCat, int getBrand) {
-            getTransRTVOne(getClient, getCat, getSubCat, getBrand);
-          })
-        ],
-      ),
+      appBar: generalAppBar(context, storeName, userName, (){
+        Navigator.of(context).pop();
+      }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
+        getTransRTVOne(getClient, getCat, getSubCat, getBrand);
+        Navigator.of(context).pop();
+      }),
       body: Padding(
         padding: const EdgeInsets.all(5),
         child: Column(
@@ -423,39 +411,49 @@ class _RtvOnePlusOneListScreenState extends State<RtvOnePlusOneListScreen> {
                               },
                             ),
             ),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ViewRtvOnePlusOneScreen(),
-                  ),
-                ).then((value) {
-                  getStoreDetails();
-                  getRtvCount();
-                });
-              },
-              child: Container(
+
+            Container(
                 margin: const EdgeInsets.only(left: 5, right: 5),
-                height: screenHeight / 19,
-                decoration: const BoxDecoration(
-                  color: Color.fromRGBO(91, 149, 75, 1),
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(left: 10),
-                      child: const Text(
-                        "View RTVS",
-                        style: TextStyle(fontSize: 18, color: Colors.white),
+              child: BigElevatedButton(
+                  buttonName: "View RTVS",
+                  submit: (){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ViewRtvOnePlusOneScreen(),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+                    ).then((value) {
+                      getStoreDetails();
+                      getRtvCount();
+                    });
+                  },
+                  isBlueColor: false),
+            )
+            // InkWell(
+            //   onTap: () {
+            //
+            //   },
+            //   child: Container(
+            //
+            //     height: screenHeight / 19,
+            //     decoration: const BoxDecoration(
+            //       color: Color.fromRGBO(91, 149, 75, 1),
+            //       borderRadius: BorderRadius.all(Radius.circular(5)),
+            //     ),
+            //     child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.center,
+            //       children: [
+            //         Container(
+            //           margin: const EdgeInsets.only(left: 10),
+            //           child: const Text(
+            //             ,
+            //             style: TextStyle(fontSize: 18, color: Colors.white),
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),

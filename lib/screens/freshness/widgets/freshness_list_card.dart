@@ -3,7 +3,7 @@ import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:datepicker_dropdown/order_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../widget/loading.dart';
+import '../../widget/loading.dart';
 import 'package:datepicker_dropdown/datepicker_dropdown.dart';
 import 'package:datepicker_dropdown/order_format.dart';
 import 'package:flutter/material.dart';

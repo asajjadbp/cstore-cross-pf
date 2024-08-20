@@ -10,7 +10,6 @@ import '../../Database/db_helper.dart';
 import '../../Model/database_model/category_model.dart';
 import '../../Model/database_model/client_model.dart';
 import '../../Model/database_model/sys_photo_type.dart';
-import '../promoplane/PromoPlan.dart';
 import '../utils/app_constants.dart';
 import '../utils/appcolor.dart';
 import '../utils/services/image_picker.dart';
@@ -18,6 +17,7 @@ import '../utils/services/take_image_and_save_to_folder.dart';
 import '../utils/toast/toast.dart';
 import '../widget/app_bar_widgets.dart';
 import '../widget/drop_downs.dart';
+import '../widget/elevated_buttons.dart';
 import '../widget/image_selection_row_button.dart';
 import 'package:path/path.dart' as path;
 
@@ -184,9 +184,9 @@ class _ProofOfSaleState extends State<ProofOfSale> {
     return Scaffold(
       appBar: generalAppBar(context, storeName, "Add POS", () {
         Navigator.of(context).pop();
-      }, () {
+      }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
 
-      }, true, false, false),
+      }),
       body: SingleChildScrollView(
         child: Container(
           margin: const EdgeInsets.only(left: 10, right: 10, top: 30),
@@ -511,35 +511,21 @@ class _ProofOfSaleState extends State<ProofOfSale> {
               const SizedBox(
                 height: 8,
               ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: MyColors.appMainColor,
-                    minimumSize: Size(screenWidth, 45),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10))),
-                onPressed: () {
-                  // Navigator.of(context).pushNamed();
-                  saveStorePhotoData();
-                },
-                child: const Text(
-                  "Save",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: MyColors.greenColor,
-                    minimumSize: Size(screenWidth, 45),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10))),
-                onPressed: () {
-                  Navigator.of(context).pushNamed(ShowProofOfSaleScreen.routename);
-                },
-                child: const Text(
-                  "Show",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
+
+              BigElevatedButton(
+                  buttonName: "Save",
+                  submit: (){
+                    saveStorePhotoData();
+                  },
+                  isBlueColor: true),
+
+              BigElevatedButton(
+                  buttonName: "View POS",
+                  submit: (){
+                    Navigator.of(context).pushNamed(ShowProofOfSaleScreen.routename);
+                  },
+                  isBlueColor: true),
+
             ],
           ),
         ),

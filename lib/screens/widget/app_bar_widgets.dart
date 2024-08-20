@@ -1,5 +1,6 @@
 
 
+import 'package:cstore/screens/widget/search_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,7 +9,7 @@ import '../auth/login.dart';
 import '../utils/app_constants.dart';
 import '../utils/toast/toast.dart';
 
-generalAppBar(BuildContext context,String userName,String storeName, Function onBackTap,Function onFilterTap,bool isBackButton,bool isFilterButton,bool isLogoutButton ) {
+generalAppBar(BuildContext context,String userName,String storeName, Function onBackTap,bool isBackButton,bool isFilterButton,bool isLogoutButton,final Function(int selectedClientId, int selectedCategoryId, int selectedSubCategoryId, int selectedBrandId) searchFilterData) {
   return AppBar(
     automaticallyImplyLeading: false,
     title:  Row(
@@ -77,9 +78,7 @@ generalAppBar(BuildContext context,String userName,String storeName, Function on
         );
       }, icon: const Icon(Icons.logout_rounded)),
       if(isFilterButton)
-      IconButton(onPressed: (){
-        onFilterTap();
-      }, icon: const Icon(Icons.filter_alt_outlined)),
+        SearchBottomSheet(searchFilterData: searchFilterData)
     ],
   );
 }

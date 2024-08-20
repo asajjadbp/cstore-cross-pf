@@ -2,13 +2,14 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../Database/db_helper.dart';
-import '../utils/app_constants.dart';
-import '../utils/appcolor.dart';
-import '../utils/services/take_image_and_save_to_folder.dart';
-import '../utils/toast/toast.dart';
-import '../widget/drop_downs.dart';
-import '../widget/loading.dart';
+import '../../../Database/db_helper.dart';
+import '../../utils/app_constants.dart';
+import '../../utils/appcolor.dart';
+import '../../utils/services/take_image_and_save_to_folder.dart';
+import '../../utils/toast/toast.dart';
+import '../../widget/drop_downs.dart';
+import '../../widget/elevated_buttons.dart';
+import '../../widget/loading.dart';
 
 class PlanoguidesCard extends StatelessWidget {
   final String fieldValue1;
@@ -203,40 +204,49 @@ class PlanoguidesCard extends StatelessWidget {
               height: 60,
               child: MyLoadingCircle(),
             ),
-          ): InkWell(
-            onTap: () {
-              onSaveClick();
-              // Navigator.push(context, MaterialPageRoute(builder: (context) => const Shelf_Shares_Screen(),));
-            },
-            child: Container(
-                margin: const EdgeInsets.only(left: 8, right: 8, top: 10),
-                height: screenHeight / 18,
-                width: screenWidth / 1,
-                decoration: BoxDecoration(
-                    color: const Color.fromRGBO(26, 91, 140, 1),
-                    borderRadius: BorderRadius.circular(5)),
-                child: Row(
-                  children: [
-                    Container(
-                        margin: EdgeInsets.only(left: screenWidth / 3),
-                        child: const Icon(
-                          Icons.check_circle,
-                          size: 25,
-                          color: Colors.white,
-                        )),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    const Text(
-                      "Save",
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.white),
-                    )
-                  ],
-                )),
+          ): Container(
+            margin: const EdgeInsets.symmetric(vertical: 5),
+            child: BigElevatedButton(
+                buttonName: "Save",
+                submit: (){
+                 onSaveClick();
+                },
+                isBlueColor: true),
           ),
+          // InkWell(
+          //   onTap: () {
+          //     onSaveClick();
+          //     // Navigator.push(context, MaterialPageRoute(builder: (context) => const Shelf_Shares_Screen(),));
+          //   },
+          //   child: Container(
+          //       margin: const EdgeInsets.only(left: 8, right: 8, top: 10),
+          //       height: screenHeight / 18,
+          //       width: screenWidth / 1,
+          //       decoration: BoxDecoration(
+          //           color: const Color.fromRGBO(26, 91, 140, 1),
+          //           borderRadius: BorderRadius.circular(5)),
+          //       child: Row(
+          //         children: [
+          //           Container(
+          //               margin: EdgeInsets.only(left: screenWidth / 3),
+          //               child: const Icon(
+          //                 Icons.check_circle,
+          //                 size: 25,
+          //                 color: Colors.white,
+          //               )),
+          //           const SizedBox(
+          //             width: 8,
+          //           ),
+          //           const Text(
+          //             "Save",
+          //             style: TextStyle(
+          //                 fontSize: 18,
+          //                 fontWeight: FontWeight.w400,
+          //                 color: Colors.white),
+          //           )
+          //         ],
+          //       )),
+          // ),
         ],
       ),
     );

@@ -2,7 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../widget/loading.dart';
+import '../../widget/elevated_buttons.dart';
+import '../../widget/loading.dart';
 
 class pricecheckcard extends StatelessWidget {
   pricecheckcard({super.key,
@@ -165,8 +166,8 @@ class pricecheckcard extends StatelessWidget {
                                     topLeft: Radius.circular(30),
                                   )),
                               builder: (context) {
-                                valueControllerPromo.text = promo;
-                                valueControllerRegular.text = regular;
+                                // valueControllerCases.text = cases.toString();
+                                // valueControllerOuter.text = outer.toString();
                                 return Padding(
                                   padding: MediaQuery.of(context).viewInsets,
                                   child: Container(
@@ -210,9 +211,8 @@ class pricecheckcard extends StatelessWidget {
                                           ),
                                         ),
                                         Container(
-                                          width: screenWidth / 1.4,
-                                          margin: const EdgeInsets.only(
-                                              left: 15, top: 35),
+                                          width: screenWidth / 1.2,
+                                          margin: const EdgeInsets.only(left: 15, top: 15),
                                           child: const Row(
                                             mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
@@ -234,11 +234,11 @@ class pricecheckcard extends StatelessWidget {
                                         ),
                                         Row(
                                           mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.spaceAround,
                                           children: [
                                             Container(
                                               margin: const EdgeInsets.only(
-                                                  left: 15, bottom: 5),
+                                                  left: 5),
                                               decoration: BoxDecoration(
                                                   color: Colors.white,
                                                   borderRadius:
@@ -248,7 +248,7 @@ class pricecheckcard extends StatelessWidget {
                                                       color:
                                                       MyColors.appMainColor)),
                                               height: screenHeight / 15,
-                                              width: screenWidth / 2.3,
+                                              width: screenWidth / 2.2,
                                               child: Center(
                                                 child: TextField(
                                                   showCursor: true,
@@ -261,44 +261,42 @@ class pricecheckcard extends StatelessWidget {
                                                   valueControllerRegular,
                                                   keyboardType:
                                                   TextInputType.number,
-                                                  decoration: InputDecoration(
+                                                  decoration: const InputDecoration(
                                                       prefixIconColor:
                                                       MyColors.appMainColor,
                                                       focusColor:
                                                       MyColors.appMainColor,
                                                       fillColor: MyColors
                                                           .dropBorderColor,
-                                                      labelStyle: const TextStyle(
+                                                      labelStyle: TextStyle(
                                                           color: MyColors
                                                               .appMainColor),
                                                       focusedBorder:
-                                                      const OutlineInputBorder(
+                                                      OutlineInputBorder(
                                                           borderSide: BorderSide(
                                                               width: 1,
                                                               color: MyColors
                                                                   .appMainColor)),
                                                       border:
-                                                      const OutlineInputBorder(),
-                                                      hintText: regular != ""
-                                                          ? regular.toString()
-                                                          : "Enter regular"),
+                                                      OutlineInputBorder(),
+                                                      hintText: ""),
                                                   inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^[0-9.]*'))],
                                                 ),
                                               ),
                                             ),
                                             Container(
                                               margin: const EdgeInsets.only(
-                                                  right: 15, bottom: 5),
+                                                  left: 5),
                                               decoration: BoxDecoration(
-                                                  color: const Color(0xFFFFFFFF),
+                                                  color: Colors.white,
                                                   borderRadius:
                                                   BorderRadius.circular(5),
                                                   border: Border.all(
                                                       width: 0,
-                                                      color: const Color(
-                                                          0xFF1A5B8C))),
+                                                      color:
+                                                      MyColors.appMainColor)),
                                               height: screenHeight / 15,
-                                              width: screenWidth / 2.3,
+                                              width: screenWidth / 2.2,
                                               child: Center(
                                                 child: TextField(
                                                   showCursor: true,
@@ -307,67 +305,46 @@ class pricecheckcard extends StatelessWidget {
                                                   onChanged: (value) {
                                                     print(value);
                                                   },
-                                                  controller: valueControllerPromo,
+                                                  controller:
+                                                  valueControllerPromo,
                                                   keyboardType:
                                                   TextInputType.number,
                                                   decoration: const InputDecoration(
                                                       prefixIconColor:
                                                       MyColors.appMainColor,
-                                                      focusColor:MyColors.appMainColor,
+                                                      focusColor:
+                                                      MyColors.appMainColor,
                                                       fillColor: MyColors
                                                           .dropBorderColor,
                                                       labelStyle: TextStyle(
-                                                          color: MyColors.appMainColor),
+                                                          color: MyColors
+                                                              .appMainColor),
                                                       focusedBorder:
                                                       OutlineInputBorder(
                                                           borderSide: BorderSide(
                                                               width: 1,
-                                                              color: MyColors.appMainColor)),
+                                                              color: MyColors
+                                                                  .appMainColor)),
                                                       border:
                                                       OutlineInputBorder(),
-                                                      hintText: 'Enter promo..'),
+                                                      hintText: ""),
                                                   inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^[0-9.]*'))],
                                                 ),
                                               ),
-                                            )
+                                            ),
                                           ],
                                         ),
-                                        InkWell(
-                                          onTap: () {
-                                            pricingValues(valueControllerRegular.text,valueControllerPromo.text);
-                                          },
-                                          child: Container(
-                                              margin: const EdgeInsets.only(
-                                                  left: 15, right: 15, top: 10),
-                                              height: screenHeight / 15,
-                                              decoration: BoxDecoration(
-                                                  color: const Color.fromRGBO(
-                                                      26, 91, 140, 1),
-                                                  borderRadius:
-                                                  BorderRadius.circular(5)),
-                                              child: const Row(
-                                                mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                                children: [
-                                                  Icon(
-                                                    Icons.check_circle,
-                                                    size: 35,
-                                                    color: Colors.white,
-                                                  ),
-                                                  SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  Text(
-                                                    "Save",
-                                                    style: TextStyle(
-                                                        fontSize: 18,
-                                                        fontWeight:
-                                                        FontWeight.w400,
-                                                        color: Colors.white),
-                                                  )
-                                                ],
-                                              )),
+                                        Container(
+                                          margin: const EdgeInsets.only(
+                                              left: 15, right: 15, top: 10),
+                                          child: BigElevatedButton(
+                                              buttonName: "Save",
+                                              submit: (){
+                                                pricingValues(valueControllerRegular.text,valueControllerPromo.text,);
+                                              },
+                                              isBlueColor: true),
                                         ),
+
                                       ],
                                     ),
                                   ),
