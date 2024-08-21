@@ -2004,3 +2004,145 @@ class VisitSosUploadScreenCard extends StatelessWidget {
     );
   }
 }
+
+class VisitOsdAndMarketIssueUploadScreenCard extends StatelessWidget {
+  const VisitOsdAndMarketIssueUploadScreenCard({
+    super.key,
+    required this.screenName,
+    required this.moduleName,
+    required this.onUploadTap,
+    required this.totalOsd,
+    required this.isUploadData,
+    required this.isUploaded,
+  });
+
+  final String screenName;
+  final String moduleName;
+  final Function onUploadTap;
+  final bool isUploadData;
+  final int totalOsd;
+  final bool isUploaded;
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    return Container(
+      margin: const EdgeInsets.all(6),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left:12,top: 8),
+            child: Text(
+              screenName,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color:MyColors.appMainColor),
+            ),
+          ),
+          Row(
+            children: [
+              Container(
+                width: screenWidth/1.48,
+                margin: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: MyColors.appMainColor, width: 1),
+                    borderRadius: BorderRadius.circular(5)),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(3.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: screenWidth /5,
+                            child: Padding(
+                              padding:const EdgeInsets.only(left: 7, top: 8),
+                              child: Center(
+                                child: Text(
+                                  moduleName,
+                                  style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                      color: MyColors.darkGreyColor),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Divider(color: MyColors.appMainColor,height: 2,),
+                    Container(
+                      color: MyColors.rowGreyishColor,
+                      padding: const EdgeInsets.all(4.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: screenWidth /5,
+                            child:  Padding(
+                              padding: const EdgeInsets.only(left: 7, top: 8),
+                              child: Center(
+                                child: Text(
+                                  totalOsd.toString(),
+                                  style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: MyColors.darkGreyColor),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 4,)
+                  ],
+                ),
+              ),
+              isUploadData ? const Center(child: CircularProgressIndicator(),) :  InkWell(
+                onTap: isUploaded ? null : (){
+                  onUploadTap();
+                },
+                child: Container(
+                  width: screenWidth/5.3,
+                  height: screenHeight/11.1,
+                  decoration: BoxDecoration(
+                      color: MyColors.appMainColor,
+                      border: Border.all(color: MyColors.appMainColor, width: 1),
+                      borderRadius: BorderRadius.circular(5)),
+                  child: Column(
+                    children: [
+                      Icon( isUploaded ? Icons.check : Icons.cloud_upload_outlined,color: Colors.white,size: 39,),
+                      Padding(
+                        padding: EdgeInsets.only(left: 7, top: 8),
+                        child: Center(
+                          child: Text(
+                            isUploaded ? "Done" : "Upload",
+                            style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}

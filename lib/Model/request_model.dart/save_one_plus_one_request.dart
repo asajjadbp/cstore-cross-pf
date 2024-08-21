@@ -26,14 +26,16 @@ class SaveOnePlusOneData {
 
 class SaveOnePlusOneListData {
 
+  final int id;
   final int skuId;
   final int pieces;
-  final int type;
+  final String type;
   final String imageName;
   final String docNumber;
   final String docImage;
 
   SaveOnePlusOneListData({
+    required this.id,
     required this.skuId,
     required this.pieces,
     required this.type,
@@ -44,6 +46,7 @@ class SaveOnePlusOneListData {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'sku_id': skuId,
       'pieces': pieces,
       'type': type,

@@ -516,9 +516,7 @@ class _ProofOfSaleState extends State<ProofOfSale> {
                         isRequired: true,),
                     ),
 
-                    isBtnLoading ? const SizedBox(
-                      height: 60,
-                    ) : BigElevatedButton(
+                    isBtnLoading ? const SizedBox(height: 60,width: 60,child: MyLoadingCircle(),) : BigElevatedButton(
                         buttonName: "Save",
                         submit: (){
                           saveStorePhotoData();

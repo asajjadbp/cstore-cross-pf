@@ -25,14 +25,16 @@ class SaveOsdData {
 }
 
 class SaveOsdListData {
+  final int id;
   final int brandId;
-  final int clientId;
+  final String clientId;
   final int typeId;
   final int reasonId;
   final int quantity;
   final List<SaveOsdImageNameListData> osdImagesList;
 
   SaveOsdListData({
+    required this.id,
     required this.clientId,
     required this.brandId,
     required this.typeId,
@@ -43,6 +45,7 @@ class SaveOsdListData {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'client_id': clientId,
       'brand_id': brandId,
       'type_id': typeId,
@@ -54,14 +57,17 @@ class SaveOsdListData {
 }
 
 class SaveOsdImageNameListData {
+  final int id;
   final String imageName;
 
   SaveOsdImageNameListData({
+    required this.id,
     required this.imageName,
   });
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'image_name': imageName,
     };
   }

@@ -25,12 +25,14 @@ class SaveMarketIssueData {
 }
 
 class SaveMarketIssueListData {
+  final int id;
   final int issueId;
-  final int clientId;
+  final String clientId;
   final String imageName;
   final String comment;
 
   SaveMarketIssueListData({
+    required this.id,
     required this.issueId,
     required this.clientId,
     required this.comment,
@@ -39,6 +41,7 @@ class SaveMarketIssueListData {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'client_id': clientId,
       'issue_id': issueId,
       'comment': comment,

@@ -352,3 +352,61 @@ class PlanogramCountModel {
     );
   }
 }
+
+class PosCountModel {
+  int totalNotUpload;
+  int totalUpload;
+  int totalPosItems;
+  int amount;
+  int quantity;
+
+  PosCountModel({required this.totalPosItems,required this.totalNotUpload ,required this.amount,required this.quantity,required this.totalUpload});
+
+  // Method to convert an instance of AvailableCountModel to a map
+  Map<String, dynamic> toJson() {
+    return {
+      'total_pos_items': totalPosItems,
+      'total_not_uploaded': totalNotUpload,
+      'total_uploaded' : totalUpload,
+      'amount' : amount,
+      'qty' : quantity,
+    };
+  }
+
+  // Factory method to create an instance of AvailableCountModel from a map
+  factory PosCountModel.fromJson(Map<String, dynamic> json) {
+    return PosCountModel(
+      totalPosItems: json['total_pos_items'],
+      totalNotUpload: json['total_not_uploaded'],
+      totalUpload: json['total_uploaded'],
+      amount: json['amount'],
+      quantity: json['qty'],
+    );
+  }
+}
+
+class OsdAndMarketIssueCountModel {
+  int totalNotUpload;
+  int totalUpload;
+  int totalItems;
+
+  OsdAndMarketIssueCountModel({required this.totalItems,required this.totalNotUpload ,required this.totalUpload});
+
+  // Method to convert an instance of AvailableCountModel to a map
+  Map<String, dynamic> toJson() {
+    return {
+      'total_items': totalItems,
+      'total_not_uploaded': totalNotUpload,
+      'total_uploaded' : totalUpload,
+    };
+  }
+
+  // Factory method to create an instance of AvailableCountModel from a map
+  factory OsdAndMarketIssueCountModel.fromJson(Map<String, dynamic> json) {
+    return OsdAndMarketIssueCountModel(
+      totalItems: json['total_items'],
+      totalNotUpload: json['total_not_uploaded'],
+      totalUpload: json['total_uploaded'],
+    );
+  }
+}

@@ -33,6 +33,10 @@ import '../../Model/request_model.dart/ready_pick_list_request.dart';
 import '../../Model/request_model.dart/save_api_pricing_data_request.dart';
 import '../../Model/request_model.dart/save_api_rtv_data_request.dart';
 import '../../Model/request_model.dart/save_freshness_request_model.dart';
+import '../../Model/request_model.dart/save_market_issue_request.dart';
+import '../../Model/request_model.dart/save_one_plus_one_request.dart';
+import '../../Model/request_model.dart/save_osd_request.dart';
+import '../../Model/request_model.dart/save_pos_request.dart';
 import '../../Model/request_model.dart/save_promo_plan_request_model.dart';
 import '../../Model/request_model.dart/save_stock_request_model.dart';
 import '../../Model/request_model.dart/sos_end_api_request_model.dart';
@@ -127,6 +131,23 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
   SosCountModel sosCountModel = SosCountModel(totalNotUpload: 0,totalUpload: 0,totalSosItems: 0,totalCategories: 0);
   List<SaveSosData> sosDataForApi = [];
 
+  List<SavePosListData> posImageList = [];
+  List<TransPlanoGuideGcsImagesListModel> posGcsImagesList=[];
+  PosCountModel posCountModel = PosCountModel(totalPosItems: 0, totalNotUpload: 0, amount: 0, quantity: 0, totalUpload: 0);
+
+  List<SaveOsdListData> osdImageList = [];
+  List<SaveOsdImageNameListData> osdDataImagesList = [];
+  List<TransPlanoGuideGcsImagesListModel> osdGcsImagesList=[];
+  OsdAndMarketIssueCountModel osdCountModel = OsdAndMarketIssueCountModel(totalItems: 0, totalNotUpload: 0, totalUpload: 0);
+
+  List<SaveMarketIssueListData> marketIssueImageList = [];
+  List<TransPlanoGuideGcsImagesListModel> marketIssueGcsImagesList=[];
+  OsdAndMarketIssueCountModel marketIssueCountModel = OsdAndMarketIssueCountModel(totalItems: 0, totalNotUpload: 0, totalUpload: 0);
+
+  List<SaveOnePlusOneListData> onePlusOneImageList = [];
+  List<TransOnePlusOneGcsImagesListModel> onePlusOneGcsImageList = [];
+  RtvCountModel onePlusOneCountModel = RtvCountModel(totalRtv: 0, totalNotUpload: 0, totalUpload: 0,totalVolume: 0,totalValue: 0);
+
   List<AgencyDashboardModel> allAgencyData = [];
   List<AgencyDashboardModel> agencyData = [];
 
@@ -145,6 +166,10 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
   bool isBeforeFixingFinishLoading = false;
   bool isOtherPhotoFinishLoading = false;
   bool isSosFinishLoading = false;
+  bool isOnePlusOneFinishLoading = false;
+  bool isOsdFinishLoading = false;
+  bool isMarketIssueFinishLoading = false;
+  bool isPosFinishLoading = false;
   bool isPlanogramFinishLoading = false;
 
   @override
@@ -450,6 +475,65 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                             totalStock: totalStockCountData.total_stock_taken,
                           ),
 
+                        if (onePlusOneCountModel.totalRtv > 0 )
+                          VisitRtvUploadScreenCard(
+                            onUploadTap: () async {
+                              await uploadImagesToGcs(AppConstants.onePlusOne);
+                              //
+                              onePlusOneUploadApi();
+                            },
+                            isUploaded: onePlusOneCountModel.totalNotUpload == 0,
+                            isUploadData: isOnePlusOneFinishLoading,
+                            moduleName: "Sku's",
+                            screenName: "One Plus One",
+                            uploadedData:onePlusOneCountModel.totalVolume.toInt(),
+                            notUploadedData: onePlusOneCountModel.totalValue.toInt(),
+                            totalRtv: onePlusOneCountModel.totalRtv,),
+
+                        if (osdCountModel.totalItems > 0 )
+                          VisitOsdAndMarketIssueUploadScreenCard(
+                            onUploadTap: () async {
+                              print("OSDC Click");
+                              await uploadImagesToGcs(AppConstants.osdc);
+                              //
+                              osdUploadApi();
+                            },
+                            isUploaded: osdCountModel.totalNotUpload == 0,
+                            isUploadData: isOsdFinishLoading,
+                            moduleName: "Total",
+                            screenName: "OSD",
+                            totalOsd: osdCountModel.totalItems,),
+
+                        if (marketIssueCountModel.totalItems > 0 )
+                          VisitOsdAndMarketIssueUploadScreenCard(
+                            onUploadTap: () async {
+                              print("Market Issue Click");
+                              await uploadImagesToGcs(AppConstants.marketIssues);
+                              //
+                              marketIssueUploadApi();
+                            },
+                            isUploaded: marketIssueCountModel.totalNotUpload == 0,
+                            isUploadData: isMarketIssueFinishLoading,
+                            moduleName: "Total",
+                            screenName: "Market Issue",
+                            totalOsd: marketIssueCountModel.totalItems,),
+
+                        if (posCountModel.totalPosItems > 0 )
+                          VisitRtvUploadScreenCard(
+                            onUploadTap: () async {
+                              print("POS Click");
+                              await uploadImagesToGcs(AppConstants.pos);
+
+                              posUploadApi();
+                            },
+                            isUploaded: posCountModel.totalNotUpload == 0,
+                            isUploadData: isRtvFinishLoading,
+                            moduleName: "Total",
+                            screenName: "POS",
+                            uploadedData:posCountModel.quantity.toInt(),
+                            notUploadedData: posCountModel.amount.toInt(),
+                            totalRtv: posCountModel.totalPosItems,),
+
                       ],
                     ),
                   ),
@@ -616,9 +700,6 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
     } catch (e) {
       print('Error reading images: $e');
     }
-    // uploadToGcs();
-
-    // setState(() {});
   }
 
   Future<bool> getAllCountData() async {
@@ -723,6 +804,30 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
     });
 
+    await DatabaseHelper.getOnePLusOneCountDataServices(workingId).then((value) {
+
+      onePlusOneCountModel = value;
+
+    });
+
+    await DatabaseHelper.getPosCountDataServices(workingId).then((value) {
+
+      posCountModel = value;
+
+    });
+
+    await DatabaseHelper.getOsdCountDataServices(workingId).then((value) {
+
+      osdCountModel = value;
+
+    });
+
+    await DatabaseHelper.getMarketIssueCountDataServices(workingId).then((value) {
+
+      marketIssueCountModel = value;
+
+    });
+
     setState(() {
 
       if(beforeFixingCountModel.totalNotUpload > 0) {
@@ -779,6 +884,22 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       }
 
       if(totalStockCountData.total_not_upload > 0) {
+        isFinishButton = false;
+      }
+
+      if(onePlusOneCountModel.totalNotUpload > 0) {
+        isFinishButton = false;
+      }
+
+      if(posCountModel.totalNotUpload > 0) {
+        isFinishButton = false;
+      }
+
+      if(osdCountModel.totalNotUpload > 0) {
+        isFinishButton = false;
+      }
+
+      if(marketIssueCountModel.totalNotUpload > 0) {
         isFinishButton = false;
       }
 
@@ -870,6 +991,73 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
           {
             if (_imageFiles[i].path.endsWith(planogramGcsImagesList[j].imageName)) {
               planogramGcsImagesList[j].imageFile = _imageFiles[i];
+            }
+          }
+        }
+      }
+
+    }
+
+    if(module == AppConstants.marketIssues) {
+
+      for (int j=0;j<marketIssueGcsImagesList.length; j++) {
+        for (int i = 0; i < _imageFiles.length; i++) {
+          if(marketIssueGcsImagesList[j].imageName.isNotEmpty)
+          {
+            if (_imageFiles[i].path.endsWith(marketIssueGcsImagesList[j].imageName)) {
+              marketIssueGcsImagesList[j].imageFile = _imageFiles[i];
+            }
+          }
+        }
+      }
+
+    }
+
+    if(module == AppConstants.pos) {
+
+      for (int j=0;j<posGcsImagesList.length; j++) {
+        for (int i = 0; i < _imageFiles.length; i++) {
+          if(posGcsImagesList[j].imageName.isNotEmpty)
+          {
+            if (_imageFiles[i].path.endsWith(posGcsImagesList[j].imageName)) {
+              posGcsImagesList[j].imageFile = _imageFiles[i];
+            }
+          }
+        }
+      }
+
+    }
+
+    if(module == AppConstants.osdc) {
+
+      for (int j=0;j<osdGcsImagesList.length; j++) {
+        for (int i = 0; i < _imageFiles.length; i++) {
+          if(osdGcsImagesList[j].imageName.isNotEmpty)
+          {
+            if (_imageFiles[i].path.endsWith(osdGcsImagesList[j].imageName)) {
+              osdGcsImagesList[j].imageFile = _imageFiles[i];
+            }
+          }
+        }
+      }
+
+    }
+
+    if(module == AppConstants.onePlusOne) {
+
+      for (int j=0;j<onePlusOneGcsImageList.length; j++) {
+        for (int i = 0; i < _imageFiles.length; i++) {
+          if(onePlusOneGcsImageList[j].imageName.isNotEmpty)
+          {
+            if (_imageFiles[i].path.endsWith(onePlusOneGcsImageList[j].imageName)) {
+              onePlusOneGcsImageList[j].imageFile = _imageFiles[i];
+            }
+          }
+
+          if(onePlusOneGcsImageList[j].docImageName.isNotEmpty)
+          {
+            if (_imageFiles[i].path.endsWith(onePlusOneGcsImageList[j].docImageName)) {
+              onePlusOneGcsImageList[j].docImageFile = _imageFiles[i];
             }
           }
         }
@@ -1164,6 +1352,205 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         });
       }
 
+      if(moduleName == AppConstants.marketIssues) {
+
+        setState(() {
+          isMarketIssueFinishLoading = true;
+        });
+
+        await DatabaseHelper.getMarketIssueGcsImagesList(workingId).then((value) async {
+
+          marketIssueGcsImagesList = value.cast<TransPlanoGuideGcsImagesListModel>();
+
+          await _getImages(AppConstants.marketIssues).then((value) {
+            setTransPhotoInList(AppConstants.marketIssues);
+
+            setState(() {
+
+            });
+          });
+
+        });
+
+        print("------Market Issue Image Upload -------- ");
+        for(int j = 0; j < marketIssueGcsImagesList.length; j++) {
+
+          final filename =  marketIssueGcsImagesList[j].imageName;
+          final filePath = 'capture_photo/$filename';
+          final fileContent = await marketIssueGcsImagesList[j].imageFile!.readAsBytes();
+          final bucketObject = Object(name: filePath);
+
+          final resp = await storage.objects.insert(
+            bucketObject,
+            bucketName,
+            predefinedAcl: 'publicRead',
+            uploadMedia: Media(
+              Stream<List<int>>.fromIterable([fileContent]),
+              fileContent.length,
+            ),
+          );
+          print("Image Uploaded successfully");
+
+          await updateMarketIssueAfterGcs1(marketIssueGcsImagesList[j].id);
+        }
+        setState(() {
+          isMarketIssueFinishLoading = false;
+        });
+      }
+
+      if(moduleName == AppConstants.pos) {
+
+        setState(() {
+          isPosFinishLoading = true;
+        });
+
+        await DatabaseHelper.getPosGcsImagesList(workingId).then((value) async {
+
+          posGcsImagesList = value.cast<TransPlanoGuideGcsImagesListModel>();
+
+          await _getImages(AppConstants.pos).then((value) {
+            setTransPhotoInList(AppConstants.pos);
+
+            setState(() {
+
+            });
+          });
+
+        });
+
+        print("------POS Image Upload -------- ");
+        for(int j = 0; j < posGcsImagesList.length; j++) {
+
+          final filename =  posGcsImagesList[j].imageName;
+          final filePath = 'capture_photo/$filename';
+          final fileContent = await posGcsImagesList[j].imageFile!.readAsBytes();
+          final bucketObject = Object(name: filePath);
+
+          final resp = await storage.objects.insert(
+            bucketObject,
+            bucketName,
+            predefinedAcl: 'publicRead',
+            uploadMedia: Media(
+              Stream<List<int>>.fromIterable([fileContent]),
+              fileContent.length,
+            ),
+          );
+          print("Image Uploaded successfully");
+
+          await updatePosAfterGcs1(posGcsImagesList[j].id);
+        }
+        setState(() {
+          isPosFinishLoading = false;
+        });
+      }
+
+      if(moduleName == AppConstants.osdc) {
+
+        setState(() {
+          isOsdFinishLoading = true;
+        });
+
+        await DatabaseHelper.getOsdcGcsImagesList(workingId).then((value) async {
+
+          osdGcsImagesList = value.cast<TransPlanoGuideGcsImagesListModel>();
+
+          await _getImages(AppConstants.osdc).then((value) {
+            setTransPhotoInList(AppConstants.osdc);
+
+            setState(() {
+
+            });
+          });
+
+        });
+
+        print("------OSD Image Upload -------- ");
+        for(int j = 0; j < osdGcsImagesList.length; j++) {
+
+          final filename =  osdGcsImagesList[j].imageName;
+          final filePath = 'capture_photo/$filename';
+          final fileContent = await osdGcsImagesList[j].imageFile!.readAsBytes();
+          final bucketObject = Object(name: filePath);
+
+          final resp = await storage.objects.insert(
+            bucketObject,
+            bucketName,
+            predefinedAcl: 'publicRead',
+            uploadMedia: Media(
+              Stream<List<int>>.fromIterable([fileContent]),
+              fileContent.length,
+            ),
+          );
+          print("Image Uploaded successfully");
+
+          await updateOsdAfterGcs1(osdGcsImagesList[j].id);
+        }
+        setState(() {
+          isOsdFinishLoading = false;
+        });
+      }
+
+      if(moduleName == AppConstants.onePlusOne) {
+
+        setState(() {
+          isOnePlusOneFinishLoading = true;
+        });
+
+        await DatabaseHelper.getOnePlusOneGcsImagesList(workingId).then((value) async {
+
+          onePlusOneGcsImageList = value.cast<TransOnePlusOneGcsImagesListModel>();
+
+          await _getImages(AppConstants.onePlusOne).then((value) {
+            setTransPhotoInList(AppConstants.onePlusOne);
+
+            setState(() {
+
+            });
+          });
+
+        });
+
+        print("------One Plus One Image Upload -------- ");
+        for(int j = 0; j < onePlusOneGcsImageList.length; j++) {
+
+          final filename =  onePlusOneGcsImageList[j].imageName;
+          final filePath = 'capture_photo/$filename';
+          final fileContent = await onePlusOneGcsImageList[j].imageFile!.readAsBytes();
+          final bucketObject = Object(name: filePath);
+
+          final resp = await storage.objects.insert(
+            bucketObject,
+            bucketName,
+            predefinedAcl: 'publicRead',
+            uploadMedia: Media(
+              Stream<List<int>>.fromIterable([fileContent]),
+              fileContent.length,
+            ),
+          );
+
+          final docFilename =  onePlusOneGcsImageList[j].docImageName;
+          final docFilePath = 'capture_photo/$docFilename';
+          final docFileContent = await onePlusOneGcsImageList[j].docImageFile!.readAsBytes();
+          final docBucketObject = Object(name: docFilePath);
+
+          final respDoc = await storage.objects.insert(
+            docBucketObject,
+            bucketName,
+            predefinedAcl: 'publicRead',
+            uploadMedia: Media(
+              Stream<List<int>>.fromIterable([docFileContent]),
+              docFileContent.length,
+            ),
+          );
+          print("Image Uploaded successfully");
+
+          await updateOnePlusAfterGcs1(onePlusOneGcsImageList[j].id);
+        }
+        setState(() {
+          isOnePlusOneFinishLoading = false;
+        });
+      }
+
       return true;
     } catch (e) {
       // Handle any errors that occur during the upload
@@ -1182,6 +1569,10 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
          isOtherPhotoFinishLoading = false;
          isSosFinishLoading = false;
          isPlanogramFinishLoading = false;
+         isMarketIssueFinishLoading = false;
+         isOsdFinishLoading = false;
+         isOnePlusOneFinishLoading = false;
+         isPosFinishLoading = false;
       });
       ToastMessage.errorMessage(context, "Uploading images error please try again!");
       return false;
@@ -1236,6 +1627,42 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
   Future<bool> updatePlanogramAfterGcs1(int promoId) async {
     print("UPLOAD Planogram AFTER GCS");
     await DatabaseHelper.updateTransPlanogramAfterGcsImageUpload(workingId,promoId.toString()).then((value) {
+
+    });
+
+    return true;
+  }
+
+  Future<bool> updateMarketIssueAfterGcs1(int marketIssueId) async {
+    print("UPLOAD Market Issue AFTER GCS");
+    await DatabaseHelper.updateMarketIssueAfterGcsImageUpload(workingId,marketIssueId.toString()).then((value) {
+
+    });
+
+    return true;
+  }
+
+  Future<bool> updatePosAfterGcs1(int posId) async {
+    print("UPLOAD POS AFTER GCS");
+    await DatabaseHelper.updatePosAfterGcsImageUpload(workingId,posId.toString()).then((value) {
+
+    });
+
+    return true;
+  }
+
+  Future<bool> updateOsdAfterGcs1(int posId) async {
+    print("UPLOAD Osd AFTER GCS");
+    await DatabaseHelper.updateOsdAfterGcsImageUpload(workingId,posId.toString()).then((value) {
+
+    });
+
+    return true;
+  }
+
+  Future<bool> updateOnePlusAfterGcs1(int posId) async {
+    print("UPLOAD One Plus One AFTER GCS");
+    await DatabaseHelper.updateOnePlusOneAfterGcsImageUpload(workingId,posId.toString()).then((value) {
 
     });
 
@@ -2121,6 +2548,272 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
     ids = removeLastComma(ids);
     print(ids);
     await DatabaseHelper.updateTransPlanogramAfterApi(workingId,ids).then((value) {
+
+    });
+
+    return true;
+  }
+
+  posUploadApi() async {
+
+    await DatabaseHelper.getTransPosApiUploadDataList(workingId).then((value) {
+
+      posImageList = value.cast<SavePosListData>();
+
+      setState(() {
+
+      });
+    });
+
+    SavePosData savePosData = SavePosData(
+        username: userName,
+        workingId: workingId,
+        storeId: storeId,
+        workingDate: workingDate,
+        posList: posImageList);
+
+    print("************ POS Upload in Api **********************");
+    print(jsonEncode(savePosData));
+
+    setState((){
+      isPosFinishLoading = true;
+    });
+
+    SqlHttpManager().savePos(token, baseUrl, savePosData).then((value) async => {
+
+
+      print("************ POS Values **********************"),
+
+      await updatePosAfterApi1(),
+
+      await getAllCountData(),
+
+      setState((){
+        isPosFinishLoading = false;
+      }),
+
+      ToastMessage.succesMessage(context, "POS Data Uploaded Successfully"),
+
+    }).catchError((e) =>{
+      print(e.toString()),
+      setState((){
+        isPosFinishLoading = false;
+      }),
+    });
+  }
+
+  Future<bool> updatePosAfterApi1() async {
+    String ids = "";
+    for(int i=0;i<posImageList.length;i++) {
+      ids = "${wrapIfString(posImageList[i].skuId.toString())},$ids";
+    }
+    ids = removeLastComma(ids);
+    print(ids);
+    await DatabaseHelper.updatePosAfterApi(workingId,ids).then((value) {
+
+    });
+
+    return true;
+  }
+
+  marketIssueUploadApi() async {
+
+    await DatabaseHelper.getTransMarketIssueApiUploadDataList(workingId).then((value) {
+
+      marketIssueImageList = value.cast<SaveMarketIssueListData>();
+
+      setState(() {
+
+      });
+    });
+
+    SaveMarketIssueData saveMarketIssueData = SaveMarketIssueData(
+        username: userName,
+        workingId: workingId,
+        storeId: storeId,
+        workingDate: workingDate,
+        marketIssueList: marketIssueImageList);
+
+    print("************ Market ISsue Upload in Api **********************");
+    print(jsonEncode(marketIssueImageList));
+
+    setState((){
+      isMarketIssueFinishLoading = true;
+    });
+
+    SqlHttpManager().saveMarketIssue(token, baseUrl, saveMarketIssueData).then((value) async => {
+
+
+      print("************ Market Issue Values **********************"),
+
+      await updateMarketIssueAfterApi1(),
+
+      await getAllCountData(),
+
+      setState((){
+        isMarketIssueFinishLoading = false;
+      }),
+
+      ToastMessage.succesMessage(context, "Market Issue Data Uploaded Successfully"),
+
+    }).catchError((e) =>{
+      print(e.toString()),
+      setState((){
+        isMarketIssueFinishLoading = false;
+      }),
+    });
+  }
+
+  Future<bool> updateMarketIssueAfterApi1() async {
+    String ids = "";
+    for(int i=0;i<marketIssueImageList.length;i++) {
+      ids = "${wrapIfString(marketIssueImageList[i].id.toString())},$ids";
+    }
+    ids = removeLastComma(ids);
+    print(ids);
+    await DatabaseHelper.updateMarketIssueAfterApi(workingId,ids).then((value) {
+
+    });
+
+    return true;
+  }
+
+  onePlusOneUploadApi() async {
+
+    await DatabaseHelper.getTransOnePlusPneApiUploadDataList(workingId).then((value) {
+
+      onePlusOneImageList = value.cast<SaveOnePlusOneListData>();
+
+      setState(() {
+
+      });
+    });
+
+    SaveOnePlusOneData saveOnePlusOneData = SaveOnePlusOneData(
+        username: userName,
+        workingId: workingId,
+        storeId: storeId,
+        workingDate: workingDate,
+        onePlusOneList: onePlusOneImageList);
+
+    print("************ One Plus One Upload in Api **********************");
+    print(jsonEncode(saveOnePlusOneData));
+
+    setState((){
+      isOnePlusOneFinishLoading = true;
+    });
+
+    SqlHttpManager().saveOnePlusOne(token, baseUrl, saveOnePlusOneData).then((value) async => {
+
+
+      print("************ One Plus One Values **********************"),
+
+      await updateOnePlusOneAfterApi1(),
+
+      await getAllCountData(),
+
+      setState((){
+        isOnePlusOneFinishLoading = false;
+      }),
+
+      ToastMessage.succesMessage(context, " 1+1 Data Uploaded Successfully"),
+
+    }).catchError((e) =>{
+      print(e.toString()),
+      setState((){
+        isOnePlusOneFinishLoading = false;
+      }),
+    });
+  }
+
+  Future<bool> updateOnePlusOneAfterApi1() async {
+    String ids = "";
+    for(int i=0;i<onePlusOneImageList.length;i++) {
+      ids = "${wrapIfString(onePlusOneImageList[i].id.toString())},$ids";
+    }
+    ids = removeLastComma(ids);
+    print(ids);
+    await DatabaseHelper.updateOnePlusOneAfterApi(workingId,ids).then((value) {
+
+    });
+
+    return true;
+  }
+
+  osdUploadApi() async {
+
+    await DatabaseHelper.getOsdDataListForApi(workingId).then((value) {
+
+      osdImageList = value.cast<SaveOsdListData>();
+
+      setState(() {
+
+      });
+    });
+
+    await DatabaseHelper.getOsdDataImagesListForApi(workingId).then((value) {
+
+      osdDataImagesList = value.cast<SaveOsdImageNameListData>();
+
+      setState(() {
+
+      });
+    });
+
+    for(int i = 0; i< osdImageList.length; i++) {
+      for(int j = 0; j < osdDataImagesList.length; j++ ) {
+        if(osdImageList[i].id == osdDataImagesList[j].id) {
+          osdImageList[i].osdImagesList.add(osdDataImagesList[i]);
+        }
+      }
+    }
+
+    SaveOsdData saveOsdData = SaveOsdData(
+        username: userName,
+        workingId: workingId,
+        storeId: storeId,
+        workingDate: workingDate,
+        osdList: osdImageList);
+
+    print("************ OSD Upload in Api **********************");
+    print(jsonEncode(osdImageList));
+    print(jsonEncode(osdDataImagesList));
+
+    setState((){
+      isOsdFinishLoading = true;
+    });
+
+    SqlHttpManager().saveOsd(token, baseUrl, saveOsdData).then((value) async => {
+
+
+      print("************ OSD Values **********************"),
+
+      await updateOsdAfterApi1(),
+
+      await getAllCountData(),
+
+      setState((){
+        isOsdFinishLoading = false;
+      }),
+
+      ToastMessage.succesMessage(context, " OSD Data Uploaded Successfully"),
+
+    }).catchError((e) =>{
+      print(e.toString()),
+      setState((){
+        isOsdFinishLoading = false;
+      }),
+    });
+  }
+
+  Future<bool> updateOsdAfterApi1() async {
+    String ids = "";
+    for(int i=0;i<osdImageList.length;i++) {
+      ids = "${wrapIfString(osdImageList[i].id.toString())},$ids";
+    }
+    ids = removeLastComma(ids);
+    print(ids);
+    await DatabaseHelper.updateOsdAfterApi(workingId,ids).then((value) {
 
     });
 

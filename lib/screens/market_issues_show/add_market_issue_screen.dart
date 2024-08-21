@@ -16,6 +16,7 @@ import '../widget/drop_downs.dart';
 import '../widget/elevated_buttons.dart';
 import '../widget/image_selection_row_button.dart';
 import 'package:path/path.dart' as path;
+import '../widget/loading.dart';
 import 'market_issues_show.dart';
 
 class AddMarketIssue extends StatefulWidget {
@@ -116,7 +117,7 @@ class _AddMarketIssueState extends State<AddMarketIssue> {
         var now = DateTime.now();
         await DatabaseHelper.insertTransMarketIssue(TransMarketIssueModel(
                 issue_id: selectedIssueId,
-                client_id: clientId,
+                client_id: selectedClientId.toString(),
                 comment: valueControllerComment.text,
                 gcs_status: 0,
                 upload_status: 0,
@@ -125,8 +126,6 @@ class _AddMarketIssueState extends State<AddMarketIssue> {
             imageName: imageName))
             .then((_) {
           ToastMessage.succesMessage(context, "Data store successfully");
-           selectedIssueId=-1;
-           selectedClientId=-1;
            valueControllerComment.text="";
           imageFile = null;
         });
@@ -261,7 +260,7 @@ class _AddMarketIssueState extends State<AddMarketIssue> {
                             getImage();
                           }),
                     ),
-                    BigElevatedButton(
+                    isBtnLoading ? const SizedBox(height: 60,width: 60,child: MyLoadingCircle(),) : BigElevatedButton(
                         buttonName: "Save",
                         submit: (){
                           saveStorePhotoData();

@@ -41,6 +41,7 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
   String clientId = "";
   String workingId = "";
   String storeName = "";
+  String userName = "";
   TextEditingController totalPieces = TextEditingController();
   TextEditingController edDocNumber = TextEditingController();
   TextEditingController edComment = TextEditingController();
@@ -61,6 +62,7 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
     clientId = sharedPreferences.getString(AppConstants.clientId)!;
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
     storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    userName = sharedPreferences.getString(AppConstants.userName)!;
 
     if (isInit) {
       getReasonData();
@@ -86,11 +88,11 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
       if (name == "rtv") {
         imageFile = value;
         final String extension = path.extension(imageFile!.path);
-        imageName = "${DateTime.now().millisecondsSinceEpoch}$extension";
+        imageName = "${userName}_${DateTime.now().millisecondsSinceEpoch}$extension";
       } else {
         docImageFile = value;
         final String docExtension = path.extension(docImageFile!.path);
-        docImageName = "${DateTime.now().millisecondsSinceEpoch}$docExtension";
+        docImageName = "${userName}_${DateTime.now().millisecondsSinceEpoch}$docExtension";
       }
       setState(() {});
     });
@@ -111,7 +113,7 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
     });
     try {
       await takePicture(
-              context, imageFile, imageName, workingId, AppConstants.rtv)
+              context, imageFile, imageName, workingId, AppConstants.onePlusOne)
           .then((_) async {
         var now = DateTime.now();
         var formattedTime = DateFormat('HH:mm').format(now);
@@ -130,22 +132,23 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
                 doc_image_name: docImageName))
             .then((_) {
           ToastMessage.succesMessage(context, "Data store successfully");
-          takePicture(context, docImageFile, docImageName, workingId,
-                  AppConstants.rtv)
-              .then((_) async {
-            print("image add success $docImageFile");
-            print("imageName add success $docImageName");
-            _selectedType = "";
-            totalPieces.text = "";
-            edComment.text = "";
-            imageFile = null;
-            docImageFile = null;
-            setState(() {
-              isBtnLoading = false;
-            });
+      });
+
+        await takePicture(context, docImageFile, docImageName, workingId, AppConstants.onePlusOne)
+            .then((_) async {
+          print("image add success $docImageFile");
+          print("imageName add success $docImageName");
+          _selectedType = "";
+          totalPieces.text = "";
+          edComment.text = "";
+          imageFile = null;
+          docImageFile = null;
+          setState(() {
+            isBtnLoading = false;
           });
         });
       });
+
     } catch (error) {
       setState(() {
         isBtnLoading = false;
@@ -156,25 +159,13 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
         backgroundColor: const Color(0xFFF4F7FD),
         appBar: generalAppBar(context, storeName, "Add 1+1", () {
           Navigator.of(context).pop();
         }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
 
-          // selectedClientId = getClient;
-          // selectedCategoryId = getCat;
-          // selectedSubCategoryId = getSubCat;
-          // selectedBrandId = getBrand;
-          //
-          // getTransFreshnessOne();
-          //
-          // setState(() {
-          //
-          // });
-          // Navigator.of(context).pop();
         }),
         body: SingleChildScrollView(
           child: Container(

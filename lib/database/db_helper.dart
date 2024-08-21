@@ -10,6 +10,7 @@ import 'package:cstore/Model/database_model/trans_freshness_model.dart';
 import 'package:cstore/Model/database_model/trans_one_plus_one_mode.dart';
 import 'package:cstore/Model/database_model/trans_sos_model.dart';
 import 'package:cstore/Model/database_model/trans_stock_model.dart';
+import 'package:cstore/Model/request_model.dart/save_one_plus_one_request.dart';
 import 'package:cstore/database/table_name.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -68,6 +69,9 @@ import '../Model/request_model.dart/ready_pick_list_request.dart';
 import '../Model/request_model.dart/save_api_pricing_data_request.dart';
 import '../Model/request_model.dart/save_api_rtv_data_request.dart';
 import '../Model/request_model.dart/save_freshness_request_model.dart';
+import '../Model/request_model.dart/save_market_issue_request.dart';
+import '../Model/request_model.dart/save_osd_request.dart';
+import '../Model/request_model.dart/save_pos_request.dart';
 import '../Model/request_model.dart/save_promo_plan_request_model.dart';
 import '../Model/request_model.dart/save_stock_request_model.dart';
 import '../Model/request_model.dart/sos_end_api_request_model.dart';
@@ -2368,6 +2372,104 @@ class DatabaseHelper {
     });
   }
 
+  ///Get OSD COUNT RECORDS FOR API UPLOAD
+  static Future<OsdAndMarketIssueCountModel> getOsdCountDataServices(String workingId) async {
+    final db = await initDataBase();
+    final List<Map<String, dynamic>> result = (await db.rawQuery("SELECT COUNT(id) as total_osd_pro, "
+        " SUM(CASE WHEN upload_status = 0 THEN 1 ELSE 0 END) As total_not_uploaded, "
+        " SUM(CASE WHEN upload_status = 1 THEN 1 ELSE 0 END) As total_uploaded "
+        " FROM trans_osdc "
+        " WHERE working_id=$workingId "));
+
+    print(jsonEncode(result));
+    print("____________OSD Count_______________");
+    return  OsdAndMarketIssueCountModel(
+      totalItems: result[0]['total_osd_pro'] ?? 0,
+      totalNotUpload: result[0]['total_not_uploaded'] ?? 0,
+      totalUpload: result[0]['total_uploaded'] ?? 0,
+    );
+  }
+
+  static Future<List<TransPlanoGuideGcsImagesListModel>> getOsdcGcsImagesList(String workingId) async {
+    var db = await initDataBase();
+    final List<Map<String, dynamic>> transImageOsdc =
+    await db.rawQuery("SELECT * FROM trans_osdc_images "
+        " JOIN trans_osdc ON trans_osdc.id = trans_osdc_images.osd_main_id "
+        " WHERE trans_osdc.working_id=$workingId");
+
+    print(jsonEncode(transImageOsdc));
+    print("--------------OSDC IMAGE List-----------");
+
+    return List.generate(transImageOsdc.length, (index) {
+      return TransPlanoGuideGcsImagesListModel(
+        id: transImageOsdc[index][TableName.trans_osdc_main_id],
+        imageName: transImageOsdc[index][TableName.imageName],
+        imageFile: null
+      );
+    });
+  }
+
+  static Future<List<SaveOsdListData>> getOsdDataListForApi(String workingId) async {
+    var db = await initDataBase();
+    final List<Map<String, dynamic>> transImageOsdc =
+    await db.rawQuery("SELECT * FROM trans_osdc "
+        " WHERE working_id=$workingId AND upload_status=0");
+
+    print(jsonEncode(transImageOsdc));
+    print("--------------OSDC Data List-----------");
+
+    return List.generate(transImageOsdc.length, (index) {
+      return SaveOsdListData(
+          id: transImageOsdc[index][TableName.sysId],
+          clientId: transImageOsdc[index][TableName.clientIds].toString(),
+          brandId: transImageOsdc[index][TableName.brandId],
+          typeId: transImageOsdc[index][TableName.type_id],
+          reasonId: transImageOsdc[index][TableName.trans_osdc_reason_id],
+          quantity: transImageOsdc[index][TableName.trans_osdc_quantity],
+          osdImagesList: [],
+      );
+    });
+  }
+
+  static Future<List<SaveOsdImageNameListData>> getOsdDataImagesListForApi(String workingId) async {
+    var db = await initDataBase();
+    final List<Map<String, dynamic>> transImageOsdc =
+    await db.rawQuery("SELECT * FROM trans_osdc_images "
+        " WHERE working_id=$workingId ");
+
+    print(jsonEncode(transImageOsdc));
+    print("--------------OSDC Images Data List-----------");
+
+    return List.generate(transImageOsdc.length, (index) {
+      return SaveOsdImageNameListData(
+        id: transImageOsdc[index][TableName.trans_osdc_main_id],
+        imageName: transImageOsdc[index][TableName.imageName],
+      );
+    });
+  }
+
+  ///Update OSD GCS status after images upload
+  static Future<int> updateOsdAfterGcsImageUpload(String workingId,String promoId) async {
+    String writeQuery = "UPDATE trans_osdc SET gcs_status=1 WHERE working_id=$workingId AND id = $promoId";
+
+    var db = await initDataBase();
+    print("_______________UpdATE GCS OSDC________________");
+    print(writeQuery);
+
+    return await db.rawUpdate(writeQuery);
+  }
+
+  /// Update OSD After API
+  static Future<int> updateOsdAfterApi(String workingId,String ids) async {
+    String writeQuery = "UPDATE trans_osdc SET upload_status=1 WHERE working_id=$workingId AND id in ($ids)";
+
+    var db = await initDataBase();
+    print("_______________UpdATE OSDC________________");
+    print(writeQuery);
+
+    return await db.rawUpdate(writeQuery);
+  }
+
   static Future<List<DropReasonModel>> getDropReason() async {
     var db = await initDataBase();
     final List<Map<String, dynamic>> dropreason =
@@ -2876,7 +2978,7 @@ class DatabaseHelper {
 
   static Future<int> updateTransPlanoGuides(int gcsStatus,int id,String workingId,String skuImageName,String adherenceId) async {
 
-    String writeQuery = "UPDATE trans_planoguide SET isAdherence=?,gcs_status=$gcsStatus, skuImageName=?,upload_status=0,activity_status=1 WHERE id=$id and working_id=$workingId";
+    String writeQuery = "UPDATE trans_planoguide SET isAdherence=?,gcs_status=$gcsStatus, image_name=?,upload_status=0,activity_status=1 WHERE id=$id and working_id=$workingId";
     var db = await initDataBase();
     print("_______________UpdATE PlanoGuide________________");
     print(writeQuery);
@@ -3095,7 +3197,7 @@ class DatabaseHelper {
   //   );
   // }
   static Future<int>  insertTransPlanoguide(String workingID) async {
-    String insertQuery = "INSERT OR IGNORE INTO trans_planoguide (client_id,store_id, category_id, pog, isAdherence, imageName, date_time,activity_status, gcs_status, upload_status, working_id) "
+    String insertQuery = "INSERT OR IGNORE INTO trans_planoguide (client_id,store_id, category_id, pog, isAdherence, image_name, date_time,activity_status, gcs_status, upload_status, working_id) "
         " SELECT client_id,store_id, category_id, pog,-1, pog_image, CURRENT_TIMESTAMP,0,0, 0,$workingID"
         " FROM sys_store_pog";
     var db = await initDataBase();
@@ -3671,7 +3773,7 @@ class DatabaseHelper {
   ///get planoguide Images For GCS upload
   static Future<List<TransPlanoGuideGcsImagesListModel>> getPlanoGuideGcsImagesList(String workingId) async {
     final db = await initDataBase();
-    String rawQuery = "SELECT id,skuImageName as image_name "
+    String rawQuery = "SELECT id, image_name "
         " FROM trans_planoguide WHERE working_id=$workingId AND activity_status=1 AND gcs_status=0";
 
     print("PLANOGUIDE QUERY");
@@ -4845,9 +4947,6 @@ class DatabaseHelper {
     print("Table data delet $tblName,  $workingId");
   }
 
-
-
-
   static Future<void> insertTransPOS(
       TransAddProfOfSale transAddProfOfSale) async {
     var db = await initDataBase();
@@ -4857,12 +4956,13 @@ class DatabaseHelper {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
+
   static Future<List<ShowProofOfSaleModel>> getTransPOS(
       String workingId) async {
 
     final db = await initDataBase();
     final List<Map<String, dynamic>> posData = await db.rawQuery(
-        "Select   trans_proof_of_sale.*,sys_product.en_name as pro_en_name, sys_product.ar_name as pro_ar_name,"
+        "Select  trans_proof_of_sale.*,sys_product.en_name as pro_en_name, sys_product.ar_name as pro_ar_name,"
             " sys_category.en_name as cat_en_name, sys_category.ar_name as cat_ar_name"
             " From trans_proof_of_sale"
             " JOIN sys_product on sys_product.id = trans_proof_of_sale.sku_id"
@@ -4892,6 +4992,98 @@ class DatabaseHelper {
     });
   }
 
+  ///Get POS COUNT RECORDS FOR API UPLOAD
+  static Future<PosCountModel> getPosCountDataServices(String workingId) async {
+    final db = await initDataBase();
+    final List<Map<String, dynamic>> result = (await db.rawQuery("SELECT COUNT(DISTINCT sku_id) as total_pos_pro, "
+        " SUM(qty) as total_quantity, SUM(amount) as total_amount, "
+        " SUM(CASE WHEN upload_status = 0 THEN 1 ELSE 0 END) As total_not_uploaded, "
+        " SUM(CASE WHEN upload_status = 1 THEN 1 ELSE 0 END) As total_uploaded "
+        " FROM trans_proof_of_sale"
+        " JOIN sys_product on sys_product.id = trans_proof_of_sale.sku_id"
+        " WHERE working_id=$workingId "));
+
+    print(jsonEncode(result));
+    print("____________POS Count_______________");
+    return  PosCountModel(
+      totalPosItems: result[0]['total_pos_pro'] ?? 0,
+      totalNotUpload: result[0]['total_not_uploaded'] ?? 0,
+      totalUpload: result[0]['total_uploaded'] ?? 0,
+      quantity: result[0]['total_quantity'] == null ? 0 : result[0]['total_quantity'].round(),
+      amount: result[0]['total_amount'] == null ? 0 : result[0]['total_amount'].round(),
+    );
+  }
+
+  ///Pos Image List For GCS Upload
+  static Future<List<TransPlanoGuideGcsImagesListModel>> getPosGcsImagesList(String workingId) async {
+    final db = await initDataBase();
+    String rawQuery = "SELECT sku_id, image_name"
+        " FROM trans_proof_of_sale WHERE working_id=$workingId AND gcs_status=0";
+
+    print("POS GCS IMAGES LIST QUERY");
+    print(rawQuery);
+
+    final List<Map<String, dynamic>> rtvMap = await db.rawQuery(rawQuery);
+    print(rtvMap);
+    print("POS Images List");
+    return List.generate(rtvMap.length, (index) {
+      return TransPlanoGuideGcsImagesListModel(
+          id: rtvMap[index]['sku_id'],
+          imageName: rtvMap[index]['image_name'],
+          imageFile: null
+      );
+    });
+  }
+
+  static Future<List<SavePosListData>> getTransPosApiUploadDataList(String workingId) async {
+    final db = await initDataBase();
+    String rawQuery = " SELECT trans_proof_of_sale.*,sys_product.client_id "
+        " From trans_proof_of_sale"
+        " JOIN sys_product on sys_product.id = trans_proof_of_sale.sku_id"
+        " WHERE working_id=$workingId AND upload_status=0";
+
+    print("Trans POS QUERY");
+    print(rawQuery);
+
+    final List<Map<String, dynamic>> posMap = await db.rawQuery(rawQuery);
+    print(jsonEncode(posMap));
+    print("POS DATA LIST FOR API");
+    return List.generate(posMap.length, (index) {
+      return SavePosListData(
+          skuId: posMap[index][TableName.skuId],
+          name: posMap[index][TableName.trans_pos_name].toString(),
+          email: posMap[index][TableName.trans_pos_email],
+          phoneNo: posMap[index][TableName.trans_pos_phone],
+          clientId: posMap[index][TableName.clientIds],
+          imageName: posMap[index][TableName.imageName],
+          amount: int.parse(posMap[index][TableName.trans_pos_amount]),
+          quantity: posMap[index][TableName.quantity],
+      );
+    });
+  }
+
+  ///Update GCS status after images upload
+  static Future<int> updatePosAfterGcsImageUpload(String workingId,String promoId) async {
+    String writeQuery = "UPDATE trans_proof_of_sale SET gcs_status=1 WHERE working_id=$workingId AND sku_id = $promoId";
+
+    var db = await initDataBase();
+    print("_______________UpdATE GCS POS________________");
+    print(writeQuery);
+
+    return await db.rawUpdate(writeQuery);
+  }
+
+  /// Update POS After API
+  static Future<int> updatePosAfterApi(String workingId,String ids) async {
+    String writeQuery = "UPDATE trans_proof_of_sale SET upload_status=1 WHERE working_id=$workingId AND sku_id in ($ids)";
+
+    var db = await initDataBase();
+    print("_______________UpdATE POS________________");
+    print(writeQuery);
+
+    return await db.rawUpdate(writeQuery);
+  }
+
   static Future<List<Sys_PhotoTypeModel>> getSkusList(int catId) async {
     final db = await initDataBase();
     final List<Map<String, dynamic>> photoTypeMaps = await db.rawQuery(
@@ -4906,6 +5098,7 @@ class DatabaseHelper {
       );
     });
   }
+
   static Future<void> insertTransRtvOnePlusOne(
       TransRtvOnePlusOneModel transRtvModel) async {
     var db = await initDataBase();
@@ -4915,6 +5108,7 @@ class DatabaseHelper {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
+
   static Future<List<RTVShowModel>> getDataListRTVOnePlusOne(
       String workingId,
       String clientId,
@@ -4991,7 +5185,7 @@ class DatabaseHelper {
     print(query);
     final List<Map<String, dynamic>> rtvMap = await db.rawQuery(query);
     print(jsonEncode(rtvMap));
-    print("___RTV Data List _______");
+    print("___One Plus One Data List _______");
     return List.generate(rtvMap.length, (index) {
       return TransOnePlusOneModel(
           id: rtvMap[index]['trans_id'] ?? 0,
@@ -5011,6 +5205,101 @@ class DatabaseHelper {
           imageFile: null,
           imageFileDoc: null);
     });
+  }
+
+
+  ///Get One Plus One COUNT RECORDS FOR API UPLOAD
+  static Future<RtvCountModel> getOnePLusOneCountDataServices(String workingId) async {
+    final db = await initDataBase();
+    final List<Map<String, dynamic>> result = (await db.rawQuery("SELECT COUNT(DISTINCT sku_id) as total_one_plus_one_pro,"
+        " sum(pieces) as total_volume, SUM(total_value) as total_value, sum(total_not_uploaded) as total_not_uploaded, sum(total_uploaded) as total_uploaded FROM "
+        " (SELECT sku_id, trans_one_plus_one.pieces as pieces ,SUM(trans_one_plus_one.pieces * sys_product.rsp) as total_value, "
+        " sum(CASE WHEN upload_status = 0 THEN 1 ELSE 0 END) As total_not_uploaded, "
+        " sum(CASE WHEN upload_status = 1 THEN 1 ELSE 0 END) As total_uploaded "
+        " from trans_one_plus_one"
+        " join sys_product on sys_product.id=trans_one_plus_one.sku_id"
+        " WHERE working_id=$workingId GROUP by trans_one_plus_one.id  ) A"));
+
+    print(jsonEncode(result));
+    print("____________One Plus One Count_______________");
+    return  RtvCountModel(
+      totalRtv: result[0]['total_one_plus_one_pro'] ?? 0,
+      totalNotUpload: result[0]['total_not_uploaded'] ?? 0,
+      totalUpload: result[0]['total_uploaded'] ?? 0,
+      totalValue: result[0]['total_value'] == null ? 0 : result[0]['total_value'].round(),
+      totalVolume: result[0]['total_volume'] == null ? 0 : result[0]['total_volume'].round(),
+    );
+  }
+
+  ///One Plus One Image List For GCS Upload
+  static Future<List<TransOnePlusOneGcsImagesListModel>> getOnePlusOneGcsImagesList(String workingId) async {
+    final db = await initDataBase();
+    String rawQuery = "SELECT id, image_name,doc_image"
+        " FROM trans_one_plus_one WHERE working_id=$workingId AND gcs_status=0";
+
+    print("One Plus One GCS IMAGES LIST QUERY");
+    print(rawQuery);
+
+    final List<Map<String, dynamic>> rtvMap = await db.rawQuery(rawQuery);
+    print(rtvMap);
+    print("One Plus One Images List");
+    return List.generate(rtvMap.length, (index) {
+      return TransOnePlusOneGcsImagesListModel(
+          id: rtvMap[index]['id'],
+          imageName: rtvMap[index]['image_name'],
+          docImageName: rtvMap[index]['doc_image'],
+          imageFile: null,
+          docImageFile: null,
+      );
+    });
+  }
+
+
+  static Future<List<SaveOnePlusOneListData>> getTransOnePlusPneApiUploadDataList(String workingId) async {
+    final db = await initDataBase();
+    String rawQuery = "SELECT * "
+        " FROM trans_one_plus_one WHERE working_id=$workingId AND upload_status=0";
+
+    print("Trans One Plus One QUERY");
+    print(rawQuery);
+
+    final List<Map<String, dynamic>> posMap = await db.rawQuery(rawQuery);
+    print(jsonEncode(posMap));
+    print("One Plus One DATA LIST FOR API");
+    return List.generate(posMap.length, (index) {
+      return SaveOnePlusOneListData(
+        id: posMap[index][TableName.sysId],
+        skuId: posMap[index][TableName.skuId],
+        pieces: posMap[index][TableName.pieces],
+        type: posMap[index][TableName.trans_one_plus_one_type].toString(),
+        imageName: posMap[index][TableName.imageName],
+        docImage: posMap[index][TableName.trans_one_plus_one_doc_image],
+        docNumber: posMap[index][TableName.trans_one_plus_one_doc_no].toString(),
+
+      );
+    });
+  }
+
+  ///Update One PLus One GCS status after images upload
+  static Future<int> updateOnePlusOneAfterGcsImageUpload(String workingId,String promoId) async {
+    String writeQuery = "UPDATE trans_one_plus_one SET gcs_status=1 WHERE working_id=$workingId AND id = $promoId";
+
+    var db = await initDataBase();
+    print("_______________UpdATE GCS OnePlusOne________________");
+    print(writeQuery);
+
+    return await db.rawUpdate(writeQuery);
+  }
+
+  /// Update One Plus One After API
+  static Future<int> updateOnePlusOneAfterApi(String workingId,String ids) async {
+    String writeQuery = "UPDATE trans_one_plus_one SET upload_status=1 WHERE working_id=$workingId AND id in ($ids)";
+
+    var db = await initDataBase();
+    print("_______________UpdATE OnePlusOne________________");
+    print(writeQuery);
+
+    return await db.rawUpdate(writeQuery);
   }
 
   static Future<List<KnowledgeShareModel>> getKnowledgeShareList(String clientId) async {
@@ -5081,7 +5370,7 @@ class DatabaseHelper {
 
   static Future<List<ShowMarketIssueModel>> getTransMarketIssue(
       String workingId) async {
-    print("__________________TransPlanogram__________________");
+    print("__________________TransMarketIssue__________________");
     final db = await initDataBase();
     final List<Map<String, dynamic>> issueData = await db.rawQuery(
         "Select trans_market_issue.*,sys_market_issues.name,sys_market_issues.updated_at"
@@ -5148,8 +5437,87 @@ class DatabaseHelper {
     return false;
   }
 
+  ///Get Market Issue COUNT RECORDS FOR API UPLOAD
+  static Future<OsdAndMarketIssueCountModel> getMarketIssueCountDataServices(String workingId) async {
+    final db = await initDataBase();
+    final List<Map<String, dynamic>> result = (await db.rawQuery("SELECT COUNT(id) as total_market_issue_pro, "
+        " SUM(CASE WHEN upload_status = 0 THEN 1 ELSE 0 END) As total_not_uploaded, "
+        " SUM(CASE WHEN upload_status = 1 THEN 1 ELSE 0 END) As total_uploaded "
+        " FROM trans_market_issue "
+        " WHERE working_id=$workingId "));
+
+    print(jsonEncode(result));
+    print("____________Market Issue Count_______________");
+    return  OsdAndMarketIssueCountModel(
+      totalItems: result[0]['total_market_issue_pro'] ?? 0,
+      totalNotUpload: result[0]['total_not_uploaded'] ?? 0,
+      totalUpload: result[0]['total_uploaded'] ?? 0,
+    );
+  }
+
+  ///Market Issue Image List For GCS Upload
+  static Future<List<TransPlanoGuideGcsImagesListModel>> getMarketIssueGcsImagesList(String workingId) async {
+    final db = await initDataBase();
+    String rawQuery = "SELECT id, image_name"
+        " FROM trans_market_issue WHERE working_id=$workingId AND gcs_status=0";
+
+    print("Market ISSue QUERY");
+    print(rawQuery);
+
+    final List<Map<String, dynamic>> rtvMap = await db.rawQuery(rawQuery);
+    print(rtvMap);
+    print("Market Issue Images List");
+    return List.generate(rtvMap.length, (index) {
+      return TransPlanoGuideGcsImagesListModel(
+          id: rtvMap[index]['id'],
+          imageName: rtvMap[index]['image_name'],
+          imageFile: null
+      );
+    });
+  }
+
+  static Future<List<SaveMarketIssueListData>> getTransMarketIssueApiUploadDataList(String workingId) async {
+    final db = await initDataBase();
+    String rawQuery = "SELECT * "
+        " FROM trans_market_issue WHERE working_id=$workingId AND upload_status=0";
+
+    print("Trans Market Value QUERY");
+    print(rawQuery);
+
+    final List<Map<String, dynamic>> posMap = await db.rawQuery(rawQuery);
+    print(jsonEncode(posMap));
+    print("Market Value DATA LIST FOR API");
+    return List.generate(posMap.length, (index) {
+      return SaveMarketIssueListData(
+        id: posMap[index][TableName.sysId],
+        issueId: posMap[index][TableName.sys_issue_id],
+        comment: posMap[index][TableName.trans_one_plus_one_comment],
+        clientId: posMap[index][TableName.clientIds].toString(),
+        imageName: posMap[index][TableName.imageName],
+      );
+    });
+  }
 
 
+  static Future<int> updateMarketIssueAfterGcsImageUpload(String workingId,String promoId) async {
+    String writeQuery = "UPDATE trans_market_issue SET gcs_status=1 WHERE working_id=$workingId AND id = $promoId";
+
+    var db = await initDataBase();
+    print("_______________UpdATE GCS Market Issue________________");
+    print(writeQuery);
+
+    return await db.rawUpdate(writeQuery);
+  }
+
+  static Future<int> updateMarketIssueAfterApi(String workingId,String ids) async {
+    String writeQuery = "UPDATE trans_market_issue SET upload_status=1 WHERE working_id=$workingId AND id in ($ids)";
+
+    var db = await initDataBase();
+    print("_______________UpdATE Market Issue________________");
+    print(writeQuery);
+
+    return await db.rawUpdate(writeQuery);
+  }
 
 }
 

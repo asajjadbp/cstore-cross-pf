@@ -40,6 +40,7 @@ class AppConstants {
   static String  beforeFixing = "before_fixing";
   static String  osdc = "osdc";
   static String  rtv = "rtv";
+  static String  onePlusOne = "one_plus_one";
   static String  pos = "pos";
   static String  marketIssues = "market_issue";
   static String  otherPhoto = "other_photo";

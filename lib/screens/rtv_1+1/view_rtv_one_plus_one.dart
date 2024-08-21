@@ -49,8 +49,7 @@ class _ViewRtvOnePlusOneScreenState extends State<ViewRtvOnePlusOneScreen> {
         .then((value) async {
       transData = value;
       await _loadImages().then((value) {
-        print("transDataList");
-        print(transData);
+
         setTransPhoto();
         setTransDocImage();
       });
@@ -61,6 +60,8 @@ class _ViewRtvOnePlusOneScreenState extends State<ViewRtvOnePlusOneScreen> {
     for (var trans in transData) {
       for (int i = 0; i < _imageFiles.length; i++) {
         if (_imageFiles[i].path.endsWith(trans.image_name)) {
+          print("IMAGE FILE CHECKING");
+          print(_imageFiles[i].path);
           trans.imageFile = _imageFiles[i];
         }
       }
@@ -70,9 +71,11 @@ class _ViewRtvOnePlusOneScreenState extends State<ViewRtvOnePlusOneScreen> {
     });
   }
   void setTransDocImage() {
+
     for (var trans in transData) {
       for (int i = 0; i < _imageFilesDoc.length; i++) {
         if (_imageFilesDoc[i].path.endsWith(trans.doc_image)) {
+
           trans.imageFileDoc = _imageFilesDoc[i];
           print("doc images");
           print(trans.doc_image);
@@ -91,15 +94,14 @@ class _ViewRtvOnePlusOneScreenState extends State<ViewRtvOnePlusOneScreen> {
     try {
       final String dirPath = (await getExternalStorageDirectory())!.path;
       final String folderPath =
-          '$dirPath/cstore/$workingId/${AppConstants.rtv}';
-      print("******************");
-      print(dirPath);
+          '$dirPath/cstore/$workingId/${AppConstants.onePlusOne}';
       final Directory folder = Directory(folderPath);
       if (await folder.exists()) {
         final List<FileSystemEntity> files = folder.listSync();
         _imageFiles = files.whereType<File>().toList();
         _imageFilesDoc = files.whereType<File>().toList();
       }
+
     } catch (e) {
       print('Error reading images: $e');
     }
@@ -146,11 +148,9 @@ class _ViewRtvOnePlusOneScreenState extends State<ViewRtvOnePlusOneScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: const Color(0xFFF4F7FD),
-      appBar: generalAppBar(context, storeName, "View RTV", (){
+      appBar: generalAppBar(context, storeName, "View 1 + 1", (){
         Navigator.of(context).pop();
       }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
 

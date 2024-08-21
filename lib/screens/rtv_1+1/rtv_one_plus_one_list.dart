@@ -45,6 +45,7 @@ class _RtvOnePlusOneListScreenState extends State<RtvOnePlusOneListScreen> {
   int selectedCategoryId = -1;
   int selectedSubCategoryId = -1;
   int selectedBrandId = -1;
+  String imageBaseUrl = "";
   RTVCountModel rtvCountModel =
       RTVCountModel(total_rtv_pro: 0, total_volume: 0, total_value: 0);
 
@@ -62,6 +63,7 @@ class _RtvOnePlusOneListScreenState extends State<RtvOnePlusOneListScreen> {
       storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
       clientId = sharedPreferences.getString(AppConstants.clientId)!;
       userName = sharedPreferences.getString(AppConstants.userName)!;
+      imageBaseUrl = sharedPreferences.getString(AppConstants.imageBaseUrl)!;
     });
     getTransRTVOne(selectedClientId, selectedCategoryId, selectedSubCategoryId,
         selectedBrandId);
@@ -123,7 +125,7 @@ class _RtvOnePlusOneListScreenState extends State<RtvOnePlusOneListScreen> {
     try {
       final String dirPath = (await getExternalStorageDirectory())!.path;
       final String folderPath =
-          '$dirPath/cstore/$workingId/${AppConstants.rtv}';
+          '$dirPath/cstore/$workingId/${AppConstants.onePlusOne}';
       final Directory folder = Directory(folderPath);
       if (await folder.exists()) {
         final List<FileSystemEntity> files = folder.listSync();
@@ -224,7 +226,7 @@ class _RtvOnePlusOneListScreenState extends State<RtvOnePlusOneListScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Text("RTV Sku's"),
+                            const Text("1 + 1 Sku's"),
                             Container(
                                 margin: const EdgeInsets.symmetric(vertical: 5),
                                 child: const FaIcon(
@@ -258,7 +260,7 @@ class _RtvOnePlusOneListScreenState extends State<RtvOnePlusOneListScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Text("RTV Pieces"),
+                            const Text("1 + 1 Pieces"),
                             Container(
                                 margin: const EdgeInsets.symmetric(vertical: 5),
                                 child: const FaIcon(
@@ -330,7 +332,7 @@ class _RtvOnePlusOneListScreenState extends State<RtvOnePlusOneListScreen> {
                                         builder: (context) => addnewrtvscreen(
                                           sku_id: filterTransData[i].pro_id,
                                           imageName:
-                                              "https://storage.googleapis.com/panda-static/sku_pictures/${filterTransData[i].img_name}",
+                                          "${imageBaseUrl}sku_pictures/${filterTransData[i].img_name}",
                                           SkuName:
                                               filterTransData[i].pro_en_name,
                                         ),
@@ -345,7 +347,7 @@ class _RtvOnePlusOneListScreenState extends State<RtvOnePlusOneListScreen> {
                                   },
                                   child: Rtvcard(
                                     imageName:
-                                        "https://storage.googleapis.com/panda-static/sku_pictures/${filterTransData[i].img_name}",
+                                    "${imageBaseUrl}sku_pictures/${filterTransData[i].img_name}",
                                     productName: filterTransData[i].pro_en_name,
                                     icon1: const Icon(
                                       Icons.category_rounded,
@@ -390,7 +392,7 @@ class _RtvOnePlusOneListScreenState extends State<RtvOnePlusOneListScreen> {
                                   },
                                   child: RtvOnePlusOneListCard(
                                     imageName:
-                                        "https://storage.googleapis.com/panda-static/sku_pictures/${transData[i].img_name}",
+                                    "${imageBaseUrl}sku_pictures/${transData[i].img_name}",
                                     productName: transData[i].pro_en_name,
                                     icon1: const Icon(
                                       Icons.category_rounded,
@@ -415,7 +417,7 @@ class _RtvOnePlusOneListScreenState extends State<RtvOnePlusOneListScreen> {
             Container(
                 margin: const EdgeInsets.only(left: 5, right: 5),
               child: BigElevatedButton(
-                  buttonName: "View RTVS",
+                  buttonName: "View 1 + 1",
                   submit: (){
                     Navigator.push(
                       context,
