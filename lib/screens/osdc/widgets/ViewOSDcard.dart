@@ -6,10 +6,9 @@ import 'package:flutter_svg/svg.dart';
 import '../../utils/appcolor.dart';
 
 class ViewOSDcard extends StatelessWidget {
-
-
   ViewOSDcard({
     super.key,
+    required this.onImageClick,
     required this.uploadStatus,
     required this.imageName,
     required this.brandName,
@@ -22,7 +21,8 @@ class ViewOSDcard extends StatelessWidget {
     required this.onDelete,
   });
 
-  final File imageName;
+  final Function onImageClick;
+  final List<File> imageName;
   final String brandName;
   final int uploadStatus;
   final String icon1;
@@ -36,8 +36,7 @@ class ViewOSDcard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
+
     return Card(
         child: Container(
           decoration: BoxDecoration(
@@ -46,19 +45,39 @@ class ViewOSDcard extends StatelessWidget {
               borderRadius: BorderRadius.circular(5)),
           child: Row(
             children: [
-              Container(
-                width: 80,
-                height: 80,
-                margin: const EdgeInsets.only(left: 5),
-                child: ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(6.0),
-                      bottomLeft: Radius.circular(6.0),
-                      topRight: Radius.circular(6.0),
-                      bottomRight: Radius.circular(6.0),
-                    ), // Image border
-                    child: FittedBox(
-                        fit: BoxFit.cover, child: Image.file(imageName))),
+              InkWell(
+                onTap: () {
+                  if(imageName.length>1) {
+                    onImageClick();
+                  }
+                },
+                child: SizedBox(
+                  width: 80,
+                  height: 80,
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: 80,
+                        height: 80,
+                        margin: const EdgeInsets.only(left: 5),
+                        child: ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(6.0),
+                              bottomLeft: Radius.circular(6.0),
+                              topRight: Radius.circular(6.0),
+                              bottomRight: Radius.circular(6.0),
+                            ), // Image border
+                            child: FittedBox(
+                                fit: BoxFit.cover, child: Image.file(imageName[0]))),
+                      ),
+                      if(imageName.length > 1)
+                        Container(
+                            alignment: Alignment.center,
+                            decoration:  BoxDecoration(color: Colors.grey.withOpacity(0.5),),
+                            child: Text("+${imageName.length > 99 ? "99" : imageName.length-1}",style: const TextStyle(fontSize:20,color: MyColors.whiteColor,fontWeight: FontWeight.w500),))
+                    ],
+                  ),
+                ),
               ),
               Expanded(
                 child: Column(

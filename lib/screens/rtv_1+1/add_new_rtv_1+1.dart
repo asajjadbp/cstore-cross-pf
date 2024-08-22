@@ -6,6 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart' as path;
 import '../../Database/db_helper.dart';
+import '../../Model/database_model/category_model.dart';
+import '../../Model/database_model/client_model.dart';
+import '../../Model/database_model/sys_photo_type.dart';
 import '../../Model/database_model/sys_rtv_reason_model.dart';
 import '../utils/app_constants.dart';
 import '../utils/appcolor.dart';
@@ -20,11 +23,7 @@ import 'package:intl/intl.dart';
 
 class AddRtvOnePlusOne extends StatefulWidget {
   static const routeName = "/add_onePlusOne";
-  AddRtvOnePlusOne({super.key, required this.sku_id, required this.SkuName});
-
-  int sku_id;
-  String SkuName;
-
+  const AddRtvOnePlusOne({super.key,});
   @override
   State<AddRtvOnePlusOne> createState() => _AddRtvOnePlusOneState();
 }
@@ -51,6 +50,21 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
   String _selectedType = "";
   List<String> unitList = ['1+1'];
 
+  int selectedSkuId = -1;
+  final GlobalKey<FormFieldState> clientKey = GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> skuKey = GlobalKey<FormFieldState>();
+  int selectedClientId = -1;
+  List<ClientModel> clientData = [];
+  List<CategoryModel> categoryData = [CategoryModel( client: -1, id: -1, en_name: '', ar_name: '')];
+  int selectedCategoryId = -1;
+  bool isCategoryLoading = false;
+  List<Sys_PhotoTypeModel> skuDataList = [
+    Sys_PhotoTypeModel(id: -1, en_name: "", ar_name: "")
+  ];
+  bool isSKusLoading = false;
+  final GlobalKey<FormFieldState> categoryKey = GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> typeKey = GlobalKey<FormFieldState>();
+
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
@@ -66,8 +80,54 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
 
     if (isInit) {
       getReasonData();
+      getClientData();
     }
     isInit = false;
+  }
+
+  void getClientData() async {
+    setState(() {
+      isLoading = true;
+    });
+    await DatabaseHelper.getVisitClientList(clientId).then((value) {
+      setState(() {
+        isLoading = false;
+      });
+      clientData = value;
+    });
+    print(clientData[0].client_name);
+  }
+  void getSkusData(int catId) async {
+    selectedSkuId = -1;
+    skuKey.currentState!.reset();
+    skuDataList = [Sys_PhotoTypeModel(en_name: "", ar_name: "", id: -1)];
+    setState(() {
+      isSKusLoading = true;
+    });
+
+    await DatabaseHelper.getSkusList(catId).then((value) {
+      setState(() {
+        isSKusLoading = false;
+      });
+      skuDataList = value;
+    });
+    print(skuDataList[0].en_name);
+  }
+  void getCategoryData(int clientId) async {
+    categoryKey.currentState!.reset();
+    selectedCategoryId = -1;
+    categoryData = [CategoryModel(en_name: "",ar_name: "",id: -1, client: -1)];
+    setState(() {
+      isCategoryLoading = true;
+    });
+
+    await DatabaseHelper.getCategoryList(selectedClientId).then((value) {
+      setState(() {
+        isCategoryLoading = false;
+      });
+      categoryData = value;
+    });
+    print(categoryData[0].en_name);
   }
 
   void getReasonData() async {
@@ -104,7 +164,7 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
         _selectedType == "" ||
         edDocNumber.text.isEmpty ||
         totalPieces.text.isEmpty ||
-        totalPieces.text.isEmpty) {
+        selectedSkuId == -1 || selectedCategoryId == -1 || selectedClientId == -1) {
       ToastMessage.errorMessage(context, "Please fill the form and take image");
       return;
     }
@@ -118,7 +178,7 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
         var now = DateTime.now();
         var formattedTime = DateFormat('HH:mm').format(now);
         await DatabaseHelper.insertTransRtvOnePlusOne(TransRtvOnePlusOneModel(
-                sku_id: widget.sku_id,
+                sku_id: selectedSkuId,
                 pieces: int.parse(totalPieces.text),
                 act_status: 1,
                 gcs_status: 0,
@@ -131,6 +191,7 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
                 doc_no: edDocNumber.text,
                 doc_image_name: docImageName))
             .then((_) {
+
           ToastMessage.succesMessage(context, "Data store successfully");
       });
 
@@ -138,11 +199,10 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
             .then((_) async {
           print("image add success $docImageFile");
           print("imageName add success $docImageName");
-          _selectedType = "";
-          totalPieces.text = "";
-          edComment.text = "";
-          imageFile = null;
-          docImageFile = null;
+          totalPieces.clear();
+          edComment.clear();
+          selectedSkuId = -1;
+          skuKey.currentState!.reset();
           setState(() {
             isBtnLoading = false;
           });
@@ -162,254 +222,389 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
 
     return Scaffold(
         backgroundColor: const Color(0xFFF4F7FD),
-        appBar: generalAppBar(context, storeName, "Add 1+1", () {
+        appBar: generalAppBar(context, storeName, userName, () {
           Navigator.of(context).pop();
         }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
 
         }),
-        body: SingleChildScrollView(
-          child: Container(
-            margin:const EdgeInsets.symmetric(horizontal: 10),
-            child: Column(
-              children: [
-                Text(
-                  widget.SkuName,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
-                  style: const TextStyle(
-                      color: MyColors.appMainColor,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.symmetric(vertical: 5),
-                      child: const Text(
-                        "Pieces",
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w500),
+        body: Container(
+          margin:const EdgeInsets.symmetric(horizontal: 10),
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+
+
+                      Container(
+                        margin: const EdgeInsets.symmetric(vertical: 5),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Row(
+                              children: [
+                                Text(
+                                  "Client",
+                                  style: TextStyle(
+                                      color: MyColors.appMainColor,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
+                              ],
+                            ),
+                            ClientListDropDown(
+                                clientKey: clientKey,
+                                hintText: "Client",
+                                clientData: clientData,
+                                onChange: (value) {
+                                  selectedClientId = value.client_id;
+                                  getCategoryData(selectedClientId);
+                                  setState(() {});
+                                }),
+                          ],
+                        ),
                       ),
-                    ),
-                    TextField(
-                      showCursor: true,
-                      enableInteractiveSelection: false,
-                      onChanged: (value) {},
-                      controller: totalPieces,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                          prefixIconColor: MyColors.appMainColor,
-                          focusColor: MyColors.appMainColor,
-                          fillColor: MyColors.dropBorderColor,
-                          labelStyle: TextStyle(
-                              color: MyColors.appMainColor, height: 50.0),
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  width: 1, color: MyColors.appMainColor)),
-                          border: OutlineInputBorder(),
-                          hintText: 'Enter Pieces'),
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                            RegExp(r'^[0-9][0-9]*'))
-                      ],
-                    ),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.symmetric(vertical: 5),
-                      child: const Text(
-                        "Type",
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w500),
+                      Container(
+                        color: MyColors.whiteColor,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Row(
+                              children: [
+                                Text(
+                                  "Category",
+                                  style: TextStyle(
+                                      color: MyColors.appMainColor,
+                                      fontWeight: FontWeight.bold),
+                                ),
+
+                                Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
+                              ],
+                            ),
+                            isCategoryLoading
+                                ? Center(
+                              child: Container(
+                                height: 60,
+                                child: const MyLoadingCircle(),
+                              ),
+                            )
+                                : CategoryDropDown(categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
+                              selectedCategoryId = value.id;
+                              getSkusData(selectedCategoryId);
+                              setState(() {
+
+                              });
+                            }),
+
+                          ],
+                        ),
                       ),
-                    ),
-                    UnitDropDown(
-                        hintText: "Select type",
-                        unitData: unitList,
-                        onChange: (value) {
-                          _selectedType = value;
-                        })
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.symmetric(vertical: 5),
-                      child: const Text(
-                        "Document No",
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w500),
+
+                      Container(
+                        margin: const EdgeInsets.symmetric(vertical: 5),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Row(
+                              children: [
+                                Text(
+                                  "Sku's",
+                                  style: TextStyle(
+                                      color: MyColors.appMainColor,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
+                              ],
+                            ),
+                            TypeDropDown(
+                                typeKey: skuKey,
+                                hintText: "Select sku",
+                                photoData: skuDataList,
+                                onChange: (value) {
+                                  selectedSkuId = value.id;
+                                  setState(() {});
+                                }),
+                          ],
+                        ),
                       ),
-                    ),
-                    TextField(
-                        showCursor: true,
-                        enableInteractiveSelection: false,
-                        onChanged: (value) {
-                          print(value);
-                        },
-                        controller: edDocNumber,
-                        keyboardType: TextInputType.text,
-                        decoration: const InputDecoration(
-                            prefixIconColor: MyColors.appMainColor,
-                            focusColor: MyColors.appMainColor,
-                            fillColor: MyColors.dropBorderColor,
-                            labelStyle: TextStyle(
-                                color: MyColors.appMainColor, height: 50.0),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    width: 1, color: MyColors.appMainColor)),
-                            border: OutlineInputBorder(),
-                            hintText: 'Enter document')),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.symmetric(vertical: 5),
-                      child: const Text(
-                        "Comment",
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w500),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Row(
+                                  children: [
+                                    Text(
+                                      "Pieces",
+                                      style: TextStyle(
+                                          color: MyColors.appMainColor,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 50,
+                                  child: TextField(
+                                    showCursor: true,
+                                    enableInteractiveSelection: false,
+                                    onChanged: (value) {},
+                                    controller: totalPieces,
+                                    keyboardType: TextInputType.number,
+                                    decoration: const InputDecoration(
+                                        prefixIconColor: MyColors.appMainColor,
+                                        focusColor: MyColors.appMainColor,
+                                        fillColor: MyColors.whiteColor,
+                                        filled: true,
+                                        labelStyle: TextStyle(
+                                            color: MyColors.appMainColor, height: 50.0),
+                                        focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                                width: 1, color: MyColors.appMainColor)),
+                                        border: OutlineInputBorder(),
+                                        hintText: 'Enter Pieces'),
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(
+                                          RegExp(r'^[0-9][0-9]*'))
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                         const SizedBox(width: 5,),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Row(
+                                  children: [
+                                    Text(
+                                      "Type",
+                                      style: TextStyle(
+                                          color: MyColors.appMainColor,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
+                                  ],
+                                ),
+                                UnitDropDown(
+                                    hintText: "Select type",
+                                    unitData: unitList,
+                                    onChange: (value) {
+                                      print(value);
+                                      _selectedType = value;
+                                    })
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    TextField(
-                        showCursor: true,
-                        enableInteractiveSelection: false,
-                        onChanged: (value) {
-                          print(value);
-                        },
-                        controller: edComment,
-                        keyboardType: TextInputType.text,
-                        decoration: const InputDecoration(
-                            prefixIconColor: MyColors.appMainColor,
-                            focusColor: MyColors.appMainColor,
-                            fillColor: MyColors.dropBorderColor,
-                            labelStyle: TextStyle(
-                                color: MyColors.appMainColor, height: 100.0),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    width: 1, color: MyColors.appMainColor)),
-                            border: OutlineInputBorder(),
-                            hintText: 'Enter comment')),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                      Container(
+                        margin: const EdgeInsets.symmetric(vertical: 5),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Row(
+                              children: [
+                                Text(
+                                  "Document No",
+                                  style: TextStyle(
+                                      color: MyColors.appMainColor,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
+                              ],
+                            ),
+                            SizedBox(
+                              height: 50,
+                              child: TextField(
+                                  showCursor: true,
+                                  enableInteractiveSelection: false,
+                                  onChanged: (value) {
+                                    print(value);
+                                  },
+                                  controller: edDocNumber,
+                                  keyboardType: TextInputType.text,
+                                  decoration: const InputDecoration(
+                                      prefixIconColor: MyColors.appMainColor,
+                                      focusColor: MyColors.appMainColor,
+                                      fillColor: MyColors.whiteColor,
+                                      filled: true,
+                                      labelStyle: TextStyle(
+                                          color: MyColors.appMainColor, height: 50.0),
+                                      focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              width: 1, color: MyColors.appMainColor)),
+                                      border: OutlineInputBorder(),
+                                      hintText: 'Enter document')),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 10),
-                              child: const Text(
-                                "1+1",
+                          const Row(
+                            children: [
+                              Text(
+                                "Comment",
                                 style: TextStyle(
-                                    fontSize: 14, fontWeight: FontWeight.w500),
-                              )),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width / 2.2,
-                            height: 120,
-                            child: InkWell(
-                              onTap: () {
-                                getImage("rtv");
-                              },
-                              child: Card(
-                                color: Colors.white,
-                                elevation: 1,
-                                child: imageFile != null
-                                    ? Image.file(
-                                        File(imageFile!.path),
-                                        fit: BoxFit.fill,
-                                      )
-                                    : Image.asset(
-                                        "assets/icons/camera_icon.png"),
+                                    color: MyColors.appMainColor,
+                                    fontWeight: FontWeight.bold),
                               ),
-                            ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 50,
+                            child: TextField(
+                                showCursor: true,
+                                enableInteractiveSelection: false,
+                                onChanged: (value) {
+                                  print(value);
+                                },
+                                controller: edComment,
+                                keyboardType: TextInputType.text,
+                                decoration: const InputDecoration(
+                                    prefixIconColor: MyColors.appMainColor,
+                                    focusColor: MyColors.appMainColor,
+                                    fillColor: MyColors.whiteColor,
+                                    filled: true,
+                                    labelStyle: TextStyle(
+                                        color: MyColors.appMainColor, height: 100.0),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            width: 1, color: MyColors.appMainColor)),
+                                    border: OutlineInputBorder(),
+                                    hintText: 'Enter comment')),
                           ),
                         ],
                       ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 10),
-                              child: const Text(
-                                "Document Photo",
-                                style: TextStyle(
-                                    fontSize: 14, fontWeight: FontWeight.w500),
-                              )),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width / 2.2,
-                            height: 120,
-                            child: InkWell(
-                              onTap: () {
-                                getImage("doc");
-                              },
-                              child: Card(
-                                color: Colors.white,
-                                elevation: 1,
-                                child: docImageFile != null
-                                    ? Image.file(
-                                        File(docImageFile!.path),
-                                        fit: BoxFit.fill,
-                                      )
-                                    : Image.asset(
-                                        "assets/icons/camera_icon.png"),
+                      Container(
+                        margin: const EdgeInsets.symmetric(vertical: 5),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  const Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "1 + 1",
+                                        style: TextStyle(
+                                            color: MyColors.appMainColor,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width / 2.2,
+                                    height: 120,
+                                    child: InkWell(
+                                      onTap: () {
+                                        getImage("rtv");
+                                      },
+                                      child: Card(
+                                        color: Colors.white,
+                                        elevation: 1,
+                                        child: imageFile != null
+                                            ? Image.file(
+                                                File(imageFile!.path),
+                                                fit: BoxFit.fill,
+                                              )
+                                            : Image.asset(
+                                                "assets/icons/camera_icon.png"),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ),
-                        ],
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  const Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Document Photo",
+                                        style: TextStyle(
+                                            color: MyColors.appMainColor,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width / 2.2,
+                                    height: 120,
+                                    child: InkWell(
+                                      onTap: () {
+                                        getImage("doc");
+                                      },
+                                      child: Card(
+                                        color: Colors.white,
+                                        elevation: 1,
+                                        child: docImageFile != null
+                                            ? Image.file(
+                                                File(docImageFile!.path),
+                                                fit: BoxFit.fill,
+                                              )
+                                            : Image.asset(
+                                                "assets/icons/camera_icon.png"),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(vertical: 15),
-                  child: isBtnLoading
-                      ? const SizedBox(
-                          width: 60,
-                          height: 60,
-                          child: MyLoadingCircle(),
-                        )
-                      : BigElevatedButton(
-                      buttonName: "Save",
-                      submit: (){
-                        saveStorePhotoData();
-                      },
-                      isBlueColor: true),
+                      Container(
+                        margin: const EdgeInsets.symmetric(vertical: 10),
+                        child: isBtnLoading
+                            ? const SizedBox(
+                                width: 60,
+                                height: 60,
+                                child: MyLoadingCircle(),
+                              )
+                            : BigElevatedButton(
+                            buttonName: "Save",
+                            submit: (){
+                              saveStorePhotoData();
+                            },
+                            isBlueColor: true),
 
-                  // ElevatedButton(
-                  //   style: ElevatedButton.styleFrom(
-                  //       backgroundColor: MyColors.appMainColor,
-                  //       minimumSize: Size(screenWidth, 45),
-                  //       shape: RoundedRectangleBorder(
-                  //           borderRadius: BorderRadius.circular(5))),
-                  //   onPressed: () {
-                  //     saveStorePhotoData();
-                  //     // Navigator.of(context).pushNamed();
-                  //   },
-                  //   child: const Text(
-                  //     "Save",
-                  //     style: TextStyle(color: Colors.white),
-                  //   ),
-                  // ),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
-              ],
-            ),
+              ),
+
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 5),
+                child: BigElevatedButton(
+                    buttonName: "View 1 + 1",
+                    submit: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ViewRtvOnePlusOneScreen(),
+                        ),
+                      );
+                    },
+                    isBlueColor: false),
+              )
+            ],
           ),
         ));
   }

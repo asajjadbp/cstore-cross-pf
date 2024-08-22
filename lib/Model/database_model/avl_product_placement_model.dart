@@ -1,4 +1,4 @@
-import '../../database/table_name.dart';
+
 
 class AvlProductPlacementModel {
   late String shelfNo;

@@ -149,6 +149,8 @@ class _ViewPlanogramScreenState extends State<ViewPlanogramScreen> {
         _loadImages();
         getGraphData();
         getTransPlanogramOne();
+
+        Navigator.of(context).pop();
       });
     });
   }

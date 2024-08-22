@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../Database/db_helper.dart';
 import '../../Database/table_name.dart';
 import '../../Model/database_model/show_trans_osdc_model.dart';
+import '../Gallery/gallery_screen.dart';
 import '../utils/app_constants.dart';
 import '../utils/toast/toast.dart';
 import 'widgets/ViewOSDcard.dart';
@@ -81,7 +82,7 @@ class _ViewOSDCState extends State<ViewOSDC> {
           for (int k = 0; k < _imageFiles.length; k++) {
             if (_imageFiles[k].path.endsWith(transImagesList[j].imgName)) {
 
-              transData[i].imageFile = File(_imageFiles[k].path);
+              transData[i].imageFile.add(File(_imageFiles[k].path));
             }
           }
         }
@@ -114,20 +115,33 @@ class _ViewOSDCState extends State<ViewOSDC> {
     final PermissionStatus permission = await Permission.camera.request();
     return permission;
   }
-  Future<void> deleteImageFromLocal(String imgName) async {
+  Future<void> deleteImageFromLocal(int recordId) async {
     try {
+
+
+
       final PermissionStatus permissionStatus = await _getPermission();
       if (permissionStatus == PermissionStatus.granted) {
+
         final String dirPath = (await getExternalStorageDirectory())!.path;
         final String folderPath = '$dirPath/cstore/$workingId/${AppConstants.osdc}';
-        final file = File('$folderPath/$imgName');
 
-        if (await file.exists()) {
-          await file.delete();
-          print("File deleted: $folderPath/$imgName");
-        } else {
-          print("File not found: $folderPath/$imgName");
+        for(int i = 0; i<transImagesList.length; i++) {
+          String imgName = transImagesList[i].imgName;
+
+          if(transImagesList[i].id == recordId) {
+
+            final file = File('$folderPath/$imgName');
+            if (await file.exists()) {
+              await file.delete();
+              print("File deleted: $folderPath/$imgName");
+            } else {
+              print("File not found: $folderPath/$imgName");
+            }
+
+          }
         }
+
       } else {
         // print('Permission denied');
         ToastMessage.errorMessage(context, "Permissing denied");
@@ -139,7 +153,7 @@ class _ViewOSDCState extends State<ViewOSDC> {
   void deletePhoto(int recordId, String imgName) async {
     await DatabaseHelper.deleteOneRecord(TableName.tblTransOsdc, recordId)
         .then((_) async {
-      await deleteImageFromLocal(imgName).then((_) {
+      await deleteImageFromLocal(recordId).then((_) {
         _loadImages();
         getTransOSDCOne();
       });
@@ -147,8 +161,6 @@ class _ViewOSDCState extends State<ViewOSDC> {
   }
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: const Color(0xFFF4F7FD),
       appBar: generalAppBar(context, storeName, userName, (){
@@ -170,8 +182,14 @@ class _ViewOSDCState extends State<ViewOSDC> {
                   itemCount: transData.length,
                   itemBuilder: (ctx, i) {
                     return ViewOSDcard(
+                      onImageClick: () {
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>NearestStoreGalleryScreen(imagesList: transData[i].imageFile))).then((value) {
+                          print("OSDC Screen Loading");
+                          getTransOSDCOne();
+                        });
+                      },
                       uploadStatus: transData[i].upload_status,
-                      imageName:transData[i].imageFile as File,
+                      imageName:transData[i].imageFile,
                       brandName: transData[i].brand_en_name,
                       icon1: "assets/icons/Component 13.svg",
                       OSDCReason: transData[i].reason_en_name,

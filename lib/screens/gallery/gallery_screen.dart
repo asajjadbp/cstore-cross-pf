@@ -1,9 +1,13 @@
 
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../utils/app_constants.dart';
 import '../utils/appcolor.dart';
+import '../widget/app_bar_widgets.dart';
 
 class NearestStoreGalleryScreen extends StatefulWidget {
+
   const NearestStoreGalleryScreen({super.key,required this.imagesList});
 
  final List<File> imagesList ;
@@ -15,6 +19,8 @@ class NearestStoreGalleryScreen extends StatefulWidget {
 
 class _NearestStoreGalleryScreenState extends State<NearestStoreGalleryScreen> {
   int selectedIndex = 0;
+  String storeName = '';
+  String userName = '';
 
   updateSelectedIndex(int index) {
     setState(() {
@@ -22,13 +28,36 @@ class _NearestStoreGalleryScreenState extends State<NearestStoreGalleryScreen> {
     });
   }
 
+  @override
+  void initState() {
+    // TODO: implement initState
+
+    getUserData();
+
+    super.initState();
+  }
+
+  getUserData() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
+    storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    userName = sharedPreferences.getString(AppConstants.userName)!;
+
+    setState(() {
+
+    });
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(onPressed: (){Navigator.of(context).pop();}, icon: const Icon(Icons.arrow_back,color: MyColors.whiteColor,)),
-      ),
+      appBar: generalAppBar(context, storeName, userName, (){
+        Navigator.of(context).pop();
+      },  true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
+
+      }),
       body: widget.imagesList.isEmpty ? const Center(child: Text("No Data to Show"),) : Column(
         children: [
           Container(
@@ -84,6 +113,7 @@ class _NearestStoreGalleryScreenState extends State<NearestStoreGalleryScreen> {
                             borderRadius: const BorderRadius.all(Radius.circular(10)),
                             child:  Image.file(
                               widget.imagesList[index],
+                              fit: BoxFit.cover,
                             ),
                           ),
                         ),

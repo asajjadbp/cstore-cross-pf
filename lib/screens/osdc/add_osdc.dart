@@ -150,29 +150,31 @@ class _AddOSDCState extends State<AddOSDC> {
       isBtnLoading = true;
     });
     try {
-     for(int i = 0; i<imagesList.length; i++) {
+      var now = DateTime.now();
       String osdcId = "";
+
+      await DatabaseHelper.insertTransOSDC(TransOSDCModel(
+        brand_id: selectedBrandId,
+        type_id: selectedTypeId,
+        client_id: clientId,
+        upload_status: 0,
+        reason_id: selectedReasonId,
+        quantity: int.parse(valueControllerQty.text),
+        working_id: int.parse(workingId),
+        date_time: now.toString(),
+        gcs_status: 0,
+      )).then((value) {
+        print("______________ osdc data Saving _________________");
+        print(value);
+        osdcId = value.toString();
+        print("_________________________________________________");
+      });
+     for(int i = 0; i<imagesList.length; i++) {
        await takePicture(
            context, imagesList[i], imagesNameList[i], workingId, AppConstants.osdc)
            .then((_) async {
              print("IMAGE SAVE TO LOCAL FOLLDER");
-         var now = DateTime.now();
-         await DatabaseHelper.insertTransOSDC(TransOSDCModel(
-           brand_id: selectedBrandId,
-           type_id: selectedTypeId,
-           client_id: clientId,
-           upload_status: 0,
-           reason_id: selectedReasonId,
-           quantity: int.parse(valueControllerQty.text),
-           working_id: int.parse(workingId),
-           date_time: now.toString(),
-           gcs_status: 0,
-         )).then((value) {
-           print("______________ osdc data Saving _________________");
-           print(value);
-           osdcId = value.toString();
-           print("_________________________________________________");
-         });
+
 
          ///image name storing
          await DatabaseHelper.insertTransOSDCImage(TransOSDCImagesModel(

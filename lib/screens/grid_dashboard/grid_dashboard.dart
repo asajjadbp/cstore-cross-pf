@@ -10,27 +10,15 @@ import 'package:cstore/screens/planogram/planogram_screen.dart';
 import 'package:cstore/screens/proof_of_sale/proof_of_sale.dart';
 import 'package:cstore/screens/sidco_availability/sidco_availablity_screen.dart';
 import 'package:cstore/screens/utils/app_constants.dart';
-import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:cstore/screens/visit_upload/visitUploadScreen.dart';
 import 'package:cstore/screens/widget/app_bar_widgets.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_internet_speed_test/flutter_internet_speed_test.dart';
-import '../../Model/database_model/availability_show_model.dart';
 import '../../Model/database_model/dashboard_model.dart';
 import '../../Model/database_model/picklist_model.dart';
-import '../../Model/database_model/planoguide_gcs_images_list_model.dart';
-import '../../Model/database_model/total_count_response_model.dart';
-import '../../Model/database_model/trans_brand_shares_model.dart';
-import '../../Model/database_model/trans_planoguide_model.dart';
-import '../../Model/request_model.dart/availability_api_request_model.dart';
-import '../../Model/request_model.dart/brand_share_request.dart';
 import '../../Model/request_model.dart/jp_request_model.dart';
-import '../../Model/request_model.dart/planoguide_request_model.dart';
-import '../../Model/request_model.dart/ready_pick_list_request.dart';
 import '../before_fixing/before_fixing.dart';
 import '../brand_share/AddBrandShares.dart';
 import '../knowledge_share/knowledge_share_screen.dart';
@@ -41,6 +29,7 @@ import '../pick_list/pick_list.dart';
 import '../plano_guide/Planoguides.dart';
 import '../price_check/Pricecheck.dart';
 import '../promoplane/PromoPlan.dart';
+import '../rtv_1+1/add_new_rtv_1+1.dart';
 import '../rtv_1+1/rtv_one_plus_one_list.dart';
 import '../rtv_screen/rtv_list_screen.dart';
 import '../share_of_shelf/add_share_of_shelf.dart';
@@ -504,7 +493,7 @@ class _GridDashBoardState extends State<GridDashBoard> {
                                        } else if(agencyData[i].id == 8) {
                                          Navigator.of(context).pushNamed(Freshness_Screen.routeName);
                                        } else if(agencyData[i].id == 14) {
-                                         Navigator.of(context).pushNamed(RtvOnePlusOneListScreen.routeName);
+                                         Navigator.of(context).pushNamed(AddRtvOnePlusOne.routeName);
                                        } else if(agencyData[i].id == 19) {
                                          Navigator.of(context).pushNamed(ProofOfSale.routeName);
                                        } else if(agencyData[i].id == 18) {

@@ -8,7 +8,7 @@ class GetTransOSDCModel {
   late String img_name = "";
   late int gcs_status = 1;
   late int upload_status = 0;
-  File? imageFile;
+  List<File> imageFile;
   late String brand_en_name = "";
   late String brand_ar_name = "";
   late String type_en_name = "";

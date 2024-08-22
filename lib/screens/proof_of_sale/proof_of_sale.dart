@@ -40,8 +40,8 @@ class _ProofOfSaleState extends State<ProofOfSale> {
   TextEditingController valueControllerPhone = TextEditingController();
   TextEditingController valueControllerAmount = TextEditingController();
   TextEditingController valueControllerQuantity = TextEditingController();
-  int selectedSkuId = -1;
   String userName = "";
+  int selectedSkuId = -1;
   final GlobalKey<FormFieldState> clientKey = GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> skuKey = GlobalKey<FormFieldState>();
   int selectedClientId = -1;
@@ -55,9 +55,9 @@ class _ProofOfSaleState extends State<ProofOfSale> {
   bool isLoading = false;
   String clientId = "";
   bool isBtnLoading = false;
-  bool isSKusLoading = false;
   var imageName = "";
   File? imageFile;
+  bool isSKusLoading = false;
   final GlobalKey<FormFieldState> categoryKey = GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> typeKey = GlobalKey<FormFieldState>();
   @override
@@ -102,6 +102,23 @@ class _ProofOfSaleState extends State<ProofOfSale> {
     });
     print(skuDataList[0].en_name);
   }
+  void getCategoryData(int clientId) async {
+    categoryKey.currentState!.reset();
+    selectedCategoryId = -1;
+    categoryData = [CategoryModel(en_name: "",ar_name: "",id: -1, client: -1)];
+    setState(() {
+      isCategoryLoading = true;
+    });
+
+    await DatabaseHelper.getCategoryList(selectedClientId).then((value) {
+      setState(() {
+        isCategoryLoading = false;
+      });
+      categoryData = value;
+    });
+    print(categoryData[0].en_name);
+  }
+
   Future<void> getImage() async {
     await ImageTakingService.imageSelect().then((value) {
       if (value == null) {
@@ -162,22 +179,7 @@ class _ProofOfSaleState extends State<ProofOfSale> {
       ToastMessage.errorMessage(context, error.toString());
     }
   }
-  void getCategoryData(int clientId) async {
-    categoryKey.currentState!.reset();
-    selectedCategoryId = -1;
-    categoryData = [CategoryModel(en_name: "",ar_name: "",id: -1, client: -1)];
-    setState(() {
-      isCategoryLoading = true;
-    });
 
-    await DatabaseHelper.getCategoryList(selectedClientId).then((value) {
-      setState(() {
-        isCategoryLoading = false;
-      });
-      categoryData = value;
-    });
-    print(categoryData[0].en_name);
-  }
 
   @override
   Widget build(BuildContext context) {

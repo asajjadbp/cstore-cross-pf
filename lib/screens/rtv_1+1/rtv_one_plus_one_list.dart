@@ -381,8 +381,6 @@ class _RtvOnePlusOneListScreenState extends State<RtvOnePlusOneListScreen> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => AddRtvOnePlusOne(
-                                          sku_id: transData[i].pro_id,
-                                          SkuName: transData[i].pro_en_name,
                                         ),
                                       ),
                                     ).then((value) {

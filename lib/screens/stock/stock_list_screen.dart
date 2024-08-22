@@ -279,8 +279,7 @@ class _StockListScreenState extends State<StockListScreen> {
   }
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: MyColors.background,
       appBar: generalAppBar(context, storeName, UserId, (){
@@ -538,10 +537,12 @@ class _StockListScreenState extends State<StockListScreen> {
                       filterTransData[filteredIndex].cases = 0;
                       filterTransData[filteredIndex].outer = 0;
                       filterTransData[filteredIndex].pieces = 0;
+                      filterTransData[filteredIndex].act_status = 0;
                     }
                     transData[transIndex].cases = 0;
                     transData[transIndex].outer = 0;
                     transData[transIndex].pieces = 0;
+                    transData[transIndex].act_status = 0;
 
                   });
                   ToastMessage.succesMessage(context, "Data deleted Successfully");

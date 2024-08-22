@@ -31,7 +31,7 @@ class SaveOsdListData {
   final int typeId;
   final int reasonId;
   final int quantity;
-  final List<SaveOsdImageNameListData> osdImagesList;
+  List<SaveOsdImageNameListData> osdImagesList = [];
 
   SaveOsdListData({
     required this.id,

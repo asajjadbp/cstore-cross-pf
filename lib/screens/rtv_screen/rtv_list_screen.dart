@@ -461,7 +461,7 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
                     shrinkWrap: true,
                     itemCount: transData.length,
                     itemBuilder: (ctx, i) {
-                      print( "${imageBaseUrl}sku_pictures/${transData[i].img_name}");
+
                       return InkWell(
                         onTap: () {
                           Navigator.push(

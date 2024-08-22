@@ -135,6 +135,8 @@ class _ViewOtherPhotoState extends State<ViewOtherPhoto> {
       await deleteImageFromLocal(imgName).then((_) {
         _loadImages();
         getTransPhotoOne();
+
+        Navigator.of(context).pop();
       });
     });
   }
@@ -169,7 +171,7 @@ class _ViewOtherPhotoState extends State<ViewOtherPhoto> {
                   uploadStatus: transData[i].upload_status,
                   dateTime: transData[i].dateTime,
                   onDeleteTap: () {
-                    Navigator.of(context).pop(true);
+                    deletePhoto(transData[i].type_id,transData[i].img_name);
                   });
 
             }),

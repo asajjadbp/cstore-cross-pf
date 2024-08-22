@@ -305,13 +305,14 @@ class _addnewrtvscreenState extends State<addnewrtvscreen> {
                           } else {}
                         },
                         child: Container(
+                            padding: const EdgeInsets.only(top: 5),
                             margin: const EdgeInsets.only(top: 12, left: 10),
                             child: Text(
                               formattedDate != null
                                   ? formattedDate.toString()
                                   : "Select Date",
                               style: const TextStyle(
-                                  color: Colors.black38,
+                                  color: Colors.black,
                                   fontWeight: FontWeight.w500),
                             ))),
                   ),

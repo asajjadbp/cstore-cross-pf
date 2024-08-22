@@ -485,7 +485,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                             isUploaded: onePlusOneCountModel.totalNotUpload == 0,
                             isUploadData: isOnePlusOneFinishLoading,
                             moduleName: "Sku's",
-                            screenName: "One Plus One",
+                            screenName: "1 + 1",
                             uploadedData:onePlusOneCountModel.totalVolume.toInt(),
                             notUploadedData: onePlusOneCountModel.totalValue.toInt(),
                             totalRtv: onePlusOneCountModel.totalRtv,),
@@ -1468,7 +1468,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         for(int j = 0; j < osdGcsImagesList.length; j++) {
 
           final filename =  osdGcsImagesList[j].imageName;
-          final filePath = 'capture_photo/$filename';
+          final filePath = 'osd_images/$filename';
           final fileContent = await osdGcsImagesList[j].imageFile!.readAsBytes();
           final bucketObject = Object(name: filePath);
 
@@ -1481,6 +1481,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
               fileContent.length,
             ),
           );
+          print(resp.mediaLink);
           print("Image Uploaded successfully");
 
           await updateOsdAfterGcs1(osdGcsImagesList[j].id);
@@ -2751,21 +2752,26 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       });
     });
 
-    await DatabaseHelper.getOsdDataImagesListForApi(workingId).then((value) {
-
-      osdDataImagesList = value.cast<SaveOsdImageNameListData>();
-
-      setState(() {
-
-      });
-    });
 
     for(int i = 0; i< osdImageList.length; i++) {
-      for(int j = 0; j < osdDataImagesList.length; j++ ) {
-        if(osdImageList[i].id == osdDataImagesList[j].id) {
-          osdImageList[i].osdImagesList.add(osdDataImagesList[i]);
-        }
-      }
+
+
+      await DatabaseHelper.getOsdDataImagesListForApi(workingId,osdImageList[i].id).then((value) {
+
+        osdDataImagesList = value.cast<SaveOsdImageNameListData>();
+
+        osdImageList[i].osdImagesList = osdDataImagesList;
+
+        setState(() {
+
+        });
+      });
+
+      // for(int j = 0; j < osdDataImagesList.length; j++ ) {
+      //   if(osdImageList[i].id == osdDataImagesList[j].id) {
+      //     osdImageList[i].osdImagesList.add(osdDataImagesList[i]);
+      //   }
+      // }
     }
 
     SaveOsdData saveOsdData = SaveOsdData(
@@ -2777,7 +2783,6 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
     print("************ OSD Upload in Api **********************");
     print(jsonEncode(osdImageList));
-    print(jsonEncode(osdDataImagesList));
 
     setState((){
       isOsdFinishLoading = true;

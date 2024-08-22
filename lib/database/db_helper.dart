@@ -2041,7 +2041,7 @@ class DatabaseHelper {
   static Future<List<TransPlanoGuideModel>> getPlanoGuideDataList(String workingId) async {
     final db = await initDataBase();
     String rawQuery = "SELECT trans_planoguide.id as trans_plano_id,trans_planoguide.client_id,sys_category.en_name as cat_en_name,"
-        "trans_planoguide.category_id,trans_planoguide.activity_status,sys_category.ar_name as cat_ar_name,trans_planoguide.pog as pog,trans_planoguide.imageName,trans_planoguide.isAdherence,trans_planoguide.skuImageName,trans_planoguide.upload_status,trans_planoguide.gcs_status "
+        "trans_planoguide.category_id,trans_planoguide.activity_status,sys_category.ar_name as cat_ar_name,trans_planoguide.pog as pog,trans_planoguide.image_name,trans_planoguide.isAdherence,trans_planoguide.skuImageName,trans_planoguide.upload_status,trans_planoguide.gcs_status "
         " FROM trans_planoguide"
         " join sys_category on sys_category.id=trans_planoguide.category_id"
         " WHERE working_id=$workingId ORDER BY trans_planoguide.category_id,pog ASC";
@@ -2343,7 +2343,7 @@ class DatabaseHelper {
         id: transOsdc[index]['osdc_id'] as int,
         quantity: transOsdc[index]["quantity"] as int,
         img_name: "",
-        imageFile: null,
+        imageFile: [],
         gcs_status: transOsdc[index]['gcs_status'] as int,
         upload_status: transOsdc[index]['upload_status'] as int,
         brand_en_name: transOsdc[index]["brand_en_name"] as String,
@@ -2395,7 +2395,7 @@ class DatabaseHelper {
     final List<Map<String, dynamic>> transImageOsdc =
     await db.rawQuery("SELECT * FROM trans_osdc_images "
         " JOIN trans_osdc ON trans_osdc.id = trans_osdc_images.osd_main_id "
-        " WHERE trans_osdc.working_id=$workingId");
+        " WHERE trans_osdc.working_id=$workingId AND gcs_status=0");
 
     print(jsonEncode(transImageOsdc));
     print("--------------OSDC IMAGE List-----------");
@@ -2412,16 +2412,17 @@ class DatabaseHelper {
   static Future<List<SaveOsdListData>> getOsdDataListForApi(String workingId) async {
     var db = await initDataBase();
     final List<Map<String, dynamic>> transImageOsdc =
-    await db.rawQuery("SELECT * FROM trans_osdc "
+    await db.rawQuery("SELECT trans_osdc.*, sys_brand.client_id as brand_client_id FROM trans_osdc "
+        " JOIN sys_brand on sys_brand.id = trans_osdc.brand_id"
         " WHERE working_id=$workingId AND upload_status=0");
 
     print(jsonEncode(transImageOsdc));
     print("--------------OSDC Data List-----------");
 
-    return List.generate(transImageOsdc.length, (index) {
+    return List.generate(transImageOsdc.length, (index)  {
       return SaveOsdListData(
           id: transImageOsdc[index][TableName.sysId],
-          clientId: transImageOsdc[index][TableName.clientIds].toString(),
+          clientId: transImageOsdc[index]['brand_client_id'].toString(),
           brandId: transImageOsdc[index][TableName.brandId],
           typeId: transImageOsdc[index][TableName.type_id],
           reasonId: transImageOsdc[index][TableName.trans_osdc_reason_id],
@@ -2431,11 +2432,11 @@ class DatabaseHelper {
     });
   }
 
-  static Future<List<SaveOsdImageNameListData>> getOsdDataImagesListForApi(String workingId) async {
+  static Future<List<SaveOsdImageNameListData>> getOsdDataImagesListForApi(String workingId,int osdMainId) async {
     var db = await initDataBase();
     final List<Map<String, dynamic>> transImageOsdc =
     await db.rawQuery("SELECT * FROM trans_osdc_images "
-        " WHERE working_id=$workingId ");
+        " WHERE working_id=$workingId AND osd_main_id = $osdMainId ");
 
     print(jsonEncode(transImageOsdc));
     print("--------------OSDC Images Data List-----------");

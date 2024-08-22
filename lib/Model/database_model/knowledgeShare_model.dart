@@ -44,7 +44,7 @@ class KnowledgeShareModel {
     chain_id = json[TableName.chain_id] ?? 0;
     title = json[TableName.sys_knowledge_title] ?? "";
     description = json[TableName.sys_knowledge_des] ?? "";
-    added_by = json[TableName.sysKnowledgeAddedBy] ?? "";
+    added_by = json[TableName.sysKnowledgeAddedBy].toString() == "null" ? "" : json[TableName.sysKnowledgeAddedBy].toString();
     file_name = json[TableName.sysKnowledgeFileName] ?? 0;
     type = json[TableName.sysKnowledgeType] ?? "";
     active = json[TableName.sysKnowledgeType] ?? 0;
