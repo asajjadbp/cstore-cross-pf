@@ -104,51 +104,51 @@ class _OtherPhotoCardState extends State<OtherPhotoCard> {
                   ],
                 ),
               ),
-              // if(widget.uploadStatus != 1)
-              //   Align(
-              //       alignment: Alignment.topRight,
-              //       child: IconButton(
-              //         onPressed: () {
-              //           showDialog(
-              //             context: context,
-              //             builder: (BuildContext context) {
-              //               return AlertDialog(
-              //                 title: const Text(
-              //                   "Are you sure you want to delete this item Permanently",
-              //                   style: TextStyle(
-              //                     fontWeight: FontWeight.w500,
-              //                     fontSize: 12,
-              //                   ),
-              //                 ),
-              //                 actions: [
-              //                   TextButton(
-              //                     child: const Text("No"),
-              //                     onPressed: () {
-              //                       Navigator.of(context).pop(true);
-              //                     },
-              //                   ),
-              //                   TextButton(
-              //                     child: const Text("Yes"),
-              //                     onPressed: () {
-              //                       widget.onDeleteTap();
-              //                     },
-              //                   )
-              //                 ],
-              //               );
-              //             },
-              //           );
-              //
-              //         },
-              //         icon: const Icon(
-              //           Icons.delete,
-              //           color: Colors.red,
-              //         ),
-              //       )
-              //     // Icon(
-              //     //   Icons.delete,
-              //     //   color: Colors.red,
-              //     // ),
-              //   )
+              if(widget.uploadStatus != 1)
+                Align(
+                    alignment: Alignment.topRight,
+                    child: IconButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text(
+                                "Are you sure you want to delete this item Permanently",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  child: const Text("No"),
+                                  onPressed: () {
+                                    Navigator.of(context).pop(true);
+                                  },
+                                ),
+                                TextButton(
+                                  child: const Text("Yes"),
+                                  onPressed: () {
+                                    widget.onDeleteTap();
+                                  },
+                                )
+                              ],
+                            );
+                          },
+                        );
+
+                      },
+                      icon: const Icon(
+                        Icons.delete,
+                        color: Colors.red,
+                      ),
+                    )
+                  // Icon(
+                  //   Icons.delete,
+                  //   color: Colors.red,
+                  // ),
+                )
             ],
           ),
           Positioned(

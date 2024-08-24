@@ -12,6 +12,7 @@ import 'package:cstore/Model/database_model/trans_sos_model.dart';
 import 'package:cstore/Model/database_model/trans_stock_model.dart';
 import 'package:cstore/Model/request_model.dart/save_one_plus_one_request.dart';
 import 'package:cstore/database/table_name.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../Model/database_model/app_setting_model.dart';
@@ -2215,13 +2216,15 @@ class DatabaseHelper {
     var db = await initDataBase();
     final List<Map<String, dynamic>> transphoto =
     await db.rawQuery(
-        "SELECT  trans_photo.id,trans_photo.client_id,trans_photo.category_id,trans_photo.date_time,trans_photo.type_id,trans_photo.upload_status,sys_client.client_name ,sys_category.en_name as cat_en_name ,sys_category.ar_name as cat_ar_name ,trans_photo.gcs_status,sys_photo_type.en_name as type_en_name,sys_photo_type.ar_name as type_ar_name,"
-            "trans_photo.image_name FROM trans_photo "
-            "JOIN sys_client on sys_client.client_id=trans_photo.client_id "
-            "JOIN sys_category on sys_category.id=trans_photo.category_id "
+        "SELECT  trans_photo.*,sys_client.client_name ,sys_category.en_name as cat_en_name ,sys_category.ar_name as cat_ar_name ,sys_photo_type.en_name as type_en_name,sys_photo_type.ar_name as type_ar_name "
+            " FROM trans_photo "
+            " JOIN sys_client on sys_client.client_id=trans_photo.client_id "
+            " JOIN sys_category on sys_category.id=trans_photo.category_id "
             " JOIN sys_photo_type on sys_photo_type.id=trans_photo.type_id "
-            "WHERE trans_photo.photo_type_id=1 AND trans_photo.working_id=$workingId ORDER BY sys_category.en_name,sys_photo_type.en_name ASC");
+            "WHERE trans_photo.photo_type_id=1 AND working_id=$workingId ORDER BY sys_category.en_name,sys_photo_type.en_name ASC");
 
+    print(jsonEncode(transphoto));
+    print("Trans Photo List");
     return List.generate(transphoto.length, (index) {
       return GetTransPhotoModel(
         trans_photo_type_id: transphoto[index]['id'],
@@ -2731,8 +2734,8 @@ class DatabaseHelper {
         client_name: sos[index][TableName.sys_client_name] as String,
         cat_en_name:sos[index]['cat_en_name'] as String,
         cat_ar_name:sos[index]['cat_ar_name'] as String,
-        brand_en_name:sos[index]['brand_en_name'] as String,
-        brand_ar_name:sos[index]['brand_ar_name'] as String,
+        brand_en_name:sos[index]['brand_en_name'] ?? "---",
+        brand_ar_name:sos[index]['brand_ar_name'] ?? "---",
         total_cat_space:sos[index]['total_space'] as String,
         actual_space:sos[index]['actual_space'] as String,
         unit:sos[index]['unit'].toString(),
@@ -3469,6 +3472,9 @@ class DatabaseHelper {
     await db.rawDelete('DELETE FROM ${tbl_name}');
   }
   static Future<void> deleteOneRecord(String tblName, int id) async {
+    print(tblName);
+    print(id);
+    print("Delete Record");
     var db = await initDataBase();
     await db.delete(tblName, where: 'id = ?', whereArgs: [id]);
   }
@@ -3912,35 +3918,45 @@ class DatabaseHelper {
   /// Drop Whole DB
   static Future<bool> dropDb() async {
 
-    const databaseName = "cstore_pro.db";
-    var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, databaseName);
+    // final PermissionStatus permissionStatus = await _getPermission();
 
-    final dbFile = File(path);
+    // if (permissionStatus == PermissionStatus.granted) {
+      const databaseName = "cstore_pro.db";
+      var databasesPath = await getDatabasesPath();
+      String path = join(databasesPath, databaseName);
 
-    await closeDb();
+      final dbFile = File(path);
 
-    if (await dbFile.exists()) {
-      try {
-        await dbFile.delete();
-        print('Database $path dropped successfully.');
-        return true;
-      } catch (e) {
-        print('Error deleting database file: $e');
+      await closeDb(path);
+
+      if (await dbFile.exists()) {
+        try {
+          await dbFile.delete();
+
+          print('Database $path dropped successfully.');
+          return true;
+        } catch (e) {
+          print('Error deleting database file: $e');
+          return false;
+        }
+      } else {
+        print('Database file does not exist at path: $path');
         return false;
       }
-    } else {
-      print('Database file does not exist at path: $path');
-      return false;
-    }
+    // } else {
+    //   print('Permission Not Allowed');
+    //   return false;
+    // }
   }
 
   /// Close Connection with DB
-  static Future<void> closeDb() async {
-    var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, "cstore_pro.db");
-    Database db = await openDatabase(path);
-    await db.close();
+  static Future<void> closeDb(String dbPath) async {
+
+    Database db = await openDatabase(dbPath);
+    if(db.isOpen) {
+      await db.close();
+      print("Compiler is HERE ${db.isOpen}");
+    }
   }
 
   ///Pricing Database Functions
@@ -5550,5 +5566,9 @@ Future<String> getOtherExcludesString(String workingId) async {
   print(jsonEncode(journeyPlanMap));
   print("-------------------- AVL Excludes ------------------------");
   return journeyPlanMap[0]['other_exculde'] ?? "";
+}
+Future<PermissionStatus> _getPermission() async {
+  final PermissionStatus permission = await Permission.camera.request();
+  return permission;
 }
 

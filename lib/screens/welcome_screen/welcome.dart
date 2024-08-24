@@ -8,6 +8,7 @@ import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:cstore/screens/utils/toast/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Database/table_name.dart';
 import '../auth/login.dart';
@@ -23,7 +24,7 @@ class WelcomeScreen extends StatefulWidget {
   State<WelcomeScreen> createState() => _WelcomeScreenState();
 }
 
-class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProviderStateMixin {
+class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateMixin  {
 
   late AnimationController _controller;
   late Animation<double> _animation;
@@ -43,6 +44,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
 
   bool isError = false;
   String errorText = "";
+  String currentLanguage = "en";
 
   @override
   void didChangeDependencies() async {
@@ -107,26 +109,28 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
   }
 
   Future<void> getSyncronise() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isLoading = true;
     });
+
+    ///DB Dropping
+    if(currentVersion != updatedVersion) {
+      bool isDbDrop = await DatabaseHelper.dropDb();
+      if(isDbDrop) {
+        prefs.setDouble(AppConstants.appCurrentVersion, updatedVersion);
+      }
+      await DatabaseHelper.database;
+
+    }
+
     // try {
     await SyncroniseHTTP()
         .fetchSyncroniseData(userName, token, baseUrl)
         .then((value) async {
-       SharedPreferences prefs = await SharedPreferences.getInstance();
+
           isError = false;
           errorText = "";
-
-       ///DB Dropping
-       if(currentVersion != updatedVersion) {
-         bool isDbDrop = await DatabaseHelper.dropDb();
-         if(isDbDrop) {
-           prefs.setDouble(AppConstants.appCurrentVersion, updatedVersion);
-         }
-         await DatabaseHelper.database;
-
-       }
 
         syncroniseData = value.data;
         ToastMessage.succesMessage(context, "Data synchronization started now");
@@ -251,29 +255,33 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
       }, false, false, true,(int getClient, int getCat, int getSubCat, int getBrand) {
       }),
       body: Container(
-        margin: const EdgeInsets.only(left: 15, right: 15),
+        margin: const EdgeInsets.symmetric(horizontal: 15),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            const SizedBox(height: 35,),
             Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                child: SingleChildScrollView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height*0.15,
-                    child: Image.asset("assets/images/brandlogo.png")),
-                Container(
-                    constraints:  BoxConstraints(maxHeight: MediaQuery.of(context).size.height/3.5),
-                    margin: const EdgeInsets.symmetric(vertical: 10 ),
-                    child:  SingleChildScrollView(child: Text(welcomeMessage,style: const TextStyle(fontSize: 17),))),
-                Container(
-                    margin:const EdgeInsets.symmetric(vertical: 20),
-                    child: SvgPicture.network(agencyPhoto)),
+                  Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height*0.15,
+                      child: Image.asset("assets/images/brandlogo.png")),
+                  Container(
+                      constraints:  BoxConstraints(maxHeight: MediaQuery.of(context).size.height/3.5),
+                      margin: const EdgeInsets.symmetric(vertical: 10 ),
+                      child:  SingleChildScrollView(child: Text(welcomeMessage,style: const TextStyle(fontSize: 17),))),
+                  Container(
+                      margin:const EdgeInsets.symmetric(vertical: 20),
+                      child: SvgPicture.network(agencyPhoto)),
               ],
-            )),
+            ),
+                )),
             SingleChildScrollView(
               child: Container(
                 alignment: Alignment.topCenter,
@@ -307,7 +315,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
                   ],
                 ) : BigElevatedButton(
                     isBlueColor: true,
-                    buttonName:  "Next",
+                    buttonName: "Next".tr,
                     submit: (){
                       Navigator.of(context).popAndPushNamed(DashBoard.routeName);
                     })

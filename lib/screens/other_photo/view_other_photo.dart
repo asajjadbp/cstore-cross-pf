@@ -171,7 +171,7 @@ class _ViewOtherPhotoState extends State<ViewOtherPhoto> {
                   uploadStatus: transData[i].upload_status,
                   dateTime: transData[i].dateTime,
                   onDeleteTap: () {
-                    deletePhoto(transData[i].type_id,transData[i].img_name);
+                    deletePhoto(transData[i].trans_photo_type_id,transData[i].img_name);
                   });
 
             }),

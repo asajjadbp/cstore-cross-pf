@@ -12,8 +12,10 @@ import 'package:cstore/screens/widget/loading.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../Language/localization_controller.dart';
 import '../utils/app_constants.dart';
 import '../utils/appcolor.dart';
 
@@ -29,15 +31,16 @@ class _LoginState extends State<Login> {
   var userName = "";
   var password = "";
   var baseUrl = "";
-
+  String currentLanguage = "en";
   String agencyName = "";
   String agencyPhoto = "";
   double currentVersion = 1.0;
   final _formKey = GlobalKey<FormState>();
   bool isLoading = false;
   String deviceToken = "";
-
   late UserResponseModel loginResponseData;
+
+  final languageController = Get.put(LocalizationController());
 
   @override
   void initState() {
@@ -51,6 +54,7 @@ class _LoginState extends State<Login> {
     baseUrl = prefs.getString(AppConstants.baseUrl)!;
     agencyName = prefs.getString(AppConstants.licenseAgency)!;
     agencyPhoto = prefs.getString(AppConstants.agencyPhoto)!;
+
     if(prefs.containsKey(AppConstants.appCurrentVersion)) {
       currentVersion = prefs.getDouble(AppConstants.appCurrentVersion)!;
     } else {
@@ -145,6 +149,13 @@ class _LoginState extends State<Login> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+          child: Text('lang'.tr),
+          onPressed: () {
+            languageController.changeLanguage();
+                setState(() {
+                });
+      }),
       body: SingleChildScrollView(
         child: SizedBox(
           height: MediaQuery.of(context).size.height,
@@ -171,11 +182,11 @@ class _LoginState extends State<Login> {
                               height: 200,
                               child: Image.asset("assets/images/logo.png")),
                         ),
-                        const Padding(
+                         Padding(
                             padding: EdgeInsets.symmetric(horizontal: 5),
                             child: Align(
-                              alignment: Alignment.topLeft,
-                              child: Text(
+                              alignment:languageController.languageCheck() ? Alignment.topLeft : Alignment.topRight ,
+                              child: const Text(
                                 'LOGIN',
                                 style: TextStyle(
                                   fontSize: 22,
@@ -187,9 +198,9 @@ class _LoginState extends State<Login> {
 
                          Container(
                             margin:const EdgeInsets.symmetric(horizontal: 5,vertical: 6),
-                            child: const Align(
-                              alignment: Alignment.topLeft,
-                              child: Text(
+                            child:  Align(
+                              alignment: languageController.languageCheck() ? Alignment.topLeft : Alignment.topRight ,
+                              child: const Text(
                                 'Please Login to continue',
                                 style: TextStyle(
                                   fontSize: 15,
@@ -215,7 +226,7 @@ class _LoginState extends State<Login> {
                                     height: 60, child: MyLoadingCircle()))
                                 :  BigElevatedButton(
                                 isBlueColor: true,
-                                buttonName:  "Login",
+                                buttonName:  "Sign in".tr,
                                 submit: submitForm)
                           ],
                         ),

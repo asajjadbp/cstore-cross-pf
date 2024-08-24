@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../utils/appcolor.dart';
 
@@ -12,12 +13,12 @@ class PasswordTextField extends StatelessWidget {
     return TextFormField(
       obscureText: true,
       textInputAction: TextInputAction.done,
-      decoration: const InputDecoration(
-          prefixIcon: Icon(Icons.lock),
-          hintText: "password",
+      decoration:  InputDecoration(
+          prefixIcon: const Icon(Icons.lock),
+          hintText: "Password".tr,
           filled: true,
           fillColor:MyColors.dropBorderColor,
-          border: OutlineInputBorder()),
+          border: const OutlineInputBorder()),
       validator: (value) {
         if (value!.isEmpty) {
           return "Please enter your password";

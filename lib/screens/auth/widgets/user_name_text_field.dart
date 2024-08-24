@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../utils/appcolor.dart';
 
@@ -11,13 +12,13 @@ class UserNameTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       textInputAction: TextInputAction.next,
-      decoration: const InputDecoration(
-          prefixIcon: Icon(Icons.person),
+      decoration:  InputDecoration(
+          prefixIcon:const Icon(Icons.person),
           focusColor: MyColors.appMainColor,
-          hintText: "username",
+          hintText: "Username".tr,
           filled: true,
           fillColor:MyColors.dropBorderColor,
-          border: OutlineInputBorder()),
+          border:const OutlineInputBorder()),
       validator: (value) {
         if (value!.isEmpty) {
           return "Please enter your username";
