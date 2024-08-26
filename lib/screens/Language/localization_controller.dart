@@ -1,5 +1,7 @@
+import 'package:cstore/screens/utils/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalizationController extends GetxService {
   var isEnglish = true.obs; // Observable boolean
@@ -15,8 +17,16 @@ class LocalizationController extends GetxService {
     print(isEnglish.value);
     if (isEnglish.value) {
       Get.updateLocale(Locale('en', 'US'));
+      setLanguageSession("en");
     } else {
-      Get.updateLocale(Locale('ar', 'AE')); // Example for Spanish
+      Get.updateLocale(Locale('ar', 'AE'));
+      setLanguageSession("ar");
     }
+  }
+
+  setLanguageSession(String languageCode) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
+    sharedPreferences.setString(AppConstants.languageCode, languageCode);
   }
 }

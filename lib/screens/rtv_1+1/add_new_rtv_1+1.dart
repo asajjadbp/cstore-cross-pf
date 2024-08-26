@@ -105,7 +105,7 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
       isSKusLoading = true;
     });
 
-    await DatabaseHelper.getSkusList(catId).then((value) {
+    await DatabaseHelper.getSkusList(catId,workingId).then((value) {
       setState(() {
         isSKusLoading = false;
       });

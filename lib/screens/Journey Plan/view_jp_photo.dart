@@ -5,6 +5,7 @@ import 'package:cstore/screens/utils/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import '../../Database/db_helper.dart';
@@ -237,7 +238,7 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: generalAppBar(context, journeyPlanDetail.enStoreName, "Start Visit", (){
+      appBar: generalAppBar(context, journeyPlanDetail.enStoreName, "Start Visit".tr, (){
         Navigator.of(context).pop();
       }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
       }),
@@ -266,10 +267,10 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
                   Card(
                     child: TextField(
                         controller: commentText,
-                        decoration: const InputDecoration(
-                            hintText: "Comment",
+                        decoration:  InputDecoration(
+                            hintText: "Comment".tr,
                             filled: true,
-                            fillColor: Color.fromARGB(255, 223, 218, 218),
+                            fillColor:const Color.fromARGB(255, 223, 218, 218),
                             border: InputBorder.none),
                         maxLines: 4),
                   )
@@ -284,7 +285,7 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
                     )
                   : RowButtons(
                 isNextActive: true,
-                  buttonText: "Save",
+                  buttonText: "Save".tr,
                   onSaveTap: () {
                       // submitStartVist(routeArg["workingId"].toString());
                       uploadImageToCloud(

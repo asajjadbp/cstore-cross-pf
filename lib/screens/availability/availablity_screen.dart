@@ -2,12 +2,14 @@ import 'dart:convert';
 
 import 'package:cstore/Database/db_helper.dart';
 import 'package:cstore/Model/request_model.dart/get_tmr_pick_list_request.dart';
+import 'package:cstore/screens/Language/localization_controller.dart';
 import 'package:cstore/screens/availability/widgets/availability_card_item.dart';
 import 'package:cstore/screens/availability/widgets/custom_dialogue.dart';
 import 'package:cstore/screens/availability/widgets/pick_list_card_item.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Model/database_model/availability_show_model.dart';
@@ -39,8 +41,11 @@ class Availability extends StatefulWidget {
 
 class _AvailabilityState extends State<Availability> {
 
+  final languageController = Get.put(LocalizationController());
+
   String workingId = "";
-  String storeName = "";
+  String storeEnName = "";
+  String storeArName = "";
   String userName = "";
   String workingDate = "";
   String storeId = "";
@@ -251,7 +256,8 @@ class _AvailabilityState extends State<Availability> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
-    storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeEnName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeArName = sharedPreferences.getString(AppConstants.storeArNAme)!;
     clientId = sharedPreferences.getString(AppConstants.clientId)!;
 
     getAvailableData();
@@ -353,7 +359,7 @@ class _AvailabilityState extends State<Availability> {
     if(requiredPickList!= "0") {
       await DatabaseHelper.updateSavePickList(
           workingId, requiredPickList, skuId).then((value) {
-        ToastMessage.succesMessage(context, "Data saved Successfully");
+        ToastMessage.succesMessage(context, "Data Saved Successfully".tr);
         Navigator.of(context).pop();
 
         if(isNotAvl){
@@ -384,7 +390,7 @@ class _AvailabilityState extends State<Availability> {
 
           });
     } else {
-      ToastMessage.errorMessage(context, "Please enter a valid number");
+      ToastMessage.errorMessage(context, "Please enter a valid number".tr);
     }
   }
 
@@ -400,7 +406,7 @@ class _AvailabilityState extends State<Availability> {
        notMarkedCount = availableData.where((element) => element.activity_status == 0).toList().length;
 
       if(isMessage) {
-        ToastMessage.succesMessage(context, "Data Saved Successfully");
+        ToastMessage.succesMessage(context, "Data Saved Successfully".tr);
       }
           setState(() {
             isUpdateLoading = false;
@@ -468,9 +474,10 @@ class _AvailabilityState extends State<Availability> {
           builder: (BuildContext context) {
             return CustomDetailsDialogue(
               pogOnTap: (){
+                print("${imageBaseUrl}pog/${avlProductPlacementModel.pog}.pdf");
                 Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PdfScreen( type: "PDF", pdfUrl: "${imageBaseUrl}pog/${avlProductPlacementModel.pog}.pdf")));
               },
-              title: availabilityShowModel.pro_en_name,
+              title:languageController.isEnglish.value ? availabilityShowModel.pro_en_name : availabilityShowModel.pro_ar_name,
               shelfNo: avlProductPlacementModel.shelfNo,
               bayNo: avlProductPlacementModel.buyNo,
               hFacings: avlProductPlacementModel.h_facing,
@@ -489,7 +496,7 @@ class _AvailabilityState extends State<Availability> {
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: MyColors.background,
-      appBar: generalAppBar(context, storeName, userName , (){
+      appBar: generalAppBar(context, languageController.isEnglish.value ? storeEnName : storeArName, userName , (){
         Navigator.of(context).pop();
       }, true, selectedIndex == 0, false,(int getClient, int getCat, int getSubCat, int getBrand) {
         setState(() {
@@ -524,9 +531,9 @@ class _AvailabilityState extends State<Availability> {
         showUnselectedLabels: true,
         items: [
           BottomNavigationBarItem(
-              icon: selectedIndex == 0 ? Image.asset("assets/icons/home_icon_blue.png") : Image.asset("assets/icons/home_icon_grey.png"), label: "Home"),
+              icon: selectedIndex == 0 ? Image.asset("assets/icons/home_icon_blue.png") : Image.asset("assets/icons/home_icon_grey.png"), label: "Home".tr),
           BottomNavigationBarItem(
-              icon: selectedIndex == 1 ? Image.asset("assets/icons/pick_list_icon_blue.png") : Image.asset("assets/icons/pick_list_icon_grey.png"),  label: "Pick List"),
+              icon: selectedIndex == 1 ? Image.asset("assets/icons/pick_list_icon_blue.png") : Image.asset("assets/icons/pick_list_icon_grey.png"),  label: "Pick List".tr),
         ],
       ),
       body: Container(
@@ -582,7 +589,7 @@ class _AvailabilityState extends State<Availability> {
                                           const SizedBox(width: 10,),
                                           isAll ? const Icon(Icons.check_circle_rounded,color: MyColors.appMainColor,) : const Icon(Icons.circle_outlined,color: MyColors.appMainColor,),
                                           const SizedBox(width: 10,),
-                                          const Text("Total",style: TextStyle(color: MyColors.appMainColor,fontSize: 16),),
+                                           Text("Total".tr,style:const TextStyle(color: MyColors.appMainColor,fontSize: 16),),
                                         ],
                                       ),
                                     ],
@@ -632,7 +639,7 @@ class _AvailabilityState extends State<Availability> {
                                           const SizedBox(width: 10,),
                                           isNotMarked ? const Icon(Icons.check_circle_rounded,color: MyColors.appMainColor,) : const Icon(Icons.circle_outlined,color: MyColors.appMainColor,),
                                           const SizedBox(width: 10,),
-                                          const Text("Not Marked",style: TextStyle(color: MyColors.appMainColor,fontSize: 16),),
+                                           Text("Not Marked".tr,style:const TextStyle(color: MyColors.appMainColor,fontSize: 16),),
                                         ],
                                       ),
                                     ],
@@ -687,7 +694,7 @@ class _AvailabilityState extends State<Availability> {
                                           const SizedBox(width: 10,),
                                           isAvl ? const Icon(Icons.check_circle_rounded,color: MyColors.appMainColor,) : const Icon(Icons.circle_outlined,color: MyColors.appMainColor,),
                                           const SizedBox(width: 10,),
-                                          const Text("Available",style: TextStyle(color: MyColors.appMainColor,fontSize: 16),),
+                                           Text("Available".tr,style:const TextStyle(color: MyColors.appMainColor,fontSize: 16),),
                                         ],
                                       ),
                                     ],
@@ -738,7 +745,7 @@ class _AvailabilityState extends State<Availability> {
                                           const SizedBox(width: 10,),
                                           isNotAvl ? const Icon(Icons.check_circle_rounded,color: MyColors.appMainColor,) : const Icon(Icons.circle_outlined,color: MyColors.appMainColor,),
                                           const SizedBox(width: 10,),
-                                          const Text("Not Available",style: TextStyle(color: MyColors.appMainColor,fontSize: 16),),
+                                           Text("Not Available".tr,style:const TextStyle(color: MyColors.appMainColor,fontSize: 16),),
                                         ],
                                       ),
                                     ],
@@ -752,8 +759,8 @@ class _AvailabilityState extends State<Availability> {
                     ],
                   ),
                   Expanded(
-                      child:availableData.isEmpty ? const Center(
-                        child: Text("No Data Found"),
+                      child:availableData.isEmpty ?  Center(
+                        child: Text("No Data Found".tr),
                       ) : isFilter ?  ListView.builder(
                           itemCount: filteredList.length,
                           shrinkWrap: true,
@@ -811,7 +818,7 @@ class _AvailabilityState extends State<Availability> {
                                         }
                                     );
                                   } else {
-                                    ToastMessage.errorMessage(context, "Please mark item status first");
+                                    ToastMessage.errorMessage(context, "Please mark item status first".tr);
                                   }
                                 },
                                 onAvailable: (){
@@ -905,7 +912,7 @@ class _AvailabilityState extends State<Availability> {
                                       }
                                   );
                                 } else {
-                                  ToastMessage.errorMessage(context, "Please mark item status first");
+                                  ToastMessage.errorMessage(context, "Please mark item status first".tr);
                                 }
                                 },
                                 onAvailable: (){
@@ -976,7 +983,7 @@ class _AvailabilityState extends State<Availability> {
                       alignment: Alignment.center,
                       padding:const EdgeInsets.symmetric(vertical: 5),
                       width: MediaQuery.of(context).size.width,
-                      child:const Text("Retry",style: TextStyle(color: MyColors.backbtnColor,fontSize: 20),),
+                      child: Text("Retry".tr,style:const TextStyle(color: MyColors.backbtnColor,fontSize: 20),),
                     ),
                   )
                 ],
@@ -997,7 +1004,7 @@ class _AvailabilityState extends State<Availability> {
                               },
                               child: PercentIndicator(
                                   isSelected: currentSelectedValue == "Requested",
-                                  titleText: "Requested",
+                                  titleText: "Requested".tr,
                                   isIcon: false,
                                   percentColor: MyColors.appMainColor,
                                   iconData: Icons.check_circle,
@@ -1016,7 +1023,7 @@ class _AvailabilityState extends State<Availability> {
                                 },
                                 child: PercentIndicator(
                                     isSelected: currentSelectedValue == "Ready",
-                                    titleText: "Ready",
+                                    titleText: "Ready".tr,
                                     percentColor: MyColors.greenColor,
                                     isIcon: false,
                                     iconData: Icons.done,
@@ -1034,7 +1041,7 @@ class _AvailabilityState extends State<Availability> {
                                 },
                                 child: PercentIndicator(
                                     isSelected: currentSelectedValue == "Pending",
-                                    titleText: "Not Ready",
+                                    titleText: "Not Ready".tr,
                                     percentColor: MyColors.backbtnColor,
                                     isIcon: false,
                                     iconData: Icons.pending,
@@ -1045,8 +1052,8 @@ class _AvailabilityState extends State<Availability> {
                         ],
                       ),
                        Expanded(
-                          child: isUpdateSearchFilter ? updatedFilterAvailableData.isEmpty ? const Center(
-                            child: Text("No Data Found"),
+                          child: isUpdateSearchFilter ? updatedFilterAvailableData.isEmpty ?  Center(
+                            child: Text("No Data Found".tr),
                           ) : ListView.builder(
                               itemCount: updatedFilterAvailableData.length,
                               shrinkWrap: true,
@@ -1108,8 +1115,8 @@ class _AvailabilityState extends State<Availability> {
 
                               }
                           )
-                              : updatedAvailableData.isEmpty ? const Center(
-                            child: Text("No Data Found"),
+                              : updatedAvailableData.isEmpty ?  Center(
+                            child: Text("No Data Found".tr),
                           ) :
                           ListView.builder(
                               itemCount: updatedAvailableData.length,
@@ -1173,6 +1180,7 @@ class _AvailabilityState extends State<Availability> {
                               }
                           )
                       ),
+
                       InkWell(
                         onTap: tmrPickListCountModel.totalPickNotUpload > 0 ?  () {
                           saveRequiredPickList();
@@ -1183,11 +1191,11 @@ class _AvailabilityState extends State<Availability> {
                           decoration:  BoxDecoration(
                               color: tmrPickListCountModel.totalPickNotUpload > 0 ? MyColors.savebtnColor : MyColors.disableColor,
                               borderRadius: const BorderRadius.all(Radius.circular(5))),
-                          child: const Row(
+                          child:  Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              CircleAvatar(
+                             const CircleAvatar(
                                 radius: 12,
                                 backgroundColor: Colors.white,
                                 child: Icon(
@@ -1195,12 +1203,12 @@ class _AvailabilityState extends State<Availability> {
                                   color: Colors.black,
                                 ),
                               ),
-                              SizedBox(
+                            const  SizedBox(
                                 width: 10,
                               ),
                               Text(
-                                "Send To Picker",
-                                style: TextStyle(
+                                "Send To Picker".tr,
+                                style:const TextStyle(
                                     fontSize: 12,
                                     color: MyColors.whiteColor,
                                     fontWeight: FontWeight.w400),
@@ -1288,7 +1296,7 @@ class _AvailabilityState extends State<Availability> {
         setState(() {
           isDataUploading = false;
         }),
-        ToastMessage.succesMessage(context, "Pick List Uploaded Successfully"),
+        ToastMessage.succesMessage(context, "Pick List Uploaded Successfully".tr),
       }).catchError((onError) =>
       {
         print("API ERROR Before"),
@@ -1302,7 +1310,7 @@ class _AvailabilityState extends State<Availability> {
       setState(() {
         isDataUploading  = false;
       });
-      ToastMessage.errorMessage(context, "Already sent to picker");
+      ToastMessage.errorMessage(context, "Already sent to picker".tr);
     }
   }
 

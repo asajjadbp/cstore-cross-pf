@@ -133,6 +133,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
           errorText = "";
 
         syncroniseData = value.data;
+
+        print("Product Placement List");
+        print(syncroniseData[0].sysProductPlacement.length);
+
         ToastMessage.succesMessage(context, "Data synchronization started now");
 
        ///Table Deletion
@@ -221,37 +225,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
     final screenWidth = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: generalAppBar(context, "Welcome, $userName", "", (){
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Logout'),
-              content: const Text('Are you sure you want to logout?'),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
-                  },
-                  child: const Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () async {
-                    // Perform logout operation
-                    Navigator.of(context).pop();
-                    SharedPreferences sharedPreferences =
-                    await SharedPreferences.getInstance();
-                    sharedPreferences.setBool(
-                        AppConstants.userLoggedIn, false);
-                    Navigator.of(context).pushReplacementNamed(Login.routeName);
-                    ToastMessage.succesMessage(context, "Logged Out Successfully");
-                  },
-                  child: const Text('Logout'),
-                ),
-              ],
-            );
-          },
-        );
+      appBar: generalAppBar(context, "${"Welcome".tr}, $userName", "", (){
       }, false, false, true,(int getClient, int getCat, int getSubCat, int getBrand) {
       }),
       body: Container(
@@ -309,7 +283,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
                         decoration: BoxDecoration(
                             border: Border.all(color: MyColors.backbtnColor,width: 2)
                         ),
-                        child: const Text("Retry",style: TextStyle(color: MyColors.backbtnColor,fontSize: 22),),
+                        child:  Text("Retry".tr,style:const TextStyle(color: MyColors.backbtnColor,fontSize: 22),),
                       ),
                     )
                   ],

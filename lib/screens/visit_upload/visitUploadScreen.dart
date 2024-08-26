@@ -2148,6 +2148,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       ToastMessage.succesMessage(context, "RTV Data Uploaded Successfully"),
     }).catchError((e)=>{
       print(e.toString()),
+      ToastMessage.errorMessage(context, e.toString()),
         setState((){
       isRtvFinishLoading = false;
     }),
@@ -2211,6 +2212,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
     }).catchError((e) =>{
       print(e.toString()),
+      ToastMessage.errorMessage(context, e.toString()),
       setState((){
         isPriceCheckFinishLoading = false;
       }),
@@ -2341,6 +2343,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
     }).catchError((e) =>{
       print(e.toString()),
+      ToastMessage.errorMessage(context, e.toString()),
       setState((){
         isFreshnessFinishLoading = false;
       }),
@@ -2402,6 +2405,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
     }).catchError((e)=> {
       print(e.toString()),
+      ToastMessage.errorMessage(context, e.toString()),
       setState((){
         isStockFinishLoading = false;
       }),
@@ -2473,6 +2477,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
     }).catchError((e) =>{
       print(e.toString()),
+      ToastMessage.errorMessage(context, e.toString()),
       setState((){
         isPromoPlanFinishLoading = false;
       }),
@@ -2535,6 +2540,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
     }).catchError((e) =>{
       print(e.toString()),
+      ToastMessage.errorMessage(context, e.toString()),
       setState((){
         isPlanogramFinishLoading = false;
       }),
@@ -2597,6 +2603,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
     }).catchError((e) =>{
       print(e.toString()),
+      ToastMessage.errorMessage(context, e.toString()),
       setState((){
         isPosFinishLoading = false;
       }),
@@ -2659,6 +2666,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
     }).catchError((e) =>{
       print(e.toString()),
+      ToastMessage.errorMessage(context, e.toString()),
       setState((){
         isMarketIssueFinishLoading = false;
       }),
@@ -2721,6 +2729,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
     }).catchError((e) =>{
       print(e.toString()),
+      ToastMessage.errorMessage(context, e.toString()),
       setState((){
         isOnePlusOneFinishLoading = false;
       }),
@@ -2805,6 +2814,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
     }).catchError((e) =>{
       print(e.toString()),
+      ToastMessage.errorMessage(context, e.toString()),
       setState((){
         isOsdFinishLoading = false;
       }),
@@ -2889,6 +2899,10 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
     await DatabaseHelper.deleteTransTableByWorkingId(TableName.tblTransPhoto,workingId);
     await DatabaseHelper.deleteTransTableByWorkingId(TableName.tblTransSos,workingId);
     await DatabaseHelper.deleteTransTableByWorkingId(TableName.tblTransPlanogram,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tblTransMarketIssue,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tblTransPOS,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tblTransOsdc,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.tblTransOnePlusOne,workingId);
 
     await deleteFolder(workingId);
 

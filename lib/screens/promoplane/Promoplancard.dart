@@ -8,16 +8,18 @@ import 'package:cstore/screens/widget/drop_downs.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
 
+import '../../Model/database_model/sys_osdc_reason_model.dart';
 import '../widget/elevated_buttons.dart';
 
 class PromoPlanCard extends StatelessWidget {
   PromoPlanCard({super.key,
-    required this.promoReason,required this.promoStatus,required this.actStatus,required this.modalImage,
+    required this.promoReasonModel,required this.promoStatus,required this.actStatus,required this.modalImage,
    required this.isBtnLoading,required this.skuName,required this.skuImage,required this.categoryName,
   required this.brandName,required this.fromDate,required this.toDate,
     required this.osdType,required this.pieces,required this.promoScope,
     required this.promoPrice,required this.leftOverPieces,required this.imageFile,
-    required this.onSelectImage,required this.statusValue,required this.reasonValue,required this.onSaveClick,
+    required this.promoReasonValue,
+    required this.onSelectImage,required this.statusValue,required this.onSaveClick,
   });
 
   bool isBtnLoading;
@@ -34,13 +36,14 @@ class PromoPlanCard extends StatelessWidget {
   String promoScope;
   String promoPrice;
   String leftOverPieces;
-  String promoReason;
   String promoStatus;
   late final File? imageFile;
   final Function onSelectImage;
   Function (String value) statusValue;
-  Function (String value) reasonValue;
   final Function onSaveClick;
+  List<Sys_OSDCReasonModel> promoReasonModel=[];
+  int selectedReasonId=-1;
+  Function (int value) promoReasonValue;
 
   @override
   Widget build(BuildContext context) {
@@ -125,8 +128,11 @@ class PromoPlanCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text("Reason"),
-
-                    AdherenceDropDown(hintText: "Select Reason",initialValue: promoReason, unitData: const ['Out Of Stock'], onChange: (value){reasonValue(value);}),
+                    OsdcReasonDropDown(hintText: "Select Reason",
+                        osdcReasonData: promoReasonModel, onChange: (value) {
+                          selectedReasonId = value.id;
+                          promoReasonValue(selectedReasonId);
+                        }),
                   ],
                 )),
             Container(

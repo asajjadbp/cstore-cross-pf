@@ -14,11 +14,13 @@ import 'package:cstore/screens/visit_upload/visitUploadScreen.dart';
 import 'package:cstore/screens/widget/app_bar_widgets.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_internet_speed_test/flutter_internet_speed_test.dart';
 import '../../Model/database_model/dashboard_model.dart';
 import '../../Model/database_model/picklist_model.dart';
 import '../../Model/request_model.dart/jp_request_model.dart';
+import '../Language/localization_controller.dart';
 import '../before_fixing/before_fixing.dart';
 import '../brand_share/AddBrandShares.dart';
 import '../knowledge_share/knowledge_share_screen.dart';
@@ -49,7 +51,8 @@ class GridDashBoard extends StatefulWidget {
 class _GridDashBoardState extends State<GridDashBoard> {
   bool isLoading = false;
   bool isinit = true;
-  String storeName = "";
+  String storeEnName = "";
+  String storeArName = "";
   String userName = "";
   String userId = "";
   String storeId = "";
@@ -93,6 +96,8 @@ class _GridDashBoardState extends State<GridDashBoard> {
   List<AgencyDashboardModel> allAgencyData = [];
   List<AgencyDashboardModel> agencyData = [];
 
+  final languageController = Get.put(LocalizationController());
+
   List<String> moduleIdList = [];
 
   List<String> agencyModuleNameList=[];
@@ -116,7 +121,8 @@ class _GridDashBoardState extends State<GridDashBoard> {
       token = sharedPreferences.getString(AppConstants.tokenId)!;
       baseUrl = sharedPreferences.getString(AppConstants.baseUrl)!;
       bucketName = sharedPreferences.getString(AppConstants.bucketName)!;
-      storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+      storeEnName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+      storeArName = sharedPreferences.getString(AppConstants.storeArNAme)!;
       userName = sharedPreferences.getString(AppConstants.userName)!;
       storeId = sharedPreferences.getString(AppConstants.storeId)!;
       workingId = sharedPreferences.getString(AppConstants.workingId)!;
@@ -335,26 +341,26 @@ class _GridDashBoardState extends State<GridDashBoard> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      appBar: generalAppBar(context, storeName, userName, (){
+      appBar: generalAppBar(context, languageController.isEnglish.value ? storeEnName : storeArName, userName, (){
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text("Visit"),
-              content: const Text('Are you sure you want to quit this visit?'),
+              title: Text("Visit".tr),
+              content: Text('Are you sure you want to quit this visit?'.tr),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop(); // Close the dialog
                   },
-                  child: const Text('No'),
+                  child: Text('No'.tr),
                 ),
                 TextButton(
                   onPressed: ()async {
                     Navigator.of(context).pop();
                     Navigator.of(context).pop();
                   },
-                  child: const Text('Yes'),
+                  child: Text('Yes'.tr),
                 ),
               ],
             );
@@ -370,24 +376,22 @@ class _GridDashBoardState extends State<GridDashBoard> {
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: const Text("Visit"),
-                content: const Text('Are you sure you want to quit this visit?'),
+                title: Text("Visit".tr),
+                content: Text('Are you sure you want to quit this visit?'.tr),
                 actions: <Widget>[
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pop(); // Close the dialog
                     },
-                    child: const Text('No'),
+                    child:  Text('No'.tr),
                   ),
                   TextButton(
                     onPressed: ()async {
                       // Perform logout operation
                       Navigator.of(context).pop();
-                      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-                      sharedPreferences.setBool(AppConstants.userLoggedIn, false);
                       Navigator.of(context).pop();
                     },
-                    child: const Text('Yes'),
+                    child: Text('Yes'.tr),
                   ),
                 ],
               );
@@ -520,7 +524,7 @@ class _GridDashBoardState extends State<GridDashBoard> {
                                       },
                                       imageUrl: agencyData[i].id.toString(),
                                       // "assets/images/camera.png",
-                                      cardName: agencyData[i].ar_name),
+                                      cardName: languageController.isEnglish.value ? agencyData[i].en_name : agencyData[i].ar_name),
                                 );
                               }),
                         ),
@@ -528,7 +532,7 @@ class _GridDashBoardState extends State<GridDashBoard> {
                         Container(
                           margin:const EdgeInsets.symmetric(vertical: 5),
                           child: BigElevatedButton(
-                              buttonName: "View Visit Summary",
+                              buttonName: "View Visit Summary".tr,
                               submit: (){
                                 Navigator.of(context).pushNamed(VisitUploadScreen.routeName);
                               },

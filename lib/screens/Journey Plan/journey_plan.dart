@@ -3,6 +3,7 @@ import 'package:cstore/Model/response_model.dart/jp_response_model.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class JourneyPlan extends StatelessWidget {
   final JourneyPlanDetail jp;
@@ -89,7 +90,7 @@ class JourneyPlan extends StatelessWidget {
                                   topRight: Radius.circular(10),
                                     topLeft: Radius.circular(10))),
                             child: Text(
-                              jp.visitType,
+                              jp.visitType.tr,
                               // "Special",
 
                               style: const TextStyle(color: Colors.white,fontSize: 12),
@@ -132,8 +133,8 @@ class JourneyPlan extends StatelessWidget {
                                     onPressed: jp.isDrop == 1 ? null : jp.visitStatus == "2" ? null : () {
                                            onStartClick();
                                           },
-                                    child:jp.visitStatus == "1"? const Text("Resume",style: TextStyle(color: MyColors.whiteColor,fontSize: 11),) : jp.visitStatus == "2" ?
-                                    const Text("Completed",style: TextStyle(color: MyColors.whiteColor,fontSize: 11),) : const Text("Start Visit",style: TextStyle(color: MyColors.whiteColor,fontSize: 11),)),
+                                    child:jp.visitStatus == "1"?  Text("Resume".tr,style:const TextStyle(color: MyColors.whiteColor,fontSize: 11),) : jp.visitStatus == "2" ?
+                                     Text("Completed".tr,style:const TextStyle(color: MyColors.whiteColor,fontSize: 11),) :  Text("Start Visit".tr,style:const TextStyle(color: MyColors.whiteColor,fontSize: 11),)),
                               ),
                               const SizedBox(
                                 width: 5,

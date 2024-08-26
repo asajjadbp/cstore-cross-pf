@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../utils/appcolor.dart';
 
@@ -38,9 +39,9 @@ class _RowButtonsState extends State<RowButtons> {
               decoration: const BoxDecoration(
                   color: MyColors.backbtnColor,
                   borderRadius: BorderRadius.all(Radius.circular(5))),
-              child: const Row(
+              child:  Row(
                 children: [
-                  CircleAvatar(
+                  const CircleAvatar(
                     radius: 12,
                     backgroundColor: Colors.white,
                     child: Icon(
@@ -48,12 +49,12 @@ class _RowButtonsState extends State<RowButtons> {
                       color: Colors.black,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 10,
                   ),
                   Text(
-                    "Back",
-                    style: TextStyle(
+                    "Back".tr,
+                    style:const TextStyle(
                         fontSize: 12,
                         color: MyColors.whiteColor,
                         fontWeight: FontWeight.w400),

@@ -2,6 +2,7 @@
 
 import 'package:cstore/screens/widget/search_bottom_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -51,14 +52,14 @@ generalAppBar(BuildContext context,String userName,String storeName, Function on
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text('Logout'),
-              content: const Text('Are you sure you want to logout?'),
+              title: Text('Logout'.tr),
+              content: Text('Are you sure you want to logout?'.tr),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop(); // Close the dialog
                   },
-                  child: const Text('Cancel'),
+                  child:  Text('Cancel'.tr),
                 ),
                 TextButton(
                   onPressed: () async {
@@ -68,9 +69,9 @@ generalAppBar(BuildContext context,String userName,String storeName, Function on
                     await SharedPreferences.getInstance();
                     sharedPreferences.setBool(AppConstants.userLoggedIn, false);
                     Navigator.of(context).pushReplacementNamed(Login.routeName);
-                    ToastMessage.succesMessage(context, "Logged Out Successfully");
+                    ToastMessage.succesMessage(context, "Logged Out Successfully".tr);
                   },
-                  child: const Text('Logout'),
+                  child: Text('Logout'.tr),
                 ),
               ],
             );

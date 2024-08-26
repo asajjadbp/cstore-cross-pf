@@ -39,6 +39,7 @@ import '../Model/database_model/sys_market_issue_model.dart';
 import '../Model/database_model/sys_photo_type.dart';
 import '../Model/database_model/sys_product_model.dart';
 import '../Model/database_model/sys_product_placement_model.dart';
+import '../Model/database_model/sys_store_model.dart';
 import '../Model/database_model/sys_store_pog_model.dart';
 import '../Model/database_model/total_count_response_model.dart';
 import '../Model/database_model/trans_add_proof_of_sale_model.dart';
@@ -1076,6 +1077,49 @@ class DatabaseHelper {
           " INTEGER" +
           ")");
 
+      await db.execute('CREATE TABLE ' +
+          TableName.tblSysStores +
+          "(" +
+          TableName.sysId +
+          " INTEGER PRIMARY KEY UNIQUE," +
+          TableName.enName +
+          " TEXT, " +
+          TableName.arName +
+          " TEXT, " +
+          TableName.sysStoreGcode +
+          " TEXT, " +
+          TableName.sysStoreRegionId +
+          " INTEGER, " +
+          TableName.sysStoreRegionName +
+          " TEXT, " +
+          TableName.sysStoreCityId +
+          " INTEGER, " +
+          TableName.sysStoreCityName +
+          " TEXT, " +
+          TableName.chain_id +
+          " INTEGER, " +
+          TableName.sysStoreChainName +
+          " TEXT, " +
+          TableName.sysStoreChannelId +
+          " INTEGER, " +
+          TableName.sysStoreChannelId6 +
+          " INTEGER, " +
+          TableName.sysStoreChannelId7 +
+          " INTEGER, " +
+          TableName.type_id +
+          " INTEGER " +
+          ")");
+
+      await db.execute('CREATE TABLE ' +
+          TableName.tblSysPromoPlaneReason+
+          "(" +
+          TableName.sysId +
+          " INTEGER PRIMARY KEY UNIQUE," +
+          TableName.enName +
+          " TEXT, " +
+          TableName.arName +
+          " TEXT" +
+          ")");
 
         });
 
@@ -1113,6 +1157,7 @@ class DatabaseHelper {
       if (isDuplicate) {
         print("Error: Duplicate entry App Setting type");
       } else {
+        print("App Sitting insertion");
         await db.insert(
           TableName.tblSysAppSetting,
           {
@@ -1139,15 +1184,13 @@ class DatabaseHelper {
 
       };
 
-      print("Sys Req Module Item");
-      print(jsonEncode(data));
-
       bool isDuplicate = await hasDuplicateEntry(
           db, TableName.tblSysVisitReqModules, fields);
 
       if (isDuplicate) {
         print("Error: Duplicate entry sys Required Modules reason");
       } else {
+        print("Required MOdules insertion");
         await db.insert(
           TableName.tblSysVisitReqModules,
           {
@@ -1184,7 +1227,7 @@ class DatabaseHelper {
       if (isDuplicate) {
         print("Error: Duplicate entry sys Promo PLan");
       } else {
-
+        print("Promo plan insertion");
         await db.insert(
           TableName.tblSysPromoPlan,
           {
@@ -1203,8 +1246,6 @@ class DatabaseHelper {
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
 
-        print("Sys Promo Plan Item");
-        print(jsonEncode(data));
       }
     }
     return false;
@@ -1243,7 +1284,7 @@ class DatabaseHelper {
       if (isDuplicate) {
         print("Error: Duplicate entry sys Journey PLan");
       } else {
-
+        print("JP Insertion");
         await db.insert(
           TableName.tblSysJourneyPlan,
           {
@@ -1269,9 +1310,6 @@ class DatabaseHelper {
           },
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
-
-        print("Sys Journey Plan Item");
-        print(jsonEncode(data));
       }
     }
     return false;
@@ -1304,7 +1342,7 @@ class DatabaseHelper {
       if (isDuplicate) {
         print("Error: Duplicate entry sys Dashboard");
       } else {
-
+        print("Dashboard Insertion");
         await db.insert(
           TableName.tblSysDashboard,
           {
@@ -1326,8 +1364,6 @@ class DatabaseHelper {
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
 
-        print("Sys Dashboard Item");
-        print(jsonEncode(data));
       }
     }
     return false;
@@ -1347,6 +1383,7 @@ class DatabaseHelper {
       if (isDuplicate) {
         print("Error: Duplicate entry DailyCheckList type");
       } else {
+        print("Daily CHeck list Insertion");
         await db.insert(
           TableName.tblSysDailyChecklist,
           {
@@ -1375,6 +1412,7 @@ class DatabaseHelper {
       if (isDuplicate) {
         print("Error: Duplicate entry sos unit type");
       } else {
+        print("SOS Insertion");
         await db.insert(
           TableName.tblSysSosUnits,
           {
@@ -1392,6 +1430,7 @@ class DatabaseHelper {
     // final db = await getDatabase();
     var db = await initDataBase();
     for (SysClient data in modelList) {
+      print("Client Array insertion");
       await db.insert(
         TableName.tblSysClient,
         {
@@ -1431,6 +1470,7 @@ class DatabaseHelper {
       if (isDuplicate) {
         print("Error: Duplicate entry drop reason");
       } else {
+        print("agency Dashboard insertion");
         await db.insert(
           TableName.tblSysAgencyDashboard,
           {
@@ -1466,6 +1506,9 @@ class DatabaseHelper {
       if (isDuplicate) {
         print("Error: Duplicate entry drop reason");
       } else {
+
+
+        print("Drop Reason insertion");
         await db.insert(
           TableName.tblSysDropReason,
           {
@@ -1496,6 +1539,9 @@ class DatabaseHelper {
       if (isDuplicate) {
         print("Error: Duplicate entry sys brand");
       } else {
+
+        print("Brand Array insertion");
+
         await db.insert(
           TableName.tblSysBrand,
           {
@@ -1527,6 +1573,9 @@ class DatabaseHelper {
       if (isDuplicate) {
         print("Error: Duplicate entry sys plano reason");
       } else {
+
+        print("System Plano reason insertion");
+
         await db.insert(
           TableName.tblSysPlanogramReason,
           {
@@ -1558,6 +1607,9 @@ class DatabaseHelper {
       if (isDuplicate) {
         print("Error: Duplicate entry RTV reason");
       } else {
+
+        print("RTV Reason insertion");
+
         await db.insert(
           TableName.tblSysRtvReason,
           {
@@ -1588,6 +1640,10 @@ class DatabaseHelper {
       if (isDuplicate) {
         print("Error: Duplicate entry photo type");
       } else {
+
+
+        print("Photo Type array insertion");
+
         await db.insert(
           TableName.tblSysPhototype,
           {
@@ -1616,6 +1672,9 @@ class DatabaseHelper {
       if (isDuplicate) {
         print("Error: Duplicate entry osdc type");
       } else {
+
+        print("OSDC TYPE ARRAY insertion");
+
         await db.insert(
           TableName.tblSysOsdcType,
           {
@@ -1644,6 +1703,8 @@ class DatabaseHelper {
       if (isDuplicate) {
         print("Error: Duplicate entry osdc");
       } else {
+        print("OSDC REASON insertion");
+
         await db.insert(
           TableName.tblSysOsdcReason,
           {
@@ -1673,6 +1734,9 @@ class DatabaseHelper {
       if (isDuplicate) {
         print("Error: Duplicate entry sys category");
       } else {
+
+        print("Category insertion");
+
         await db.insert(
           TableName.tblSysCategory,
           {
@@ -1703,6 +1767,7 @@ class DatabaseHelper {
       if (isDuplicate) {
         print("Error: Duplicate entry sys sub category");
       } else {
+        print("Sub Category insertion");
         await db.insert(
           TableName.tblSysSubcategory,
           {
@@ -1740,6 +1805,7 @@ class DatabaseHelper {
       if (isDuplicate) {
         print("Error: Duplicate entry sys product");
       } else {
+        print("Products Array insertion");
         await db.insert(
           TableName.tblSysProduct,
           {
@@ -1819,6 +1885,9 @@ class DatabaseHelper {
       if (isDuplicate) {
         print("Error: Duplicate store pog");
       } else {
+
+        print("Product Placement insertion");
+        print(modelList.length);
         await db.insert(
           TableName.tblSysProductPlacement,
           {
@@ -1842,9 +1911,6 @@ class DatabaseHelper {
   }
   static Future<bool> insertBrandFacesArray(List<SysBrandFacesModel> modelList) async {
     var db = await initDataBase();
-
-    print("Brand Share Length");
-    print(modelList.length);
 
     for (SysBrandFacesModel data in modelList) {
       print("Brand Face Array");
@@ -1879,6 +1945,7 @@ class DatabaseHelper {
   }
   static Future<void> insertClient(ClientModel model) async {
     var db = await initDataBase();
+    print("Client insertion");
     await db.insert(
       TableName.tblSysClient,
       model.toMap(),
@@ -2047,10 +2114,10 @@ class DatabaseHelper {
         " join sys_category on sys_category.id=trans_planoguide.category_id"
         " WHERE working_id=$workingId ORDER BY trans_planoguide.category_id,pog ASC";
 
-    print("PLANOGUIDE QUERY");
-    print(rawQuery);
 
     final List<Map<String, dynamic>> planoguideMap = await db.rawQuery(rawQuery);
+    print("PLANOGUIDE QUERY");
+    print(jsonEncode(planoguideMap));
 
     return List.generate(planoguideMap.length, (index) {
       return TransPlanoGuideModel(
@@ -2065,7 +2132,7 @@ class DatabaseHelper {
         upload_status: planoguideMap[index]['upload_status'] ?? 0,
         activity_status: planoguideMap[index]['activity_status'] ?? 0,
         client_id: planoguideMap[index]['client_id'],
-        imageName: planoguideMap[index]['imageName'] ?? "",
+        imageName: planoguideMap[index]['image_name'] ?? "",
         isAdherence: planoguideMap[index]['isAdherence'] ?? "-1",
 
       );
@@ -2296,7 +2363,7 @@ class DatabaseHelper {
 
   static Future<List<SaveOtherPhotoData>> getOtherPhotoApiUploadDataList(String workingId) async {
     final db = await initDataBase();
-    String rawQuery = "SELECT id,client_id,cat_id As category_id,photo_type_id, image_name "
+    String rawQuery = "SELECT id,client_id,category_id,photo_type_id, image_name "
         " FROM trans_photo WHERE working_id=$workingId AND upload_status=0";
 
     print("Other Photo QUERY");
@@ -3407,20 +3474,6 @@ class DatabaseHelper {
         id: osdcReasonMaps[index][TableName.sysId] as int,
         en_name: osdcReasonMaps[index][TableName.enName] as String,
         ar_name: osdcReasonMaps[index][TableName.arName] as String,
-      );
-    });
-  }
-  static Future<List<Sys_OSDCTypeModel>> getSosUnitList() async {
-    final db = await initDataBase();
-    final List<Map<String, dynamic>> osdcTypeMaps = await db.rawQuery(
-        "SELECT *from sys_sos_unit");
-    print(jsonEncode(osdcTypeMaps));
-    print("________ SOS Unit List ________________");
-    return List.generate(osdcTypeMaps.length, (index) {
-      return Sys_OSDCTypeModel(
-        id: osdcTypeMaps[index][TableName.sysId] as int,
-        en_name: osdcTypeMaps[index][TableName.enName] as String,
-        ar_name: osdcTypeMaps[index][TableName.arName] as String,
       );
     });
   }
@@ -5101,10 +5154,19 @@ class DatabaseHelper {
     return await db.rawUpdate(writeQuery);
   }
 
-  static Future<List<Sys_PhotoTypeModel>> getSkusList(int catId) async {
+  static Future<List<Sys_PhotoTypeModel>> getSkusList(int catId,String workingId) async {
+
+    String searchOtherExclude = "";
+    String otherExclSearchParam = await getOtherExcludesString(workingId);
+    print(otherExclSearchParam);
+
+    if(otherExclSearchParam.isNotEmpty) {
+      searchOtherExclude = "And sys_product.id not in ($otherExclSearchParam)";
+    }
+
     final db = await initDataBase();
     final List<Map<String, dynamic>> photoTypeMaps = await db.rawQuery(
-        "SELECT sys_product.id,sys_product.en_name,sys_product.ar_name from sys_product where sys_product.category_id=$catId");
+        "SELECT sys_product.id,sys_product.en_name,sys_product.ar_name from sys_product where sys_product.category_id=$catId $searchOtherExclude");
     print(jsonEncode(photoTypeMaps));
     print("________Photo type List ________________");
     return List.generate(photoTypeMaps.length, (index) {
@@ -5439,6 +5501,7 @@ class DatabaseHelper {
       if (isDuplicate) {
         print("Error: Duplicate entry market issue");
       } else {
+        print("Market Issue Insertion");
         await db.insert(
           TableName.tblSysMarketIssue,
           {
@@ -5536,6 +5599,166 @@ class DatabaseHelper {
     return await db.rawUpdate(writeQuery);
   }
 
+
+
+  static Future<bool> insertSysStoreArray(List<SysStoreModel> modelList) async {
+    var db = await initDataBase();
+
+    for (SysStoreModel data in modelList) {
+      Map<String, dynamic> fields = {
+        TableName.sysId: data.id,
+        TableName.enName: data.en_name,
+        TableName.arName: data.ar_name,
+        TableName.sysStoreGcode: data.gcode,
+        TableName.sysStoreRegionId: data.region_name,
+        TableName.sysStoreRegionName: data.region_name,
+        TableName.sysStoreCityId: data.city_id,
+        TableName.sysStoreCityName: data.city_name,
+        TableName.chain_id: data.chain_id,
+        TableName.sysStoreChainName: data.chain_name,
+        TableName.sysStoreChannelId: data.channel_id,
+        TableName.sysStoreChannelId6: data.channel_id6,
+        TableName.sysStoreChannelId7: data.channel_id7,
+        TableName.type_id: data.type_id,
+      };
+      bool isDuplicate = await hasDuplicateEntry(
+          db, TableName.tblSysStores, fields);
+
+      if (isDuplicate) {
+        print("Error: Duplicate entry storess");
+      } else {
+        await db.insert(
+          TableName.tblSysStores,
+          {
+            TableName.sysId: data.id,
+            TableName.enName: data.en_name,
+            TableName.arName: data.ar_name,
+            TableName.sysStoreGcode: data.gcode,
+            TableName.sysStoreRegionId: data.region_name,
+            TableName.sysStoreRegionName: data.region_name,
+            TableName.sysStoreCityId: data.city_id,
+            TableName.sysStoreCityName: data.city_name,
+            TableName.chain_id: data.chain_id,
+            TableName.sysStoreChainName: data.chain_name,
+            TableName.sysStoreChannelId: data.channel_id,
+            TableName.sysStoreChannelId6: data.channel_id6,
+            TableName.sysStoreChannelId7: data.channel_id7,
+            TableName.type_id: data.type_id,
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+    }
+    return false;
+  }
+  static Future<bool> insertSosUnitArray(List<Sys_OSDCReasonModel> modelList) async {
+    var db = await initDataBase();
+
+    for (Sys_OSDCReasonModel data in modelList) {
+      Map<String, dynamic> fields = {
+        TableName.sysId: data.id,
+        TableName.enName: data.en_name.toString(),
+        TableName.arName: data.ar_name.toString(),
+      };
+      bool isDuplicate = await hasDuplicateEntry(
+          db, TableName.tblSysSosUnit, fields);
+
+      if (isDuplicate) {
+        print("Error: Duplicate entry osdc");
+      } else {
+        await db.insert(
+          TableName.tblSysSosUnit,
+          {
+            TableName.sysId: data.id,
+            TableName.enName: data.en_name.toString(),
+            TableName.arName: data.ar_name.toString(),
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+    }
+    return false;
+  }
+  static Future<bool> insertPromoPlaneReasonArray(List<Sys_OSDCReasonModel> modelList) async {
+    var db = await initDataBase();
+
+    for (Sys_OSDCReasonModel data in modelList) {
+      Map<String, dynamic> fields = {
+        TableName.sysId: data.id,
+        TableName.enName: data.en_name.toString(),
+        TableName.arName: data.ar_name.toString(),
+      };
+      bool isDuplicate = await hasDuplicateEntry(
+          db, TableName.tblSysPromoPlaneReason, fields);
+
+      if (isDuplicate) {
+        print("Error: Duplicate entry osdc");
+      } else {
+        await db.insert(
+          TableName.tblSysPromoPlaneReason,
+          {
+            TableName.sysId: data.id,
+            TableName.enName: data.en_name.toString(),
+            TableName.arName: data.ar_name.toString(),
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+    }
+    return false;
+  }
+  static Future<List<Sys_OSDCReasonModel>> getPromoPlaneReasonList() async {
+    final db = await initDataBase();
+    final List<Map<String, dynamic>> osdcTypeMaps = await db.rawQuery(
+        "SELECT *from sys_promo_plan_reasons");
+    print(jsonEncode(osdcTypeMaps));
+    print("________ promo reason Unit List ________________");
+    return List.generate(osdcTypeMaps.length, (index) {
+      return Sys_OSDCReasonModel(
+        id: osdcTypeMaps[index][TableName.sysId] as int,
+        en_name: osdcTypeMaps[index][TableName.enName] as String,
+        ar_name: osdcTypeMaps[index][TableName.arName] as String,
+      );
+    });
+  }
+  static Future<List<Sys_OSDCTypeModel>> getSysDailyCheckList() async {
+    final db = await initDataBase();
+    final List<Map<String, dynamic>> osdcTypeMaps = await db.rawQuery(
+        "SELECT *from sys_daily_checklist");
+    print(jsonEncode(osdcTypeMaps));
+    print("________ sys_daily_checklist ________________");
+    return List.generate(osdcTypeMaps.length, (index) {
+      return Sys_OSDCTypeModel(
+        id: osdcTypeMaps[index][TableName.sysId] as int,
+        en_name: osdcTypeMaps[index][TableName.enName] as String,
+        ar_name: osdcTypeMaps[index][TableName.arName] as String,
+      );
+    });
+  }
+
+
+  static Future<List<Sys_OSDCReasonModel>> getSosUnitListData() async {
+    final db = await initDataBase();
+    final List<Map<String, dynamic>> osdcTypeMaps = await db.rawQuery(
+        "SELECT *from sys_sos_unit");
+    print(jsonEncode(osdcTypeMaps));
+    print("________ SOS Unit List ________________");
+    return List.generate(osdcTypeMaps.length, (index) {
+      return Sys_OSDCReasonModel(
+        id: osdcTypeMaps[index][TableName.sysId] as int,
+        en_name: osdcTypeMaps[index][TableName.enName] as String,
+        ar_name: osdcTypeMaps[index][TableName.arName] as String,
+      );
+    });
+  }
+
+
+
+
+
+
+
+
 }
 
 String wrapIfString(dynamic value) {
@@ -5567,8 +5790,5 @@ Future<String> getOtherExcludesString(String workingId) async {
   print("-------------------- AVL Excludes ------------------------");
   return journeyPlanMap[0]['other_exculde'] ?? "";
 }
-Future<PermissionStatus> _getPermission() async {
-  final PermissionStatus permission = await Permission.camera.request();
-  return permission;
-}
+
 

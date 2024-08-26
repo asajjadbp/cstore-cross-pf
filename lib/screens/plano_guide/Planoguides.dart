@@ -361,6 +361,7 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
           itemCount: transData.length,
           shrinkWrap: true,
           itemBuilder: (context, index) {
+            print("${imageBaseUrl}pog/${transData[index].imageName}");
 
                   return PlanoguidesCard(
                     onImageTap: (){

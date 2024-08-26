@@ -83,6 +83,7 @@ class _LicenseKeyState extends State<LicenseKey> {
             child: Stack(children: [
               Positioned(
                 top: screenHeight * 0.1,
+
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height * 0.5,

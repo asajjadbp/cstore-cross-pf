@@ -27,6 +27,10 @@ class TableName {
   static const String tblSysVisitActivityType = 'visit_activty_type_id';
   static const String tblSysKnowledgeShare = 'sys_knowledge_share';
 
+  static const String tblSysSosUnit = 'sys_sos_units';
+  static const String tblSysPromoPlaneReason = 'sys_promo_plan_reasons';
+  static const String tblSysStores = 'sys_stores';
+
   static const String tblPicklist="picklist";
   static const String tblSysJourneyPlan = "sys_journey_plan";
   static const String tblSysDashboard = "sys_dashboard";
@@ -259,4 +263,14 @@ class TableName {
   static const String sysKnowledgeType = "type";
   static const String sysKnowledgeActive = "active";
   static const String sysIssueUpdateAt = "updated_at";
+
+  static const String sysStoreGcode = "gcode";
+  static const String sysStoreRegionId = "region_id";
+  static const String sysStoreRegionName = "region_name";
+  static const String sysStoreCityId= "city_id";
+  static const String sysStoreCityName = "city_name";
+  static const String sysStoreChainName = "chain_name";
+  static const String sysStoreChannelId = "channel_id";
+  static const String sysStoreChannelId6 = "channel_id6";
+  static const String sysStoreChannelId7 = "channel_id7";
 }

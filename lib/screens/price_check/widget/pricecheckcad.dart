@@ -383,8 +383,7 @@ class pricecheckcard extends StatelessWidget {
           bottom: 5,
           right: 5,
           child: Container(
-            height: 20,
-            width: 49,
+            padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 5),
             decoration: const BoxDecoration(
                 color: MyColors.appMainColor,
                 borderRadius: BorderRadius.only(

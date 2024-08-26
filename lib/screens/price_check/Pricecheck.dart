@@ -120,7 +120,7 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
     print("Update Data Getting");
     if (regularPrice == "0" || regularPrice.isEmpty) {
       ToastMessage.errorMessage(context, "Please add proper regular price");
-    } else if(promoPrice.isNotEmpty && (int.parse(promoPrice) >= int.parse(regularPrice))) {
+    } else if(promoPrice.isNotEmpty && (double.parse(promoPrice) >= double.parse(regularPrice))) {
         ToastMessage.errorMessage(context, "Promo price can't be greater than or equal to regular price");
     } else {
     setState(() {

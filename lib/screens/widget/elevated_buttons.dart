@@ -5,7 +5,7 @@ import '../utils/appcolor.dart';
 class BigElevatedButton extends StatelessWidget {
   const BigElevatedButton({super.key,required this.buttonName,required this.submit,required this.isBlueColor});
 
-  final Function submit;
+  final dynamic submit;
   final String buttonName;
   final bool isBlueColor;
 

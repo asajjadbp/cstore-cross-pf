@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 
 import 'counter_widget.dart';
 
@@ -48,34 +49,37 @@ class _CustomDialogState extends State<CustomDialog> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: Text(
-                      widget.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                          color: MyColors.blackColor,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400),
+            Container(
+              margin:const EdgeInsets.symmetric(horizontal: 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: Text(
+                        widget.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                            color: MyColors.blackColor,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400),
+                      ),
                     ),
                   ),
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: SvgPicture.asset(
-                    "assets/icons/close.svg",
-                    height: 30,
-                    width: 30,
-                  ),
-                )
-              ],
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: SvgPicture.asset(
+                      "assets/icons/close.svg",
+                      height: 30,
+                      width: 30,
+                    ),
+                  )
+                ],
+              ),
             ),
             CounterWidget(
               isButtonsActive: widget.isButtonActive,
@@ -104,9 +108,9 @@ class _CustomDialogState extends State<CustomDialog> {
                     color: widget.isButtonActive ? MyColors.appMainColor : MyColors.darkGreyColor ,
                     borderRadius: const BorderRadius.all(Radius.circular(8))),
                 alignment: Alignment.center,
-                child: const Text(
-                  "Save",
-                  style: TextStyle(
+                child:  Text(
+                  "Save".tr,
+                  style:const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
                       color: MyColors.whiteColor),

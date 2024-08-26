@@ -1,4 +1,7 @@
 class AppConstants {
+  ///Language Code
+  static String languageCode = "languageCode";
+
 ///License Details
   static String licenseId = "licenseId";
   static String licenseKey = "licenseKey";
@@ -50,7 +53,5 @@ class AppConstants {
   static String  shelfShare = "shelf_share";
   static String  availability = "availability";
 
-
-  /// Bucket Names
 
 }

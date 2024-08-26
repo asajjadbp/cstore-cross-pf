@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Model/database_model/promo_plan_graph_api_count_model.dart';
+import '../../Model/database_model/sys_osdc_reason_model.dart';
 import '../../Model/database_model/trans_promo_plan_list_model.dart';
 import '../utils/appcolor.dart';
 import '../utils/services/image_picker.dart';
@@ -41,6 +42,8 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
   bool isPendingFilter = false;
   File? imageFile;
   String currentSelectedValue = "";
+  int selectedReasonId=-1;
+  List<Sys_OSDCReasonModel> promoReason=[Sys_OSDCReasonModel(id: -1, en_name: "", ar_name: "")];
 
   List<TransPromoPlanListModel> promoTransData = <TransPromoPlanListModel>[];
   List<TransPromoPlanListModel> filterTransData = <TransPromoPlanListModel>[];
@@ -53,6 +56,7 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
     // TODO: implement initState
 
     getUserData();
+    PromoReasonData();
     super.initState();
   }
 
@@ -70,6 +74,21 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
     });
     getPromoPlanTransData("");
     print(storeName);
+  }
+
+
+  void PromoReasonData() async {
+
+    setState(() {
+      isLoading = true;
+    });
+    await DatabaseHelper.getPromoPlaneReasonList().then((value) {
+      setState(() {
+        isLoading = false;
+      });
+      promoReason = value;
+    });
+    print(promoReason[0].en_name);
   }
 
   getPromoPlanTransData(String promoReason) async {
@@ -155,7 +174,7 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
       promoTransData[index].imageName = "${userName}_${DateTime.now().millisecondsSinceEpoch}$extension";
       if(promoTransData[index].actStatus == 1) {
         promoTransData[index].gcsStatus = 0;
-        savePromoPlanImage(false, index);
+        savePromoPlanImage(false, index,selectedReasonId);
       }
       setState(() {
 
@@ -164,9 +183,9 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
     });
   }
 
-  void savePromoPlanImage(bool isMessageShow,int index) async {
+  void savePromoPlanImage(bool isMessageShow,int index,int reasonValue) async {
 
-    if (promoTransData[index].promoStatus.isEmpty || promoTransData[index].promoReason.isEmpty) {
+    if (promoTransData[index].promoStatus.isEmpty ||reasonValue==-1) {
       if (isMessageShow) {
         ToastMessage.errorMessage(
             context, "Please fill the form");
@@ -193,7 +212,7 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
                 workingId,
                 promoTransData[index].imageName,
                 promoTransData[index].promoStatus,
-                promoTransData[index].promoReason
+                reasonValue.toString()
             ).then((_) {
 
               if (isMessageShow) {
@@ -348,7 +367,6 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
                   modalImage: promoTransData[index].modalImage,
                   isBtnLoading:isBtnLoading,
                   actStatus: promoTransData[index].actStatus,
-                  promoReason: promoTransData[index].promoReason == "1" ? 'Out Of Stock' : promoTransData[index].promoReason ,
                   promoStatus: promoTransData[index].promoStatus,
                   skuName: promoTransData[index].skuEnName,
                   skuImage: "${imageBaseUrl}sku_pictures/${promoTransData[index].skuImageName}",
@@ -367,26 +385,18 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
                     if(promoTransData[index].actStatus == 1 && promoTransData[index].promoStatus != value) {
                       promoTransData[index].promoStatus = value;
                       promoTransData[index].gcsStatus = 0;
-                      savePromoPlanImage(false, index);
+                      savePromoPlanImage(false, index,selectedReasonId);
                     } else {
                       promoTransData[index].promoStatus = value;
                     }
                     print(promoTransData[index].promoStatus);
                     setState(() {});
                   },
-                  reasonValue: (value) {
-
+                  promoReasonValue: (value) {
                     if(promoTransData[index].actStatus == 1 && promoTransData[index].promoReason != value) {
-                      if(value == 'Out Of Stock') {
-                        promoTransData[index].promoReason = "1";
-                      }
                       promoTransData[index].gcsStatus = 0;
-                      savePromoPlanImage(false, index);
-                    } else {
-
-                      if(value == 'Out Of Stock') {
-                        promoTransData[index].promoReason = "1";
-                      }
+                      selectedReasonId=value;
+                      savePromoPlanImage(false, index,selectedReasonId);
                     }
                     print(promoTransData[index].promoReason);
                     setState(() {});
@@ -395,8 +405,9 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
                     getImage(index);
                   },
                   onSaveClick: (){
-                    savePromoPlanImage(true, index);
+                    savePromoPlanImage(true, index,selectedReasonId);
                   },
+                  promoReasonModel:promoReason,
                 );
               }),
             ),

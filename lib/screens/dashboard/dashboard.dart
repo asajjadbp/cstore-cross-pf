@@ -1,5 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:cstore/screens/dashboard/widgets/CheckInDialog.dart';
 import 'package:cstore/screens/dashboard/widgets/dashboard_table_widget.dart';
+import 'package:get/get.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import 'package:cstore/screens/Journey%20Plan/journey_plan_screen.dart';
 import 'package:cstore/screens/utils/app_constants.dart';
@@ -10,10 +13,13 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Database/db_helper.dart';
 import '../../Database/table_name.dart';
+import '../../Model/database_model/sys_osdc_type_model.dart';
 import '../../Model/response_model.dart/user_dashboard_model.dart';
 import '../../Network/jp_http.dart';
+import '../Language/localization_controller.dart';
 import '../auth/login.dart';
 import '../utils/appcolor.dart';
+import '../utils/services/take_image_and_save_to_folder.dart';
 import '../widget/app_bar_widgets.dart';
 import '../widget/loading.dart';
 
@@ -31,9 +37,13 @@ class _DashBoardState extends State<DashBoard> {
   String baseUrl = "";
   var token = "";
   bool isLoading = true;
+  bool isCheckListLoading = true;
+  bool isButtonLoading = true;
   int totalPlanned = 0;
   int totalJP = 0;
   int totalHours = 0;
+  List<Sys_OSDCTypeModel> checkListData = [Sys_OSDCTypeModel(id: -1,
+      en_name: "", ar_name: "")];
   UserDashboardModel userDashboardModel = UserDashboardModel
     (user_id: 0,
       jp_planned: 0,
@@ -55,7 +65,8 @@ class _DashBoardState extends State<DashBoard> {
   bool isinit = true;
   bool isError = false;
   String errorText = "";
-
+  String workingId = "";
+  final languageController = Get.put(LocalizationController());
 
   @override
   void initState() {
@@ -68,7 +79,9 @@ class _DashBoardState extends State<DashBoard> {
     userName = sharedPreferences.getString(AppConstants.userName)!;
     baseUrl = sharedPreferences.getString(AppConstants.baseUrl)!;
     token = sharedPreferences.getString(AppConstants.tokenId)!;
+   // workingId = sharedPreferences.getString(AppConstants.workingId)!;
     getSqlUserDashboard();
+    getCheckListData();
   }
 
   Future<void> getSqlUserDashboard() async {
@@ -174,20 +187,46 @@ class _DashBoardState extends State<DashBoard> {
       initialRefresh: false);
 
   void _onRefresh() async {
-    // await Future.delayed(const Duration(milliseconds: 1000));
-    // DatabaseHelper.delete_table(TableName.tbl_user_dashboard);
     getApiUserDashboard();
     _refreshController.refreshCompleted();
   }
+  void getCheckListData() async {
+    setState(() {
+      isCheckListLoading = true;
+    });
 
-  // void _onLoading() async {
-  //   await Future.delayed(const Duration(milliseconds: 4000));
-  //   await getUserDashboardList();
-  //   if (mounted) {
-  //     setState(() {});
-  //   }
-  //   _refreshController.loadComplete();
-  // }
+    await DatabaseHelper.getSysDailyCheckList().then((value) {
+      setState(() {
+        isCheckListLoading = false;
+      });
+      checkListData = value;
+    });
+    print("checkList data is..");
+    print(checkListData[0].en_name);
+  }
+  void saveCheckListData(File? imageFile,String imageName,String selectedIds) async {
+    if (selectedIds==null ||
+        imageFile == null) {
+      ToastMessage.errorMessage(context, "Please fill the form and take image");
+      return;
+    }
+    setState(() {
+      isButtonLoading = true;
+    });
+    try {
+      await takePicture(context,imageFile,imageName,workingId,AppConstants.beforeFixing).then((_) async {
+        var now = DateTime.now();
+      });
+      setState(() {
+        isButtonLoading = false;
+      });
+    } catch (error) {
+      setState(() {
+        isButtonLoading = false;
+      });
+      ToastMessage.errorMessage(context, error.toString());
+    }
+  }
   @override
   Widget build(BuildContext context) {
     Widget circularProgressCard(double percentValue, String cardName) {
@@ -206,6 +245,8 @@ class _DashBoardState extends State<DashBoard> {
                 const SizedBox(height: 5,),
                 Text(
                   cardName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(fontWeight: FontWeight.w500,
                       fontSize: 14,
                       fontFamily: 'lato'),
@@ -266,38 +307,58 @@ class _DashBoardState extends State<DashBoard> {
       );
     }
 
-    Widget cardActivity2(String label, String imageName) {
+    Widget cardActivity2(String label, String imageName,String btnName) {
       return Expanded(
-        child: Card(
-          color: MyColors.appMainColor,
-          shape: RoundedRectangleBorder(
-              side: const BorderSide(color: MyColors.appMainColor, width: 1.0),
-              borderRadius: BorderRadius.circular(5.0)),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: Row(children: [
-                  SvgPicture.asset(imageName),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Column(
-                    children: [
-                      const Text(
-                        "12:00 PM",
-                        style:
-                        TextStyle(fontSize: 10, color: MyColors.whiteColor),
-                      ),
-                      Text(
-                        label,
-                        style: const TextStyle(color: MyColors.whiteColor),
-                      )
-                    ],
-                  )
-                ]),
-              ),
-            ],
+        child: InkWell(
+          onTap: () async {
+            if(btnName=="checkIn"){
+              await showDialog<bool>(
+            context: context,
+            builder: (BuildContext context) {
+            return CustomCheckListDialog(checkListData: checkListData,userName: userName,
+            onTakeImages: (File? imageFiles, String imageName,String ids){
+            saveCheckListData(imageFiles, imageName, ids);
+            setState(() {
+            });
+            print("selected Ids is $ids");
+            print("imageName is $imageName");
+            print("imageFiles is $imageFiles");
+            });
+            },
+            );
+          }
+          },
+          child: Card(
+            color: MyColors.appMainColor,
+            shape: RoundedRectangleBorder(
+                side: const BorderSide(color: MyColors.appMainColor, width: 1.0),
+                borderRadius: BorderRadius.circular(5.0)),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Row(children: [
+                    SvgPicture.asset(imageName),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Column(
+                      children: [
+                        const Text(
+                          "12:00 PM",
+                          style:
+                          TextStyle(fontSize: 10, color: MyColors.whiteColor),
+                        ),
+                        Text(
+                          label,
+                          style: const TextStyle(color: MyColors.whiteColor),
+                        )
+                      ],
+                    )
+                  ]),
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -332,40 +393,19 @@ class _DashBoardState extends State<DashBoard> {
 
     return Scaffold(
         backgroundColor: MyColors.background,
-        appBar: generalAppBar(context, "Good Morning, $userName", "", (){
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text('Logout'),
-                content: const Text('Are you sure you want to logout?'),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(); // Close the dialog
-                    },
-                    child: const Text('Cancel'),
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      // Perform logout operation
-                      Navigator.of(context).pop();
-                      SharedPreferences sharedPreferences =
-                      await SharedPreferences.getInstance();
-                      sharedPreferences.setBool(
-                          AppConstants.userLoggedIn, false);
-                      Navigator.of(context).pushReplacementNamed(Login.routeName);
-                      ToastMessage.succesMessage(context, "Logged Out Successfully");
-                    },
-                    child: const Text('Logout'),
-                  ),
-                ],
-              );
-            },
-          );
+        appBar: generalAppBar(context, "${"Good Morning".tr}, $userName", "", (){
+
         },  false, false, true,(int getClient, int getCat, int getSubCat, int getBrand) {
 
         }),
+        floatingActionButton: FloatingActionButton(
+            backgroundColor: MyColors.appMainColor,
+            child: Text('lang'.tr),
+            onPressed: () {
+              languageController.changeLanguage();
+              setState(() {
+              });
+            }),
         body: isLoading
             ? const Center(
           child: MyLoadingCircle(),
@@ -380,9 +420,9 @@ class _DashBoardState extends State<DashBoard> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "Today",
-                    style: TextStyle(fontWeight: FontWeight.bold,
+                   Text(
+                    "Today".tr,
+                    style: const TextStyle(fontWeight: FontWeight.bold,
                         fontSize: 14,
                         fontFamily: 'lato'),
                   ),
@@ -402,13 +442,13 @@ class _DashBoardState extends State<DashBoard> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       circularProgressCard(
-                          userDashboardModel.jpc.toDouble(), "JPC"),
+                          userDashboardModel.jpc.toDouble(), "JPC".tr),
                       circularProgressCard(
                           userDashboardModel.pro.toDouble(),
-                          "Productivity"),
+                          "Productivity".tr),
                       circularProgressCard(
                           userDashboardModel.eff.toDouble(),
-                          "Efficiency"),
+                          "Efficiency".tr),
                     ],
                   ),
                   Container(
@@ -417,16 +457,16 @@ class _DashBoardState extends State<DashBoard> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Activity",
-                          style: TextStyle(fontWeight: FontWeight.bold,
+                         Text(
+                          "Activity".tr,
+                          style:const TextStyle(fontWeight: FontWeight.bold,
                               fontSize: 14,
                               fontFamily: 'lato'),
                         ),
                         Row(
                           children: [
-                            cardActivity("Visit Pool", "assets/icons/jp_icon.svg"),
-                            cardActivity("Universe", "assets/icons/universe_icon.svg")
+                            cardActivity("Visit Pool".tr, "assets/icons/jp_icon.svg"),
+                            cardActivity("Universe".tr, "assets/icons/universe_icon.svg")
                           ],
                         ),
                         Visibility(
@@ -434,18 +474,18 @@ class _DashBoardState extends State<DashBoard> {
                           child: Row(
                             children: [
                               cardActivity2(
-                                  "Check in", "assets/icons/check_in_icon.svg"),
+                                  "Check in".tr, "assets/icons/check_in_icon.svg","checkIn"),
                               cardActivity2(
-                                  "check out", "assets/icons/check_out_icon.svg")
+                                  "Check out".tr, "assets/icons/check_out_icon.svg","checkOut")
                             ],
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const Text(
-                    "MTD",
-                    style: TextStyle(fontWeight: FontWeight.bold,
+                  Text(
+                    "MTD".tr,
+                    style: const TextStyle(fontWeight: FontWeight.bold,
                         fontSize: 14,
                         fontFamily: 'lato'),
                   ),
@@ -460,10 +500,10 @@ class _DashBoardState extends State<DashBoard> {
                     child: Column(
                       children: [
                         linerProgressbar(
-                            "Attendance",
+                            "Attendance".tr,
                             userDashboardModel.monthly_attend
                                 .toDouble()),
-                        linerProgressbar("Productivity",
+                        linerProgressbar("Productivity".tr,
                             userDashboardModel.monthly_pro.toDouble()),
                         const SizedBox(height: 5)
                       ],
@@ -487,9 +527,9 @@ class _DashBoardState extends State<DashBoard> {
                             padding: const EdgeInsets.all(5.0),
                             child: Column(
                               children: [
-                                const Text("Efficiency",
+                                 Text("Efficiency".tr,
                                     style:
-                                    TextStyle(fontWeight: FontWeight.w600)),
+                                    const TextStyle(fontWeight: FontWeight.w600)),
                                 SvgPicture.asset(
                                   "assets/icons/efficiency_icon.svg",),
                                 Text("${userDashboardModel.monthly_eff
@@ -516,9 +556,9 @@ class _DashBoardState extends State<DashBoard> {
                             padding: const EdgeInsets.all(5.0),
                             child: Column(
                               children: [
-                                const Text("Deduction",
+                                 Text("Deduction".tr,
                                     style:
-                                    TextStyle(fontWeight: FontWeight.w600)),
+                                    const TextStyle(fontWeight: FontWeight.w600)),
                                 SvgPicture.asset(
                                     "assets/icons/deduction_icon.svg"),
                                 Text("${userDashboardModel.monthly_deduction
@@ -547,9 +587,9 @@ class _DashBoardState extends State<DashBoard> {
                             padding: const EdgeInsets.all(5.0),
                             child: Column(
                               children: [
-                                const Text("Incentives",
+                                 Text("Incentives".tr,
                                     style:
-                                    TextStyle(fontWeight: FontWeight.w600)),
+                                    const  TextStyle(fontWeight: FontWeight.w600)),
                                 SvgPicture.asset(
                                     "assets/icons/incentives_icon.svg"),
                                 Text("${userDashboardModel.monthly_incentives

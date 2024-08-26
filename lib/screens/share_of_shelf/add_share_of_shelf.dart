@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart' as path;
 import '../../Model/database_model/sys_brand_model.dart';
+import '../../Model/database_model/sys_osdc_reason_model.dart';
 import '../../Model/database_model/sys_unit.dart';
 import '../../Model/database_model/trans_sos_model.dart';
 import '../utils/appcolor.dart';
@@ -29,7 +30,7 @@ class ShareOfShelf extends StatefulWidget {
 class _ShareOfShelfState extends State<ShareOfShelf> {
 
   List<ClientModel> clientData = [];
-  List<SysUnitModel> unitData=[];
+  List<Sys_OSDCReasonModel> unitData=[Sys_OSDCReasonModel(id: -1, en_name: "", ar_name: "")];
   List<CategoryModel> categoryData = [CategoryModel( client: -1, id: -1, en_name: '', ar_name: '')];
   List<SYS_BrandModel> brandData = [SYS_BrandModel( client: -1, id: -1, en_name: '', ar_name: '')];
   int selectedClientId = -1;
@@ -48,7 +49,7 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
   final GlobalKey<FormFieldState> brandKey = GlobalKey<FormFieldState>();
 
   List<String> unitList = ['Faces', 'CM', 'Meter']; // Option 2
-  String _selectedUnit= "";
+  int _selectedUnit= -1;
   String clientId = "";
   String workingId = "";
   String storeName = "";
@@ -70,6 +71,7 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
 
     if (isInit) {
       getClientData();
+      getUnitData();
     }
     isInit = false;
 
@@ -124,23 +126,28 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
     print(categoryData[0].en_name);
 
   }
+
   void getUnitData() async {
 
     setState(() {
       isLoading = true;
     });
-    await DatabaseHelper.getVisitClientList(clientId).then((value) {
+    await DatabaseHelper.getSosUnitListData().then((value) {
       setState(() {
         isLoading = false;
       });
-      clientData = value;
+      unitData = value;
     });
-    print(clientData[0].client_name);
+    print(unitData[0].en_name);
   }
+
+
+
+
   void StoreUnitDataDB() async{
     if (selectedClientId == -1 ||
         selectedCategoryId == -1 ||
-        _selectedUnit == ""||
+        _selectedUnit == -1||
         valueControllerActual.text==""||valueControllerCatSpace.text=="" ) {
       ToastMessage.errorMessage(context, "Please fill the form");
       return;
@@ -159,7 +166,7 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
         brand_id: selectedBrandId,
         category_space: valueControllerCatSpace.text,
         actual_space: valueControllerActual.text,
-        unit: _selectedUnit,
+        unit: _selectedUnit.toString(),
         date_time: now.toString(),
         uploadStatus: 0,
         working_id: int.parse(workingId)))
@@ -396,9 +403,11 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
                           const SizedBox(
                             height: 15,
                           ),
-                          UnitDropDown(hintText: "Select Unit", unitData: unitList, onChange: (value){
-                            _selectedUnit = value;
-                          }),
+                          OsdcReasonDropDown(hintText: "Select Unit",
+                              osdcReasonData: unitData, onChange: (value) {
+                                _selectedUnit = value.id;
+                                setState(() {});
+                              }),
                           const SizedBox(
                             height: 20,
                           ),

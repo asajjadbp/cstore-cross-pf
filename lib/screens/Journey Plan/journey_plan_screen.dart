@@ -12,6 +12,7 @@ import 'package:cstore/screens/utils/toast/toast.dart';
 import 'package:cstore/screens/widget/drop_downs.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Database/table_name.dart';
@@ -153,7 +154,7 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: MyColors.background,
-      appBar: generalAppBar(context, userName, "Visit Pool", (){
+      appBar: generalAppBar(context, userName, "Visit Pool".tr, (){
         Navigator.of(context).pop();
       }, true, false, true,(int getClient, int getCat, int getSubCat, int getBrand) {
 

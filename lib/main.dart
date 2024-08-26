@@ -30,6 +30,7 @@ import 'package:cstore/screens/share_of_shelf/view_share_of_shelf.dart';
 import 'package:cstore/screens/sidco_availability/sidco_availablity_screen.dart';
 import 'package:cstore/screens/splash_screen.dart';
 import 'package:cstore/screens/stock/stock_list_screen.dart';
+import 'package:cstore/screens/utils/app_constants.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:cstore/screens/visit_upload/visitUploadScreen.dart';
 import 'package:cstore/screens/welcome_screen/welcome.dart';
@@ -37,6 +38,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/auth/license.dart';
 import 'screens/auth/login.dart';
 import 'screens/before_fixing/before_fixing.dart';
@@ -58,13 +60,36 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   // String _deviceToken = "";
   //
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   super.initState();
-  //
-  //   getToken();
-  // }
+  String languageCode = "en";
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getLanguageFromSession();
+  }
+
+  getLanguageFromSession() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    if(sharedPreferences.containsKey(AppConstants.languageCode)) {
+      languageCode = sharedPreferences.getString(AppConstants.languageCode)!;
+    } else {
+      languageCode = "en";
+    }
+
+    if(languageCode == "en") {
+      Get.updateLocale(Locale('en', 'US'));
+    } else {
+      Get.updateLocale(Locale('ar', 'AE'));
+    }
+
+
+    print("Language Code");
+    print(languageCode);
+
+   setState(() {
+
+   });
+  }
 
   // Future<void> getToken() async {
   //   FirebaseMessaging messaging = FirebaseMessaging.instance;

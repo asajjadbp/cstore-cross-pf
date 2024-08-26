@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
 
 import '../../utils/appcolor.dart';
 
@@ -36,8 +37,8 @@ class _TableWidgetState extends State<TableWidget> {
           const BorderRadius.all(Radius.circular(7)),
           color: MyColors.appMainColor),
       children: [
-        const TableRow(
-            decoration: BoxDecoration(
+         TableRow(
+            decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(5),
                     topRight: Radius.circular(5)),
@@ -45,39 +46,39 @@ class _TableWidgetState extends State<TableWidget> {
                 color: MyColors.appMainColor),
             children: [
               Padding(
-                padding: EdgeInsets.all(9.0),
+                padding: const EdgeInsets.all(9.0),
                 child: Text(
-                  "Visits",
-                  style: TextStyle(color: Colors.white),
+                  "Visits".tr,
+                  style: const TextStyle(color: Colors.white),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Planned",
-                  style: TextStyle(color: Colors.white),
+                  "Planned".tr,
+                  style: const TextStyle(color: Colors.white),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Finished",
-                  style: TextStyle(color: Colors.white),
+                  "Finished".tr,
+                  style: const TextStyle(color: Colors.white),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Hours",
-                  style: TextStyle(color: Colors.white),
+                  "Hours".tr,
+                  style: const TextStyle(color: Colors.white),
                 ),
               )
             ]),
         TableRow(children: [
-          const Padding(
-            padding: EdgeInsets.only(left: 8.0, top: 8.0),
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0, top: 8.0),
             child: Text(
-              'JP',
+              'JP'.tr,
             ),
           ),
           Padding(
@@ -95,9 +96,9 @@ class _TableWidgetState extends State<TableWidget> {
           ),
         ]),
         TableRow(children: [
-          const Padding(
-            padding: EdgeInsets.only(left: 8.0, top: 8.0),
-            child: Text('Special'),
+           Padding(
+            padding: const EdgeInsets.only(left: 8.0, top: 8.0),
+            child: Text('Special'.tr),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -120,11 +121,11 @@ class _TableWidgetState extends State<TableWidget> {
                     bottomRight: Radius.circular(5)),
                 color: MyColors.appMainColor2),
             children: [
-              const Padding(
-                padding: EdgeInsets.only(left: 8.0, top: 8.0),
+               Padding(
+                padding: const EdgeInsets.only(left: 8.0, top: 8.0),
                 child: Text(
-                  'Total',
-                  style: TextStyle(color: Colors.white),
+                  'Total'.tr,
+                  style: const TextStyle(color: Colors.white),
                 ),
               ),
               Padding(

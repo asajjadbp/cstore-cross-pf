@@ -150,6 +150,7 @@ class _LoginState extends State<Login> {
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       floatingActionButton: FloatingActionButton(
+          backgroundColor: MyColors.appMainColor,
           child: Text('lang'.tr),
           onPressed: () {
             languageController.changeLanguage();
@@ -183,12 +184,12 @@ class _LoginState extends State<Login> {
                               child: Image.asset("assets/images/logo.png")),
                         ),
                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 5),
+                            padding: const EdgeInsets.symmetric(horizontal: 5),
                             child: Align(
                               alignment:languageController.languageCheck() ? Alignment.topLeft : Alignment.topRight ,
-                              child: const Text(
-                                'LOGIN',
-                                style: TextStyle(
+                              child: Text(
+                                'LOGIN'.tr,
+                                style: const TextStyle(
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
 
@@ -200,9 +201,9 @@ class _LoginState extends State<Login> {
                             margin:const EdgeInsets.symmetric(horizontal: 5,vertical: 6),
                             child:  Align(
                               alignment: languageController.languageCheck() ? Alignment.topLeft : Alignment.topRight ,
-                              child: const Text(
-                                'Please Login to continue',
-                                style: TextStyle(
+                              child: Text(
+                                'Please Login to continue'.tr,
+                                style:const TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w400,
 
@@ -226,7 +227,7 @@ class _LoginState extends State<Login> {
                                     height: 60, child: MyLoadingCircle()))
                                 :  BigElevatedButton(
                                 isBlueColor: true,
-                                buttonName:  "Sign in".tr,
+                                buttonName:  "Login".tr,
                                 submit: submitForm)
                           ],
                         ),
