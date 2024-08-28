@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../utils/appcolor.dart';
 import '../../widget/loading.dart';
 
@@ -21,7 +22,6 @@ class ExpiryCard extends StatelessWidget {
     required this.nov,
     required this.dec,
     required this.sku_en_name,
-    required this.sku_ar_name,
     required this.imageName,
     required this.onJanTap,
     required this.onFebTap,
@@ -52,7 +52,6 @@ class ExpiryCard extends StatelessWidget {
   final String nov;
   final String dec;
   final String sku_en_name;
-  final String sku_ar_name;
   final String imageName;
   final Function onJanTap;
   final Function onFebTap;
@@ -69,7 +68,6 @@ class ExpiryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("check month is:: $mar");
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return Card(
@@ -143,26 +141,26 @@ class ExpiryCard extends StatelessWidget {
                       children: [
                         Row(
                             children: [
-                              CardWidget(title: "Jan",data: jan,onCardTap: (){onJanTap();},),
-                              CardWidget(title: "Feb",data: feb,onCardTap: (){onFebTap();},),
-                              CardWidget(title: "Mar",data: mar,onCardTap: (){onMarTap();},),
-                              CardWidget(title: "Apr",data: apr,onCardTap: (){onAprTap();},),
+                              CardWidget(title: "Jan".tr,data: jan,onCardTap: (){onJanTap();},),
+                              CardWidget(title: "Feb".tr,data: feb,onCardTap: (){onFebTap();},),
+                              CardWidget(title: "Mar".tr,data: mar,onCardTap: (){onMarTap();},),
+                              CardWidget(title: "Apr".tr,data: apr,onCardTap: (){onAprTap();},),
                             ],
                         ),
                         Row(
                           children: [
-                            CardWidget(title: "May",data: may,onCardTap: (){onMayTap();},),
-                            CardWidget(title: "Jun",data: jun,onCardTap: (){onJunTap();},),
-                            CardWidget(title: "Jul",data: jul,onCardTap: (){onJulTap();},),
-                            CardWidget(title: "Aug",data: aug,onCardTap: (){onAugTap();},),
+                            CardWidget(title: "May".tr,data: may,onCardTap: (){onMayTap();},),
+                            CardWidget(title: "Jun".tr,data: jun,onCardTap: (){onJunTap();},),
+                            CardWidget(title: "Jul".tr,data: jul,onCardTap: (){onJulTap();},),
+                            CardWidget(title: "Aug".tr,data: aug,onCardTap: (){onAugTap();},),
                           ],
                         ),
                         Row(
                           children: [
-                            CardWidget(title: "Sep",data: sep,onCardTap: (){onSepTap();},),
-                            CardWidget(title: "Oct",data: oct,onCardTap: (){onOctTap();},),
-                            CardWidget(title: "Nov",data: nov,onCardTap: (){onNovTap();},),
-                            CardWidget(title: "Dec",data: dec,onCardTap: (){onDecTap();},),
+                            CardWidget(title: "Sep".tr,data: sep,onCardTap: (){onSepTap();},),
+                            CardWidget(title: "Oct".tr,data: oct,onCardTap: (){onOctTap();},),
+                            CardWidget(title: "Nov".tr,data: nov,onCardTap: (){onNovTap();},),
+                            CardWidget(title: "Dec".tr,data: dec,onCardTap: (){onDecTap();},),
                           ],
                         ),
                       ],
@@ -179,7 +177,7 @@ class CardWidget extends StatelessWidget {
   final String title;
   final String data;
   final Function onCardTap;
-  CardWidget({super.key, required this.title, required this.data,required this.onCardTap});
+  const CardWidget({super.key, required this.title, required this.data,required this.onCardTap});
   @override
   Widget build(BuildContext context) {
     return Expanded(

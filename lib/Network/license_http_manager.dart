@@ -17,7 +17,7 @@ print(url);
         LicenseResponseModel.fromJson(response);
     // StoreLicense.storeBaseUrl(licenseResponseData);
 
-    print(licenseResponseData.data[0].baseUrl);
+    // print(licenseResponseData.data[0].baseUrl);
     return licenseResponseData;
   }
 }

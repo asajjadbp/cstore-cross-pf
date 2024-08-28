@@ -5,6 +5,7 @@ import 'package:datepicker_dropdown/datepicker_dropdown.dart';
 import 'package:datepicker_dropdown/order_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import '../../widget/drop_downs.dart';
 import '../../widget/elevated_buttons.dart';
 import '../../widget/loading.dart';
@@ -98,8 +99,8 @@ class FreshnessListCard extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text("Year",
-                                  style: TextStyle(
+                               Text("Year".tr,
+                                  style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w400,
                                     fontFamily: 'lato',
@@ -143,14 +144,14 @@ class FreshnessListCard extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text("Month",
-                                  style: TextStyle(
+                               Text("Month".tr,
+                                  style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w400,
                                     fontFamily: 'lato',
                                   )),
 
-                              UnitDropDown(hintText: "Month", unitData: unitList, onChange: (value){
+                              UnitDropDown(hintText: "Month".tr, unitData: unitList, onChange: (value){
                                 _selectedMonth = value;
                                 print("Month is $_selectedMonth");
                               }),
@@ -168,17 +169,17 @@ class FreshnessListCard extends StatelessWidget {
                         },
                         controller: valueControllerPieces,
                         keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                             prefixIconColor: MyColors.appMainColor,
                             focusColor: MyColors.appMainColor,
                             fillColor: MyColors.dropBorderColor,
-                            labelStyle: TextStyle(
+                            labelStyle: const TextStyle(
                                 color: MyColors.appMainColor, height: 50.0),
-                            focusedBorder: OutlineInputBorder(
+                            focusedBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(
                                     width: 1, color: MyColors.appMainColor)),
-                            border: OutlineInputBorder(),
-                            hintText: 'Enter Pieces'),
+                            border: const OutlineInputBorder(),
+                            hintText: 'Enter Pieces'.tr),
                         inputFormatters: [
                           FilteringTextInputFormatter.allow(
                               RegExp(r'^[0-9][0-9]*'))
@@ -187,10 +188,10 @@ class FreshnessListCard extends StatelessWidget {
                     ),
                     BigElevatedButton(
                         isBlueColor: true,
-                        buttonName: "Save",
+                        buttonName: "Save".tr,
                         submit: (){
                           if(_selectedYear.isEmpty || _selectedMonth.isEmpty) {
-                            ToastMessage.errorMessage(context, "Please Select a valid year and month");
+                            ToastMessage.errorMessage(context, "Please Select a valid year and month".tr);
                           } else {
 
                             freshnessDate(valueControllerPieces.text,
@@ -198,49 +199,6 @@ class FreshnessListCard extends StatelessWidget {
                                 int.parse(_selectedYear));
                           }
                         }),
-                    // InkWell(
-                    //   onTap: () {
-                    //     if(_selectedYear.isEmpty || _selectedMonth.isEmpty) {
-                    //       ToastMessage.errorMessage(context, "Please Select a valid year and month");
-                    //     } else {
-                    //
-                    //       freshnessDate(valueControllerPieces.text,
-                    //           _selectedMonth,
-                    //           int.parse(_selectedYear));
-                    //     }
-                    //   },
-                    //   child: Container(
-                    //       margin: const EdgeInsets.only(
-                    //           left: 15, right: 15, top: 10),
-                    //       height: screenHeight / 15,
-                    //       decoration: BoxDecoration(
-                    //           color: const Color.fromRGBO(
-                    //               26, 91, 140, 1),
-                    //           borderRadius:
-                    //           BorderRadius.circular(5)),
-                    //       child: const Row(
-                    //         mainAxisAlignment:
-                    //         MainAxisAlignment.center,
-                    //         children: [
-                    //           Icon(
-                    //             Icons.check_circle,
-                    //             size: 35,
-                    //             color: Colors.white,
-                    //           ),
-                    //           SizedBox(
-                    //             width: 10,
-                    //           ),
-                    //           Text(
-                    //             "Save",
-                    //             style: TextStyle(
-                    //                 fontSize: 18,
-                    //                 fontWeight:
-                    //                 FontWeight.w400,
-                    //                 color: Colors.white),
-                    //           )
-                    //         ],
-                    //       )),
-                    // ),
                   ],
                 ),
               ),
@@ -354,16 +312,6 @@ class FreshnessListCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                // Container(
-                //   margin: const EdgeInsets.symmetric(horizontal: 5),
-                //   child: InkWell(
-                //
-                //     child: const Icon(
-                //       Icons.add_circle_rounded,
-                //       color: MyColors.greenColor,
-                //     ),
-                //   ),
-                // ),
               ],
             ),
           ),

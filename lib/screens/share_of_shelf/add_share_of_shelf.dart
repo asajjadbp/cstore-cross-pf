@@ -8,12 +8,15 @@ import 'package:cstore/screens/widget/drop_downs.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart' as path;
 import '../../Model/database_model/sys_brand_model.dart';
 import '../../Model/database_model/sys_osdc_reason_model.dart';
 import '../../Model/database_model/sys_unit.dart';
 import '../../Model/database_model/trans_sos_model.dart';
+import '../Language/localization_controller.dart';
 import '../utils/appcolor.dart';
 import '../utils/toast/toast.dart';
 import '../widget/app_bar_widgets.dart';
@@ -48,11 +51,12 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
   final GlobalKey<FormFieldState> categoryKey = GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> brandKey = GlobalKey<FormFieldState>();
 
-  List<String> unitList = ['Faces', 'CM', 'Meter']; // Option 2
   int _selectedUnit= -1;
   String clientId = "";
   String workingId = "";
-  String storeName = "";
+  String storeEnName = '';
+  String storeArName = '';
+  final languageController = Get.put(LocalizationController());
   String userName = "";
 
   @override
@@ -66,7 +70,8 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
 
     clientId = sharedPreferences.getString(AppConstants.clientId)!;
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
-    storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeEnName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeArName = sharedPreferences.getString(AppConstants.storeArNAme)!;
     userName = sharedPreferences.getString(AppConstants.userName)!;
 
     if (isInit) {
@@ -149,11 +154,11 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
         selectedCategoryId == -1 ||
         _selectedUnit == -1||
         valueControllerActual.text==""||valueControllerCatSpace.text=="" ) {
-      ToastMessage.errorMessage(context, "Please fill the form");
+      ToastMessage.errorMessage(context, "Please fill the form".tr);
       return;
     }
     if((double.parse( valueControllerActual.text)) > (double.parse(valueControllerCatSpace.text))) {
-      ToastMessage.errorMessage(context, "Actual Space cannot be greater or equal than category space");
+      ToastMessage.errorMessage(context, "Actual Space cannot be greater or equal than category space".tr);
       return;
     }
     setState(() {
@@ -171,11 +176,7 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
         uploadStatus: 0,
         working_id: int.parse(workingId)))
         .then((_) {
-      ToastMessage.succesMessage(context, "Data store successfully");
-      // selectedCategoryId = -1;
-      // selectedClientId = -1;
-      // selectedBrandId=-1;
-      // _selectedUnit="";
+      ToastMessage.succesMessage(context, "Data Store SuccessFully".tr);
       valueControllerActual.clear();
       valueControllerCatSpace.clear();
       isBrandLoading=false;
@@ -188,7 +189,7 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
 
     return Scaffold(
       backgroundColor: MyColors.background,
-      appBar: generalAppBar(context, storeName, userName, (){
+      appBar: generalAppBar(context, languageController.isEnglish.value ? storeEnName : storeArName, userName, (){
         Navigator.of(context).pop();
       }, true, false, false, (int getClient, int getCat, int getSubCat, int getBrand) {
 
@@ -200,10 +201,10 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
                 child: Column(
                   children: [
                     isLoading
-                        ? Center(
-                      child: Container(
+                        ? const Center(
+                      child: SizedBox(
                         height: 60,
-                        child: const MyLoadingCircle(),
+                        child: MyLoadingCircle(),
                       ),
                     )
                         : Container(
@@ -214,15 +215,15 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
                           const SizedBox(
                             height: 20,
                           ),
-                          const Row(
+                           Row(
                             children: [
                               Text(
-                                "Client ",
-                                style: TextStyle(
+                                "Client".tr,
+                                style: const TextStyle(
                                     color: MyColors.appMainColor,
                                     fontWeight: FontWeight.bold),
                               ),
-                              Text("*", style: TextStyle(
+                              const Text(" * ", style: TextStyle(
                                   color: MyColors.backbtnColor,
                                   fontWeight: FontWeight.bold,fontSize: 14),)
                             ],
@@ -230,10 +231,9 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
                           const SizedBox(
                             height: 5,
                           ),
-                          // dropdownwidget("Company Name"),
                           ClientListDropDown(
                               clientKey: clientKey,
-                              hintText: "Client", clientData: clientData, onChange: (value){
+                              hintText: "Client".tr, clientData: clientData, onChange: (value){
                             selectedClientId = value.client_id;
                             getCategoryData(selectedClientId);
                             getBrandData(selectedClientId);
@@ -243,15 +243,15 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
                           const SizedBox(
                             height: 10,
                           ),
-                          const Row(
+                           Row(
                             children: [
                               Text(
-                                "Category ",
-                                style: TextStyle(
+                                "Category".tr,
+                                style: const TextStyle(
                                     color: MyColors.appMainColor,
                                     fontWeight: FontWeight.bold),
                               ),
-                              Text("*", style: TextStyle(
+                              const Text(" * ", style: TextStyle(
                                   color: MyColors.backbtnColor,
                                   fontWeight: FontWeight.bold,fontSize: 14),)
                             ],
@@ -260,10 +260,10 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
                             height: 5,
                           ),
                           isCategoryLoading
-                              ? Center(
-                            child: Container(
+                              ? const Center(
+                            child: SizedBox(
                               height: 60,
-                              child: const MyLoadingCircle(),
+                              child: MyLoadingCircle(),
                             ),
                           )
                               : CategoryDropDown(categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
@@ -276,16 +276,16 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
                           const SizedBox(
                             height: 20,
                           ),
-                          const Text(
-                            "Brand",
-                            style: TextStyle(
+                           Text(
+                            "Brand".tr,
+                            style: const TextStyle(
                                 color: MyColors.appMainColor,
                                 fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(
                             height: 5,
                           ),
-                          SysBrandDropDown(brandKey:brandKey,hintText: "Brand", brandData: brandData, onChange: (value){
+                          SysBrandDropDown(brandKey:brandKey,hintText: "Brand".tr, brandData: brandData, onChange: (value){
                             selectedBrandId = value.id;
                           }),
                           const SizedBox(
@@ -295,15 +295,15 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
                             children: [
                               Expanded(child: Column(
                                 children: [
-                                  const Row(
+                                   Row(
                                     children: [
                                       Text(
-                                        "Category Space ",
-                                        style: TextStyle(
+                                        "Category Space".tr,
+                                        style: const TextStyle(
                                             color: MyColors.appMainColor,
                                             fontWeight: FontWeight.bold),
                                       ),
-                                      Text("*", style: TextStyle(
+                                      const Text(" * ", style: TextStyle(
                                           color: MyColors.backbtnColor,
                                           fontWeight: FontWeight.bold,fontSize: 14),)
                                     ],
@@ -311,8 +311,8 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
                                   const SizedBox(
                                     height: 5,
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 0),
+                                  SizedBox(
+                                    height: 55,
                                     child: TextField(
                                       showCursor: true,
                                       enableInteractiveSelection:false,
@@ -321,16 +321,16 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
                                       },
                                       controller: valueControllerCatSpace,
                                       keyboardType: TextInputType.number,
-                                      decoration: const InputDecoration(
+                                      decoration:  InputDecoration(
                                           prefixIconColor: MyColors.appMainColor,
                                           focusColor: MyColors.appMainColor,
                                           fillColor:MyColors.dropBorderColor,
-                                          labelStyle: TextStyle(color: MyColors.appMainColor),
-                                          focusedBorder: OutlineInputBorder(
+                                          labelStyle: const TextStyle(color: MyColors.appMainColor),
+                                          focusedBorder: const OutlineInputBorder(
                                               borderSide: BorderSide(
                                                   width: 1, color: MyColors.appMainColor)),
-                                          border: OutlineInputBorder(),
-                                          hintText: 'Enter Total'),
+                                          border: const OutlineInputBorder(),
+                                          hintText: 'Enter Total'.tr),
                                       inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^[0-9.]*'))],
                                     ),
                                   ),
@@ -339,15 +339,15 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
                               const SizedBox(width: 5,),
                               Expanded(child: Column(
                                 children: [
-                                  const Row(
+                                   Row(
                                     children: [
                                       Text(
-                                        "Actual Space ",
-                                        style: TextStyle(
+                                        "Actual Space".tr,
+                                        style: const TextStyle(
                                             color: MyColors.appMainColor,
                                             fontWeight: FontWeight.bold),
                                       ),
-                                      Text("*", style: TextStyle(
+                                      const Text("*", style: TextStyle(
                                           color: MyColors.backbtnColor,
                                           fontWeight: FontWeight.bold,fontSize: 14),)
                                     ],
@@ -355,8 +355,8 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
                                   const SizedBox(
                                     height: 5,
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 0),
+                                  SizedBox(
+                                    height: 55,
                                     child: TextField(
                                       showCursor: true,
                                       enableInteractiveSelection:false,
@@ -365,17 +365,17 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
                                       },
                                       controller: valueControllerActual,
                                       keyboardType: TextInputType.number,
-                                      decoration: const InputDecoration(
+                                      decoration:  InputDecoration(
                                           prefixIconColor: MyColors.appMainColor,
                                           focusColor: MyColors.appMainColor,
                                           fillColor:MyColors.dropBorderColor,
-                                          labelStyle: TextStyle(color: MyColors.appMainColor,
+                                          labelStyle: const TextStyle(color: MyColors.appMainColor,
                                               height: 50.0),
-                                          focusedBorder: OutlineInputBorder(
+                                          focusedBorder: const OutlineInputBorder(
                                               borderSide: BorderSide(
                                                   width: 1, color: MyColors.appMainColor)),
-                                          border: OutlineInputBorder(),
-                                          hintText: 'Enter Actual'),
+                                          border: const OutlineInputBorder(),
+                                          hintText: 'Enter Actual Faces'.tr),
                                       inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^[0-9.]*'))],
                                     ),
                                   ),
@@ -386,16 +386,16 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
                           const SizedBox(
                             height: 15,
                           ),
-                          const Row(
+                           Row(
                             children: [
                               Text(
-                                "Select Unit ",
-                                style: TextStyle(
+                                "Select Unit".tr,
+                                style: const TextStyle(
                                     color: MyColors.appMainColor,
                                     fontWeight: FontWeight.bold),
                               ),
 
-                              Text("*", style: TextStyle(
+                              const Text("*", style: TextStyle(
                                   color: MyColors.backbtnColor,
                                   fontWeight: FontWeight.bold,fontSize: 14),)
                             ],
@@ -403,7 +403,7 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
                           const SizedBox(
                             height: 15,
                           ),
-                          OsdcReasonDropDown(hintText: "Select Unit",
+                          OsdcReasonDropDown(hintText: "Select Unit".tr,
                               osdcReasonData: unitData, onChange: (value) {
                                 _selectedUnit = value.id;
                                 setState(() {});
@@ -412,14 +412,14 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
                             height: 20,
                           ),
                           isBtnLoading
-                              ? Center(
-                            child: Container(
+                              ? const Center(
+                            child: SizedBox(
                               height: 60,
-                              child: const MyLoadingCircle(),
+                              child: MyLoadingCircle(),
                             ),
                           )
                               :  BigElevatedButton(
-                              buttonName: "Save",
+                              buttonName: "Save".tr,
                               submit: (){
                                 StoreUnitDataDB();
                               },
@@ -435,7 +435,7 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
           Container(
             margin:const  EdgeInsets.only(bottom: 10,left: 5,right: 5),
             child: BigElevatedButton(
-                buttonName: "View Share Of Shelf",
+                buttonName: "View Share Of Shelf".tr,
                 submit: (){
                   Navigator.of(context)
                       .pushNamed(ViewShareOfShelf.routename);

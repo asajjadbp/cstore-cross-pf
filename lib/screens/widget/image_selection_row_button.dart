@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:get/get.dart';
 
 class ImageRowButton extends StatelessWidget {
   const ImageRowButton({super.key,required this.imageFile,required this.onSelectImage,required this.isRequired});
@@ -19,7 +20,7 @@ final bool isRequired;
           children: [
              Row(
               children: [
-                const Text("Take Photo "),
+                Text("Take Photo".tr),
                 if(isRequired)
                 const Text("*", style: TextStyle(
                     color: MyColors.backbtnColor,
@@ -44,8 +45,8 @@ final bool isRequired;
         ),
         Column(
           children: [
-            const Text("View Photo"),
-            Container(
+            Text("View Photo".tr),
+            SizedBox(
               width: MediaQuery.of(context).size.width/2.2,
               height: MediaQuery.of(context).size.height/5.4,
               child: Card(
@@ -79,7 +80,7 @@ class ImageListButton extends StatelessWidget {
             },
             child: Column(
               children: [
-                const Text("Take Photo "),
+                Text("Take Photo".tr),
                 Card(
                   color: Colors.white,
                   elevation: 1,
@@ -100,7 +101,7 @@ class ImageListButton extends StatelessWidget {
             },
             child: Column(
               children: [
-                const Text("View Photo "),
+                Text("View Photo".tr),
                 Card(
                   color: Colors.white,
                   elevation: 1,

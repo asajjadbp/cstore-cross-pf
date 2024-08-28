@@ -2142,7 +2142,7 @@ class DatabaseHelper {
   static Future<List<TransPlanoGuideModel>> getPlanoGuideFilteredDataList(String workingId,int activityStatus,String isAdhere) async {
     final db = await initDataBase();
     String rawQuery = "SELECT trans_planoguide.id as trans_plano_id,trans_planoguide.client_id,sys_category.en_name as cat_en_name,"
-        "trans_planoguide.category_id,trans_planoguide.activity_status,sys_category.ar_name as cat_ar_name,trans_planoguide.pog as pog,trans_planoguide.imageName,trans_planoguide.isAdherence,trans_planoguide.skuImageName,trans_planoguide.upload_status,trans_planoguide.gcs_status "
+        "trans_planoguide.category_id,trans_planoguide.activity_status,sys_category.ar_name as cat_ar_name,trans_planoguide.pog as pog,trans_planoguide.image_name,trans_planoguide.isAdherence,trans_planoguide.skuImageName,trans_planoguide.upload_status,trans_planoguide.gcs_status "
         " FROM trans_planoguide"
         " join sys_category on sys_category.id=trans_planoguide.category_id"
         " WHERE working_id=$workingId AND activity_status=$activityStatus AND isAdherence=$isAdhere ORDER BY trans_planoguide.category_id,pog ASC";
@@ -2165,7 +2165,7 @@ class DatabaseHelper {
         upload_status: planoguideMap[index]['upload_status'] ?? 0,
         activity_status: planoguideMap[index]['activity_status'] ?? 0,
         client_id: planoguideMap[index]['client_id'],
-        imageName: planoguideMap[index]['imageName'] ?? "",
+        imageName: planoguideMap[index]['image_name'] ?? "",
         isAdherence: planoguideMap[index]['isAdherence'] ?? "-1",
 
       );
@@ -3574,7 +3574,7 @@ class DatabaseHelper {
                         // "VALUES($pickListId,$storeId,$catId,$tmrId,$tmrName,$stockerId, $stockerName,$shiftTime,$enCatName,$arCatName,$skuPicture,$enSkuName,$arSkuName,$reqPickList,$actPickList,$pickListReady)";
   var db = await initDataBase();
   print("_______________INSERT PICKLIST________________");
-  print(insertQuery);
+  print(queryBulkInsertion);
 
   return await db.rawInsert(insertQuery);
 }
@@ -5751,13 +5751,6 @@ class DatabaseHelper {
       );
     });
   }
-
-
-
-
-
-
-
 
 }
 

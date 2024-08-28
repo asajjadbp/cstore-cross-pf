@@ -9,10 +9,12 @@ import 'package:cstore/screens/utils/app_constants.dart';
 import 'package:cstore/screens/widget/drop_downs.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart' as path;
 
 import '../../Model/database_model/trans_before_faxing.dart';
+import '../Language/localization_controller.dart';
 import '../utils/appcolor.dart';
 import '../utils/services/image_picker.dart';
 import '../utils/services/take_image_and_save_to_folder.dart';
@@ -30,6 +32,9 @@ class BeforeFixing extends StatefulWidget {
 }
 
 class _BeforeFixingState extends State<BeforeFixing> {
+
+  final languageController = Get.put(LocalizationController());
+
   List<ClientModel> clientData = [];
   List<CategoryModel> categoryData = [CategoryModel( client: -1, id: -1, en_name: '', ar_name: '')];
   var imageName = "";
@@ -44,7 +49,8 @@ class _BeforeFixingState extends State<BeforeFixing> {
   final GlobalKey<FormFieldState> clientKey = GlobalKey<FormFieldState>();
   String clientId = "";
   String workingId = "";
-  String storeName = "";
+  String storeEnName = '';
+  String storeArName = '';
   String userName = "";
   @override
   void didChangeDependencies() async {
@@ -56,7 +62,8 @@ class _BeforeFixingState extends State<BeforeFixing> {
 
     clientId = sharedPreferences.getString(AppConstants.clientId)!;
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
-    storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeEnName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeArName = sharedPreferences.getString(AppConstants.storeArNAme)!;
     userName = sharedPreferences.getString(AppConstants.userName)!;
     if (isInit) {
       getClientData();
@@ -117,7 +124,7 @@ class _BeforeFixingState extends State<BeforeFixing> {
     if (selectedClientId == -1 ||
         selectedCategoryId == -1 ||
         imageFile == null) {
-      ToastMessage.errorMessage(context, "Please fill the form and take image");
+      ToastMessage.errorMessage(context, "Please fill the form and take image".tr);
       return;
     }
     // print(selectedCategoryId);
@@ -138,7 +145,7 @@ class _BeforeFixingState extends State<BeforeFixing> {
                 gcs_status: 0,
                 date_time: now.toString()))
             .then((_) {
-          ToastMessage.succesMessage(context, "Data store successfully");
+          ToastMessage.succesMessage(context, "Data Saved Successfully".tr);
 
           imageFile = null;
         });
@@ -159,7 +166,7 @@ class _BeforeFixingState extends State<BeforeFixing> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: generalAppBar(context, storeName, userName, (){
+      appBar: generalAppBar(context, languageController.isEnglish.value ? storeEnName : storeArName, userName, (){
         Navigator.of(context).pop();
       }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
       }),
@@ -183,9 +190,9 @@ class _BeforeFixingState extends State<BeforeFixing> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                "Client",
-                                style: TextStyle(
+                              Text(
+                                "Client".tr,
+                                style:const TextStyle(
                                     color: MyColors.appMainColor,
                                     fontWeight: FontWeight.bold),
                               ),
@@ -194,7 +201,9 @@ class _BeforeFixingState extends State<BeforeFixing> {
                               ),
                               ClientListDropDown(
                                   clientKey: clientKey,
-                                  hintText: "Client", clientData: clientData, onChange: (value){
+                                  hintText: "Client".tr,
+                                  clientData: clientData,
+                                  onChange: (value){
                                 selectedClientId = value.client_id;
                                 getCategoryData(selectedClientId);
                                 setState(() {
@@ -210,9 +219,9 @@ class _BeforeFixingState extends State<BeforeFixing> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              "Category",
-                              style: TextStyle(
+                             Text(
+                              "Category".tr,
+                              style:const TextStyle(
                                   color: MyColors.appMainColor,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -226,7 +235,11 @@ class _BeforeFixingState extends State<BeforeFixing> {
                                 child: MyLoadingCircle(),
                               ),
                             )
-                                : CategoryDropDown(categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
+                                : CategoryDropDown(
+                                categoryKey:categoryKey,
+                                hintText: "Category".tr,
+                                categoryData: categoryData,
+                                onChange: (value){
                               selectedCategoryId = value.id;
                               setState(() {
 
@@ -252,7 +265,7 @@ class _BeforeFixingState extends State<BeforeFixing> {
                         )
                             : BigElevatedButton(
                             isBlueColor: true,
-                            buttonName:  "Save",
+                            buttonName:  "Save".tr,
                             submit: (){
                               saveStorePhotoData();
                             })
@@ -264,7 +277,7 @@ class _BeforeFixingState extends State<BeforeFixing> {
                     margin: const EdgeInsets.only(bottom: 10),
                     child: BigElevatedButton(
                         isBlueColor: false,
-                        buttonName: "View Before Fixing",
+                        buttonName: "View Before Fixing".tr,
                         submit: (){
                           Navigator.of(context)
                               .pushNamed(ViewBeforeFixing.routename);

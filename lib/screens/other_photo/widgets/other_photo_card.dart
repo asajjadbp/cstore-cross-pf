@@ -2,12 +2,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../Language/localization_controller.dart';
 import '../../utils/appcolor.dart';
 
 class OtherPhotoCard extends StatefulWidget {
-  const OtherPhotoCard({super.key,
+   OtherPhotoCard({super.key,
     required this.imageFile,
     required this.clientName,
     required this.categoryName,
@@ -24,7 +26,7 @@ class OtherPhotoCard extends StatefulWidget {
   final int uploadStatus;
   final String dateTime;
   final Function onDeleteTap;
-
+  final languageController = Get.put(LocalizationController());
   @override
   State<OtherPhotoCard> createState() => _OtherPhotoCardState();
 }
@@ -113,22 +115,22 @@ class _OtherPhotoCardState extends State<OtherPhotoCard> {
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: const Text(
-                                "Are you sure you want to delete this item Permanently",
-                                style: TextStyle(
+                              title:  Text(
+                                "Are you sure you want to delete this item Permanently".tr,
+                                style: const TextStyle(
                                   fontWeight: FontWeight.w500,
                                   fontSize: 12,
                                 ),
                               ),
                               actions: [
                                 TextButton(
-                                  child: const Text("No"),
+                                  child:  Text("No".tr),
                                   onPressed: () {
                                     Navigator.of(context).pop(true);
                                   },
                                 ),
                                 TextButton(
-                                  child: const Text("Yes"),
+                                  child:  Text("Yes".tr),
                                   onPressed: () {
                                     widget.onDeleteTap();
                                   },
@@ -151,7 +153,7 @@ class _OtherPhotoCardState extends State<OtherPhotoCard> {
                 )
             ],
           ),
-          Positioned(
+          widget.languageController.isEnglish.value ? Positioned(
             bottom: 0,
             right: 0,
             child: Container(
@@ -165,7 +167,21 @@ class _OtherPhotoCardState extends State<OtherPhotoCard> {
                 style: const TextStyle(color: MyColors.whiteColor),
               ),
             ),
-          ),
+          ) : Positioned(
+            bottom: 0,
+            left: 0,
+            child: Container(
+              padding: const EdgeInsets.all(5),
+              decoration: const BoxDecoration(
+                  color: MyColors.appMainColor,
+                  borderRadius:
+                  BorderRadius.only(bottomLeft: Radius.circular(10))),
+              child: Text(
+                DateFormat('hh:mm aa').format(DateTime.parse(widget.dateTime)),
+                style: const TextStyle(color: MyColors.whiteColor),
+              ),
+            ),
+          )
         ],
       ),
     );

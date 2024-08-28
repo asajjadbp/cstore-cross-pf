@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
 import '../../utils/appcolor.dart';
 import '../../widget/check_list_comment_field.dart';
@@ -39,8 +40,6 @@ class Shelf_SharesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
     return
       Container(
         decoration: BoxDecoration(
@@ -153,7 +152,8 @@ class Shelf_SharesCard extends StatelessWidget {
                    ),
                    Expanded(
                      child: Container(
-                         margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+                       height: 55,
+                         margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 5),
                        child: ActualFacesTextField(
                          initialValue: fieldName4,
                          onChangeValue: (value) {
@@ -176,7 +176,7 @@ class Shelf_SharesCard extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 5),
                   child: BigElevatedButton(
                       isBlueColor: false,
-                      buttonName: "Save",
+                      buttonName: "Save".tr,
                       submit: (){
                         onSaveClick();
                       })

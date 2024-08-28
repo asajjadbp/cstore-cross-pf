@@ -10,10 +10,12 @@ import 'package:cstore/screens/utils/app_constants.dart';
 import 'package:cstore/screens/widget/image_selection_row_button.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Model/database_model/PlanogramReasonModel.dart';
 import '../../Model/database_model/trans_planogram_model.dart';
+import '../Language/localization_controller.dart';
 import '../utils/appcolor.dart';
 import '../utils/services/image_picker.dart';
 import '../utils/services/take_image_and_save_to_folder.dart';
@@ -34,7 +36,7 @@ class PlanogramScreen extends StatefulWidget {
 
 class _PlanogramScreenState extends State<PlanogramScreen> {
   List<ClientModel> clientData = [];
-  List<ClientModel> statusDataList = [ClientModel(client_id: 1, client_name: "Adherence"),ClientModel(client_id: 0, client_name: "No Adherence")];
+  List<ClientModel> statusDataList = [ClientModel(client_id: 1, client_name: "Adherence".tr),ClientModel(client_id: 0, client_name: "Not Adherence".tr)];
   List<CategoryModel> categoryData = [CategoryModel( client: -1, id: -1, en_name: '', ar_name: '')];
   List<SYS_BrandModel> brandData = [SYS_BrandModel( client: -1, id: -1, en_name: '', ar_name: '')];
   List<PlanogramReasonModel> planogramReasonData = [PlanogramReasonModel(id: -1,status: -1,en_name: "",ar_name: "",)];
@@ -58,7 +60,9 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
   final GlobalKey<FormFieldState> clientKey1 = GlobalKey<FormFieldState>();
   String clientId = "";
   String workingId = "";
-  String storeName = "";
+  String storeEnName = '';
+  String storeArName = '';
+  final languageController = Get.put(LocalizationController());
   String userName = "";
 
   @override
@@ -67,31 +71,21 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
 
     getUserData();
   }
-  // void initState() {
-  //   // TODO: implement initState
-  //   super.initState();
-  //   getClientData();
-  //   getCategoryData();
-  // }
-
   getUserData()async {
     SharedPreferences sharedPreferences  = await SharedPreferences.getInstance();
 
     clientId = sharedPreferences.getString(AppConstants.clientId)!;
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
-    storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeEnName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeArName = sharedPreferences.getString(AppConstants.storeArNAme)!;
     userName = sharedPreferences.getString(AppConstants.userName)!;
 
     if (isInit) {
       getReasonData();
       getClientData();
-
-      // getCategoryData();
     }
     isInit = false;
-
   }
-
   Future<void> getImage() async {
     await ImageTakingService.imageSelect().then((value) {
       if (value == null) {
@@ -104,24 +98,8 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
       setState(() {
 
       });
-      // _takePhoto(value);
     });
   }
-
-  // void _takePhoto(File recordedImage) async {
-  //   // if (recordedImage != null && recordedImage.path != null) {
-  //   // setState(() {
-  //   //   firstButtonText = 'saving in progress...';
-  //   // });
-  //   GallerySaver.saveImage(recordedImage.path).then((path) {
-  //     // setState(() {
-  //     //   firstButtonText = 'image saved!';
-  //     // });
-  //   });
-  //   // }
-  // }
-
-
   void getClientData() async {
 
     setState(() {
@@ -133,9 +111,7 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
       });
       clientData = value;
     });
-
   }
-
   getReasonData() async {
     planogramReasonData = [PlanogramReasonModel(en_name: "", ar_name: "",id: -1,status: -1)];
     setState(() {
@@ -185,25 +161,21 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
     });
     print(categoryData[0].en_name);
   }
-
-
   void saveStorePhotoData() async {
     if (selectedClientId == -1 ||
         selectedCategoryId == -1 ||
         selectedStatusId == -1 ||
         imageFile == null) {
-      ToastMessage.errorMessage(context, "Please fill the form and take image");
+      ToastMessage.errorMessage(context, "Please fill the form and take image".tr);
       return;
     }
     if(selectedStatusId == 0) {
       if(selectedPlanogramReasonId == -1) {
         ToastMessage.errorMessage(
-            context, "Please select any reason from list");
+            context, "Please select any reason from list".tr);
         return;
       }
     }
-    // print(selectedCategoryId);
-    // print(selectedClientId);
     setState(() {
       isBtnLoading = true;
     });
@@ -223,7 +195,7 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
             date_time: now.toString(),
         ))
             .then((_) {
-          ToastMessage.succesMessage(context, "Data store successfully");
+          ToastMessage.succesMessage(context, "Data Saved Successfully".tr);
           imageFile = null;
         });
       });
@@ -240,10 +212,9 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: generalAppBar(context, storeName, userName, (){
+      appBar: generalAppBar(context, languageController.isEnglish.value ? storeEnName : storeArName, userName, (){
         Navigator.of(context).pop();
       }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
 
@@ -251,8 +222,8 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
       body: Stack(
         children: [
           isLoading
-              ? Center(
-            child: const MyLoadingCircle(),
+              ? const Center(
+            child: MyLoadingCircle(),
           )
               : Container(
             margin: const EdgeInsets.only(left: 10, right: 10),
@@ -267,16 +238,16 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
                         const SizedBox(
                           height: 5,
                         ),
-                        const Row(
+                         Row(
                           children: [
                             Text(
-                              "Client ",
-                              style: TextStyle(
+                              "Client".tr,
+                              style:const TextStyle(
                                   color: MyColors.appMainColor,
                                   fontWeight: FontWeight.bold),
                             ),
 
-                            Text("*", style: TextStyle(
+                            const Text(" * ", style: TextStyle(
                                 color: MyColors.backbtnColor,
                                 fontWeight: FontWeight.bold,fontSize: 14),)
                           ],
@@ -284,10 +255,9 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
                         const SizedBox(
                           height: 5,
                         ),
-                        // dropdownwidget("Company Name"),
                         ClientListDropDown(
                             clientKey: clientKey,
-                            hintText: "Client ", clientData: clientData, onChange: (value){
+                            hintText: "Client".tr, clientData: clientData, onChange: (value){
                           selectedClientId = value.client_id;
                           getCategoryData(selectedClientId);
                           getBrandData(selectedClientId,selectedCategoryId.toString());
@@ -298,15 +268,15 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
                         const SizedBox(
                           height: 5,
                         ),
-                        const Row(
+                         Row(
                           children: [
                             Text(
-                              "Category ",
-                              style: TextStyle(
+                              "Category".tr,
+                              style:const TextStyle(
                                   color: MyColors.appMainColor,
                                   fontWeight: FontWeight.bold),
                             ),
-                            Text("*", style: TextStyle(
+                            const   Text(" * ", style: TextStyle(
                                 color: MyColors.backbtnColor,
                                 fontWeight: FontWeight.bold,fontSize: 14),)
                           ],
@@ -314,7 +284,7 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
                         const SizedBox(
                           height: 5,
                         ),
-                        CategoryDropDown(categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
+                        CategoryDropDown(categoryKey:categoryKey,hintText: "Category".tr, categoryData: categoryData, onChange: (value){
                           selectedCategoryId = value.id;
                           getBrandData(selectedClientId,selectedCategoryId.toString());
                           setState(() {
@@ -324,30 +294,30 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
                         const SizedBox(
                           height: 5,
                         ),
-                      const Text(
-                          "Brand ",
-                          style: TextStyle(
+                       Text(
+                          "Brand".tr,
+                          style:const TextStyle(
                               color: MyColors.appMainColor,
                               fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(
                           height: 5,
                         ),
-                        SysBrandDropDown(brandKey:brandKey,hintText: "Brand", brandData: brandData, onChange: (value){
+                        SysBrandDropDown(brandKey:brandKey,hintText: "Brand".tr, brandData: brandData, onChange: (value){
                           selectedBrandId = value.id;
                         }),
                         const SizedBox(
                           height: 5,
                         ),
-                        const Row(
+                         Row(
                           children: [
                             Text(
-                              "Status ",
-                              style: TextStyle(
+                              "Status".tr,
+                              style:const TextStyle(
                                   color: MyColors.appMainColor,
                                   fontWeight: FontWeight.bold),
                             ),
-                            Text("*", style: TextStyle(
+                            const  Text(" * ", style: TextStyle(
                                 color: MyColors.backbtnColor,
                                 fontWeight: FontWeight.bold,fontSize: 14),)
                           ],
@@ -357,7 +327,7 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
                         ),
                         ClientListDropDown(
                             clientKey: clientKey1,
-                            hintText: "Status", clientData: statusDataList, onChange: (value){
+                            hintText: "Status".tr, clientData: statusDataList, onChange: (value){
                           selectedStatusId = value.client_id;
                             setState(() {
 
@@ -371,9 +341,9 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
                          mainAxisAlignment: MainAxisAlignment.start,
                          crossAxisAlignment: CrossAxisAlignment.start,
                          children: [
-                           const Text(
-                             "Reason",
-                             style: TextStyle(
+                            Text(
+                             "Reason".tr,
+                             style:const TextStyle(
                                  color: MyColors.appMainColor,
                                  fontWeight: FontWeight.bold),
                            ),
@@ -381,7 +351,7 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
                              height: 5,
                            ),
 
-                           PlanoReasonDropDown(hintText: "Reason", reasonData: planogramReasonData, onChange: (value){
+                           PlanoReasonDropDown(hintText: "Reason".tr, reasonData: planogramReasonData, onChange: (value){
                              selectedPlanogramReasonId = value.id;
                              setState(() {
 
@@ -406,7 +376,7 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
                           child: MyLoadingCircle(),
                         )
                             : BigElevatedButton(
-                            buttonName: "Save",
+                            buttonName: "Save".tr,
                             submit: (){
                               saveStorePhotoData();
                             },
@@ -420,10 +390,9 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
                 Container(
                   margin: const EdgeInsets.only(bottom: 10),
                   child:  BigElevatedButton(
-                      buttonName: "View Planogram",
+                      buttonName: "View Planogram".tr,
                       submit: (){
-                        Navigator.of(context)
-                            .pushNamed(ViewPlanogramScreen.routename);
+                        Navigator.of(context).pushNamed(ViewPlanogramScreen.routename);
                       },
                       isBlueColor: false),
 

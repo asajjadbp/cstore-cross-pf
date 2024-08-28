@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Database/db_helper.dart';
 import '../../Model/database_model/category_model.dart';
@@ -70,25 +71,25 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
     await DatabaseHelper.getVisitClientList(clientId).then((value) {
       clientData = value;
       clientData.insert(
-          0, ClientModel(client_id: -1, client_name: "Select Client"));
+          0, ClientModel(client_id: -1, client_name: "Select Client".tr));
       categoryData.insert(
           0,
           CategoryModel(
               en_name: "Select Category",
-              ar_name: "Select Category",
+              ar_name: "اختر الفئة",
               id: -1,
               client: -1));
       subCategoryData.insert(
           0,
           CategoryModel(
               en_name: "Select Sub Category",
-              ar_name: "Select Sub Category",
+              ar_name: "حدد الفئة الفرعية",
               id: -1,
               client: -1));
       brandData.insert(0,
           SYS_BrandModel(
               en_name: "Select Brand",
-              ar_name: "Select Brand",
+              ar_name: "اختر العلامة التجارية",
               id: -1,
               client: -1));
 
@@ -111,7 +112,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
           0,
           CategoryModel(
               en_name: "Select Category",
-              ar_name: "Select Category",
+              ar_name: "اختر الفئة",
               id: -1,
               client: -1));
 
@@ -136,7 +137,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
           0,
           CategoryModel(
               en_name: "Select Sub Category",
-              ar_name: "Select Sub Category",
+              ar_name: "حدد الفئة الفرعية",
               id: -1,
               client: -1));
 
@@ -161,7 +162,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
           0,
           SYS_BrandModel(
               en_name: "Select Brand",
-              ar_name: "Select Brand",
+              ar_name: "اختر العلامة التجارية",
               id: -1,
               client: -1));
 
@@ -191,7 +192,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
               }, child: StatefulBuilder(
                   builder: (BuildContext context1, StateSetter menuState) {
                 return Container(
-                  height: MediaQuery.of(context).size.height * 0.90,
+                  height: MediaQuery.of(context).size.height /1.2,
                   decoration: const BoxDecoration(
                       borderRadius: BorderRadius.only(
                           topRight: Radius.circular(10),
@@ -205,10 +206,10 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                       children: <Widget>[
                         Row(
                           children: [
-                            const Expanded(
+                             Expanded(
                               child: Text(
-                                "Filter",
-                                style: TextStyle(
+                                "Filter".tr,
+                                style:const TextStyle(
                                     color: MyColors.appMainColor,
                                     fontSize: 25,
                                     fontWeight: FontWeight.bold),
@@ -233,18 +234,18 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                                     initialBrandItem = brandData[0];
                                   });
                                 },
-                                child: const Text(
-                                  "Reset Filter",
-                                  style: TextStyle(color: MyColors.whiteColor),
+                                child:  Text(
+                                  "Reset Filter".tr,
+                                  style:const TextStyle(color: MyColors.whiteColor),
                                 ))
                           ],
                         ),
                         const SizedBox(
                           height: 10,
                         ),
-                        const Text(
-                          "Client",
-                          style: TextStyle(
+                         Text(
+                          "Client".tr,
+                          style:const TextStyle(
                               color: MyColors.appMainColor,
                               fontWeight: FontWeight.bold),
                         ),
@@ -254,7 +255,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                         ClientListDropDownWithInitialValue(
                             clientKey: clientKey,
                             initialValue: initialClientItem,
-                            hintText: "Client",
+                            hintText: "Client".tr,
                             clientData: clientData,
                             onChange: (value) {
                               selectedClientId = value.client_id;
@@ -267,9 +268,9 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                         const SizedBox(
                           height: 10,
                         ),
-                        const Text(
-                          "Category",
-                          style: TextStyle(
+                         Text(
+                          "Category".tr,
+                          style: const TextStyle(
                               color: MyColors.appMainColor,
                               fontWeight: FontWeight.bold),
                         ),
@@ -286,7 +287,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                             : CategoryDropDownWithInitialValue(
                                 initialValue: initialCategoryItem,
                                 categoryKey: categoryKey,
-                                hintText: "Category",
+                                hintText: "Category".tr,
                                 categoryData: categoryData,
                                 onChange: (value) {
                                   selectedCategoryId = value.id;
@@ -296,9 +297,9 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                         const SizedBox(
                           height: 10,
                         ),
-                        const Text(
-                          "Sub Category",
-                          style: TextStyle(
+                        Text(
+                          "Sub Category".tr,
+                          style:const TextStyle(
                               color: MyColors.appMainColor,
                               fontWeight: FontWeight.bold),
                         ),
@@ -315,7 +316,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                             : CategoryDropDownWithInitialValue(
                                 initialValue: initialSubCategoryItem,
                                 categoryKey: subCategoryKey,
-                                hintText: "Sub Category",
+                                hintText: "Sub Category".tr,
                                 categoryData: subCategoryData,
                                 onChange: (value) {
                                   selectedSubCategoryId = value.id;
@@ -325,9 +326,9 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                         const SizedBox(
                           height: 10,
                         ),
-                        const Text(
-                          "Brand",
-                          style: TextStyle(
+                         Text(
+                          "Brand".tr,
+                          style:const TextStyle(
                               color: MyColors.appMainColor,
                               fontWeight: FontWeight.bold),
                         ),
@@ -337,7 +338,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                         SysBrandDropDownWithInitialValue(
                             initialValue: initialBrandItem,
                             brandKey: brandKey,
-                            hintText: "Brand",
+                            hintText: "Brand".tr,
                             brandData: brandData,
                             onChange: (value) {
                               selectedBrandId = value.id;
@@ -362,9 +363,9 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                                 selectedBrandId);
 
                           },
-                          child: const Text(
-                            "Search",
-                            style: TextStyle(color: Colors.white),
+                          child:  Text(
+                            "Search".tr,
+                            style:const TextStyle(color: Colors.white),
                           ),
                         ),
                       ],

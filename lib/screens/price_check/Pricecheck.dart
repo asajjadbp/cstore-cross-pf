@@ -1,12 +1,14 @@
 import 'package:cstore/screens/price_check/widget/pricecheckcad.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Database/db_helper.dart';
 import '../../Model/database_model/category_model.dart';
 import '../../Model/database_model/client_model.dart';
 import '../../Model/database_model/pricing_show_model.dart';
 import '../../Model/database_model/sys_brand_model.dart';
+import '../Language/localization_controller.dart';
 import '../utils/app_constants.dart';
 import '../utils/appcolor.dart';
 import '../utils/toast/toast.dart';
@@ -27,11 +29,15 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
   List<PricingShowModel> filterTransData = [];
   List<TextEditingController> promoController = [];
   List<TextEditingController> regularController = [];
+
+  final languageController = Get.put(LocalizationController());
+
   bool isLoading = false;
   String workingId = "";
   String clientId = "";
   String imageBaseUrl = "";
-  String storeName = "";
+  String storeENName = "";
+  String storeArName = "";
   String userName = "";
   bool isBtnLoading = false;
   bool isFilter = false;
@@ -68,7 +74,8 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
       workingId = sharedPreferences.getString(AppConstants.workingId)!;
-      storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+      storeArName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+      storeArName = sharedPreferences.getString(AppConstants.storeArNAme)!;
       userName = sharedPreferences.getString(AppConstants.userName)!;
       clientId = sharedPreferences.getString(AppConstants.clientId)!;
       imageBaseUrl = sharedPreferences.getString(AppConstants.imageBaseUrl)!;
@@ -80,8 +87,6 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
   getPricingCount()async {
     await DatabaseHelper.getPricingCountData(workingId,selectedClientId.toString(),selectedBrandId.toString(),selectedCategoryId.toString(),selectedSubCategoryId.toString()).then((value) {
       countPricing = value;
-      print("TOTAL total_pricing");
-      print(countPricing.total_pricing_products);
       setState(() {
       });
     });
@@ -96,18 +101,17 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
     });
   }
   void InsertTransPromoPrice(String regularPrice,String promoPrice,skuId) async{
-    print("Insert Data Getting");
     if (regularPrice == "0" || regularPrice == "0.0" || regularPrice.isEmpty) {
-      ToastMessage.errorMessage(context, "Please add proper regular price");
+      ToastMessage.errorMessage(context, "Please add proper regular price".tr);
     } else if(promoPrice.isNotEmpty && (double.parse(promoPrice) >= double.parse(regularPrice))) {
-      ToastMessage.errorMessage(context, "Promo price can't be greater than or equal to regular price");
+      ToastMessage.errorMessage(context, "Promo price can't be greater than or equal to regular price".tr);
     }else {
       setState(() {
         isBtnLoading = false;
       });
       await DatabaseHelper.insertTransPromoPrice(skuId,regularPrice.toString(),promoPrice.toString(),workingId)
           .then((_) {
-        ToastMessage.succesMessage(context, "Data store successfully");
+        ToastMessage.succesMessage(context, "Data Saved Successfully".tr);
         promoPrice="";
         regularPrice="";
         Navigator.of(context).pop();
@@ -117,11 +121,10 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
     }
   }
   void UpdateTransPromoPrice(regularPrice,promoPrice,skuId) async {
-    print("Update Data Getting");
     if (regularPrice == "0" || regularPrice.isEmpty) {
-      ToastMessage.errorMessage(context, "Please add proper regular price");
+      ToastMessage.errorMessage(context, "Please add proper regular price".tr);
     } else if(promoPrice.isNotEmpty && (double.parse(promoPrice) >= double.parse(regularPrice))) {
-        ToastMessage.errorMessage(context, "Promo price can't be greater than or equal to regular price");
+        ToastMessage.errorMessage(context, "Promo price can't be greater than or equal to regular price".tr);
     } else {
     setState(() {
       isBtnLoading = false;
@@ -129,7 +132,7 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
     await DatabaseHelper.updateTransPromoPricing(
         skuId, regularPrice.toString(), promoPrice.toString(), workingId)
         .then((_) {
-      ToastMessage.succesMessage(context, "Data update successfully");
+      ToastMessage.succesMessage(context, "Data update successfully".tr);
       promoPrice = 0;
       regularPrice = 0;
       getTransPricingOne();
@@ -246,7 +249,7 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor:MyColors.background,
-      appBar: generalAppBar(context, storeName, userName, (){
+      appBar: generalAppBar(context, languageController.isEnglish.value ? storeENName : storeArName, userName, (){
         Navigator.of(context).pop();
       }, true, true, false,(int getClient, int getCat, int getSubCat, int getBrand) {
 
@@ -292,7 +295,7 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Text("Price Sku's"),
+                            Text("Price Skus".tr,maxLines: 1,overflow: TextOverflow.ellipsis,),
                             Container(
                                 margin: const EdgeInsets.symmetric(vertical: 5),
                                 child: const FaIcon(FontAwesomeIcons.layerGroup,color: MyColors.savebtnColor,)),
@@ -324,7 +327,7 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Text("Regular Sku's"),
+                             Text("Regular Sku's".tr,maxLines: 1,overflow: TextOverflow.ellipsis,),
                             Container(
                                 margin: const EdgeInsets.symmetric(vertical: 5),
                                 child: const FaIcon(FontAwesomeIcons.circleDollarToSlot,color: MyColors.savebtnColor,)),
@@ -356,7 +359,7 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Text("Promo Sku's",),
+                             Text("Promo Sku's".tr,maxLines: 1,overflow: TextOverflow.ellipsis,),
                             Container(
                                 margin: const EdgeInsets.symmetric(vertical: 5),
                                 child: const FaIcon(FontAwesomeIcons.bullhorn,color: MyColors.savebtnColor,)),
@@ -375,8 +378,8 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
             child: Center(
               child: MyLoadingCircle(),
             ),
-          ) : isFilter ? filterTransData.isEmpty ? const Center(
-            child: Text("No data found"),
+          ) : isFilter ? filterTransData.isEmpty ? Center(
+            child: Text("No Data Found".tr),
           ) : Expanded(
             child: ListView.builder(
                 shrinkWrap: true,
@@ -385,7 +388,7 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
                   return pricecheckcard(
                     image:
                     "${imageBaseUrl}sku_pictures/${filterTransData[i].img_name}",
-                    proName: filterTransData[i].pro_en_name,
+                    proName: languageController.isEnglish.value ? filterTransData[i].pro_en_name:filterTransData[i].pro_ar_name,
                     regular: filterTransData[i].regular_price,
                     promo:filterTransData[i].promo_price,
                     rsp: filterTransData[i].rsp,
@@ -407,8 +410,8 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
                 }),
           ) :
           transData.isEmpty
-              ? const Center(
-            child: Text("No data found"),
+              ?  Center(
+            child: Text("No Data Found".tr),
           )
               :Expanded(
             child: ListView.builder(
@@ -424,7 +427,7 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
                   return pricecheckcard(
                     image:
                         "${imageBaseUrl}sku_pictures/${transData[i].img_name}",
-                    proName: transData[i].pro_en_name,
+                    proName: languageController.isEnglish.value ? transData[i].pro_en_name:transData[i].pro_ar_name,
                     regular: transData[i].regular_price,
                     promo:transData[i].promo_price,
                     rsp: transData[i].rsp,

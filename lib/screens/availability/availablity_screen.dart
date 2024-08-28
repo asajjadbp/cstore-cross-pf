@@ -771,8 +771,8 @@ class _AvailabilityState extends State<Availability> {
                                 },
                                 imageName: "${imageBaseUrl}sku_pictures/${filteredList[index].image}",
                                 isAvailable: filteredList[index].avl_status,
-                                brandName: filteredList[index].pro_en_name,
-                                categoryName: filteredList[index].cat_en_name,
+                                brandName: languageController.isEnglish.value ? filteredList[index].pro_en_name : filteredList[index].pro_ar_name,
+                                categoryName: languageController.isEnglish.value ? filteredList[index].cat_en_name : filteredList[index].cat_ar_name,
                                 pickListText: filteredList[index].requried_picklist.toString(),
                                 onTapPickList: (){
                                   if(filteredList[index].avl_status != -1) {
@@ -787,8 +787,9 @@ class _AvailabilityState extends State<Availability> {
                                                 .requried_picklist == 0,
                                             badgeNumber: 0,
                                             textEditingController: textEditingController,
-                                            title: filteredList[index]
-                                                .pro_en_name,
+                                            title: languageController.isEnglish.value ? filteredList[index]
+                                                .pro_en_name : filteredList[index]
+                                                .pro_ar_name,
                                             pickListValue: (value) {
                                               setState(() {
                                                 filteredList[index]
@@ -844,7 +845,7 @@ class _AvailabilityState extends State<Availability> {
                                             isButtonActive: filteredList[index].requried_picklist == 0,
                                             badgeNumber: 0,
                                             textEditingController: textEditingController,
-                                            title: filteredList[index].pro_en_name,
+                                            title: languageController.isEnglish.value ? filteredList[index].pro_en_name : filteredList[index].pro_ar_name,
                                             pickListValue: (value) {
                                               setState(() {
                                                 filteredList[index].requried_picklist = int.parse(value);
@@ -874,8 +875,8 @@ class _AvailabilityState extends State<Availability> {
                               },
                                 imageName: "${imageBaseUrl}sku_pictures/${availableData[index].image}",
                                 isAvailable: availableData[index].avl_status,
-                                brandName: availableData[index].pro_en_name,
-                                categoryName: availableData[index].cat_en_name,
+                                brandName: languageController.isEnglish.value ? availableData[index].pro_en_name : availableData[index].pro_ar_name,
+                                categoryName:languageController.isEnglish.value ? availableData[index].cat_en_name : availableData[index].cat_ar_name,
                                 pickListText: availableData[index].requried_picklist.toString(),
                                 onTapPickList: (){
                                 if(availableData[index].avl_status != -1) {
@@ -890,8 +891,9 @@ class _AvailabilityState extends State<Availability> {
                                           isButtonActive: availableData[index]
                                               .requried_picklist == 0,
                                           textEditingController: textEditingController,
-                                          title: availableData[index]
-                                              .pro_en_name,
+                                          title: languageController.isEnglish.value ? availableData[index]
+                                              .pro_en_name : availableData[index]
+                                              .pro_ar_name,
                                           pickListValue: (value) {
                                             setState(() {
                                               availableData[index]
@@ -942,7 +944,7 @@ class _AvailabilityState extends State<Availability> {
                                             badgeNumber: 0,
                                             isButtonActive: availableData[index].requried_picklist == 0,
                                             textEditingController: textEditingController,
-                                            title: availableData[index].pro_en_name,
+                                            title: languageController.isEnglish.value ? availableData[index].pro_en_name : availableData[index].pro_ar_name,
                                             pickListValue: (value) {
                                               setState(() {
                                                 availableData[index].requried_picklist = int.parse(value);
@@ -1064,8 +1066,8 @@ class _AvailabilityState extends State<Availability> {
                                 return PickListCardItem(
                                     isButtonActive: false,
                                     imageName: "${imageBaseUrl}sku_pictures/${updatedFilterAvailableData[index].image}",
-                                    brandName: updatedFilterAvailableData[index].cat_en_name,
-                                    skuName: updatedFilterAvailableData[index].pro_en_name,
+                                    brandName: languageController.isEnglish.value ? updatedFilterAvailableData[index].cat_en_name : updatedFilterAvailableData[index].cat_ar_name,
+                                    skuName: languageController.isEnglish.value ? updatedFilterAvailableData[index].pro_en_name : updatedFilterAvailableData[index].pro_ar_name,
                                     pickerName: updatedFilterAvailableData[index].picker_name ?? "",
                                     pickListSendTime: updatedFilterAvailableData[index].pick_list_send_time,
                                     pickListReceiveTime: updatedFilterAvailableData[index].pick_list_receive_time,
@@ -1130,8 +1132,8 @@ class _AvailabilityState extends State<Availability> {
                                     isReasonShow: false,
                                     reasonValue: [""],
                                     imageName: "${imageBaseUrl}sku_pictures/${updatedAvailableData[index].image}",
-                                    brandName: updatedAvailableData[index].cat_en_name,
-                                    skuName: updatedAvailableData[index].pro_en_name,
+                                    brandName: languageController.isEnglish.value ? updatedAvailableData[index].cat_en_name : updatedAvailableData[index].cat_ar_name,
+                                    skuName: languageController.isEnglish.value ? updatedAvailableData[index].pro_en_name : updatedAvailableData[index].pro_ar_name,
                                     pickerName: updatedAvailableData[index].picker_name ?? "",
                                     requiredPickItems: updatedAvailableData[index].requried_picklist.toString(),
                                     pickListSendTime: updatedAvailableData[index].pick_list_send_time,

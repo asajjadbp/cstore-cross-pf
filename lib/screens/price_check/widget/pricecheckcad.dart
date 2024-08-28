@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import '../../widget/elevated_buttons.dart';
 import '../../widget/loading.dart';
 
@@ -109,9 +110,9 @@ class pricecheckcard extends StatelessWidget {
                             const SizedBox(
                               height: 6,
                             ),
-                            const Text(
-                              "Regular ",
-                              style: TextStyle(
+                             Text(
+                              "Regular".tr,
+                              style: const TextStyle(
                                 fontSize: 14,
                                 fontFamily: 'lato',
                                 fontWeight: FontWeight.w500,
@@ -138,9 +139,9 @@ class pricecheckcard extends StatelessWidget {
                             const SizedBox(
                               height: 6,
                             ),
-                            const Text(
-                              "Promo ",
-                              style: TextStyle(
+                             Text(
+                              "Promo".tr,
+                              style: const TextStyle(
                                 fontSize: 14,
                                 fontFamily: 'lato',
                                 fontWeight: FontWeight.w500,
@@ -213,18 +214,18 @@ class pricecheckcard extends StatelessWidget {
                                         Container(
                                           width: screenWidth / 1.2,
                                           margin: const EdgeInsets.only(left: 15, top: 15),
-                                          child: const Row(
+                                          child: Row(
                                             mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text("Regular Price",
-                                                  style: TextStyle(
+                                              Text("Regular Price".tr,
+                                                  style: const TextStyle(
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.w400,
                                                     fontFamily: 'lato',
                                                   )),
-                                              Text("Promo Price",
-                                                  style: TextStyle(
+                                               Text("Promo Price".tr,
+                                                  style: const TextStyle(
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.w400,
                                                     fontFamily: 'lato',
@@ -338,7 +339,7 @@ class pricecheckcard extends StatelessWidget {
                                           margin: const EdgeInsets.only(
                                               left: 15, right: 15, top: 10),
                                           child: BigElevatedButton(
-                                              buttonName: "Save",
+                                              buttonName: "Save".tr,
                                               submit: (){
                                                 pricingValues(valueControllerRegular.text,valueControllerPromo.text,);
                                               },

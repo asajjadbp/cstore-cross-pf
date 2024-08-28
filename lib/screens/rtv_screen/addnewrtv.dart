@@ -2,11 +2,13 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart' as path;
 import '../../Database/db_helper.dart';
 import '../../Model/database_model/sys_rtv_reason_model.dart';
 import '../../Model/database_model/trans_rtv_model.dart';
+import '../Language/localization_controller.dart';
 import '../utils/app_constants.dart';
 import '../utils/appcolor.dart';
 import '../utils/services/image_picker.dart';
@@ -28,6 +30,9 @@ class addnewrtvscreen extends StatefulWidget {
 }
 
 class _addnewrtvscreenState extends State<addnewrtvscreen> {
+
+  final languageController = Get.put(LocalizationController());
+
   List<Sys_RTVReasonModel> reasonData = [];
   int selectedReasonId = -1;
   bool isInit = true;
@@ -37,12 +42,13 @@ class _addnewrtvscreenState extends State<addnewrtvscreen> {
   bool isBtnLoading = false;
   String clientId = "";
   String workingId = "";
-  String storeName = "";
+  String storeEnName = "";
+  String storeArName = "";
   String userName = "";
   TextEditingController totalPieces = TextEditingController();
   TextEditingController dateInput = TextEditingController();
   DateTime? pickedDate;
-  late String formattedDate = "Select Date";
+  String formattedDate = "Select Date".tr;
   int index=-1;
   @override
   void didChangeDependencies() async {
@@ -54,7 +60,8 @@ class _addnewrtvscreenState extends State<addnewrtvscreen> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     clientId = sharedPreferences.getString(AppConstants.clientId)!;
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
-    storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeEnName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeArName = sharedPreferences.getString(AppConstants.storeArNAme)!;
     userName = sharedPreferences.getString(AppConstants.userName)!;
 
     if (isInit) {
@@ -88,8 +95,8 @@ class _addnewrtvscreenState extends State<addnewrtvscreen> {
   }
 
   void saveStorePhotoData() async {
-    if (imageFile == null || selectedReasonId==-1 || totalPieces.text==null) {
-      ToastMessage.errorMessage(context, "Please fill the form and take image");
+    if (imageFile == null || selectedReasonId==-1) {
+      ToastMessage.errorMessage(context, "Please fill the form and take image".tr);
       return;
     }
     setState(() {
@@ -113,7 +120,7 @@ class _addnewrtvscreenState extends State<addnewrtvscreen> {
                 upload_status: 0,
                 working_id: int.parse(workingId)))
             .then((_) {
-          ToastMessage.succesMessage(context, "Data store successfully");
+          ToastMessage.succesMessage(context, "Data Saved Successfully".tr);
           totalPieces.text = "";
           formattedDate="Select Date";
           imageFile = null;
@@ -133,287 +140,277 @@ class _addnewrtvscreenState extends State<addnewrtvscreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.imageName);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
         backgroundColor: const Color(0xFFF4F7FD),
-        appBar: generalAppBar(context, storeName, userName, (){
+        appBar: generalAppBar(context, languageController.isEnglish.value ? storeEnName : storeArName, userName, (){
           Navigator.of(context).pop();
         }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
         }),
         body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                height: screenHeight/7.4,
-                margin: const EdgeInsets.only(top: 15,left: 10,right: 10),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.grey.shade300,width: 1),
-                  borderRadius: const BorderRadius.all( Radius.circular(7)),
+          child: Container(
+            margin:const EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+            child: Column(
+              children: [
+                Container(
+                  height: screenHeight/7.4,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Colors.grey.shade300,width: 1),
+                    borderRadius: const BorderRadius.all( Radius.circular(7)),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      CachedNetworkImage(
+                        imageUrl: widget.imageName,
+                        width: 100,
+                        height: 110,
+                        imageBuilder: (context, imageProvider) {
+                          return Container(
+                            margin: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(6.0),
+                                    bottomLeft: Radius.circular(6.0),
+                                    topRight: Radius.circular(6.0),
+                                    bottomRight: Radius.circular(6.0),
+                                  ),
+                                  image: DecorationImage(
+                                      image: imageProvider,
+                                      fit: BoxFit.fitWidth)));
+                        },
+                        placeholder: (context, url) => const SizedBox(
+                            width: 20, height: 10, child: MyLoadingCircle()),
+                        errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
+                      ),
+                       SizedBox(
+                         width:screenWidth/1.9 ,
+                         child: Text(widget.SkuName,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                          style: const TextStyle(
+                              color: Color(0xFF1A5B8C,),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700),
+                      ),
+                       ),
+                      const SizedBox(width: 5,),
+                    ],
+                  ),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                SizedBox(
+                  height: screenHeight / 60,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CachedNetworkImage(
-                      imageUrl: widget.imageName,
-                      width: 100,
-                      height: 110,
-                      imageBuilder: (context, imageProvider) {
-                        return Container(
-                          margin: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(6.0),
-                                  bottomLeft: Radius.circular(6.0),
-                                  topRight: Radius.circular(6.0),
-                                  bottomRight: Radius.circular(6.0),
-                                ),
-                                image: DecorationImage(
-                                    image: imageProvider,
-                                    fit: BoxFit.fitWidth)));
-                      },
-                      placeholder: (context, url) => const SizedBox(
-                          width: 20, height: 10, child: MyLoadingCircle()),
-                      errorWidget: (context, url, error) =>
-                      const Icon(Icons.error),
+                    Text(
+                      "Reason".tr,
+                      style:const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.w500),
                     ),
-                     SizedBox(
-                       width:screenWidth/1.9 ,
-                       child: Text(widget.SkuName,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 2,
-                        style: const TextStyle(
-                            color: Color(0xFF1A5B8C,),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700),
-                    ),
-                     ),
-                    const SizedBox(width: 5,),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: screenHeight / 60,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                      margin: const EdgeInsets.only(left: 14, bottom: 8),
-                      child: const Text(
-                        "Reason",
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w500),
-                      )),
-                  Container(
-                    margin:
-                        const EdgeInsets.only(left: 14, right: 14, bottom: 8),
-                    child: RtvReasonDropDown(
-                        hintText: "RTV Reason",
+                    RtvReasonDropDown(
+                        hintText: "RTV ${"Reason".tr}",
                         reasonData: reasonData,
                         onChange: (value) {
                           selectedReasonId = value.id;
                          index= int.parse(value.calendar);
                           setState(() {});
                         }),
-                  ),
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                      margin: const EdgeInsets.only(left: 14, bottom: 8),
-                      child: const Text(
-                        "Pieces",
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w500),
-                      )),
-                  Container(
-                    padding: const EdgeInsets.only(left: 15, right: 15),
-                    color: Colors.white,
-                    child: TextField(
-                      showCursor: true,
-                      enableInteractiveSelection: false,
-                      onChanged: (value) {
-                        print(value);
-                      },
-                      controller: totalPieces,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                          prefixIconColor: MyColors.appMainColor,
-                          focusColor: MyColors.appMainColor,
-                          fillColor: MyColors.dropBorderColor,
-                          labelStyle: TextStyle(
-                              color: MyColors.appMainColor, height: 50.0),
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  width: 1, color: MyColors.appMainColor)),
-                          border: OutlineInputBorder(),
-                          hintText: 'Enter Pieces'),
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                            RegExp(r'^[0-9][0-9]*'))
-                      ],
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Pieces".tr,
+                      style:const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.w500),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: screenHeight / 60,
-              ),
-             index==1? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                      margin: const EdgeInsets.only(left: 14, bottom: 8),
-                      child: const Text(
-                        "Date",
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w500),
-                      )),
-                  Container(
-                    margin: const EdgeInsets.only(left: 12, right: 12),
-                    height: screenHeight / 14,
-                    width: screenWidth,
-                    decoration: BoxDecoration(
-                        color: const Color(0xFFFFFFFF),
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: MyColors.darkGreyColor, width: 1)),
-                    child: InkWell(
-                        onTap: () async {
-                          pickedDate = await showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(1950),
-                              //DateTime.now() - not to allow to choose before today.
-                              lastDate: DateTime(2100));
-
-                          if (pickedDate != null) {
-                            print(
-                                pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
-                            formattedDate =
-                                DateFormat('yyyy-MM-dd').format(pickedDate!);
-                            print(
-                                formattedDate); //formatted date output using intl package =>  2021-03-16
-                            setState(() {
-                              dateInput.text =
-                                  formattedDate; //set output date to TextField value.
-                            });
-                          } else {}
+                    Container(
+                      height: 55,
+                      color: Colors.white,
+                      child: TextField(
+                        showCursor: true,
+                        enableInteractiveSelection: false,
+                        onChanged: (value) {
+                          print(value);
                         },
-                        child: Container(
-                            padding: const EdgeInsets.only(top: 5),
-                            margin: const EdgeInsets.only(top: 12, left: 10),
-                            child: Text(
-                              formattedDate != null
-                                  ? formattedDate.toString()
-                                  : "Select Date",
-                              style: const TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w500),
-                            ))),
-                  ),
-                ],
-              ):const SizedBox(height: 5,),
-              SizedBox(
-                height: screenHeight / 60,
-              ),
-              ImageRowButton(
-                  imageFile: imageFile,
-                  isRequired: false,
-                  onSelectImage: () {
-                    getImage();
-                  }),
-              SizedBox(
-                height: screenHeight / 46,
-              ),
-              isBtnLoading ? const SizedBox(
-                width: 60,
-                height: 60,
-                child: MyLoadingCircle(),)  : Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  InkWell(
-                    onTap: () {
-                    Navigator.of(context).pop();
-                    },
-                    child: Container(
-                        margin: const EdgeInsets.only(
-                          left: 15,
-                        ),
-                        height: screenHeight / 18,
-                        width: screenWidth / 3,
-                        decoration: BoxDecoration(
-                            color: const Color.fromRGBO(234, 70, 86, 1),
-                            borderRadius: BorderRadius.circular(5)),
-                        child: const Row(
-                          children: [
-                            SizedBox(
-                              width: 15,
-                            ),
-                            Icon(
-                              Icons.arrow_circle_left,
-                              size: 35,
-                              color: Colors.white,
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              "Back",
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.white),
-                            )
-                          ],
+                        controller: totalPieces,
+                        keyboardType: TextInputType.number,
+                        decoration:  InputDecoration(
+                            prefixIconColor: MyColors.appMainColor,
+                            focusColor: MyColors.appMainColor,
+                            fillColor: MyColors.dropBorderColor,
+                            labelStyle:const TextStyle(
+                                color: MyColors.appMainColor, height: 50.0),
+                            focusedBorder:const OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    width: 1, color: MyColors.appMainColor)),
+                            border:const OutlineInputBorder(),
+                            hintText: 'Enter Pieces'.tr),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'^[0-9][0-9]*'))
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: screenHeight / 60,
+                ),
+               index==1? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                        margin: const EdgeInsets.only(left: 14, bottom: 8),
+                        child:  Text(
+                          "Date".tr,
+                          style:const TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w500),
                         )),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      saveStorePhotoData();
-                    },
-                    child: Container(
-                        margin: const EdgeInsets.only(
-                          right: 10,
-                        ),
-                        height: screenHeight / 18,
-                        width: screenWidth / 3,
-                        decoration: BoxDecoration(
-                            color: const Color.fromRGBO(26, 91, 140, 1),
-                            borderRadius: BorderRadius.circular(5)),
-                        child: const Row(
-                          children: [
-                            SizedBox(
-                              width: 15,
-                            ),
-                            Icon(
-                              Icons.check_circle,
-                              size: 35,
-                              color: Colors.white,
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              "Save",
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.white),
-                            )
-                          ],
-                        )),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-            ],
+                    Container(
+                      height: 55,
+                      width: screenWidth,
+                      decoration: BoxDecoration(
+                          color: const Color(0xFFFFFFFF),
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(color: MyColors.darkGreyColor, width: 1)),
+                      child: InkWell(
+                          onTap: () async {
+                            pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(1950),
+                                //DateTime.now() - not to allow to choose before today.
+                                lastDate: DateTime(2100));
+
+                            if (pickedDate != null) {
+                              print(
+                                  pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
+                              formattedDate =
+                                  DateFormat('yyyy-MM-dd').format(pickedDate!);
+                              print(
+                                  formattedDate); //formatted date output using intl package =>  2021-03-16
+                              setState(() {
+                                dateInput.text =
+                                    formattedDate; //set output date to TextField value.
+                              });
+                            } else {}
+                          },
+                          child: Container(
+                            alignment: languageController.isEnglish.value ? Alignment.centerLeft  : Alignment.centerRight,
+                              padding: const EdgeInsets.symmetric(horizontal: 5),
+                              child: Text(
+                                formattedDate.isNotEmpty || formattedDate != null  ? formattedDate.toString() : languageController.isEnglish.value ? "Select Date" : "حدد التاريخ",
+                                style: const TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500),
+                              ))),
+                    ),
+                  ],
+                ):const SizedBox(height: 5,),
+                SizedBox(
+                  height: screenHeight / 60,
+                ),
+                ImageRowButton(
+                    imageFile: imageFile,
+                    isRequired: false,
+                    onSelectImage: () {
+                      getImage();
+                    }),
+                SizedBox(
+                  height: screenHeight / 46,
+                ),
+                isBtnLoading ? const SizedBox(
+                  width: 60,
+                  height: 60,
+                  child: MyLoadingCircle(),)  : Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                      Navigator.of(context).pop();
+                      },
+                      child: Container(
+                          margin: const EdgeInsets.only(
+                            left: 15,
+                          ),
+                          height: screenHeight / 18,
+                          width: screenWidth / 3,
+                          decoration: BoxDecoration(
+                              color: const Color.fromRGBO(234, 70, 86, 1),
+                              borderRadius: BorderRadius.circular(5)),
+                          child:  Row(
+                            children: [
+                              const  SizedBox(
+                                width: 15,
+                              ),
+                              const Icon(
+                                Icons.arrow_circle_left,
+                                size: 35,
+                                color: Colors.white,
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                "Back".tr,
+                                style:const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.white),
+                              )
+                            ],
+                          )),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        saveStorePhotoData();
+                      },
+                      child: Container(
+                          margin: const EdgeInsets.only(
+                            right: 10,
+                          ),
+                          height: screenHeight / 18,
+                          width: screenWidth / 3,
+                          decoration: BoxDecoration(
+                              color: const Color.fromRGBO(26, 91, 140, 1),
+                              borderRadius: BorderRadius.circular(5)),
+                          child:  Row(
+                            children: [
+                              const SizedBox(
+                                width: 15,
+                              ),
+                              const  Icon(
+                                Icons.check_circle,
+                                size: 35,
+                                color: Colors.white,
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                "Save".tr,
+                                style:const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.white),
+                              )
+                            ],
+                          )),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+              ],
+            ),
           ),
         ));
   }

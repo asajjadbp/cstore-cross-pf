@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../../Language/localization_controller.dart';
 import '../../widget/loading.dart';
 
 class Rtvcard extends StatelessWidget {
@@ -17,7 +19,7 @@ class Rtvcard extends StatelessWidget {
     required this.skuId,
     required this.activityStatus,
   });
-
+  final languageController = Get.put(LocalizationController());
   final String imageName;
   final String productName;
   final Icon icon1;
@@ -149,7 +151,7 @@ class Rtvcard extends StatelessWidget {
             ],
           ),
         ),
-        Positioned(
+       languageController.isEnglish.value ? Positioned(
           bottom: 6,
           right: 6,
           child: Container(
@@ -169,10 +171,43 @@ class Rtvcard extends StatelessWidget {
                   color: Colors.white),
             )),
           ),
+        ) : Positioned(
+          bottom: 6,
+          left: 6,
+          child: Container(
+            height: 20,
+            padding:const  EdgeInsets.symmetric(horizontal: 5,vertical: 3),
+            decoration: const BoxDecoration(
+                color: Colors.blue,
+                borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(5),
+                    bottomLeft: Radius.circular(5))),
+            child: Center(
+                child: Text(
+              "RSP $rsp",
+              style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
+            )),
+          ),
         ),
-        Positioned(
+        languageController.isEnglish.value ? Positioned(
             top: 8,
             left: 8,
+            child: Container(
+                decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10.0),
+                  bottomLeft: Radius.circular(10.0),
+                  topRight: Radius.circular(10.0),
+                  bottomRight: Radius.circular(10.0),
+                )),
+                child: activityStatus != 0
+                    ? const Icon(Icons.check_circle, color: MyColors.greenColor)
+                    : const SizedBox())) : Positioned(
+            top: 8,
+            right: 8,
             child: Container(
                 decoration: const BoxDecoration(
                     borderRadius: BorderRadius.only(

@@ -6,6 +6,7 @@ import 'package:cstore/screens/other_photo/widgets/other_photo_card.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -14,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../Database/db_helper.dart';
 import '../../Database/table_name.dart';
 import '../../Model/database_model/get_trans_photo_model.dart';
+import '../Language/localization_controller.dart';
 import '../utils/app_constants.dart';
 import '../utils/toast/toast.dart';
 import '../widget/app_bar_widgets.dart';
@@ -32,8 +34,11 @@ class _ViewOtherPhotoState extends State<ViewOtherPhoto> {
   List<GetTransPhotoModel> transData = [];
   bool isLoading = false;
   String workingId = "";
-  String storeName = '';
+  String storeEnName = '';
+  String storeArName = '';
   String userName = '';
+
+  final languageController = Get.put(LocalizationController());
 
   @override
   void initState() {
@@ -45,7 +50,8 @@ class _ViewOtherPhotoState extends State<ViewOtherPhoto> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
-    storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeEnName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeArName = sharedPreferences.getString(AppConstants.storeArNAme)!;
     userName = sharedPreferences.getString(AppConstants.userName)!;
 
     getTransPhotoOne();
@@ -122,10 +128,10 @@ class _ViewOtherPhotoState extends State<ViewOtherPhoto> {
         }
       } else {
         // print('Permission denied');
-        ToastMessage.errorMessage(context, "Permissing denied");
+        ToastMessage.errorMessage(context, "Permission denied".tr);
       }
     } catch (e) {
-      ToastMessage.errorMessage(context, "Permissing denied");
+      ToastMessage.errorMessage(context, "Permission denied".tr);
     }
   }
 
@@ -145,7 +151,7 @@ class _ViewOtherPhotoState extends State<ViewOtherPhoto> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor:MyColors.background ,
-      appBar: generalAppBar(context, storeName, userName, (){
+      appBar: generalAppBar(context, languageController.isEnglish.value ? storeEnName : storeArName, userName, (){
         Navigator.of(context).pop();
       }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
 
@@ -157,8 +163,8 @@ class _ViewOtherPhotoState extends State<ViewOtherPhoto> {
           child: MyLoadingCircle(),
         )
             : transData.isEmpty
-            ? const Center(
-          child: Text("No data found"),
+            ?  Center(
+          child: Text("No Data Found".tr),
         )
             : ListView.builder(
             itemCount: transData.length,
@@ -166,8 +172,8 @@ class _ViewOtherPhotoState extends State<ViewOtherPhoto> {
               return OtherPhotoCard(
                   imageFile: transData[i].imageFile!,
                   clientName: transData[i].clientName,
-                  categoryName: transData[i].categoryEnName,
-                  typeName: transData[i].type_en_name,
+                  categoryName:  languageController.isEnglish.value ? transData[i].categoryEnName : transData[i].categoryArName,
+                  typeName: languageController.isEnglish.value ? transData[i].type_en_name : transData[i].type_ar_name,
                   uploadStatus: transData[i].upload_status,
                   dateTime: transData[i].dateTime,
                   onDeleteTap: () {

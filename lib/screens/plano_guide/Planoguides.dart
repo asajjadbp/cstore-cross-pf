@@ -1,6 +1,8 @@
 import 'dart:io';
+import 'package:cstore/screens/Language/localization_controller.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Database/db_helper.dart';
@@ -10,7 +12,6 @@ import '../utils/app_constants.dart';
 import '../utils/appcolor.dart';
 import '../utils/services/image_picker.dart';
 import '../utils/services/take_image_and_save_to_folder.dart';
-import '../utils/services/url_launcher_function.dart';
 import '../utils/toast/toast.dart';
 import '../widget/app_bar_widgets.dart';
 import '../widget/percent_indicator.dart';
@@ -24,6 +25,8 @@ class Planoguides_Screen extends StatefulWidget {
   State<Planoguides_Screen> createState() => _Planoguides_ScreenState();
 }
 class _Planoguides_ScreenState extends State<Planoguides_Screen> {
+  final languageController = Get.put(LocalizationController());
+
   bool isLoading = true;
   bool isFilterLoading = true;
   
@@ -31,7 +34,8 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
   List<String> unitList = ['Adherence', 'Not Adherence'];
   String clientId = "";
   String workingId = "";
-  String storeName = "";
+  String storeEnName = "";
+  String storeArName = "";
   String userName = "";
   String imageBaseUrl = "";
   // var imageName = "";
@@ -58,7 +62,8 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
 
     clientId = sharedPreferences.getString(AppConstants.clientId)!;
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
-    storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeEnName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeArName = sharedPreferences.getString(AppConstants.storeArNAme)!;
     userName = sharedPreferences.getString(AppConstants.userName)!;
     imageBaseUrl = sharedPreferences.getString(AppConstants.imageBaseUrl)!;
 
@@ -91,15 +96,15 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
     if(isFilter) {
       for (int j = 0; j < filteredData.length; j++) {
         for (int i = 0; i < _imageFiles.length; i++) {
-          if (filteredData[j].skuImageName.isNotEmpty) {
-            if (_imageFiles[i].path.endsWith(filteredData[j].skuImageName)) {
+          if (filteredData[j].imageName.isNotEmpty) {
+            if (_imageFiles[i].path.endsWith(filteredData[j].imageName)) {
               setState(() {
                 filteredData[j].imageFile = _imageFiles[i];
               });
             }
           }
           print("________________");
-          print(filteredData[j].skuImageName);
+          print(filteredData[j].imageName);
           print(filteredData[j].imageFile);
           // print(_imageFiles[i].path.endsWith(trans.skuImageName));
         }
@@ -107,15 +112,15 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
     } else {
       for (int j = 0; j < transData.length; j++) {
         for (int i = 0; i < _imageFiles.length; i++) {
-          if (transData[j].skuImageName.isNotEmpty) {
-            if (_imageFiles[i].path.endsWith(transData[j].skuImageName)) {
+          if (transData[j].imageName.isNotEmpty) {
+            if (_imageFiles[i].path.endsWith(transData[j].imageName)) {
               setState(() {
                 transData[j].imageFile = _imageFiles[i];
               });
             }
           }
           print("________________");
-          print(transData[j].skuImageName);
+          print(transData[j].imageName);
           print(transData[j].imageFile);
           // print(_imageFiles[i].path.endsWith(trans.skuImageName));
         }
@@ -230,24 +235,16 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
-    final screenHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
     return Scaffold(
         backgroundColor: const Color(0xFFF4F7FD),
-        appBar: generalAppBar(context, storeName, userName, (){
+        appBar: generalAppBar(context, languageController.isEnglish.value ? storeEnName : storeArName, userName, (){
           Navigator.of(context).pop();
         }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
 
         }),
         body: isLoading ? const Center(child: MyLoadingCircle(),) :transData.isEmpty
-            ? const Center(
-          child: Text("No data found"),
+            ? Center(
+          child: Text("No Data Found".tr),
         )
             : Column(
               children: [
@@ -265,7 +262,7 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
                             },
                             child: PercentIndicator(
                               isSelected: currentSelectedValue == "Adhere",
-                                titleText: "Adhere",
+                                titleText: "Adhere".tr,
                                 isIcon: true,
                                 percentColor: MyColors.greenColor,
                                 iconData: Icons.check_circle,
@@ -283,7 +280,7 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
                             },
                             child: PercentIndicator(
                               isSelected: currentSelectedValue == "Not Adhere",
-                                titleText: "Not Adhere",
+                                titleText: "Not Adhere".tr,
                                 percentColor: MyColors.backbtnColor,
                                 isIcon: true,
                                 iconData: Icons.warning_amber_rounded,
@@ -301,7 +298,7 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
                             },
                             child: PercentIndicator(
                               isSelected: currentSelectedValue == "Pending",
-                                titleText: "Pending",
+                                titleText: "Pending".tr,
                                 percentColor: MyColors.warningColor,
                                 isIcon: true,
                                 iconData: Icons.pending,
@@ -313,8 +310,8 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
                   ),
                 ),
                 Expanded(
-                  child: isFilter ? isFilterLoading? const Center(child: CircularProgressIndicator(),) : filteredData.isEmpty ? const Center(
-                    child: Text("No Data Found"),
+                  child: isFilter ? isFilterLoading ? const Center(child: CircularProgressIndicator(),) : filteredData.isEmpty ? Center(
+                    child: Text("No Data Found".tr),
                   ) : ListView.builder(
                     itemCount: filteredData.length,
                     shrinkWrap: true,
@@ -326,10 +323,10 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
                           Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PdfScreen(type: "PDF",pdfUrl: "${imageBaseUrl}pog/${filteredData[index].imageName}")));
                         },
                         isActivity: filteredData[index].activity_status == 1,
-                        fieldValue1: filteredData[index].cat_en_name,
-                        labelName1: "Department",
+                        fieldValue1:languageController.isEnglish.value ? filteredData[index].cat_en_name : filteredData[index].cat_ar_name,
+                        labelName1: "Department".tr,
                         fieldValue2: filteredData[index].pog,
-                        labelName2: "POG",
+                        labelName2: "Planoguide".tr,
                         unitList: unitList,
                         selectedUnit: (value) {
                           if(value == "Adherence") {
@@ -370,10 +367,10 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
                       Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PdfScreen(type: "PDF",pdfUrl: "${imageBaseUrl}pog/${transData[index].imageName}")));
                     },
                     isActivity: transData[index].activity_status == 1,
-                    fieldValue1: transData[index].cat_en_name,
-                        labelName1: "Department",
+                    fieldValue1:languageController.isEnglish.value ? transData[index].cat_en_name : transData[index].cat_ar_name,
+                        labelName1: "Department".tr,
                     fieldValue2: transData[index].pog,
-                        labelName2: "POG",
+                        labelName2: "POG".tr,
                         unitList: unitList,
                         selectedUnit: (value) {
                           if(value == "Adherence") {
@@ -409,13 +406,13 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
       if (transPlanoGuideModel.isAdherence == "-1") {
         if (isMessageShow) {
           ToastMessage.errorMessage(
-              context, "Please fill the form");
+              context, "Please fill the form".tr);
         }
         return;
       } else if( transPlanoGuideModel.imageFile == null) {
         if (isMessageShow) {
           ToastMessage.errorMessage(
-              context, "Please take an image");
+              context, "Please take an image".tr);
         }
         return;
       }
@@ -440,7 +437,7 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
               transPlanoGuideModel.isAdherence)
               .then((_) {
             if (isMessageShow) {
-              ToastMessage.succesMessage(context, "Data stored successfully");
+              ToastMessage.succesMessage(context, "Data Saved Successfully".tr);
               print("Update data planoguide successfully");
               transData[index].activity_status = 1;
             }

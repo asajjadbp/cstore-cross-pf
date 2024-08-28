@@ -169,7 +169,7 @@ class JourneyPlan extends StatelessWidget {
                                       onDropClick();
                                     },
                                     child: Text(
-                                        jp.isDrop == 0 ? "Drop Visit" : "UnDrop",style: const TextStyle(color: MyColors.whiteColor,fontSize: 11),)),
+                                        jp.isDrop == 0 ? "Drop Visit".tr : "UnDrop".tr,style: const TextStyle(color: MyColors.whiteColor,fontSize: 11),)),
                                   )
                             ],
                           )

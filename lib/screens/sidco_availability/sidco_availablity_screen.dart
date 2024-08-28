@@ -2,13 +2,13 @@ import 'dart:convert';
 
 import 'package:cstore/Database/db_helper.dart';
 import 'package:cstore/Model/request_model.dart/get_tmr_pick_list_request.dart';
-import 'package:cstore/screens/availability/widgets/availability_card_item.dart';
 import 'package:cstore/screens/availability/widgets/custom_dialogue.dart';
 import 'package:cstore/screens/availability/widgets/pick_list_card_item.dart';
 import 'package:cstore/screens/sidco_availability/widgets/sidco_availability_card_item.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Model/database_model/availability_show_model.dart';
@@ -22,10 +22,10 @@ import '../../Model/response_model.dart/adherence_response_model.dart';
 import '../../Model/response_model.dart/tmr_pick_list_response_model.dart';
 import '../../Network/sql_data_http_manager.dart';
 import '../ImageScreen/image_screen.dart';
+import '../Language/localization_controller.dart';
 import '../utils/app_constants.dart';
 import '../utils/toast/toast.dart';
 import '../widget/app_bar_widgets.dart';
-import '../widget/drop_downs.dart';
 import 'package:badges/badges.dart' as badges;
 import '../widget/percent_indicator.dart';
 import 'package:intl/intl.dart';
@@ -40,8 +40,11 @@ class SidcoAvailability extends StatefulWidget {
 
 class _SidcoAvailabilityState extends State<SidcoAvailability> {
 
+  final languageController = Get.put(LocalizationController());
+
   String workingId = "";
-  String storeName = "";
+  String storeEnName = "";
+  String storeArName = "";
   String userName = "";
   String workingDate = "";
   String storeId = "";
@@ -252,7 +255,8 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
-    storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeEnName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeArName = sharedPreferences.getString(AppConstants.storeArNAme)!;
     clientId = sharedPreferences.getString(AppConstants.clientId)!;
 
     getAvailableData();
@@ -354,7 +358,7 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
     if(requiredPickList!= "0") {
       await DatabaseHelper.updateSavePickList(
           workingId, requiredPickList, skuId).then((value) {
-        ToastMessage.succesMessage(context, "Data saved Successfully");
+        ToastMessage.succesMessage(context, "Data Saved Successfully".tr);
         Navigator.of(context).pop();
 
         if(isNotAvl){
@@ -385,7 +389,7 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
 
           });
     } else {
-      ToastMessage.errorMessage(context, "Please enter a valid number");
+      ToastMessage.errorMessage(context, "Please enter a valid number".tr);
     }
   }
 
@@ -401,7 +405,7 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
        notMarkedCount = availableData.where((element) => element.activity_status == 0).toList().length;
 
       if(isMessage) {
-        ToastMessage.succesMessage(context, "Data Saved Successfully");
+        ToastMessage.succesMessage(context, "Data Saved Successfully".tr);
       }
           setState(() {
             isUpdateLoading = false;
@@ -471,7 +475,7 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
               pogOnTap: (){
                 Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PdfScreen(type: "PDF",pdfUrl: "${imageBaseUrl}pog/${avlProductPlacementModel.pog}.pdf")));
               },
-              title: availabilityShowModel.pro_en_name,
+              title : languageController.isEnglish.value ? availabilityShowModel.pro_en_name : availabilityShowModel.pro_ar_name,
               shelfNo: avlProductPlacementModel.shelfNo,
               bayNo: avlProductPlacementModel.buyNo,
               hFacings: avlProductPlacementModel.h_facing,
@@ -490,7 +494,7 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: MyColors.background,
-      appBar: generalAppBar(context, storeName, userName , (){
+      appBar: generalAppBar(context, languageController.isEnglish.value ? storeEnName : storeArName, userName , (){
         Navigator.of(context).pop();
       }, true, selectedIndex == 0, false,(int getClient, int getCat, int getSubCat, int getBrand) {
 
@@ -680,7 +684,7 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
                                           const SizedBox(width: 10,),
                                           isAll ? const Icon(Icons.check_circle_rounded,color: MyColors.appMainColor,) : const Icon(Icons.circle_outlined,color: MyColors.appMainColor,),
                                           const SizedBox(width: 10,),
-                                          const Text("Total",style: TextStyle(color: MyColors.appMainColor,fontSize: 16),),
+                                          Text("Total".tr,style:const TextStyle(color: MyColors.appMainColor,fontSize: 16),),
                                         ],
                                       ),
                                     ],
@@ -730,7 +734,7 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
                                           const SizedBox(width: 10,),
                                           isNotMarked ? const Icon(Icons.check_circle_rounded,color: MyColors.appMainColor,) : const Icon(Icons.circle_outlined,color: MyColors.appMainColor,),
                                           const SizedBox(width: 10,),
-                                          const Text("Not Marked",style: TextStyle(color: MyColors.appMainColor,fontSize: 16),),
+                                          Text("Not Marked".tr,style:const TextStyle(color: MyColors.appMainColor,fontSize: 16),),
                                         ],
                                       ),
                                     ],
@@ -785,7 +789,7 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
                                           const SizedBox(width: 10,),
                                           isAvl ? const Icon(Icons.check_circle_rounded,color: MyColors.appMainColor,) : const Icon(Icons.circle_outlined,color: MyColors.appMainColor,),
                                           const SizedBox(width: 10,),
-                                          const Text("Available",style: TextStyle(color: MyColors.appMainColor,fontSize: 16),),
+                                          Text("Available".tr,style: const TextStyle(color: MyColors.appMainColor,fontSize: 16),),
                                         ],
                                       ),
                                     ],
@@ -836,7 +840,7 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
                                           const SizedBox(width: 10,),
                                           isNotAvl ? const Icon(Icons.check_circle_rounded,color: MyColors.appMainColor,) : const Icon(Icons.circle_outlined,color: MyColors.appMainColor,),
                                           const SizedBox(width: 10,),
-                                          const Text("Not Available",style: TextStyle(color: MyColors.appMainColor,fontSize: 16),),
+                                          Text("Not Available".tr,style:const TextStyle(color: MyColors.appMainColor,fontSize: 16),),
                                         ],
                                       ),
                                     ],
@@ -893,8 +897,8 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
                     ],
                   ),
                   Expanded(
-                      child:availableData.isEmpty ? const Center(
-                        child: Text("No Data Found"),
+                      child:availableData.isEmpty ? Center(
+                        child: Text("No Data Found".tr),
                       ) : isFilter ?  ListView.builder(
                           itemCount: filteredList.length,
                           shrinkWrap: true,
@@ -905,8 +909,8 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
                                 },
                                 imageName: "${imageBaseUrl}sku_pictures/${filteredList[index].image}",
                                 isAvailable: filteredList[index].avl_status,
-                                brandName: filteredList[index].pro_en_name,
-                                categoryName: filteredList[index].cat_en_name,
+                                brandName: languageController.isEnglish.value ? filteredList[index].pro_en_name : filteredList[index].pro_ar_name,
+                                categoryName: languageController.isEnglish.value ? filteredList[index].cat_en_name : filteredList[index].cat_ar_name,
                                 pickListText: filteredList[index].requried_picklist.toString(),
                                 onTapPickList: (){
 
@@ -921,8 +925,9 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
                                                 .requried_picklist == 0,
                                             badgeNumber: 0,
                                             textEditingController: textEditingController,
-                                            title: filteredList[index]
-                                                .pro_en_name,
+                                            title: languageController.isEnglish.value ? filteredList[index]
+                                                .pro_en_name : filteredList[index]
+                                                .pro_ar_name,
                                             pickListValue: (value) {
                                               setState(() {
                                                 filteredList[index]
@@ -1013,12 +1018,12 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
                             // print( "${imageBaseUrl}sku_pictures/${availableData[index].image}");
                             return SidcoAvailabilityItem(
                               onImageTap: (){
-                                getDetailsDialogue(availableData[index]);
+                                // getDetailsDialogue(availableData[index]);
                               },
                                 imageName: "${imageBaseUrl}sku_pictures/${availableData[index].image}",
                                 isAvailable: availableData[index].avl_status,
-                                brandName: availableData[index].pro_en_name,
-                                categoryName: availableData[index].cat_en_name,
+                                brandName:  languageController.isEnglish.value ? availableData[index].pro_en_name : availableData[index].pro_ar_name,
+                                categoryName:  languageController.isEnglish.value ? availableData[index].cat_en_name : availableData[index].cat_ar_name,
                                 pickListText: availableData[index].requried_picklist.toString(),
                                 onTapPickList: (){
 
@@ -1033,8 +1038,9 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
                                           isButtonActive: availableData[index]
                                               .requried_picklist == 0,
                                           textEditingController: textEditingController,
-                                          title: availableData[index]
-                                              .pro_en_name,
+                                          title: languageController.isEnglish.value ? availableData[index]
+                                              .pro_en_name : availableData[index]
+                                              .pro_ar_name ,
                                           pickListValue: (value) {
                                             setState(() {
                                               availableData[index]
@@ -1128,7 +1134,7 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
                       alignment: Alignment.center,
                       padding:const EdgeInsets.symmetric(vertical: 5),
                       width: MediaQuery.of(context).size.width,
-                      child:const Text("Retry",style: TextStyle(color: MyColors.backbtnColor,fontSize: 20),),
+                      child: Text("Retry".tr,style:const TextStyle(color: MyColors.backbtnColor,fontSize: 20),),
                     ),
                   )
                 ],
@@ -1149,7 +1155,7 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
                               },
                               child: PercentIndicator(
                                   isSelected: currentSelectedValue == "Requested",
-                                  titleText: "Requested",
+                                  titleText: "Requested".tr,
                                   isIcon: false,
                                   percentColor: MyColors.appMainColor,
                                   iconData: Icons.check_circle,
@@ -1168,7 +1174,7 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
                                 },
                                 child: PercentIndicator(
                                     isSelected: currentSelectedValue == "Ready",
-                                    titleText: "Ready",
+                                    titleText: "Ready".tr,
                                     percentColor: MyColors.greenColor,
                                     isIcon: false,
                                     iconData: Icons.done,
@@ -1186,7 +1192,7 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
                                 },
                                 child: PercentIndicator(
                                     isSelected: currentSelectedValue == "Pending",
-                                    titleText: "Not Ready",
+                                    titleText: "Not Ready".tr,
                                     percentColor: MyColors.backbtnColor,
                                     isIcon: false,
                                     iconData: Icons.pending,
@@ -1197,8 +1203,8 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
                         ],
                       ),
                        Expanded(
-                          child: isUpdateSearchFilter ? updatedFilterAvailableData.isEmpty ? const Center(
-                            child: Text("No Data Found"),
+                          child: isUpdateSearchFilter ? updatedFilterAvailableData.isEmpty ? Center(
+                            child: Text("No Data Found".tr),
                           ) : ListView.builder(
                               itemCount: updatedFilterAvailableData.length,
                               shrinkWrap: true,
@@ -1209,10 +1215,10 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
                                 return PickListCardItem(
                                     isButtonActive: false,
                                     imageName: "${imageBaseUrl}sku_pictures/${updatedFilterAvailableData[index].image}",
-                                    brandName: updatedFilterAvailableData[index].cat_en_name,
-                                    skuName: updatedFilterAvailableData[index].pro_en_name,
+                                    brandName:languageController.isEnglish.value ? updatedFilterAvailableData[index].cat_en_name : updatedFilterAvailableData[index].cat_ar_name,
+                                    skuName:languageController.isEnglish.value ? updatedFilterAvailableData[index].pro_en_name : updatedFilterAvailableData[index].pro_ar_name,
                                     pickerName: updatedFilterAvailableData[index].picker_name ?? "",
-                                    pickListSendTime: updatedFilterAvailableData[index].pick_list_send_time,
+                                    pickListSendTime:  updatedFilterAvailableData[index].pick_list_send_time,
                                     pickListReceiveTime: updatedFilterAvailableData[index].pick_list_receive_time,
                                     requiredPickItems: updatedFilterAvailableData[index].requried_picklist.toString(),
                                     // pickerName: updatedAvailableData[index].picker_name.toString(),
@@ -1260,8 +1266,8 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
 
                               }
                           )
-                              : updatedAvailableData.isEmpty ? const Center(
-                            child: Text("No Data Found"),
+                              : updatedAvailableData.isEmpty ?  Center(
+                            child: Text("No Data Found".tr),
                           ) :
                           ListView.builder(
                               itemCount: updatedAvailableData.length,
@@ -1275,8 +1281,8 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
                                     isReasonShow: false,
                                     reasonValue: [""],
                                     imageName: "${imageBaseUrl}sku_pictures/${updatedAvailableData[index].image}",
-                                    brandName: updatedAvailableData[index].cat_en_name,
-                                    skuName: updatedAvailableData[index].pro_en_name,
+                                    brandName:languageController.isEnglish.value ? updatedAvailableData[index].cat_en_name : updatedAvailableData[index].cat_ar_name,
+                                    skuName:languageController.isEnglish.value ? updatedAvailableData[index].pro_en_name : updatedAvailableData[index].pro_ar_name,
                                     pickerName: updatedAvailableData[index].picker_name ?? "",
                                     requiredPickItems: updatedAvailableData[index].requried_picklist.toString(),
                                     pickListSendTime: updatedAvailableData[index].pick_list_send_time,
@@ -1335,11 +1341,11 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
                           decoration:  BoxDecoration(
                               color: tmrPickListCountModel.totalPickNotUpload > 0 ? MyColors.savebtnColor : MyColors.disableColor,
                               borderRadius: const BorderRadius.all(Radius.circular(5))),
-                          child: const Row(
+                          child:  Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              CircleAvatar(
+                              const CircleAvatar(
                                 radius: 12,
                                 backgroundColor: Colors.white,
                                 child: Icon(
@@ -1347,12 +1353,12 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
                                   color: Colors.black,
                                 ),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 10,
                               ),
                               Text(
-                                "Send To Picker",
-                                style: TextStyle(
+                                "Send To Picker".tr,
+                                style:const TextStyle(
                                     fontSize: 12,
                                     color: MyColors.whiteColor,
                                     fontWeight: FontWeight.w400),
@@ -1440,7 +1446,7 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
         setState(() {
           isDataUploading = false;
         }),
-        ToastMessage.succesMessage(context, "Pick List Uploaded Successfully"),
+        ToastMessage.succesMessage(context, "Pick List Uploaded Successfully".tr),
       }).catchError((onError) =>
       {
         print("API ERROR Before"),
@@ -1454,7 +1460,7 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
       setState(() {
         isDataUploading  = false;
       });
-      ToastMessage.errorMessage(context, "Already sent to picker");
+      ToastMessage.errorMessage(context, "Already sent to picker".tr);
     }
   }
 

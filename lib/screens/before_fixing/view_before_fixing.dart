@@ -2,14 +2,14 @@ import 'dart:io';
 import 'package:cstore/screens/before_fixing/widgets/before_listng_card_item.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:intl/intl.dart';
+import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Database/db_helper.dart';
 import '../../Database/table_name.dart';
 import '../../Model/database_model/show_before_fixing.dart';
+import '../Language/localization_controller.dart';
 import '../utils/app_constants.dart';
 import '../utils/toast/toast.dart';
 import '../widget/app_bar_widgets.dart';
@@ -29,8 +29,11 @@ class _ViewBeforeFixingState extends State<ViewBeforeFixing> {
   List<GetTransBeforeFixing> transData = [];
   bool isLoading = false;
   String workingId = "";
-  String storeName = '';
+  String storeEnName = '';
+  String storeArName = '';
   String userName = '';
+
+  final languageController = Get.put(LocalizationController());
 
   @override
   void initState() {
@@ -42,7 +45,8 @@ class _ViewBeforeFixingState extends State<ViewBeforeFixing> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
-    storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeEnName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeArName = sharedPreferences.getString(AppConstants.storeArNAme)!;
     userName = sharedPreferences.getString(AppConstants.userName)!;
     getTransBeforeFixingOne();
   }
@@ -67,7 +71,7 @@ class _ViewBeforeFixingState extends State<ViewBeforeFixing> {
         print(_imageFiles[i].path.endsWith(trans.img_name));
       }
     }
-    print("TRANSASDJJJJJJJJJJJJJJJJ");
+    print("TRANS");
     print(transData);
     setState(() {
       isLoading = false;
@@ -117,10 +121,10 @@ class _ViewBeforeFixingState extends State<ViewBeforeFixing> {
         }
       } else {
         // print('Permission denied');
-        ToastMessage.errorMessage(context, "Permissing denied");
+        ToastMessage.errorMessage(context, "Permissing denied".tr);
       }
     } catch (e) {
-      ToastMessage.errorMessage(context, "Permissing denied");
+      ToastMessage.errorMessage(context, "Permissing denied".tr);
     }
   }
 
@@ -129,22 +133,22 @@ class _ViewBeforeFixingState extends State<ViewBeforeFixing> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text(
-            "Are you sure you want to delete this item Permanently",
-            style: TextStyle(
+          title:  Text(
+            "Are you sure you want to delete this item Permanently".tr,
+            style:const TextStyle(
               fontWeight: FontWeight.w500,
               fontSize: 12,
             ),
           ),
           actions: [
             TextButton(
-              child: const Text("No"),
+              child:  Text("No".tr),
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
             ),
             TextButton(
-              child: const Text("Yes"),
+              child:  Text("Yes".tr),
               onPressed: () async {
                 await DatabaseHelper.deleteOneRecord(
                     TableName.tblTransBeforeFaxing, recordId)
@@ -168,7 +172,7 @@ class _ViewBeforeFixingState extends State<ViewBeforeFixing> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: MyColors.background,
-      appBar: generalAppBar(context, storeName, userName, (){
+      appBar: generalAppBar(context, languageController.isEnglish.value ? storeEnName : storeArName, userName, (){
         Navigator.of(context).pop();
       }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
       }),
@@ -189,7 +193,7 @@ class _ViewBeforeFixingState extends State<ViewBeforeFixing> {
                       return BeforeFixingCardItem(
                           imageFile: transData[i].imageFile!,
                           clientName: transData[i].clientName,
-                          categoryEnName: transData[i].categoryEnName,
+                          categoryEnName:languageController.isEnglish.value ? transData[i].categoryEnName : transData[i].categoryArName,
                           uploadStatus: transData[i].upload_status,
                           dateTime: transData[i].dateTime,
                           onDeleteTap: (){

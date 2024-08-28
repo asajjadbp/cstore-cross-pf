@@ -1,12 +1,14 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Database/db_helper.dart';
 import '../../Database/table_name.dart';
 import '../../Model/database_model/show_trans_sos.dart';
+import '../Language/localization_controller.dart';
 import '../utils/app_constants.dart';
 import '../widget/app_bar_widgets.dart';
 import 'widgets/shareofshellshow.dart';
@@ -24,7 +26,9 @@ class _ViewShareOfShelfState extends State<ViewShareOfShelf> {
   List<ShowTransSOSModel> transData = [];
   bool isLoading = false;
   String workingId = "";
-  String storeName = '';
+  String storeEnName = '';
+  String storeArName = '';
+  final languageController = Get.put(LocalizationController());
   String userName = '';
 
   @override
@@ -37,7 +41,8 @@ class _ViewShareOfShelfState extends State<ViewShareOfShelf> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
-    storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeEnName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeArName = sharedPreferences.getString(AppConstants.storeArNAme)!;
     userName = sharedPreferences.getString(AppConstants.userName)!;
     getTransSOSOne();
   }
@@ -82,22 +87,22 @@ class _ViewShareOfShelfState extends State<ViewShareOfShelf> {
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: const Color(0xFFF4F7FD),
-      appBar: generalAppBar(context, storeName, userName, (){
+      appBar: generalAppBar(context, languageController.isEnglish.value ? storeEnName : storeArName, userName, (){
         Navigator.of(context).pop();
       }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
 
       }),
-      body: transData.isEmpty ? const Center(child: Text("No Data Available"),) : ListView.builder(
+      body: transData.isEmpty ?  Center(child: Text("No Data Found".tr),) : ListView.builder(
           padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
           shrinkWrap: true,
           itemCount: transData.length,
           itemBuilder: (ctx, i) {
             return shareofshellshow(
-              catName: transData[i].cat_en_name,
+              catName:languageController.isEnglish.value ?  transData[i].cat_en_name: transData[i].cat_ar_name,
               total: transData[i].total_cat_space,
               actual: transData[i].actual_space,
               unit: transData[i].unit,
-              brandName: transData[i].brand_en_name,
+              brandName: languageController.isEnglish.value ? transData[i].brand_en_name: transData[i].brand_ar_name,
             );
           }),
     );

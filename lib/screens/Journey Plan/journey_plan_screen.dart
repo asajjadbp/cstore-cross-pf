@@ -189,15 +189,15 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
                     .of(context)
                     .size
                     .width,
-                child: const Text("Retry",
-                  style: TextStyle(color: MyColors.backbtnColor, fontSize: 20),),
+                child:  Text("Retry".tr,
+                  style:const TextStyle(color: MyColors.backbtnColor, fontSize: 20),),
               ),
             )
           ],
         )
             : jpData.isEmpty
-            ? const Center(
-          child: Text("No journey plan found"),
+            ?  Center(
+          child: Text("No journey plan found".tr),
         )
             : ListView.builder(
                 itemCount: jpData.length,
@@ -224,23 +224,23 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
                         showDialog(context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: const Text(
-                                  "Are you sure you want to drop this visit?"),
-                              content: ReasonDropDown(hintText: "Select Reason",
+                              title: Text(
+                                  "Are you sure you want to drop this visit?".tr),
+                              content: ReasonDropDown(hintText: "Select Reason".tr,
                                   reasonData: dropReasonList,
                                   onChange: (value) {
                                     selectedReasonId = value.id;
                                   }),
                               actions: [
                                 TextButton(
-                                  child: const Text("No"),
+                                  child:  Text("No".tr),
                                   onPressed: () {
                                     // returnValue = true;
                                     Navigator.of(context).pop(true);
                                   },
                                 ),
                                 TextButton(
-                                  child: const Text("Yes"),
+                                  child:  Text("Yes".tr),
                                   onPressed: () {
                                     // returnValue = true;
                                     if (selectedReasonId != -1) {
@@ -248,7 +248,7 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
                                       Navigator.of(context).pop();
                                     } else {
                                       ToastMessage.errorMessage(
-                                          context, "Please Select reason");
+                                          context, "Please Select reason".tr);
                                     }
                                   },
                                 )

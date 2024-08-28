@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../utils/appcolor.dart';
 import '../../widget/drop_downs.dart';
@@ -116,7 +117,7 @@ class _SidcoPickListCardItemPickListCardItemState extends State<SidcoPickListCar
                       if(widget.isButtonActive)
                         SidcoCounterWidget(
                           isButtonsActive: widget.isButtonActive,
-                          title: "Ready pieces",
+                          title: "Ready pieces".tr,
                           onIncrement: () {
                             widget.onIncrement();
                           },
@@ -137,7 +138,7 @@ class _SidcoPickListCardItemPickListCardItemState extends State<SidcoPickListCar
                         ),
                         child: Row(
                           children: [
-                            const Text("Ready Pieces",style: TextStyle(fontWeight: FontWeight.w600,fontSize: 12),),
+                             Text("Ready Pieces".tr,style:const TextStyle(fontWeight: FontWeight.w600,fontSize: 12),),
                             Container(
                               margin: const EdgeInsets.symmetric(horizontal: 5),
                               padding: const EdgeInsets.all(5),
@@ -196,7 +197,7 @@ class _SidcoPickListCardItemPickListCardItemState extends State<SidcoPickListCar
                           width: MediaQuery.of(context).size.width / 1.8,
                           child: UnitDropDownWithInitialValue(
                             initialValue: widget.reasonValue,
-                              hintText: "Reason",
+                              hintText: "Reason".tr,
                               unitData: widget.dropdownList,
                               onChange: (value) {
                                 widget.onItemSelected(value);
@@ -221,9 +222,9 @@ class _SidcoPickListCardItemPickListCardItemState extends State<SidcoPickListCar
                                       : MyColors.whiteColor,
                                   borderRadius:
                                   const BorderRadius.all(Radius.circular(5))),
-                              child: const Text(
-                                "Save",
-                                style: TextStyle(
+                              child:  Text(
+                                "Save".tr,
+                                style:const TextStyle(
                                     color: MyColors.whiteColor,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600),
@@ -244,7 +245,7 @@ class _SidcoPickListCardItemPickListCardItemState extends State<SidcoPickListCar
                         borderRadius:
                         BorderRadius.only(topLeft: Radius.circular(10))),
                     child: Text(
-                      "Req ${widget.requiredPickItems} pc",
+                      "${"Req".tr} ${widget.requiredPickItems} ${"pc".tr}",
                       style: const TextStyle(color: MyColors.whiteColor,fontSize: 12,fontWeight: FontWeight.bold),
                     ),
                   ),

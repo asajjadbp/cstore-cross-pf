@@ -4,11 +4,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 
+import '../../Language/localization_controller.dart';
 import '../../widget/loading.dart';
 
 class Viewrtvcard extends StatelessWidget {
-  const Viewrtvcard({
+   Viewrtvcard({
     super.key,
     required this.time,
     required this.title,
@@ -31,10 +33,10 @@ class Viewrtvcard extends StatelessWidget {
   final int uploadStatus;
   final Function onDelete;
 
+  final languageController = Get.put(LocalizationController());
+
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
     return Card(
       elevation: 3,
       color: MyColors.dropBorderColor,
@@ -54,10 +56,9 @@ class Viewrtvcard extends StatelessWidget {
               children: [
                 Container(
                  padding: const EdgeInsets.symmetric(horizontal: 5,vertical: 3),
-                  decoration:  const BoxDecoration(
+                  decoration:  BoxDecoration(
                       color: MyColors.appMainColor,
-                      borderRadius:
-                          BorderRadius.only(bottomRight: Radius.circular(10))),
+                      borderRadius: languageController.isEnglish.value ? const BorderRadius.only(bottomRight: Radius.circular(10)) : const BorderRadius.only(bottomLeft: Radius.circular(10))),
                   child: Text(
                     time,
                     style: const TextStyle(
@@ -68,7 +69,7 @@ class Viewrtvcard extends StatelessWidget {
                 ),
                 Expanded(
                   child: Container(
-                      margin: const EdgeInsets.only(top: 5),
+                      margin: const EdgeInsets.only(top: 5,left: 10,right: 10),
                       child: Text(
                         title,
                         overflow: TextOverflow.ellipsis,
@@ -157,8 +158,8 @@ class Viewrtvcard extends StatelessWidget {
                 children: [
                   Container(
                       margin: const EdgeInsets.only(left: 20),
-                      child: const Text('Type',
-                          style: TextStyle(
+                      child:  Text('Type'.tr,
+                          style:const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                               color: Colors.black))),
@@ -191,8 +192,8 @@ class Viewrtvcard extends StatelessWidget {
                 children: [
                   Container(
                       margin: const EdgeInsets.only(left: 15),
-                      child: const Text('Pieces',
-                          style: TextStyle(
+                      child:  Text('Pieces'.tr,
+                          style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                               color: Colors.black))),
@@ -223,12 +224,12 @@ class Viewrtvcard extends StatelessWidget {
                             bottomLeft: Radius.circular(12),
                             bottomRight: Radius.circular(12))),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Container(
                             margin: const EdgeInsets.only(left: 20),
-                            child: const Text('Exp Date',
-                                style: TextStyle(
+                            child:  Text('Exp Date'.tr,
+                                style: const TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.black))),

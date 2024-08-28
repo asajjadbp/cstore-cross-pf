@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cstore/screens/rtv_screen/widgets/view_rtv_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -10,6 +11,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../Database/db_helper.dart';
 import '../../Database/table_name.dart';
 import '../../Model/database_model/show_trans_rtv_model.dart';
+import '../Language/localization_controller.dart';
 import '../utils/app_constants.dart';
 import '../utils/toast/toast.dart';
 import '../widget/app_bar_widgets.dart';
@@ -23,11 +25,15 @@ class viewrtvScreen extends StatefulWidget {
 }
 
 class _viewrtvScreenState extends State<viewrtvScreen> {
+
+  final languageController = Get.put(LocalizationController());
+
   List<File> _imageFiles = [];
   List<ShowTransRTVShowModel> transData = [];
   bool isLoading = false;
   String workingId = "";
-  String storeName = '';
+  String storeEnName = '';
+  String storeArName = '';
   String userName = '';
   String clientId = '';
   String imageBaseUrl = '';
@@ -41,7 +47,8 @@ class _viewrtvScreenState extends State<viewrtvScreen> {
   getStoreDetails() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
-    storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeEnName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeArName = sharedPreferences.getString(AppConstants.storeArNAme)!;
     userName = sharedPreferences.getString(AppConstants.userName)!;
     clientId = sharedPreferences.getString(AppConstants.clientId)!;
     imageBaseUrl = sharedPreferences.getString(AppConstants.imageBaseUrl)!;
@@ -121,10 +128,10 @@ class _viewrtvScreenState extends State<viewrtvScreen> {
         }
       } else {
         // print('Permission denied');
-        ToastMessage.errorMessage(context, "Permissing denied");
+        ToastMessage.errorMessage(context, "Permission denied".tr);
       }
     } catch (e) {
-      ToastMessage.errorMessage(context, "Permissing denied");
+      ToastMessage.errorMessage(context, "Permission denied".tr);
     }
   }
 
@@ -138,11 +145,9 @@ class _viewrtvScreenState extends State<viewrtvScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: const Color(0xFFF4F7FD),
-      appBar: generalAppBar(context, storeName, userName, (){
+      appBar: generalAppBar(context, languageController.isEnglish.value ? storeEnName : storeArName, userName, (){
         Navigator.of(context).pop();
       }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
 
@@ -152,8 +157,8 @@ class _viewrtvScreenState extends State<viewrtvScreen> {
               child: MyLoadingCircle(),
             )
           : transData.isEmpty
-              ? const Center(
-                  child: Text("No data found"),
+              ? Center(
+                  child: Text("No Data Found".tr),
                 )
               : ListView.builder(
                   shrinkWrap: true,
@@ -161,32 +166,32 @@ class _viewrtvScreenState extends State<viewrtvScreen> {
                   itemBuilder: (BuildContext context, int i) {
                     return Viewrtvcard(
                       time: transData[i].dateTime,
-                      title: transData[i].pro_en_name,
+                      title: languageController.isEnglish.value ? transData[i].pro_en_name : transData[i].pro_ar_name,
                       proImage:
                           "${imageBaseUrl}sku_pictures/${transData[i].pro_image}",
                       rtvImage:transData[i].imageFile as File,
-                      type: transData[i].reason_en_name,
+                      type:  languageController.isEnglish.value ? transData[i].reason_en_name : transData[i].reason_ar_name ,
                       piece: transData[i].pieces.toString(),
                       expdate: transData[i].exp_date,
                         onDelete: (){
                           showDialog(context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: const Text("Are you sure you want to delete this item Permanently",
-                                  style: TextStyle(
+                                title:  Text("Are you sure you want to delete this item Permanently".tr,
+                                  style:const TextStyle(
                                     fontSize: 13,
                                   ),),
                                 actions: [
                                   TextButton.icon(
                                     icon: const Icon(Icons.cancel_outlined),
-                                    label: const Text("No"),
+                                    label: Text("No".tr),
                                     onPressed: () {
                                       Navigator.of(context).pop(true);
                                     },
                                   ),
                                   TextButton.icon(
                                     icon: const Icon(Icons.check),
-                                    label: const Text("Yes"),
+                                    label:  Text("Yes".tr),
                                     onPressed: () {
                                       deletePhoto(transData[i].id,transData[i].rtv_image);
                                       Navigator.of(context).pop(true);

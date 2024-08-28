@@ -1,7 +1,9 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:cstore/Model/database_model/sys_brand_model.dart';
+import 'package:cstore/screens/Language/localization_controller.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../Model/database_model/PlanogramReasonModel.dart';
 import '../../Model/database_model/category_model.dart';
 import '../../Model/database_model/client_model.dart';
@@ -14,12 +16,14 @@ import '../../Model/database_model/sys_rtv_reason_model.dart';
 import '../utils/appcolor.dart';
 
 class ClientListDropDown extends StatelessWidget {
-  const ClientListDropDown({super.key,required this.clientKey,required this.hintText,required this.clientData,required this.onChange});
+  ClientListDropDown({super.key,required this.clientKey,required this.hintText,required this.clientData,required this.onChange});
 
   final String hintText;
   final List<ClientModel> clientData;
   final GlobalKey<FormFieldState> clientKey;
   final Function (ClientModel clientModel) onChange;
+
+  final languageController = Get.put(LocalizationController());
 
   @override
   Widget build(BuildContext context) {
@@ -34,14 +38,14 @@ class ClientListDropDown extends StatelessWidget {
       ),
       isExpanded: true,
       hint: Text(
-        hintText,
+        hintText.tr,
         style: const TextStyle(fontSize: 14),
       ),
       items: clientData
           .map((item) => DropdownMenuItem<ClientModel>(
         value: item,
         child: Text(
-          item.client_name,
+          languageController.isEnglish.value ? item.client_name : item.client_name,
           style: const TextStyle(
             fontSize: 14,
           ),
@@ -79,11 +83,13 @@ class ClientListDropDown extends StatelessWidget {
 }
 
 class CategoryDropDown extends StatefulWidget {
-  const CategoryDropDown({super.key,required this.categoryKey,required this.hintText,required this.categoryData,required this.onChange});
+  CategoryDropDown({super.key,required this.categoryKey,required this.hintText,required this.categoryData,required this.onChange});
   final String hintText;
   final GlobalKey<FormFieldState> categoryKey;
   final List<CategoryModel> categoryData;
   final Function (CategoryModel clientModel) onChange;
+
+  final languageController = Get.put(LocalizationController());
 
   @override
   State<CategoryDropDown> createState() => _CategoryDropDownState();
@@ -104,14 +110,14 @@ class _CategoryDropDownState extends State<CategoryDropDown> {
       ),
       isExpanded: true,
       hint: Text(
-        widget.hintText,
+        widget.hintText.tr,
         style: const TextStyle(fontSize: 14),
       ),
       items: widget.categoryData
           .map((item) => DropdownMenuItem<CategoryModel>(
         value: item,
         child: Text(
-          item.en_name,
+          widget.languageController.isEnglish.value ? item.en_name : item.ar_name,
           style: const TextStyle(
             fontSize: 14,
           ),
@@ -149,12 +155,13 @@ class _CategoryDropDownState extends State<CategoryDropDown> {
 }
 
 class SysBrandDropDown extends StatelessWidget {
-  const SysBrandDropDown({super.key,required this.brandKey,required this.hintText,required this.brandData,required this.onChange});
+  SysBrandDropDown({super.key,required this.brandKey,required this.hintText,required this.brandData,required this.onChange});
 
   final String hintText;
   final List<SYS_BrandModel> brandData;
   final Function (SYS_BrandModel clientModel) onChange;
   final GlobalKey<FormFieldState> brandKey;
+  final languageController = Get.put(LocalizationController());
 
   @override
   Widget build(BuildContext context) {
@@ -173,14 +180,14 @@ class SysBrandDropDown extends StatelessWidget {
       ),
       isExpanded: true,
       hint: Text(
-        hintText,
+        hintText.tr,
         style: const TextStyle(fontSize: 14),
       ),
       items: brandData
           .map((item) => DropdownMenuItem<SYS_BrandModel>(
         value: item,
         child: Text(
-          item.en_name,
+          languageController.isEnglish.value ? item.en_name : item.ar_name,
           style: const TextStyle(
             fontSize: 14,
           ),
@@ -217,11 +224,12 @@ class SysBrandDropDown extends StatelessWidget {
   }
 }
 class PlanoReasonDropDown extends StatelessWidget {
-  const PlanoReasonDropDown({super.key,required this.hintText,required this.reasonData,required this.onChange});
+  PlanoReasonDropDown({super.key,required this.hintText,required this.reasonData,required this.onChange});
 
   final String hintText;
   final List<PlanogramReasonModel> reasonData;
   final Function (PlanogramReasonModel clientModel) onChange;
+  final languageController = Get.put(LocalizationController());
 
   @override
   Widget build(BuildContext context) {
@@ -243,7 +251,7 @@ class PlanoReasonDropDown extends StatelessWidget {
       items: reasonData.map((item) => DropdownMenuItem<PlanogramReasonModel>(
         value: item,
         child: Text(
-          item.en_name,
+          languageController.isEnglish.value ? item.en_name : item.ar_name,
           style: const TextStyle(
             fontSize: 14,
           ),
@@ -279,12 +287,14 @@ class PlanoReasonDropDown extends StatelessWidget {
     );
   }
 }
-class TypeDropDown extends StatelessWidget {const TypeDropDown({super.key,required this.hintText,required this.photoData,required this.onChange,required this.typeKey});
+class TypeDropDown extends StatelessWidget {
+  TypeDropDown({super.key,required this.hintText,required this.photoData,required this.onChange,required this.typeKey});
 
   final String hintText;
   final List<Sys_PhotoTypeModel> photoData;
   final Function (Sys_PhotoTypeModel typeModel) onChange;
 final GlobalKey<FormFieldState> typeKey;
+final languageController = Get.put(LocalizationController());
 
   @override
   Widget build(BuildContext context) {
@@ -306,7 +316,7 @@ final GlobalKey<FormFieldState> typeKey;
           .map((item) => DropdownMenuItem<Sys_PhotoTypeModel>(
         value: item,
         child: Text(
-          item.en_name,
+          languageController.isEnglish.value ? item.en_name : item.ar_name,
           style: const TextStyle(
             fontSize: 14,
           ),
@@ -343,11 +353,12 @@ final GlobalKey<FormFieldState> typeKey;
   }
 }
 class OsdcTypeDropDown extends StatelessWidget {
-  const OsdcTypeDropDown({super.key,required this.hintText,required this.osdcTypeData,required this.onChange});
+   OsdcTypeDropDown({super.key,required this.hintText,required this.osdcTypeData,required this.onChange});
 
   final String hintText;
   final List<Sys_OSDCTypeModel> osdcTypeData;
   final Function (Sys_OSDCTypeModel typeModel) onChange;
+   final languageController = Get.put(LocalizationController());
 
   @override
   Widget build(BuildContext context) {
@@ -368,7 +379,7 @@ class OsdcTypeDropDown extends StatelessWidget {
           .map((item) => DropdownMenuItem<Sys_OSDCTypeModel>(
         value: item,
         child: Text(
-          item.en_name,
+          languageController.isEnglish.value ? item.en_name : item.ar_name,
           style: const TextStyle(
             fontSize: 14,
           ),
@@ -405,10 +416,11 @@ class OsdcTypeDropDown extends StatelessWidget {
   }
 }
 class OsdcReasonDropDown extends StatelessWidget {
-  const OsdcReasonDropDown({super.key,required this.hintText,required this.osdcReasonData,required this.onChange});
+   OsdcReasonDropDown({super.key,required this.hintText,required this.osdcReasonData,required this.onChange});
   final String hintText;
   final List<Sys_OSDCReasonModel> osdcReasonData;
   final Function (Sys_OSDCReasonModel typeModel) onChange;
+   final languageController = Get.put(LocalizationController());
 
   @override
   Widget build(BuildContext context) {
@@ -429,7 +441,7 @@ class OsdcReasonDropDown extends StatelessWidget {
           .map((item) => DropdownMenuItem<Sys_OSDCReasonModel>(
         value: item,
         child: Text(
-          item.en_name,
+          languageController.isEnglish.value ? item.en_name : item.ar_name,
           style: const TextStyle(
             fontSize: 14,
           ),
@@ -466,10 +478,11 @@ class OsdcReasonDropDown extends StatelessWidget {
   }
 }
 class OsdcBrandDropDown extends StatelessWidget {
-  const OsdcBrandDropDown({super.key,required this.hintText,required this.osdcBrandData,required this.onChange});
+   OsdcBrandDropDown({super.key,required this.hintText,required this.osdcBrandData,required this.onChange});
   final String hintText;
   final List<SYS_BrandModel> osdcBrandData;
   final Function (SYS_BrandModel typeModel) onChange;
+   final languageController = Get.put(LocalizationController());
 
   @override
   Widget build(BuildContext context) {
@@ -490,7 +503,7 @@ class OsdcBrandDropDown extends StatelessWidget {
           .map((item) => DropdownMenuItem<SYS_BrandModel>(
         value: item,
         child: Text(
-          item.en_name,
+          languageController.isEnglish.value ? item.en_name : item.ar_name,
           style: const TextStyle(
             fontSize: 14,
           ),
@@ -527,11 +540,12 @@ class OsdcBrandDropDown extends StatelessWidget {
   }
 }
 class ReasonDropDown extends StatelessWidget {
-  const ReasonDropDown({super.key,required this.hintText,required this.reasonData,required this.onChange});
+   ReasonDropDown({super.key,required this.hintText,required this.reasonData,required this.onChange});
 
   final String hintText;
   final List<DropReasonModel> reasonData;
   final Function (DropReasonModel typeModel) onChange;
+   final languageController = Get.put(LocalizationController());
 
   @override
   Widget build(BuildContext context) {
@@ -555,7 +569,7 @@ class ReasonDropDown extends StatelessWidget {
           .map((item) => DropdownMenuItem<DropReasonModel>(
         value: item,
         child: Text(
-          item.en_name,
+          languageController.isEnglish.value ? item.en_name : item.ar_name,
           style: const TextStyle(
             fontSize: 14,
           ),
@@ -689,7 +703,7 @@ class AdherenceDropDown extends StatelessWidget {
           .map((item) => DropdownMenuItem<String>(
         value: item,
         child: Text(
-          item,
+          item.tr,
           style: const TextStyle(
             fontSize: 14,
           ),
@@ -822,13 +836,14 @@ class UnitDropDownWithInitialValue extends StatelessWidget {
 }
 
 class SysBrandDropDownWithInitialValue extends StatelessWidget {
-  const SysBrandDropDownWithInitialValue({super.key,required this.initialValue,required this.brandKey,required this.hintText,required this.brandData,required this.onChange});
+   SysBrandDropDownWithInitialValue({super.key,required this.initialValue,required this.brandKey,required this.hintText,required this.brandData,required this.onChange});
 
   final String hintText;
   final List<SYS_BrandModel> brandData;
   final SYS_BrandModel initialValue;
   final Function (SYS_BrandModel clientModel) onChange;
   final GlobalKey<FormFieldState> brandKey;
+   final languageController = Get.put(LocalizationController());
 
   @override
   Widget build(BuildContext context) {
@@ -856,7 +871,7 @@ class SysBrandDropDownWithInitialValue extends StatelessWidget {
         value: item,
         enabled: item.id != -1,
         child: Text(
-          item.en_name,
+          languageController.isEnglish.value ? item.en_name : item.ar_name,
           style: const TextStyle(
             fontSize: 14,
           ),
@@ -894,12 +909,13 @@ class SysBrandDropDownWithInitialValue extends StatelessWidget {
 }
 
 class CategoryDropDownWithInitialValue extends StatefulWidget {
-  const CategoryDropDownWithInitialValue({super.key,required this.initialValue,required this.categoryKey,required this.hintText,required this.categoryData,required this.onChange});
+  CategoryDropDownWithInitialValue({super.key,required this.initialValue,required this.categoryKey,required this.hintText,required this.categoryData,required this.onChange});
   final String hintText;
   final GlobalKey<FormFieldState> categoryKey;
   final List<CategoryModel> categoryData;
   final CategoryModel initialValue;
   final Function (CategoryModel clientModel) onChange;
+  final languageController = Get.put(LocalizationController());
 
   @override
   State<CategoryDropDownWithInitialValue> createState() => _CategoryDropDownWithInitialValueState();
@@ -909,7 +925,7 @@ class _CategoryDropDownWithInitialValueState extends State<CategoryDropDownWithI
   Widget build(BuildContext context) {
     return DropdownButtonFormField2<CategoryModel>(
       key: widget.categoryKey,
-      value: widget.initialValue,
+      value: widget.initialValue.id == 0 ? null  : widget.initialValue,
       decoration: InputDecoration(
         isDense: true,
         filled: true,
@@ -929,7 +945,7 @@ class _CategoryDropDownWithInitialValueState extends State<CategoryDropDownWithI
         value: item,
         enabled: item.id != -1,
         child: Text(
-          item.en_name,
+          widget.languageController.isEnglish.value ? item.en_name : item.ar_name,
           style: const TextStyle(
             fontSize: 14,
           ),
@@ -967,11 +983,12 @@ class _CategoryDropDownWithInitialValueState extends State<CategoryDropDownWithI
 }
 
 class RtvReasonDropDown extends StatelessWidget {
-  const RtvReasonDropDown({super.key,required this.hintText,required this.reasonData,required this.onChange});
+   RtvReasonDropDown({super.key,required this.hintText,required this.reasonData,required this.onChange});
 
   final String hintText;
   final List<Sys_RTVReasonModel> reasonData;
   final Function (Sys_RTVReasonModel typeModel) onChange;
+   final languageController = Get.put(LocalizationController());
 
   @override
   Widget build(BuildContext context) {
@@ -995,7 +1012,7 @@ class RtvReasonDropDown extends StatelessWidget {
           .map((item) => DropdownMenuItem<Sys_RTVReasonModel>(
         value: item,
         child: Text(
-          item.en_name,
+          languageController.isEnglish.value ? item.en_name : item.ar_name,
           style: const TextStyle(
             fontSize: 14,
           ),

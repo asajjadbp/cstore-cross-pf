@@ -2,7 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cstore/Model/database_model/PlanogramReasonModel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 
+import '../../Language/localization_controller.dart';
 import '../../utils/appcolor.dart';
 import '../../widget/drop_downs.dart';
 import '../../widget/loading.dart';
@@ -50,6 +52,7 @@ class PickListCardItem extends StatefulWidget {
   final Function onDecrement;
   final String pickListSendTime;
   final String pickListReceiveTime;
+  final languageController = Get.put(LocalizationController());
 
   @override
   State<PickListCardItem> createState() => _PickListCardItemState();
@@ -118,7 +121,7 @@ class _PickListCardItemState extends State<PickListCardItem> {
                       if(widget.isButtonActive)
                       CounterWidget(
                           isButtonsActive: widget.isButtonActive,
-                          title: "Ready pieces",
+                          title: "Ready pieces".tr,
                           onIncrement: () {
                             widget.onIncrement();
                           },
@@ -139,7 +142,7 @@ class _PickListCardItemState extends State<PickListCardItem> {
                         ),
                         child: Row(
                           children: [
-                            const Text("Ready Pieces",style: TextStyle(fontWeight: FontWeight.w600,fontSize: 12),),
+                             Text("Ready Pieces".tr,style:const TextStyle(fontWeight: FontWeight.w600,fontSize: 12),),
                             Container(
                               margin: const EdgeInsets.symmetric(horizontal: 5),
                               padding: const EdgeInsets.all(5),
@@ -198,7 +201,7 @@ class _PickListCardItemState extends State<PickListCardItem> {
                           width: MediaQuery.of(context).size.width / 1.8,
                           child: UnitDropDownWithInitialValue(
                             initialValue: widget.reasonValue,
-                              hintText: "Reason",
+                              hintText: "Reason".tr,
                               unitData: widget.dropdownList,
                               onChange: (value) {
                                 widget.onItemSelected(value);
@@ -223,9 +226,9 @@ class _PickListCardItemState extends State<PickListCardItem> {
                                       : MyColors.whiteColor,
                                   borderRadius:
                                   const BorderRadius.all(Radius.circular(5))),
-                              child: const Text(
-                                "Save",
-                                style: TextStyle(
+                              child:  Text(
+                                "Save".tr,
+                                style: const TextStyle(
                                     color: MyColors.whiteColor,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600),
@@ -235,32 +238,30 @@ class _PickListCardItemState extends State<PickListCardItem> {
                   ))
             ],
           ),
-          Positioned(
-              child: Row(
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(right: 8),
-                    padding: const EdgeInsets.all(5),
-                    decoration: const BoxDecoration(
-                        color: MyColors.backbtnColor,
-                        borderRadius:
-                        BorderRadius.only(topLeft: Radius.circular(10))),
-                    child: Text(
-                      "Req ${widget.requiredPickItems} pc",
-                      style: const TextStyle(color: MyColors.whiteColor,fontSize: 12,fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  widget.isAvailable
-                      ? const Icon(
-                    Icons.check_circle,
-                    color: Colors.green,
-                  )
-                      : const Icon(
-                    Icons.pending,
-                    color: Colors.red,
-                  ),
-                ],
-              )),
+          Row(
+            children: [
+              Container(
+                margin: widget.languageController.isEnglish.value ? const EdgeInsets.only(right: 8) : const EdgeInsets.only(left: 8),
+                padding: const EdgeInsets.all(5),
+                decoration:  BoxDecoration(
+                    color: MyColors.backbtnColor,
+                    borderRadius: widget.languageController.isEnglish.value ? const BorderRadius.only(topLeft: Radius.circular(10)) :const BorderRadius.only(topRight: Radius.circular(10))),
+                child: Text(
+                  "${"Req".tr} ${widget.requiredPickItems} ${"pc".tr}",
+                  style: const TextStyle(color: MyColors.whiteColor,fontSize: 12,fontWeight: FontWeight.bold),
+                ),
+              ),
+              widget.isAvailable
+                  ? const Icon(
+                Icons.check_circle,
+                color: Colors.green,
+              )
+                  : const Icon(
+                Icons.pending,
+                color: Colors.red,
+              ),
+            ],
+          ),
         ],
       ),
     );

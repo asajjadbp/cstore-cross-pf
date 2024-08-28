@@ -3,6 +3,7 @@ import 'package:cstore/Model/database_model/trans_rtv_one_plus_one.dart';
 import 'package:cstore/screens/rtv_1+1/view_rtv_one_plus_one.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart' as path;
 import '../../Database/db_helper.dart';
@@ -10,6 +11,7 @@ import '../../Model/database_model/category_model.dart';
 import '../../Model/database_model/client_model.dart';
 import '../../Model/database_model/sys_photo_type.dart';
 import '../../Model/database_model/sys_rtv_reason_model.dart';
+import '../Language/localization_controller.dart';
 import '../utils/app_constants.dart';
 import '../utils/appcolor.dart';
 import '../utils/services/image_picker.dart';
@@ -39,7 +41,10 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
   bool isBtnLoading = false;
   String clientId = "";
   String workingId = "";
-  String storeName = "";
+  String storeEnName = "";
+  String storeArName = "";
+  final languageController = Get.put(LocalizationController());
+
   String userName = "";
   TextEditingController totalPieces = TextEditingController();
   TextEditingController edDocNumber = TextEditingController();
@@ -75,7 +80,8 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     clientId = sharedPreferences.getString(AppConstants.clientId)!;
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
-    storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeEnName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeArName = sharedPreferences.getString(AppConstants.storeArNAme)!;
     userName = sharedPreferences.getString(AppConstants.userName)!;
 
     if (isInit) {
@@ -136,8 +142,6 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
       setState(() {});
       reasonData = value;
     });
-    print("TRV Reason ScreenList");
-    print(reasonData[0].en_name);
   }
 
   Future<void> getImage(String name) async {
@@ -165,7 +169,7 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
         edDocNumber.text.isEmpty ||
         totalPieces.text.isEmpty ||
         selectedSkuId == -1 || selectedCategoryId == -1 || selectedClientId == -1) {
-      ToastMessage.errorMessage(context, "Please fill the form and take image");
+      ToastMessage.errorMessage(context, "Please fill the form and take image".tr);
       return;
     }
     setState(() {
@@ -192,13 +196,11 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
                 doc_image_name: docImageName))
             .then((_) {
 
-          ToastMessage.succesMessage(context, "Data store successfully");
+          ToastMessage.succesMessage(context, "Data Store SuccessFully".tr);
       });
 
         await takePicture(context, docImageFile, docImageName, workingId, AppConstants.onePlusOne)
             .then((_) async {
-          print("image add success $docImageFile");
-          print("imageName add success $docImageName");
           totalPieces.clear();
           edComment.clear();
           selectedSkuId = -1;
@@ -222,7 +224,7 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
 
     return Scaffold(
         backgroundColor: const Color(0xFFF4F7FD),
-        appBar: generalAppBar(context, storeName, userName, () {
+        appBar: generalAppBar(context,  languageController.isEnglish.value ? storeEnName : storeArName, userName, () {
           Navigator.of(context).pop();
         }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
 
@@ -243,20 +245,20 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Row(
+                             Row(
                               children: [
                                 Text(
-                                  "Client",
-                                  style: TextStyle(
+                                  "Client".tr,
+                                  style: const TextStyle(
                                       color: MyColors.appMainColor,
                                       fontWeight: FontWeight.bold),
                                 ),
-                                Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
+                                const Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
                               ],
                             ),
                             ClientListDropDown(
                                 clientKey: clientKey,
-                                hintText: "Client",
+                                hintText: "Client".tr,
                                 clientData: clientData,
                                 onChange: (value) {
                                   selectedClientId = value.client_id;
@@ -272,26 +274,26 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Row(
+                             Row(
                               children: [
                                 Text(
-                                  "Category",
-                                  style: TextStyle(
+                                  "Category".tr,
+                                  style: const TextStyle(
                                       color: MyColors.appMainColor,
                                       fontWeight: FontWeight.bold),
                                 ),
 
-                                Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
+                                const Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
                               ],
                             ),
                             isCategoryLoading
-                                ? Center(
-                              child: Container(
+                                ? const Center(
+                              child: SizedBox(
                                 height: 60,
-                                child: const MyLoadingCircle(),
+                                child: MyLoadingCircle(),
                               ),
                             )
-                                : CategoryDropDown(categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
+                                : CategoryDropDown(categoryKey:categoryKey,hintText: "Category".tr, categoryData: categoryData, onChange: (value){
                               selectedCategoryId = value.id;
                               getSkusData(selectedCategoryId);
                               setState(() {
@@ -309,20 +311,20 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Row(
+                            Row(
                               children: [
                                 Text(
-                                  "Sku's",
-                                  style: TextStyle(
+                                  "Skus".tr,
+                                  style: const TextStyle(
                                       color: MyColors.appMainColor,
                                       fontWeight: FontWeight.bold),
                                 ),
-                                Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
+                                const Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
                               ],
                             ),
                             TypeDropDown(
                                 typeKey: skuKey,
-                                hintText: "Select sku",
+                                hintText: "Select SKU".tr,
                                 photoData: skuDataList,
                                 onChange: (value) {
                                   selectedSkuId = value.id;
@@ -337,15 +339,15 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Row(
+                                 Row(
                                   children: [
                                     Text(
-                                      "Pieces",
-                                      style: TextStyle(
+                                      "Pieces".tr,
+                                      style: const TextStyle(
                                           color: MyColors.appMainColor,
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
+                                    const Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
                                   ],
                                 ),
                                 SizedBox(
@@ -356,18 +358,18 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
                                     onChanged: (value) {},
                                     controller: totalPieces,
                                     keyboardType: TextInputType.number,
-                                    decoration: const InputDecoration(
+                                    decoration:  InputDecoration(
                                         prefixIconColor: MyColors.appMainColor,
                                         focusColor: MyColors.appMainColor,
                                         fillColor: MyColors.whiteColor,
                                         filled: true,
-                                        labelStyle: TextStyle(
+                                        labelStyle: const TextStyle(
                                             color: MyColors.appMainColor, height: 50.0),
-                                        focusedBorder: OutlineInputBorder(
+                                        focusedBorder: const OutlineInputBorder(
                                             borderSide: BorderSide(
                                                 width: 1, color: MyColors.appMainColor)),
-                                        border: OutlineInputBorder(),
-                                        hintText: 'Enter Pieces'),
+                                        border: const OutlineInputBorder(),
+                                        hintText: 'Enter Pieces'.tr),
                                     inputFormatters: [
                                       FilteringTextInputFormatter.allow(
                                           RegExp(r'^[0-9][0-9]*'))
@@ -382,22 +384,21 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Row(
+                                 Row(
                                   children: [
                                     Text(
-                                      "Type",
-                                      style: TextStyle(
+                                      "Type".tr,
+                                      style: const TextStyle(
                                           color: MyColors.appMainColor,
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
+                                    const Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
                                   ],
                                 ),
                                 UnitDropDown(
-                                    hintText: "Select type",
+                                    hintText: "Select type".tr,
                                     unitData: unitList,
                                     onChange: (value) {
-                                      print(value);
                                       _selectedType = value;
                                     })
                               ],
@@ -410,15 +411,15 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Row(
+                             Row(
                               children: [
                                 Text(
-                                  "Document No",
-                                  style: TextStyle(
+                                  "Document No".tr,
+                                  style: const TextStyle(
                                       color: MyColors.appMainColor,
                                       fontWeight: FontWeight.bold),
                                 ),
-                                Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
+                                const Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
                               ],
                             ),
                             SizedBox(
@@ -431,18 +432,18 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
                                   },
                                   controller: edDocNumber,
                                   keyboardType: TextInputType.text,
-                                  decoration: const InputDecoration(
+                                  decoration:  InputDecoration(
                                       prefixIconColor: MyColors.appMainColor,
                                       focusColor: MyColors.appMainColor,
                                       fillColor: MyColors.whiteColor,
                                       filled: true,
-                                      labelStyle: TextStyle(
+                                      labelStyle: const TextStyle(
                                           color: MyColors.appMainColor, height: 50.0),
-                                      focusedBorder: OutlineInputBorder(
+                                      focusedBorder: const OutlineInputBorder(
                                           borderSide: BorderSide(
                                               width: 1, color: MyColors.appMainColor)),
-                                      border: OutlineInputBorder(),
-                                      hintText: 'Enter document')),
+                                      border: const OutlineInputBorder(),
+                                      hintText: 'Enter document'.tr)),
                             ),
                           ],
                         ),
@@ -450,11 +451,11 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Row(
+                           Row(
                             children: [
                               Text(
-                                "Comment",
-                                style: TextStyle(
+                                "Comment".tr,
+                                style: const TextStyle(
                                     color: MyColors.appMainColor,
                                     fontWeight: FontWeight.bold),
                               ),
@@ -466,22 +467,21 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
                                 showCursor: true,
                                 enableInteractiveSelection: false,
                                 onChanged: (value) {
-                                  print(value);
                                 },
                                 controller: edComment,
                                 keyboardType: TextInputType.text,
-                                decoration: const InputDecoration(
+                                decoration:  InputDecoration(
                                     prefixIconColor: MyColors.appMainColor,
                                     focusColor: MyColors.appMainColor,
                                     fillColor: MyColors.whiteColor,
                                     filled: true,
-                                    labelStyle: TextStyle(
+                                    labelStyle: const TextStyle(
                                         color: MyColors.appMainColor, height: 100.0),
-                                    focusedBorder: OutlineInputBorder(
+                                    focusedBorder: const OutlineInputBorder(
                                         borderSide: BorderSide(
                                             width: 1, color: MyColors.appMainColor)),
-                                    border: OutlineInputBorder(),
-                                    hintText: 'Enter comment')),
+                                    border: const OutlineInputBorder(),
+                                    hintText: 'Enter comment'.tr)),
                           ),
                         ],
                       ),
@@ -531,16 +531,16 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
                             Expanded(
                               child: Column(
                                 children: [
-                                  const Row(
+                                   Row(
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
                                       Text(
-                                        "Document Photo",
-                                        style: TextStyle(
+                                        "Document Photo".tr,
+                                        style: const TextStyle(
                                             color: MyColors.appMainColor,
                                             fontWeight: FontWeight.bold),
                                       ),
-                                      Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
+                                      const Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
                                     ],
                                   ),
                                   SizedBox(
@@ -578,7 +578,7 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
                                 child: MyLoadingCircle(),
                               )
                             : BigElevatedButton(
-                            buttonName: "Save",
+                            buttonName: "Save".tr,
                             submit: (){
                               saveStorePhotoData();
                             },
@@ -593,7 +593,7 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
               Container(
                 margin: const EdgeInsets.symmetric(vertical: 5),
                 child: BigElevatedButton(
-                    buttonName: "View 1 + 1",
+                    buttonName: "View 1 + 1".tr,
                     submit: (){
                       Navigator.push(
                         context,

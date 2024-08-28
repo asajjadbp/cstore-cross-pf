@@ -7,6 +7,7 @@ import 'package:cstore/screens/planogram/widgets/planogram_item_card.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:cstore/screens/widget/percent_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../Database/db_helper.dart';
 import '../../Database/table_name.dart';
 import '../../Model/database_model/show_planogram_model.dart';
+import '../Language/localization_controller.dart';
 import '../utils/app_constants.dart';
 import '../utils/toast/toast.dart';
 import '../widget/app_bar_widgets.dart';
@@ -34,7 +36,9 @@ class _ViewPlanogramScreenState extends State<ViewPlanogramScreen> {
   AdherenceModel adherenceModel  = AdherenceModel(adhereCount: 0, notAdhereCount: 0);
   bool isLoading = false;
   String workingId = "";
-  String storeName = "";
+  String storeEnName = '';
+  String storeArName = '';
+  final languageController = Get.put(LocalizationController());
   String userName = "";
   DateTime now = DateTime.now();
 
@@ -48,7 +52,8 @@ class _ViewPlanogramScreenState extends State<ViewPlanogramScreen> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
-    storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeEnName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeArName = sharedPreferences.getString(AppConstants.storeArNAme)!;
     userName = sharedPreferences.getString(AppConstants.userName)!;
     getTransPlanogramOne();
     getGraphData();
@@ -135,10 +140,10 @@ class _ViewPlanogramScreenState extends State<ViewPlanogramScreen> {
         }
       } else {
         // print('Permission denied');
-        ToastMessage.errorMessage(context, "Permissing denied");
+        ToastMessage.errorMessage(context, "Permissing denied".tr);
       }
     } catch (e) {
-      ToastMessage.errorMessage(context, "Permissing denied");
+      ToastMessage.errorMessage(context, "Permissing denied".tr);
     }
   }
 
@@ -159,7 +164,7 @@ class _ViewPlanogramScreenState extends State<ViewPlanogramScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: MyColors.background,
-      appBar: generalAppBar(context, storeName, userName, (){
+      appBar: generalAppBar(context, languageController.isEnglish.value ? storeEnName : storeArName, userName, (){
         Navigator.of(context).pop();
       }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
       }),
@@ -176,7 +181,7 @@ class _ViewPlanogramScreenState extends State<ViewPlanogramScreen> {
                  Expanded(
                    child: PercentIndicator(
                      isSelected: false,
-                titleText: "Adherence",
+                titleText: "Adherence".tr,
                 isIcon: true,
                 percentColor: MyColors.greenColor,
                 iconData: Icons.check_circle,
@@ -186,7 +191,7 @@ class _ViewPlanogramScreenState extends State<ViewPlanogramScreen> {
                  Expanded(
                    child: PercentIndicator(
                      isSelected: false,
-                      titleText: "Not Adherence",
+                      titleText: "Not Adherence".tr,
                       percentColor: MyColors.backbtnColor,
                       isIcon: true,
                       iconData: Icons.warning_amber_rounded,
@@ -197,8 +202,8 @@ class _ViewPlanogramScreenState extends State<ViewPlanogramScreen> {
             ),
             Expanded(
               child: transData.isEmpty
-                  ? const Center(
-                child: Text("No data found"),
+                  ?  Center(
+                child: Text("No Data Found".tr),
               )
                   : ListView.builder(
                   itemCount: transData.length,
@@ -208,23 +213,23 @@ class _ViewPlanogramScreenState extends State<ViewPlanogramScreen> {
                       itemTime: DateFormat('hh:mm aa').format(DateTime.parse(transData[i].dateTime)),
                         reason: transData[i].not_adherence_reason,
                         clientName: transData[i].client_name,
-                        brandName: transData[i].brand_en_name,
+                        brandName:languageController.isEnglish.value ? transData[i].brand_en_name:transData[i].brand_ar_name,
                         imageFile: transData[i].imageFile as File,
                         isAdherence: transData[i].is_adherence,
                         onDelete: (){
                           showDialog(context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: const Text("Are you sure you want to delete this item Permanently"),
+                                title:  Text("Are you sure you want to delete this item Permanently".tr),
                                 actions: [
                                   TextButton(
-                                    child: const Text("No"),
+                                    child:  Text("No".tr),
                                     onPressed: () {
                                       Navigator.of(context).pop(true);
                                     },
                                   ),
                                   TextButton(
-                                    child: const Text("Yes"),
+                                    child:  Text("Yes".tr),
                                     onPressed: () {
                                       deletePhoto(transData[i].id,
                                           transData[i].image_name);

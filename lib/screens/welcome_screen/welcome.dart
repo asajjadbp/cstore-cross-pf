@@ -251,6 +251,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
                       margin: const EdgeInsets.symmetric(vertical: 10 ),
                       child:  SingleChildScrollView(child: Text(welcomeMessage,style: const TextStyle(fontSize: 17),))),
                   Container(
+                      width: MediaQuery.of(context).size.width/2,
                       margin:const EdgeInsets.symmetric(vertical: 20),
                       child: SvgPicture.network(agencyPhoto)),
               ],

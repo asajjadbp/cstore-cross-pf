@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import '../../../Database/db_helper.dart';
 import '../../utils/app_constants.dart';
 import '../../utils/appcolor.dart';
@@ -124,7 +125,7 @@ class PlanoguidesCard extends StatelessWidget {
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 5),
             child: AdherenceDropDown(
-                hintText: "Select status",
+                hintText: "Select Status".tr,
                 unitData: unitList,
                 initialValue: initialValue,
                 onChange: (value) {
@@ -143,9 +144,9 @@ class PlanoguidesCard extends StatelessWidget {
                     children: [
                       Container(
                           margin: const EdgeInsets.only(top: 8, left: 10, bottom: 5),
-                          child: const Text(
-                            "Model",
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                          child:  Text(
+                            "Model".tr,
+                            style:const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                           )),
                       InkWell(
                         onTap: (){
@@ -170,9 +171,9 @@ class PlanoguidesCard extends StatelessWidget {
                     children: [
                       Container(
                           margin: const EdgeInsets.only(top: 8, right: 115, bottom: 5),
-                          child: const Text(
-                            "Actual",
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                          child:  Text(
+                            "Actual".tr,
+                            style:const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                           )),
                       Container(
                         width: MediaQuery.of(context).size.width/2.2,
@@ -207,7 +208,7 @@ class PlanoguidesCard extends StatelessWidget {
           ): Container(
             margin: const EdgeInsets.symmetric(vertical: 5),
             child: BigElevatedButton(
-                buttonName: "Save",
+                buttonName: "Save".tr,
                 submit: (){
                  onSaveClick();
                 },

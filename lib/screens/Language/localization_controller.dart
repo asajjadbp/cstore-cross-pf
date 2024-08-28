@@ -6,9 +6,31 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LocalizationController extends GetxService {
   var isEnglish = true.obs; // Observable boolean
 
+  @override
+  void onInit() {
+    // TODO: implement onInit
+    getLanguageSession();
+    super.onInit();
+  }
   // Function to toggle the language status
   bool languageCheck() {
     return isEnglish.value ? true : false;
+  }
+
+  getLanguageSession() async {
+    String languageCode = "en";
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    if(sharedPreferences.containsKey(AppConstants.languageCode)) {
+      languageCode = sharedPreferences.getString(AppConstants.languageCode)!;
+    } else {
+      languageCode = "en";
+    }
+
+    if(languageCode == "en") {
+      isEnglish.value = true;
+    } else {
+      isEnglish.value = false;
+    }
   }
 
   void changeLanguage() {

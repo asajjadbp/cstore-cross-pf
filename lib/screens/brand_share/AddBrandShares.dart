@@ -1,11 +1,11 @@
-import 'dart:convert';
 
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Database/db_helper.dart';
 import '../../Model/database_model/trans_brand_shares_model.dart';
+import '../Language/localization_controller.dart';
 import '../utils/app_constants.dart';
 import '../utils/toast/toast.dart';
 import '../widget/app_bar_widgets.dart';
@@ -26,14 +26,15 @@ class BrandShares_ScreenState extends State<BrandShares_Screen> {
   bool isLoading = true;
   bool isFilterLoading = true;
   List<TransBransShareModel> transData = [];
-
+  final languageController = Get.put(LocalizationController());
   bool isFilter = false;
   List<TransBransShareModel> filteredList = [];
   String currentSelectedValue = "All";
 
   String clientId = "";
   String workingId = "";
-  String storeName = "";
+  String storeEnName = "";
+  String storeArName = "";
   String userName = "";
 
   int doneItems = 0;
@@ -52,7 +53,8 @@ class BrandShares_ScreenState extends State<BrandShares_Screen> {
 
     clientId = sharedPreferences.getString(AppConstants.clientId)!;
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
-    storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeEnName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeArName = sharedPreferences.getString(AppConstants.storeArNAme)!;
     userName = sharedPreferences.getString(AppConstants.userName)!;
     getTransBrandShareOne(true);
   }
@@ -110,18 +112,16 @@ class BrandShares_ScreenState extends State<BrandShares_Screen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
         backgroundColor: const Color(0xFFF4F7FD),
-        appBar: generalAppBar(context, storeName, userName, (){
+        appBar: generalAppBar(context, languageController.isEnglish.value ? storeEnName : storeArName, userName, (){
           Navigator.of(context).pop();
         }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
 
         }),
         body: isLoading ? const Center(child: MyLoadingCircle(),) : transData.isEmpty
-            ? const Center(
-                child: Text("No data found"),
+            ?  Center(
+                child: Text("No Data found".tr),
               )
             : Column(
               children: [
@@ -142,7 +142,7 @@ class BrandShares_ScreenState extends State<BrandShares_Screen> {
                             },
                             child: PercentIndicator(
                                 isSelected: currentSelectedValue == "Done",
-                                titleText: "Done",
+                                titleText: "Done".tr,
                                 isIcon: true,
                                 percentColor: MyColors.greenColor,
                                 iconData: Icons.check_circle,
@@ -163,7 +163,7 @@ class BrandShares_ScreenState extends State<BrandShares_Screen> {
                             },
                             child: PercentIndicator(
                                 isSelected: currentSelectedValue == "Pending",
-                                titleText: "Pending",
+                                titleText: "Pending".tr,
                                 percentColor: MyColors.warningColor,
                                 isIcon: true,
                                 iconData: Icons.pending,
@@ -175,8 +175,8 @@ class BrandShares_ScreenState extends State<BrandShares_Screen> {
                   ),
                 ),
                 Expanded(
-                  child: isFilter ? isFilterLoading ? const Center(child: CircularProgressIndicator(),) : filteredList.isEmpty ? const Center(
-                    child: Text("No data found"),
+                  child: isFilter ? isFilterLoading ? const Center(child: CircularProgressIndicator(),) : filteredList.isEmpty ? Center(
+                    child: Text("No Data found".tr),
                   ) :  ListView.builder(
                     itemCount: filteredList.length,
                     shrinkWrap: true,
@@ -184,14 +184,14 @@ class BrandShares_ScreenState extends State<BrandShares_Screen> {
                       print(filteredList.length);
                       return Shelf_SharesCard(
                         isDone: filteredList[filterIndex].activity_status == 1,
-                        fieldName1: filteredList[filterIndex].cat_en_name,
-                        labelName1: "Department",
-                        fieldName2: filteredList[filterIndex].brand_en_name,
-                        labelName2: "Brand",
+                        fieldName1: languageController.isEnglish.value ? filteredList[filterIndex].cat_en_name : filteredList[filterIndex].cat_ar_name ,
+                        labelName1: "Department".tr,
+                        fieldName2: languageController.isEnglish.value ? filteredList[filterIndex].brand_en_name : filteredList[filterIndex].brand_ar_name,
+                        labelName2: "Brand".tr,
                         fieldName3: filteredList[filterIndex].given_faces,
-                        labelName3: "Given Faces",
+                        labelName3: "Given Faces".tr,
                         fieldName4: filteredList[filterIndex].actual_faces,
-                        labelName4: "Actual Faces",
+                        labelName4: "Actual Faces".tr,
                         context: context,
                         onSaveClick: (){
                           saveBrandShareData(filteredList[filterIndex]);},
@@ -216,14 +216,14 @@ class BrandShares_ScreenState extends State<BrandShares_Screen> {
                         print(transData.length);
                         return Shelf_SharesCard(
                           isDone: transData[index].activity_status == 1,
-                          fieldName1: transData[index].cat_en_name,
-                          labelName1: "Department",
-                          fieldName2: transData[index].brand_en_name,
-                          labelName2: "Brand",
+                          fieldName1: languageController.isEnglish.value ? transData[index].cat_en_name : transData[index].cat_ar_name,
+                          labelName1: "Department".tr,
+                          fieldName2: languageController.isEnglish.value ? transData[index].brand_en_name : transData[index].brand_ar_name,
+                          labelName2: "Brand".tr,
                           fieldName3: transData[index].given_faces,
-                          labelName3: "Given Faces",
+                          labelName3: "Given Faces".tr,
                           fieldName4: transData[index].actual_faces,
-                          labelName4: "Actual Faces",
+                          labelName4: "Actual Faces".tr,
                           context: context,
                           onSaveClick: (){saveBrandShareData(transData[index]);},
                           onActualValue: (value) {
@@ -242,7 +242,7 @@ class BrandShares_ScreenState extends State<BrandShares_Screen> {
 
   void saveBrandShareData(TransBransShareModel transBransShareModel) async {
     if (transBransShareModel.actual_faces.isEmpty ) {
-      ToastMessage.errorMessage(context, "Please add actual faces");
+      ToastMessage.errorMessage(context, "Please add actual faces".tr);
     } else {
       setState(() {
         isBtnLoading = true;
@@ -258,10 +258,7 @@ class BrandShares_ScreenState extends State<BrandShares_Screen> {
 
           getTransBrandShareOne(false);
 
-          ToastMessage.succesMessage(context, "Data store successfully");
-          print("Update data ShareShelf successfully");
-          print(doneItems);
-          print(pendingItems);
+          ToastMessage.succesMessage(context, "Data Saved Successfully".tr);
 
           setState(() {
             isBtnLoading = false;

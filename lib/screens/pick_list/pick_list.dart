@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:cstore/Model/request_model.dart/ready_pick_list_request.dart';
 import 'package:cstore/Network/sql_data_http_manager.dart';
+import 'package:cstore/screens/Language/localization_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -58,7 +60,7 @@ class _PickListScreenState extends State<PickListScreen> {
   String currentSelectedValue = "Requested";
 
   List<TextEditingController> controllerList = <TextEditingController>[];
-
+  final languageController = Get.put(LocalizationController());
   @override
   void initState() {
     // TODO: implement initState
@@ -116,20 +118,27 @@ class _PickListScreenState extends State<PickListScreen> {
   }
 
   insertDataToSql(List<PickListModel> valuePickList) async {
-    String valueQuery = "";
-    for(int i=0; i < valuePickList.length; i++) {
-      valueQuery = "$valueQuery(${wrapIfString(workingId)},${valuePickList[i].picklist_id},${valuePickList[i].store_id},${valuePickList[i].category_id},${valuePickList[i].tmr_id},${wrapIfString(valuePickList[i].tmr_name)},${valuePickList[i].stocker_id},${wrapIfString(valuePickList[i].stocker_name)},${wrapIfString(valuePickList[i].shift_time)},${wrapIfString(valuePickList[i].en_cat_name)},${wrapIfString(valuePickList[i].ar_cat_name)},${wrapIfString(valuePickList[i].sku_picture)},${wrapIfString(valuePickList[i].en_sku_name)},${wrapIfString(valuePickList[i].ar_sku_name)},${valuePickList[i].req_pickList},${valuePickList[i].act_pickList},${valuePickList[i].pickList_ready},0,'',${wrapIfString(valuePickList[i].pick_list_receive_time)},${wrapIfString(valuePickList[i].pick_list_reason)}),";
-    }
-    if (valueQuery.endsWith(",")) {
-      valueQuery = valueQuery.substring(0, valueQuery.length - 1);
-    }
-    print("Query Part");
-    print(valueQuery);
+    if (valuePickList.isNotEmpty) {
+      String valueQuery = "";
+      for (int i = 0; i < valuePickList.length; i++) {
+        valueQuery =
+            "$valueQuery($workingId,${wrapIfString(workingId)},${valuePickList[i].picklist_id},${valuePickList[i].store_id},${valuePickList[i].category_id},${valuePickList[i].tmr_id},${wrapIfString(valuePickList[i].tmr_name)},${valuePickList[i].stocker_id},${wrapIfString(valuePickList[i].stocker_name)},${wrapIfString(valuePickList[i].shift_time)},${wrapIfString(valuePickList[i].en_cat_name)},${wrapIfString(valuePickList[i].ar_cat_name)},${wrapIfString(valuePickList[i].sku_picture)},${wrapIfString(valuePickList[i].en_sku_name)},${wrapIfString(valuePickList[i].ar_sku_name)},${valuePickList[i].req_pickList},${valuePickList[i].act_pickList},${valuePickList[i].pickList_ready},0,'',${wrapIfString(valuePickList[i].pick_list_receive_time)},${wrapIfString(valuePickList[i].pick_list_reason)}),";
+      }
+      if (valueQuery.endsWith(",")) {
+        valueQuery = valueQuery.substring(0, valueQuery.length - 1);
+      }
+      print("Query Part");
+      print(valueQuery);
 
-    await DatabaseHelper.insertPickListByQuery(valueQuery).then((value) {
-      print("check picklist screen");
-      getPickListFromQuery();
-    });
+      await DatabaseHelper.insertPickListByQuery(valueQuery).then((value) {
+        print("check picklist screen");
+        getPickListFromQuery();
+      });
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   getPickListFromQuery() async {
@@ -240,11 +249,11 @@ class _PickListScreenState extends State<PickListScreen> {
                 alignment: Alignment.center,
                 padding:const EdgeInsets.symmetric(vertical: 5),
                 width: MediaQuery.of(context).size.width,
-                child:const Text("Retry",style: TextStyle(color: MyColors.backbtnColor,fontSize: 20),),
+                child: Text("Retry".tr,style:const TextStyle(color: MyColors.backbtnColor,fontSize: 20),),
               ),
             )
           ],
-        ) : pickerPickList.isEmpty ? const Center(child: Text("Pick List is not added yet"),) : Column(
+        ) : pickerPickList.isEmpty ? Center(child: Text("Pick List is not added yet".tr),) : Column(
           children: [
             Row(
               children: [
@@ -259,7 +268,7 @@ class _PickListScreenState extends State<PickListScreen> {
                       },
                       child: PercentIndicator(
                         isSelected: currentSelectedValue == "Requested",
-                          titleText: "Requested",
+                          titleText: "Requested".tr,
                           isIcon: false,
                           percentColor: MyColors.appMainColor,
                           iconData: Icons.check_circle,
@@ -278,7 +287,7 @@ class _PickListScreenState extends State<PickListScreen> {
                       },
                       child: PercentIndicator(
                         isSelected: currentSelectedValue == "Ready",
-                          titleText: "Ready",
+                          titleText: "Ready".tr,
                           percentColor: MyColors.greenColor,
                           isIcon: false,
                           iconData: Icons.close,
@@ -297,7 +306,7 @@ class _PickListScreenState extends State<PickListScreen> {
                       },
                       child: PercentIndicator(
                         isSelected: currentSelectedValue == "Pending",
-                          titleText: "Pending",
+                          titleText: "Pending".tr,
                           percentColor: MyColors.backbtnColor,
                           isIcon: false,
                           iconData: Icons.close,
@@ -308,7 +317,7 @@ class _PickListScreenState extends State<PickListScreen> {
               ],
             ),
             Expanded(
-              child:  isUpdateSearchFilter ? pickerFilterPickList.isEmpty ? const Center(child: Text("No data Found"),) :
+              child:  isUpdateSearchFilter ? pickerFilterPickList.isEmpty ?  Center(child: Text("No Data Found".tr),) :
               ListView.builder(
                   itemCount: pickerFilterPickList.length,
                   shrinkWrap: true,
@@ -320,8 +329,8 @@ class _PickListScreenState extends State<PickListScreen> {
                         isButtonActive: true,
                         reasonValue: pickerFilterPickList[index].reasonValue!,
                         imageName: "${imageBaseUrl}sku_pictures/${pickerFilterPickList[index].sku_picture}",
-                        brandName: pickerFilterPickList[index].en_cat_name,
-                        skuName: pickerFilterPickList[index].en_sku_name,
+                        brandName: languageController.isEnglish.value ? pickerFilterPickList[index].en_cat_name : pickerFilterPickList[index].ar_cat_name,
+                        skuName: languageController.isEnglish.value ? pickerFilterPickList[index].en_sku_name : pickerFilterPickList[index].ar_sku_name,
                         pickerName: pickerFilterPickList[index].tmr_name ?? "",
                         requiredPickItems: pickerFilterPickList[index].req_pickList,
                         pickListSendTime: pickerFilterPickList[index].pick_list_send_time,
@@ -401,7 +410,7 @@ class _PickListScreenState extends State<PickListScreen> {
 
                   }
               )
-                  : pickerPickList.isEmpty ? const Center(child: Text("No Data Found"),)
+                  : pickerPickList.isEmpty ?  Center(child: Text("No Data Found".tr),)
                   :  ListView.builder(
                   itemCount: pickerPickList.length,
                   shrinkWrap: true,
@@ -413,8 +422,8 @@ class _PickListScreenState extends State<PickListScreen> {
                         isButtonActive: true,
                         reasonValue: pickerPickList[index].reasonValue!,
                         imageName: "${imageBaseUrl}sku_pictures/${pickerPickList[index].sku_picture}",
-                        brandName: pickerPickList[index].en_cat_name,
-                        skuName: pickerPickList[index].en_sku_name,
+                        brandName: languageController.isEnglish.value ?  pickerPickList[index].en_cat_name : pickerPickList[index].ar_cat_name,
+                        skuName: languageController.isEnglish.value ?  pickerPickList[index].en_sku_name : pickerPickList[index].ar_sku_name,
                         pickerName: pickerPickList[index].tmr_name ?? "",
                         requiredPickItems: pickerPickList[index].req_pickList,
                         pickListSendTime: pickerPickList[index].pick_list_send_time,
@@ -504,11 +513,11 @@ class _PickListScreenState extends State<PickListScreen> {
                 decoration:  BoxDecoration(
                     color: isNextButton ? MyColors.savebtnColor : MyColors.disableColor,
                     borderRadius: const BorderRadius.all(Radius.circular(5))),
-                child: const Row(
+                child:  Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    CircleAvatar(
+                    const  CircleAvatar(
                       radius: 12,
                       backgroundColor: Colors.white,
                       child: Icon(
@@ -516,12 +525,12 @@ class _PickListScreenState extends State<PickListScreen> {
                         color: Colors.black,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 10,
                     ),
                     Text(
-                      "Send To TMR",
-                      style: TextStyle(
+                      "Send To TMR".tr,
+                      style:const TextStyle(
                           fontSize: 12,
                           color: MyColors.whiteColor,
                           fontWeight: FontWeight.w400),
@@ -547,7 +556,7 @@ class _PickListScreenState extends State<PickListScreen> {
   updateSqlPickTable(int index) async {
     String reason  = pickerPickList[index].reasonValue!.join(', ');
     if(int.parse(pickerPickList[index].act_pickList) < int.parse(pickerPickList[index].req_pickList) && reason.isEmpty) {
-      ToastMessage.errorMessage(context, "Please Select a reason first");
+      ToastMessage.errorMessage(context, "Please Select a reason first".tr);
 
     } else {
       await DatabaseHelper.updateTransPicklist(
@@ -569,7 +578,7 @@ class _PickListScreenState extends State<PickListScreen> {
             .toList()
             .length;
 
-        ToastMessage.succesMessage(context, "Items added successfully");
+        ToastMessage.succesMessage(context, "Items added successfully".tr);
       });
     }
   }
@@ -616,7 +625,7 @@ class _PickListScreenState extends State<PickListScreen> {
       isNextButton  = false;
     isDataUploading  = false;
     }),
-      ToastMessage.succesMessage(context, "Pick List Uploaded Successfully"),
+      ToastMessage.succesMessage(context, "Pick List Uploaded Successfully".tr),
     }).catchError((e) =>{
       setState(() {
         isDataUploading  = false;

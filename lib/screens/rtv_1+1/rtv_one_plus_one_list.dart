@@ -4,6 +4,7 @@ import 'package:cstore/screens/rtv_screen/widgets/rtv_list_card.dart';
 import 'package:cstore/screens/rtv_screen/view_rtv_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -317,8 +318,8 @@ class _RtvOnePlusOneListScreenState extends State<RtvOnePlusOneListScreen> {
                     )
                   : isFilter
                       ? filterTransData.isEmpty
-                          ? const Center(
-                              child: Text("No data found"),
+                          ?  Center(
+                              child: Text("No data found".tr),
                             )
                           : ListView.builder(
                               shrinkWrap: true,
@@ -333,8 +334,7 @@ class _RtvOnePlusOneListScreenState extends State<RtvOnePlusOneListScreen> {
                                           sku_id: filterTransData[i].pro_id,
                                           imageName:
                                           "${imageBaseUrl}sku_pictures/${filterTransData[i].img_name}",
-                                          SkuName:
-                                              filterTransData[i].pro_en_name,
+                                          SkuName: filterTransData[i].pro_en_name,
                                         ),
                                       ),
                                     ).then((value) {

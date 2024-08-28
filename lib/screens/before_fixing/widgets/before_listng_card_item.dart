@@ -2,12 +2,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../Language/localization_controller.dart';
 import '../../utils/appcolor.dart';
 
 class BeforeFixingCardItem extends StatelessWidget {
-  const BeforeFixingCardItem({super.key,required this.imageFile,
+   BeforeFixingCardItem({super.key,required this.imageFile,
     required this.clientName,
     required this.categoryEnName,
     required this.uploadStatus,
@@ -20,6 +22,7 @@ class BeforeFixingCardItem extends StatelessWidget {
   final int uploadStatus;
   final String dateTime;
   final Function onDeleteTap;
+  final languageController = Get.put(LocalizationController());
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +122,7 @@ class BeforeFixingCardItem extends StatelessWidget {
                     ))
             ],
           ),
-          Positioned(
+          languageController.isEnglish.value ? Positioned(
             bottom: 0,
             right: 0,
             child: Container(
@@ -128,6 +131,20 @@ class BeforeFixingCardItem extends StatelessWidget {
                   color: MyColors.appMainColor,
                   borderRadius:
                   BorderRadius.only(bottomRight: Radius.circular(10))),
+              child: Text(
+                DateFormat('hh:mm aa').format(DateTime.parse(dateTime)),
+                style: const TextStyle(color: MyColors.whiteColor),
+              ),
+            ),
+          ) : Positioned(
+            bottom: 0,
+            left: 0,
+            child: Container(
+              padding: const EdgeInsets.all(5),
+              decoration: const BoxDecoration(
+                  color: MyColors.appMainColor,
+                  borderRadius:
+                  BorderRadius.only(bottomLeft: Radius.circular(10))),
               child: Text(
                 DateFormat('hh:mm aa').format(DateTime.parse(dateTime)),
                 style: const TextStyle(color: MyColors.whiteColor),

@@ -160,7 +160,7 @@ class _CustomDetailsDialogueState extends State<CustomDetailsDialogue> {
       elevation: 0,
       backgroundColor: Colors.transparent,
       child: Container(
-        height: MediaQuery.of(context).size.height/3.5,
+        height: MediaQuery.of(context).size.height/3.2,
         width: MediaQuery.of(context).size.width,
         decoration: const BoxDecoration(
           color: MyColors.whiteColor,
@@ -174,12 +174,12 @@ class _CustomDetailsDialogueState extends State<CustomDetailsDialogue> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 20),
+              Container(
+                margin:const EdgeInsets.symmetric(horizontal: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
                       child: Text(
                         widget.title,
                         maxLines: 1,
@@ -190,18 +190,18 @@ class _CustomDetailsDialogueState extends State<CustomDetailsDialogue> {
                             fontWeight: FontWeight.w400),
                       ),
                     ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: SvgPicture.asset(
-                      "assets/icons/close.svg",
-                      height: 30,
-                      width: 30,
-                    ),
-                  )
-                ],
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: SvgPicture.asset(
+                        "assets/icons/close.svg",
+                        height: 30,
+                        width: 30,
+                      ),
+                    )
+                  ],
+                ),
               ),
               const SizedBox(height: 10,),
               Container(
@@ -217,7 +217,7 @@ class _CustomDetailsDialogueState extends State<CustomDetailsDialogue> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                         const Text("Shelf No:",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w400),),
+                          Text("${"Shelf No".tr}:",style:const TextStyle(fontSize: 12,fontWeight: FontWeight.w400),),
                           Text(widget.shelfNo,style: const TextStyle(fontSize: 12,fontWeight: FontWeight.w400),)
                         ],),
                       ),
@@ -227,7 +227,7 @@ class _CustomDetailsDialogueState extends State<CustomDetailsDialogue> {
                         child:  Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            const Text("Bay No:",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w400),),
+                             Text("${"Bay No".tr}:",style:const TextStyle(fontSize: 12,fontWeight: FontWeight.w400),),
                           Text(widget.bayNo,style:const TextStyle(fontSize: 12,fontWeight: FontWeight.w400),)
                         ],),
                       ),
@@ -237,7 +237,7 @@ class _CustomDetailsDialogueState extends State<CustomDetailsDialogue> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            const Text("H Facings:",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w400),),
+                             Text("${"H Facings".tr}:",style: const TextStyle(fontSize: 12,fontWeight: FontWeight.w400),),
                           Text(widget.hFacings,style:const TextStyle(fontSize: 12,fontWeight: FontWeight.w400),)
                         ],),
                       ),
@@ -247,7 +247,7 @@ class _CustomDetailsDialogueState extends State<CustomDetailsDialogue> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            const Text("V Facings:",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w400),),
+                             Text("${"V Facings".tr}:",style:const TextStyle(fontSize: 12,fontWeight: FontWeight.w400),),
                           Text(widget.vFacings,style:const TextStyle(fontSize: 12,fontWeight: FontWeight.w400),)
                         ],),
                       ),
@@ -257,7 +257,7 @@ class _CustomDetailsDialogueState extends State<CustomDetailsDialogue> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            const Text("D Facings:",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w400),),
+                             Text("${"D Facings".tr}:",style:const TextStyle(fontSize: 12,fontWeight: FontWeight.w400),),
                           Text(widget.dFacings,style:const TextStyle(fontSize: 12,fontWeight: FontWeight.w400),)
                         ],),
                       ),
@@ -267,7 +267,7 @@ class _CustomDetailsDialogueState extends State<CustomDetailsDialogue> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            const Text("POG:",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w400),),
+                             Text("${"POG".tr}:",style:const TextStyle(fontSize: 12,fontWeight: FontWeight.w400),),
                           InkWell(
                               onTap: () {
                                 widget.pogOnTap();

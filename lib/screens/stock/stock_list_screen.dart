@@ -2,11 +2,13 @@ import 'package:cstore/Model/database_model/trans_stock_model.dart';
 import 'package:cstore/screens/stock/widget/stock_list_card.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Database/db_helper.dart';
 import '../../Model/database_model/category_model.dart';
 import '../../Model/database_model/client_model.dart';
 import '../../Model/database_model/sys_brand_model.dart';
+import '../Language/localization_controller.dart';
 import '../utils/app_constants.dart';
 import '../utils/appcolor.dart';
 import '../utils/toast/toast.dart';
@@ -36,6 +38,7 @@ class _StockListScreenState extends State<StockListScreen> {
   String storeName = "";
   String UserId = "";
   bool isBtnLoading = false;
+  final languageController = Get.put(LocalizationController());
   int cases = 0;
   int outer = 0;
   int pieces = 0;
@@ -103,11 +106,11 @@ class _StockListScreenState extends State<StockListScreen> {
   void InsertTransStock(String cases, String outer,String pieces, skuId,pro_client_id) async {
     print("Insert Data Getting");
     if (cases.isEmpty && outer.isEmpty && pieces.isEmpty) {
-      ToastMessage.errorMessage(context, "Please add stock data");
+      ToastMessage.errorMessage(context, "Please add stock data".tr);
       return;
     }
     if(cases == "0" && outer == "0" && pieces == "0") {
-      ToastMessage.errorMessage(context, "Please add stock data");
+      ToastMessage.errorMessage(context, "Please add stock data".tr);
       return;
     }
       setState(() {
@@ -471,8 +474,8 @@ class _StockListScreenState extends State<StockListScreen> {
                 }),
           )
               : transData.isEmpty
-                  ? const Center(
-                      child: Text("No data found"),
+                  ?  Center(
+                      child: Text("No Data Found".tr),
                     )
                   : Expanded(
                       child: ListView.builder(
@@ -488,7 +491,7 @@ class _StockListScreenState extends State<StockListScreen> {
                                   deleteStockData(transData[i].pro_id);
                                 },
                                 image:"${imageBaseUrl}sku_pictures/${transData[i].img_name}",
-                                proName:transData[i].pro_en_name,
+                                proName:languageController.isEnglish.value? transData[i].pro_en_name : transData[i].pro_ar_name,
                                 pieces: transData[i].pieces,
                                 actStatus: transData[i].act_status,
                                 cases: transData[i].cases,
@@ -509,22 +512,22 @@ class _StockListScreenState extends State<StockListScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text(
-            "Are you sure you want to delete this sku data",
-            style: TextStyle(
+          title:  Text(
+            "Are you sure you want to delete this item Permanently".tr,
+            style: const TextStyle(
               fontWeight: FontWeight.w500,
               fontSize: 12,
             ),
           ),
           actions: [
             TextButton(
-              child: const Text("No"),
+              child:  Text("No".tr),
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
             ),
             TextButton(
-              child: const Text("Yes"),
+              child:  Text("Yes".tr),
               onPressed: () async {
 
                 await DatabaseHelper.updateTransStockAfterDeleteOneSkuRecord(workingId,proId.toString()).then((value) {

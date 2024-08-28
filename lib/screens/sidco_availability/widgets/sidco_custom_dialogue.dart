@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 
 import 'sidco_counter_widget.dart';
 
@@ -104,9 +105,9 @@ class _SidcoCustomDialogState extends State<SidcoCustomDialog> {
                     color: widget.isButtonActive ? MyColors.appMainColor : MyColors.darkGreyColor ,
                     borderRadius: const BorderRadius.all(Radius.circular(8))),
                 alignment: Alignment.center,
-                child: const Text(
-                  "Save",
-                  style: TextStyle(
+                child:  Text(
+                  "Save".tr,
+                  style:const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
                       color: MyColors.whiteColor),

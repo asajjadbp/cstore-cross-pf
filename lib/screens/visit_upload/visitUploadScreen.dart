@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:googleapis/storage/v1.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:intl/intl.dart';
@@ -42,6 +43,7 @@ import '../../Model/request_model.dart/save_stock_request_model.dart';
 import '../../Model/request_model.dart/sos_end_api_request_model.dart';
 import '../../Network/jp_http.dart';
 import '../../Network/sql_data_http_manager.dart';
+import '../Language/localization_controller.dart';
 import '../utils/app_constants.dart';
 import '../utils/appcolor.dart';
 import '../utils/services/getting_gps.dart';
@@ -60,7 +62,8 @@ class VisitUploadScreen extends StatefulWidget {
 }
 
 class _VisitUploadScreenState extends State<VisitUploadScreen> {
-  String storeName = "";
+  String storeEnName = "";
+  String storeArName = "";
   String userName = "";
   String userId = "";
   String storeId = "";
@@ -75,6 +78,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
   String workingDate="";
   String location = "";
   String visitActivity = "";
+
+  final languageController = Get.put(LocalizationController());
 
   int count = 0;
 
@@ -187,7 +192,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
     token = sharedPreferences.getString(AppConstants.tokenId)!;
     baseUrl = sharedPreferences.getString(AppConstants.baseUrl)!;
     bucketName = sharedPreferences.getString(AppConstants.bucketName)!;
-    storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeEnName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeArName = sharedPreferences.getString(AppConstants.storeArNAme)!;
     userName = sharedPreferences.getString(AppConstants.userName)!;
     storeId = sharedPreferences.getString(AppConstants.storeId)!;
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
@@ -223,7 +229,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F7FD),
-      appBar: generalAppBar(context, storeName, userName, (){
+      appBar: generalAppBar(context, languageController.isEnglish.value ? storeEnName : storeArName, userName, (){
         Navigator.of(context).pop();
       }, true, false, false, (int getClient, int getCat, int getSubCat, int getBrand) {
 
@@ -237,7 +243,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  storeName,
+                  languageController.isEnglish.value ? storeEnName : storeArName,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                   style: const TextStyle(
@@ -245,14 +251,28 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                       fontWeight: FontWeight.w600,
                       color: Colors.black),
                 ),
-                Text(
-                  "CheckIn : $checkInTime",
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
-                  style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color:MyColors.darkGreyColor),
+                Row(
+                  children: [
+                     Text(
+                      "${"CheckIn".tr} : ",
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      style:const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color:MyColors.darkGreyColor),
+                    ),
+
+                    Text(
+                      checkInTime,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color:MyColors.darkGreyColor),
+                    ),
+                  ],
                 )
               ],
 
@@ -279,9 +299,9 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                             },
                             isUploaded: availabilityCountModel.totalNotUploaded == 0,
                             isUploadData: isAvlFinishLoading,
-                            storeName:storeName,
-                            moduleName: "Sku's",
-                            screenName: "Availability",
+                            storeName:languageController.isEnglish.value ? storeEnName : storeArName,
+                            moduleName: "Sku's".tr,
+                            screenName: "Availability".tr,
                             checkinTime:checkInTime,
                             avlSkus:availabilityCountModel.totalAvl,
                             notAvlSkus: availabilityCountModel.totalNotAvl,
@@ -290,8 +310,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
                         if(beforeFixingCountModel.totalBeforeFixing  >0)
                           VisitBeforeFixingUploadScreenCard(
-                              screenName: "Before Fixing",
-                              moduleName: "Category",
+                              screenName: "Before Fixing".tr,
+                              moduleName: "Category".tr,
                               onUploadTap: () async {
 
                                 await uploadImagesToGcs(AppConstants.beforeFixing);
@@ -306,8 +326,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
                         if(otherPhotoCountModel.totalOtherPhotos  > 0)
                           VisitBeforeFixingUploadScreenCard(
-                              screenName: "Other Photo",
-                              moduleName: "Category",
+                              screenName: "Other Photo".tr,
+                              moduleName: "Category".tr,
                               onUploadTap: () async {
 
                                 await uploadImagesToGcs(AppConstants.otherPhoto);
@@ -322,8 +342,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
                         if(sosCountModel.totalSosItems  > 0)
                           VisitSosUploadScreenCard(
-                              screenName: "Share of Shelf",
-                              moduleName: "Records",
+                              screenName: "Share of Shelf".tr,
+                              moduleName: "Records".tr,
                               onUploadTap: () async {
 
                                 sosUploadApi();
@@ -336,8 +356,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
                         if(planogramCountModel.totalPlanogramItems > 0)
                           VisitPlanogramUploadScreenCard(
-                              screenName: "PLanogram",
-                              moduleName: "Category",
+                              screenName: "Planogram".tr,
+                              moduleName: "Category".tr,
                               onUploadTap: () async {
                                 await uploadImagesToGcs(AppConstants.planogram);
 
@@ -356,8 +376,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                             },
                             isUploadData: isPickListFinishLoading,
                             isUploaded: tmrPickListCountModel.totalPickNotUpload == 0,
-                            moduleName: "Requests",
-                            screenName: "Picklist",
+                            moduleName: "Requests".tr,
+                            screenName: "Picklist".tr,
                             readyPickList:tmrPickListCountModel.totalPickReady,
                             notReadyPickList: tmrPickListCountModel.totalPickNotReady,
                             totalPickList: tmrPickListCountModel.totalPickListItems,),
@@ -371,8 +391,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                             },
                             isUploaded: planoguideCountModel.totalNotUploaded == 0,
                             isUploadData: isPlanoguideFinishLoading,
-                            moduleName: "Pog",
-                            screenName: "Planoguide",
+                            moduleName: "Pog".tr,
+                            screenName: "Planoguide".tr,
                             totalAdhere:planoguideCountModel.totalAdhere,
                             totalNotAdhere: planoguideCountModel.totalNotAdhere,
                             notMarkedPlanoguide: planoguideCountModel.totalNotMarkedPlano,
@@ -385,8 +405,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                             },
                             isUploaded: brandShareCountModel.totalNotUpload == 0,
                             isUploadData: isShelfShareFinishLoading,
-                            moduleName: "Brands",
-                            screenName: "Shelf Share",
+                            moduleName: "Brands".tr,
+                            screenName: "Shelf Share".tr,
                             readyBrandList:brandShareCountModel.totalReadyBrands,
                             notReadyBrandList: brandShareCountModel.totalNotReadyBrands,
                             totalBrands: brandShareCountModel.totalBrandShare,),
@@ -398,8 +418,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                             },
                             isUploaded: pickListCountModel.totalNotUpload == 0,
                             isUploadData: isPickListFinishLoading,
-                            moduleName: "Requests",
-                            screenName: "Picklist",
+                            moduleName: "Requests".tr,
+                            screenName: "Picklist".tr,
                             readyPickList:pickListCountModel.totalPickReady,
                             notReadyPickList: pickListCountModel.totalPickNotReady,
                             totalPickList: pickListCountModel.totalPickListItems,),
@@ -413,8 +433,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                             },
                             isUploaded: rtvCountModel.totalNotUpload == 0,
                             isUploadData: isRtvFinishLoading,
-                            moduleName: "Sku's",
-                            screenName: "RTV",
+                            moduleName: "Sku's".tr,
+                            screenName: "RTV".tr,
                             uploadedData:rtvCountModel.totalVolume.toInt(),
                             notUploadedData: rtvCountModel.totalValue.toInt(),
                             totalRtv: rtvCountModel.totalRtv,),
@@ -426,8 +446,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                             },
                             isUploaded: priceCheckCountModel.totalNotUpload == 0,
                             isUploadData: isPriceCheckFinishLoading,
-                            moduleName: "Sku's",
-                            screenName: "Price Check",
+                            moduleName: "Sku's".tr,
+                            screenName: "Price Check".tr,
                             uploadedData:priceCheckCountModel.totalRegularSku,
                             notUploadedData: priceCheckCountModel.totalPromoSku,
                             totalPriceCheck: priceCheckCountModel.totalPriceCheck,),
@@ -439,8 +459,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                             },
                             isUploaded: freshnessGraphCountShowModel.totalNotUploadCount == 0,
                             isUploadData: isFreshnessFinishLoading,
-                            moduleName: "Sku's",
-                            screenName: "Freshness",
+                            moduleName: "Sku's".tr,
+                            screenName: "Freshness".tr,
                             uploadedData:freshnessGraphCountShowModel.totalVolume,
                             totalRtv: freshnessGraphCountShowModel.totalFreshnessTaken,),
 
@@ -453,8 +473,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                             },
                             isUploaded: promoPlanGraphAndApiCountShowModel.totalNotUploadCount == 0,
                             isUploadData: isPromoPlanFinishLoading,
-                            moduleName: "Plan",
-                            screenName: "Promotions",
+                            moduleName: "Plan".tr,
+                            screenName: "Promotions".tr,
                             totalAdhere:promoPlanGraphAndApiCountShowModel.totalDeployed,
                             totalNotAdhere: promoPlanGraphAndApiCountShowModel.totalDeployed,
                             notMarkedPlanoguide: promoPlanGraphAndApiCountShowModel.totalPending,
@@ -467,8 +487,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                             },
                             isUploaded: totalStockCountData.total_not_upload == 0,
                             isUploadData: isStockFinishLoading,
-                            moduleName: "Sku's",
-                            screenName: "Stock",
+                            moduleName: "Sku's".tr,
+                            screenName: "Stock".tr,
                             totalCases: totalStockCountData.total_cases,
                             totalOuters: totalStockCountData.total_outers,
                             totalPieces: totalStockCountData.total_pieces,
@@ -484,8 +504,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                             },
                             isUploaded: onePlusOneCountModel.totalNotUpload == 0,
                             isUploadData: isOnePlusOneFinishLoading,
-                            moduleName: "Sku's",
-                            screenName: "1 + 1",
+                            moduleName: "Sku's".tr,
+                            screenName: "1 + 1".tr,
                             uploadedData:onePlusOneCountModel.totalVolume.toInt(),
                             notUploadedData: onePlusOneCountModel.totalValue.toInt(),
                             totalRtv: onePlusOneCountModel.totalRtv,),
@@ -500,36 +520,35 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                             },
                             isUploaded: osdCountModel.totalNotUpload == 0,
                             isUploadData: isOsdFinishLoading,
-                            moduleName: "Total",
-                            screenName: "OSD",
+                            moduleName: "Total".tr,
+                            screenName: "OSD".tr,
                             totalOsd: osdCountModel.totalItems,),
 
                         if (marketIssueCountModel.totalItems > 0 )
                           VisitOsdAndMarketIssueUploadScreenCard(
                             onUploadTap: () async {
-                              print("Market Issue Click");
+
                               await uploadImagesToGcs(AppConstants.marketIssues);
                               //
                               marketIssueUploadApi();
                             },
                             isUploaded: marketIssueCountModel.totalNotUpload == 0,
                             isUploadData: isMarketIssueFinishLoading,
-                            moduleName: "Total",
-                            screenName: "Market Issue",
+                            moduleName: "Total".tr,
+                            screenName: "Market Issue".tr,
                             totalOsd: marketIssueCountModel.totalItems,),
 
                         if (posCountModel.totalPosItems > 0 )
                           VisitRtvUploadScreenCard(
                             onUploadTap: () async {
-                              print("POS Click");
                               await uploadImagesToGcs(AppConstants.pos);
 
                               posUploadApi();
                             },
                             isUploaded: posCountModel.totalNotUpload == 0,
                             isUploadData: isRtvFinishLoading,
-                            moduleName: "Total",
-                            screenName: "POS",
+                            moduleName: "Total".tr,
+                            screenName: "POS".tr,
                             uploadedData:posCountModel.quantity.toInt(),
                             notUploadedData: posCountModel.amount.toInt(),
                             totalRtv: posCountModel.totalPosItems,),
@@ -565,15 +584,15 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                     planoguideCountModel.totalUploaded == 0));
                 if(userRole == "TMR") {
                   if ((moduleIdList.contains("3") || moduleIdList.contains("17") ) && ((availabilityCountModel.totalSku != availabilityCountModel.totalUploaded) || availabilityCountModel.totalSku == 0 || availabilityCountModel.totalUploaded.toString() == "null")) {
-                    ToastMessage.errorMessage(context, "Please Mark All Sku's Availability");
+                    ToastMessage.errorMessage(context, "Please Mark All Sku's Availability".tr);
                   } else if ((moduleIdList.contains("3")) && (tmrPickListCountModel.totalPickListItems != tmrPickListCountModel.totalPickReady)) {
-                    ToastMessage.errorMessage(context, "Please Wait for pick list response");
+                    ToastMessage.errorMessage(context, "Please Wait for pick list response".tr);
                   } else if ((moduleIdList.contains("15")) && (planoguideCountModel.totalUploaded.toString() == "null" || planoguideCountModel.totalUploaded == 0)) {
                     ToastMessage.errorMessage(
-                        context, "PLease Add At lease one planoguide");
+                        context, "PLease Add At lease one planoguide".tr);
                   } else if ((moduleIdList.contains("16")) && (brandShareCountModel.totalUpload.toString() == "null" || brandShareCountModel.totalUpload == 0)) {
                     ToastMessage.errorMessage(
-                        context, "Please Add at least one brand share");
+                        context, "Please Add at least one brand share".tr);
                   } else {
                     // print("Visit Finished Successfully");
 
@@ -584,8 +603,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                         return StatefulBuilder(
                             builder: (BuildContext context1, StateSetter menuState) {
                               return AlertDialog(
-                                title: const Text('Visit'),
-                                content: const Text('Are you sure you want to finish this visit?'),
+                                title:  Text('Visit'.tr),
+                                content:  Text('Are you sure you want to finish this visit?'.tr),
                                 actions: <Widget>[
                                   isDataUploading ? const Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -601,14 +620,14 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                                         onPressed: () {
                                           Navigator.of(context).pop(); // Close the dialog
                                         },
-                                        child: const Text('No'),
+                                        child:  Text('No'.tr),
                                       ),
                                       TextButton(
                                         onPressed: () {
                                           // Perform logout operation
                                           finishVisit(menuState);
                                         },
-                                        child: const Text('Yes'),
+                                        child:  Text('Yes'.tr),
                                       ),
                                     ],
                                   )
@@ -623,7 +642,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
                   if ((moduleIdList.contains("4")) && (pickListCountModel.totalPickListItems != pickListCountModel.totalPickReady) && (pickListCountModel.totalPickListItems != pickListCountModel.totalUpload) || pickListCountModel.totalUpload.toString() == "null") {
 
-                    ToastMessage.errorMessage(context, "Please make all pick list ready and upload it");
+                    ToastMessage.errorMessage(context, "Please make all pick list ready and upload it".tr);
 
                   } else {
                     showDialog(
@@ -633,8 +652,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                         return StatefulBuilder(
                             builder: (BuildContext context1, StateSetter menuState) {
                               return AlertDialog(
-                                title: const Text('Visit'),
-                                content: const Text('Are you sure you want to finish this visit?'),
+                                title: Text('Visit'.tr),
+                                content: Text('Are you sure you want to finish this visit?'.tr),
                                 actions: <Widget>[
                                   isDataUploading ? const Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -650,14 +669,14 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                                         onPressed: () {
                                           Navigator.of(context).pop(); // Close the dialog
                                         },
-                                        child: const Text('No'),
+                                        child:  Text('No'.tr),
                                       ),
                                       TextButton(
                                         onPressed: () {
                                           // Perform logout operation
                                           finishVisit(menuState);
                                         },
-                                        child: const Text('Yes'),
+                                        child:  Text('Yes'.tr),
                                       ),
                                     ],
                                   )
@@ -671,7 +690,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                 }
               } : null,
               child: Text(
-                "Finish Visit",style: TextStyle(color: isFinishButton ? MyColors.whiteColor : MyColors.appMainColor2),
+                "Finish Visit".tr,style: TextStyle(color: isFinishButton ? MyColors.whiteColor : MyColors.appMainColor2),
               ),
             ),
           )
@@ -1575,7 +1594,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
          isOnePlusOneFinishLoading = false;
          isPosFinishLoading = false;
       });
-      ToastMessage.errorMessage(context, "Uploading images error please try again!");
+      ToastMessage.errorMessage(context, "Uploading images error please try again!".tr);
       return false;
     }
   }
@@ -1704,7 +1723,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       isAvlUp = true,
       setState(() {
       }),
-      ToastMessage.succesMessage(context, "Availability data Uploaded Successfully"),
+      ToastMessage.succesMessage(context, "Availability data Uploaded Successfully".tr),
     }).catchError((onError)=>{
       ToastMessage.errorMessage(context, onError.toString()),
       print(onError.toString()),
@@ -1775,7 +1794,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       setState(() {
         isBeforeFixingFinishLoading  = false;
       }),
-      ToastMessage.succesMessage(context, "Before Fixing Data Uploaded Successfully"),
+      ToastMessage.succesMessage(context, "Before Fixing Data Uploaded Successfully".tr),
     }).catchError((onError)=>{
       ToastMessage.errorMessage(context, onError.toString()),
       print(onError.toString()),
@@ -1833,7 +1852,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       setState(() {
         isOtherPhotoFinishLoading  = false;
       }),
-      ToastMessage.succesMessage(context, "Other Photo Data Uploaded Successfully"),
+      ToastMessage.succesMessage(context, "Other Photo Data Uploaded Successfully".tr),
     }).catchError((onError)=>{
       ToastMessage.errorMessage(context, onError.toString()),
       print(onError.toString()),
@@ -1891,7 +1910,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       setState(() {
         isSosFinishLoading  = false;
       }),
-      ToastMessage.succesMessage(context, "Share Of Shelf Data Uploaded Successfully"),
+      ToastMessage.succesMessage(context, "Share Of Shelf Data Uploaded Successfully".tr),
     }).catchError((onError)=>{
       ToastMessage.errorMessage(context, onError.toString()),
       print(onError.toString()),
@@ -1947,7 +1966,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         isPickUp = true,
         setState(() {}),
         ToastMessage.succesMessage(
-            context, "Pick List Uploaded Successfully"),
+            context, "Pick List Uploaded Successfully".tr),
       }).catchError((onError) =>
       {
         ToastMessage.errorMessage(context, onError.toString()),
@@ -2026,7 +2045,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       setState(() {
         isShelfShareFinishLoading = false;
       }),
-      ToastMessage.succesMessage(context, "Share Shelf Data Uploaded Successfully"),
+      ToastMessage.succesMessage(context, "Share Shelf Data Uploaded Successfully".tr),
     }).catchError((onError)=>{
       ToastMessage.errorMessage(context, onError.toString()),
       print(onError.toString()),
@@ -2087,7 +2106,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       setState(() {
         isPlanoguideFinishLoading  = false;
       }),
-      ToastMessage.succesMessage(context, "Planoguide Data Uploaded Successfully"),
+      ToastMessage.succesMessage(context, "Planoguide Data Uploaded Successfully".tr),
     }).catchError((onError)=>{
       ToastMessage.errorMessage(context, onError.toString()),
       print(onError.toString()),
@@ -2145,7 +2164,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         isRtvFinishLoading = false;
       }),
 
-      ToastMessage.succesMessage(context, "RTV Data Uploaded Successfully"),
+      ToastMessage.succesMessage(context, "RTV Data Uploaded Successfully".tr),
     }).catchError((e)=>{
       print(e.toString()),
       ToastMessage.errorMessage(context, e.toString()),
@@ -2208,7 +2227,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         isPriceCheckFinishLoading = false;
       }),
 
-      ToastMessage.succesMessage(context, "Price Check Data Uploaded Successfully"),
+      ToastMessage.succesMessage(context, "Price Check Data Uploaded Successfully".tr),
 
     }).catchError((e) =>{
       print(e.toString()),
@@ -2270,7 +2289,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         setState(() {
           isPickListFinishLoading = false;
         }),
-        ToastMessage.succesMessage(context, "Pick List Uploaded Successfully"),
+        ToastMessage.succesMessage(context, "Pick List Uploaded Successfully".tr),
       }).catchError((e) =>
       {
         setState(() {
@@ -2279,7 +2298,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         ToastMessage.errorMessage(context, e.toString()),
       });
     } else {
-      ToastMessage.errorMessage(context, "Please complete your picklist");
+      ToastMessage.errorMessage(context, "Please complete your picklist".tr);
     }
   }
 
@@ -2339,7 +2358,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         isFreshnessFinishLoading = false;
       }),
 
-      ToastMessage.succesMessage(context, "Freshness Data Uploaded Successfully"),
+      ToastMessage.succesMessage(context, "Freshness Data Uploaded Successfully".tr),
 
     }).catchError((e) =>{
       print(e.toString()),
@@ -2401,7 +2420,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         isStockFinishLoading = false;
       }),
 
-      ToastMessage.succesMessage(context, "Stock Data Uploaded Successfully"),
+      ToastMessage.succesMessage(context, "Stock Data Uploaded Successfully".tr),
 
     }).catchError((e)=> {
       print(e.toString()),
@@ -2473,7 +2492,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         isPromoPlanFinishLoading = false;
       }),
 
-      ToastMessage.succesMessage(context, "Promotions Data Uploaded Successfully"),
+      ToastMessage.succesMessage(context, "Promotions Data Uploaded Successfully".tr),
 
     }).catchError((e) =>{
       print(e.toString()),
@@ -2536,7 +2555,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         isPlanogramFinishLoading = false;
       }),
 
-      ToastMessage.succesMessage(context, "Planogram Data Uploaded Successfully"),
+      ToastMessage.succesMessage(context, "Planogram Data Uploaded Successfully".tr),
 
     }).catchError((e) =>{
       print(e.toString()),
@@ -2599,7 +2618,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         isPosFinishLoading = false;
       }),
 
-      ToastMessage.succesMessage(context, "POS Data Uploaded Successfully"),
+      ToastMessage.succesMessage(context, "POS Data Uploaded Successfully".tr),
 
     }).catchError((e) =>{
       print(e.toString()),
@@ -2662,7 +2681,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         isMarketIssueFinishLoading = false;
       }),
 
-      ToastMessage.succesMessage(context, "Market Issue Data Uploaded Successfully"),
+      ToastMessage.succesMessage(context, "Market Issue Data Uploaded Successfully".tr),
 
     }).catchError((e) =>{
       print(e.toString()),
@@ -2725,7 +2744,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         isOnePlusOneFinishLoading = false;
       }),
 
-      ToastMessage.succesMessage(context, " 1+1 Data Uploaded Successfully"),
+      ToastMessage.succesMessage(context, "1 + 1 Data Uploaded Successfully".tr),
 
     }).catchError((e) =>{
       print(e.toString()),
@@ -2810,7 +2829,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         isOsdFinishLoading = false;
       }),
 
-      ToastMessage.succesMessage(context, " OSD Data Uploaded Successfully"),
+      ToastMessage.succesMessage(context, "OSD Data Uploaded Successfully".tr),
 
     }).catchError((e) =>{
       print(e.toString()),
@@ -2863,7 +2882,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
             isDataUploading = false;
           }),
 
-          ToastMessage.succesMessage(context, "Visit Ended Successfully"),
+          ToastMessage.succesMessage(context, "Visit Ended Successfully".tr),
           Navigator.popUntil(context, (route) => count++ == 3),
         }).catchError((e) =>{
           print(e.toString()),

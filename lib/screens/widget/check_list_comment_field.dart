@@ -1,6 +1,7 @@
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
 
 class ActualFacesTextField extends StatelessWidget {
@@ -15,29 +16,29 @@ class ActualFacesTextField extends StatelessWidget {
         onChangeValue(value);
       },
       initialValue: initialValue,
-      decoration: const InputDecoration(
-        enabledBorder:  OutlineInputBorder(
+      decoration:  InputDecoration(
+        enabledBorder:const  OutlineInputBorder(
           borderRadius:  BorderRadius.all(Radius.circular(5.0)),
           borderSide:  BorderSide(
             color: MyColors.appMainColor,
           ),
         ),
-        focusedBorder:  OutlineInputBorder(
+        focusedBorder:const  OutlineInputBorder(
             borderRadius:  BorderRadius.all(Radius.circular(5.0)),
             borderSide:  BorderSide(
               color: MyColors.appMainColor,
               width: 2.0,
             )),
-        border: OutlineInputBorder(
+        border:const OutlineInputBorder(
             borderRadius:  BorderRadius.all(Radius.circular(5.0)),
             borderSide: BorderSide(
 
                 color: MyColors.appMainColor, width: 1.0)),
-        labelText: 'Actual Faces',
+        labelText: 'Actual Faces'.tr,
         alignLabelWithHint: true,
-        labelStyle: TextStyle(color: MyColors.appMainColor,),
-        hintText: 'Enter Actual Faces',
-        hintStyle: TextStyle(color: MyColors.appMainColor,),),
+        labelStyle:const TextStyle(color: MyColors.appMainColor,),
+        hintText: 'Enter Actual Faces'.tr,
+        hintStyle:const TextStyle(color: MyColors.appMainColor,),),
       inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^[0-9][0-9]*'))],
 
       style: const TextStyle(color: MyColors.appMainColor,),

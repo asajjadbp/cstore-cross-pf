@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Database/db_helper.dart';
 import '../../Model/database_model/category_model.dart';
 import '../../Model/database_model/client_model.dart';
 import '../../Model/database_model/sys_brand_model.dart';
 import '../../Model/database_model/trans_freshness_model.dart';
+import '../Language/localization_controller.dart';
 import '../utils/app_constants.dart';
 import '../utils/appcolor.dart';
 import '../widget/app_bar_widgets.dart';
@@ -23,7 +25,9 @@ class ViewFreshness_Screen extends StatefulWidget {
 }
 
 class _ViewFreshness_ScreenState extends State<ViewFreshness_Screen> {
-  String storeName = "";
+  String storeEnName = '';
+  String storeArName = '';
+  final languageController = Get.put(LocalizationController());
   String userName = "";
   String imageBaseUrl = "";
   List<TransFreshnessModel> transData = [];
@@ -54,16 +58,8 @@ class _ViewFreshness_ScreenState extends State<ViewFreshness_Screen> {
   late CategoryModel initialCategoryItem;
   late CategoryModel initialSubCategoryItem;
   late SYS_BrandModel initialBrandItem;
-
   void getClientData() async {
-
-    // setState(() {
-    //   isLoading = true;
-    // });
     await DatabaseHelper.getVisitClientList(clientId).then((value) {
-      // setState(() {
-      //   isLoading = false;
-      // });
       clientData = value;
       clientData.insert(0,ClientModel(client_id: -1, client_name: "Select Client"));
       categoryData.insert(0, CategoryModel(en_name: "Select Category",ar_name: "Select Category",id: -1, client: -1));
@@ -110,9 +106,7 @@ class _ViewFreshness_ScreenState extends State<ViewFreshness_Screen> {
 
       subCategoryData = value;
       subCategoryData.insert(0, CategoryModel(en_name: "Select Sub Category",ar_name: "Select Sub Category",id: -1, client: -1));
-
       initialSubCategoryItem = subCategoryData[0];
-      // print(jsonEncode(subCategoryData));
       menuState(() {
         isSubCategoryLoading = false;
       });
@@ -149,7 +143,8 @@ class _ViewFreshness_ScreenState extends State<ViewFreshness_Screen> {
 
   getUserData() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeEnName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeArName = sharedPreferences.getString(AppConstants.storeArNAme)!;
     userName = sharedPreferences.getString(AppConstants.userName)!;
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
     clientId = sharedPreferences.getString(AppConstants.clientId)!;
@@ -179,7 +174,7 @@ class _ViewFreshness_ScreenState extends State<ViewFreshness_Screen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: generalAppBar(context, storeName, userName, () {
+      appBar: generalAppBar(context, languageController.isEnglish.value ? storeEnName : storeArName, userName, () {
         Navigator.of(context).pop();
       }, true, true, false,(int getClient, int getCat, int getSubCat, int getBrand) {
 
@@ -206,7 +201,7 @@ class _ViewFreshness_ScreenState extends State<ViewFreshness_Screen> {
                     if(transData[i].jan >0) {
                       resetMonthEntry(
                           transData[i].sku_id, transData[i].year.toString(),
-                          "Jan".toString(), transData[i].sku_en_name);
+                          "Jan".toString().tr, languageController.isEnglish.value ? transData[i].sku_en_name : transData[i].sku_ar_name);
                     }
                     },
                   onFebTap: (){
@@ -214,8 +209,8 @@ class _ViewFreshness_ScreenState extends State<ViewFreshness_Screen> {
                             resetMonthEntry(
                                 transData[i].sku_id,
                                 transData[i].year.toString(),
-                                "Feb".toString(),
-                                transData[i].sku_en_name);
+                                "Feb".toString().tr,
+                                languageController.isEnglish.value ? transData[i].sku_en_name : transData[i].sku_ar_name);
                           }
                         },
                   onMarTap: (){
@@ -223,8 +218,8 @@ class _ViewFreshness_ScreenState extends State<ViewFreshness_Screen> {
                             resetMonthEntry(
                                 transData[i].sku_id,
                                 transData[i].year.toString(),
-                                "Mar".toString(),
-                                transData[i].sku_en_name);
+                                "Mar".toString().tr,
+                                languageController.isEnglish.value ? transData[i].sku_en_name : transData[i].sku_ar_name);
                           }
                         },
                   onAprTap: (){
@@ -232,8 +227,8 @@ class _ViewFreshness_ScreenState extends State<ViewFreshness_Screen> {
                             resetMonthEntry(
                                 transData[i].sku_id,
                                 transData[i].year.toString(),
-                                "Apr".toString(),
-                                transData[i].sku_en_name);
+                                "Apr".toString().tr,
+                                languageController.isEnglish.value ? transData[i].sku_en_name : transData[i].sku_ar_name);
                           }
                         },
                   onMayTap: (){
@@ -241,8 +236,8 @@ class _ViewFreshness_ScreenState extends State<ViewFreshness_Screen> {
                             resetMonthEntry(
                                 transData[i].sku_id,
                                 transData[i].year.toString(),
-                                "May".toString(),
-                                transData[i].sku_en_name);
+                                "May".toString().tr,
+                                languageController.isEnglish.value ? transData[i].sku_en_name : transData[i].sku_ar_name);
                           }
                         },
                   onJunTap: (){
@@ -250,8 +245,8 @@ class _ViewFreshness_ScreenState extends State<ViewFreshness_Screen> {
                             resetMonthEntry(
                                 transData[i].sku_id,
                                 transData[i].year.toString(),
-                                "Jun".toString(),
-                                transData[i].sku_en_name);
+                                "Jun".toString().tr,
+                                languageController.isEnglish.value ? transData[i].sku_en_name : transData[i].sku_ar_name);
                           }
                         },
                   onJulTap: (){
@@ -259,8 +254,8 @@ class _ViewFreshness_ScreenState extends State<ViewFreshness_Screen> {
                             resetMonthEntry(
                                 transData[i].sku_id,
                                 transData[i].year.toString(),
-                                "Jul".toString(),
-                                transData[i].sku_en_name);
+                                "Jul".toString().tr,
+                                languageController.isEnglish.value ? transData[i].sku_en_name : transData[i].sku_ar_name);
                           }
                         },
                   onAugTap: (){
@@ -268,8 +263,8 @@ class _ViewFreshness_ScreenState extends State<ViewFreshness_Screen> {
                             resetMonthEntry(
                                 transData[i].sku_id,
                                 transData[i].year.toString(),
-                                "Aug".toString(),
-                                transData[i].sku_en_name);
+                                "Aug".toString().tr,
+                                languageController.isEnglish.value ? transData[i].sku_en_name : transData[i].sku_ar_name);
                           }
                         },
                   onSepTap: (){
@@ -277,8 +272,8 @@ class _ViewFreshness_ScreenState extends State<ViewFreshness_Screen> {
                             resetMonthEntry(
                                 transData[i].sku_id,
                                 transData[i].year.toString(),
-                                "Sep".toString(),
-                                transData[i].sku_en_name);
+                                "Sep".toString().tr,
+                                languageController.isEnglish.value ? transData[i].sku_en_name : transData[i].sku_ar_name);
                           }
                         },
                   onOctTap: (){
@@ -286,8 +281,8 @@ class _ViewFreshness_ScreenState extends State<ViewFreshness_Screen> {
                             resetMonthEntry(
                                 transData[i].sku_id,
                                 transData[i].year.toString(),
-                                "Oct".toString(),
-                                transData[i].sku_en_name);
+                                "Oct".toString().tr,
+                                languageController.isEnglish.value ? transData[i].sku_en_name : transData[i].sku_ar_name);
                           }
                         },
                   onNovTap: (){
@@ -295,8 +290,8 @@ class _ViewFreshness_ScreenState extends State<ViewFreshness_Screen> {
                             resetMonthEntry(
                                 transData[i].sku_id,
                                 transData[i].year.toString(),
-                                "Nov".toString(),
-                                transData[i].sku_en_name);
+                                "Nov".toString().tr,
+                                languageController.isEnglish.value ? transData[i].sku_en_name : transData[i].sku_ar_name);
                           }
                         },
                   onDecTap: (){
@@ -304,8 +299,8 @@ class _ViewFreshness_ScreenState extends State<ViewFreshness_Screen> {
                             resetMonthEntry(
                                 transData[i].sku_id,
                                 transData[i].year.toString(),
-                                "Dec".toString(),
-                                transData[i].sku_en_name);
+                                "Dec".toString().tr,
+                                languageController.isEnglish.value ? transData[i].sku_en_name : transData[i].sku_ar_name);
                           }
                         },
                   sku_id: transData[i].sku_id,
@@ -322,8 +317,7 @@ class _ViewFreshness_ScreenState extends State<ViewFreshness_Screen> {
                   oct:  transData[i].oct.toString(),
                   nov:  transData[i].nov.toString(),
                   dec:  transData[i].dec.toString(),
-                  sku_en_name:  transData[i].sku_en_name,
-                  sku_ar_name:  transData[i].sku_ar_name,
+                  sku_en_name: languageController.isEnglish.value ? transData[i].sku_en_name:transData[i].sku_ar_name,
                    imageName:  "${imageBaseUrl}sku_pictures/${transData[i].imgName}",),
             );
           }),
@@ -335,14 +329,14 @@ class _ViewFreshness_ScreenState extends State<ViewFreshness_Screen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Reset Freshness"),
-          content:  Text('Are you sure you want to reset $month $year for $skuName?'),
+          title:  Text("Reset Freshness".tr),
+          content:  Text('${"Are you sure you want to reset".tr} $month $year ${"for".tr} $skuName?'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
               },
-              child: const Text('No'),
+              child:  Text('No'.tr),
             ),
             TextButton(
               onPressed: ()async {
@@ -352,7 +346,7 @@ class _ViewFreshness_ScreenState extends State<ViewFreshness_Screen> {
 
                   });
               },
-              child: const Text('Yes'),
+              child: Text('Yes'.tr),
             ),
           ],
         );

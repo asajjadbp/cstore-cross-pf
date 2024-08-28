@@ -193,19 +193,36 @@ class _GridDashBoardState extends State<GridDashBoard> {
 
   insertDataToSql(List<PickListModel> valuePickList) async {
     String valueQuery = "";
-    for(int i=0; i < valuePickList.length; i++) {
-      valueQuery = "$valueQuery(${valuePickList[i].picklist_id},${valuePickList[i].store_id},${valuePickList[i].category_id},${valuePickList[i].tmr_id},${wrapIfString(valuePickList[i].tmr_name)},${valuePickList[i].stocker_id},${wrapIfString(valuePickList[i].stocker_name)},${wrapIfString(valuePickList[i].shift_time)},${wrapIfString(valuePickList[i].en_cat_name)},${wrapIfString(valuePickList[i].ar_cat_name)},${wrapIfString(valuePickList[i].sku_picture)},${wrapIfString(valuePickList[i].en_sku_name)},${wrapIfString(valuePickList[i].ar_sku_name)},${valuePickList[i].req_pickList},${valuePickList[i].act_pickList},${valuePickList[i].pickList_ready},0,'',${wrapIfString(valuePickList[i].pick_list_receive_time)},${wrapIfString(valuePickList[i].pick_list_reason)}),";
-    }
-    if (valueQuery.endsWith(",")) {
-      valueQuery = valueQuery.substring(0, valueQuery.length - 1);
-    }
-    print("Query Part");
-    print(valueQuery);
+    if (valuePickList.isNotEmpty) {
+      for (int i = 0; i < valuePickList.length; i++) {
+        valueQuery = "$valueQuery($workingId,${valuePickList[i]
+            .picklist_id},${valuePickList[i].store_id},${valuePickList[i]
+            .category_id},${valuePickList[i].tmr_id},${wrapIfString(
+            valuePickList[i].tmr_name)},${valuePickList[i]
+            .stocker_id},${wrapIfString(
+            valuePickList[i].stocker_name)},${wrapIfString(
+            valuePickList[i].shift_time)},${wrapIfString(
+            valuePickList[i].en_cat_name)},${wrapIfString(
+            valuePickList[i].ar_cat_name)},${wrapIfString(
+            valuePickList[i].sku_picture)},${wrapIfString(
+            valuePickList[i].en_sku_name)},${wrapIfString(
+            valuePickList[i].ar_sku_name)},${valuePickList[i]
+            .req_pickList},${valuePickList[i].act_pickList},${valuePickList[i]
+            .pickList_ready},0,'',${wrapIfString(
+            valuePickList[i].pick_list_receive_time)},${wrapIfString(
+            valuePickList[i].pick_list_reason)}),";
+      }
+      if (valueQuery.endsWith(",")) {
+        valueQuery = valueQuery.substring(0, valueQuery.length - 1);
+      }
 
-    await DatabaseHelper.insertPickListByQuery(valueQuery).then((value) {
-      print("check picklist screen");
+      print("Query Part");
+      print(valueQuery);
 
-    });
+      await DatabaseHelper.insertPickListByQuery(valueQuery).then((value) {
+        print("check picklist screen");
+      });
+    }
   }
 
   // void testSpeed() async {

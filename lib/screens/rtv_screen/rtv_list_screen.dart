@@ -3,6 +3,7 @@ import 'package:cstore/screens/rtv_screen/widgets/rtv_list_card.dart';
 import 'package:cstore/screens/rtv_screen/view_rtv_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,14 +13,13 @@ import '../../Model/database_model/category_model.dart';
 import '../../Model/database_model/client_model.dart';
 import '../../Model/database_model/rtv_show_model.dart';
 import '../../Model/database_model/sys_brand_model.dart';
+import '../Language/localization_controller.dart';
 import '../utils/app_constants.dart';
 import '../utils/appcolor.dart';
 import '../utils/toast/toast.dart';
 import '../widget/app_bar_widgets.dart';
-import '../widget/drop_downs.dart';
 import '../widget/elevated_buttons.dart';
 import '../widget/loading.dart';
-import '../widget/percent_indicator.dart';
 import 'addnewrtv.dart';
 class Rtv_List_Screen extends StatefulWidget {
   static const routeName = "/rtv_screen";
@@ -30,6 +30,7 @@ class Rtv_List_Screen extends StatefulWidget {
   State<Rtv_List_Screen> createState() => _Rtv_List_ScreenState();
 }
 class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
+
   List<File> _imageFiles = [];
   List<RTVShowModel> transData = [];
   List<RTVShowModel> filterTransData = [];
@@ -38,7 +39,9 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
   String workingId = "";
   String imageBaseUrl = "";
   String clientId = "";
-  String storeName = '';
+  String storeEnName = '';
+  String storeArName = '';
+  final languageController = Get.put(LocalizationController());
   String userName = '';
   int totalPieces = 0;
   bool isCategoryLoading = false;
@@ -152,7 +155,8 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
 
     setState(() {
       workingId = sharedPreferences.getString(AppConstants.workingId)!;
-      storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+      storeEnName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+      storeArName = sharedPreferences.getString(AppConstants.storeArNAme)!;
       userName = sharedPreferences.getString(AppConstants.userName)!;
       clientId = sharedPreferences.getString(AppConstants.clientId)!;
       imageBaseUrl = sharedPreferences.getString(AppConstants.imageBaseUrl)!;
@@ -191,8 +195,6 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
     });
     await DatabaseHelper.getRTVCountData(workingId,selectedClientId.toString(),selectedBrandId.toString(),selectedCategoryId.toString(),selectedSubCategoryId.toString()).then((value) {
       rtvCountModel = value;
-      print("TOTAL PRODUCTS");
-      print(rtvCountModel.total_value);
     });
   }
 
@@ -238,10 +240,10 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
           print("File not found: $folderPath/$imgName");
         }
       } else {
-        ToastMessage.errorMessage(context, "Permission denied");
+        ToastMessage.errorMessage(context, "Permission denied".tr);
       }
     } catch (e) {
-      ToastMessage.errorMessage(context, "Permission denied");
+      ToastMessage.errorMessage(context, "Permission denied".tr);
     }
   }
 
@@ -272,11 +274,9 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor:MyColors.background,
-      appBar: generalAppBar(context, storeName, userName, (){
+      appBar: generalAppBar(context, languageController.isEnglish.value ? storeEnName : storeArName, userName, (){
         Navigator.of(context).pop();
       }, true, true, false,(int getClient, int getCat, int getSubCat, int getBrand) {
 
@@ -324,7 +324,7 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              const Text("RTV Sku's"),
+                              Text("RTV Sku's".tr),
                              Container(
                                  margin: const EdgeInsets.symmetric(vertical: 5),
                                  child: const FaIcon(FontAwesomeIcons.layerGroup,color: MyColors.greenColor,)),
@@ -355,7 +355,7 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                const Text("RTV Pieces"),
+                                Text("RTV Pieces".tr),
                                 Container(
                                     margin: const EdgeInsets.symmetric(vertical: 5),
                                     child: const FaIcon(FontAwesomeIcons.cubesStacked,color: MyColors.savebtnColor,)),
@@ -386,7 +386,7 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                const Text("RTV Values"),
+                                Text("RTV Values".tr),
                                 Container(
                                     margin: const EdgeInsets.symmetric(vertical: 5),
                                     child: const FaIcon(FontAwesomeIcons.circleDollarToSlot,color: MyColors.savebtnColor,)),
@@ -407,8 +407,8 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
                     child: MyLoadingCircle(),
                   )
                   : isFilter
-                  ? filterTransData.isEmpty ? const Center(
-                child: Text("No data found"),
+                  ? filterTransData.isEmpty ? Center(
+                child: Text("No Data Found".tr),
               ) : ListView.builder(
                 shrinkWrap: true,
                 itemCount: filterTransData.length,
@@ -422,7 +422,7 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
                             sku_id: filterTransData[i].pro_id,
                             imageName:
                             "${imageBaseUrl}sku_pictures/${filterTransData[i].img_name}",
-                            SkuName: filterTransData[i].pro_en_name,
+                            SkuName: languageController.isEnglish.value ? filterTransData[i].pro_en_name : filterTransData[i].pro_ar_name,
                           ),
                         ),
                       ).then((value) {
@@ -436,17 +436,17 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
                     child: Rtvcard(
                       imageName:
                       "${imageBaseUrl}sku_pictures/${filterTransData[i].img_name}",
-                      productName: filterTransData[i].pro_en_name,
+                      productName: languageController.isEnglish.value ? filterTransData[i].pro_en_name : filterTransData[i].pro_ar_name,
                       icon1: const Icon(
                         Icons.category_rounded,
                         color: MyColors.appMainColor,
                       ),
-                      category: filterTransData[i].cat_en_name,
+                      category: languageController.isEnglish.value ? filterTransData[i].cat_en_name : filterTransData[i].cat_ar_name,
                       icon2: const Icon(
                         Icons.account_tree,
                         color: MyColors.appMainColor,
                       ),
-                      brandName: filterTransData[i].brand_en_name,
+                      brandName: languageController.isEnglish.value ? filterTransData[i].brand_en_name : filterTransData[i].brand_ar_name,
                       rsp: filterTransData[i].rsp,
                       skuId: filterTransData[i].pro_id,
                       activityStatus: filterTransData[i].act_status,
@@ -454,8 +454,8 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
                   );
                 },
               )  : transData.isEmpty
-                  ? const Center(
-                child: Text("No data found"),
+                  ?  Center(
+                child: Text("No Data Found".tr),
               )
                   : ListView.builder(
                     shrinkWrap: true,
@@ -471,7 +471,7 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
                                 sku_id: transData[i].pro_id,
                                 imageName:
                                 "${imageBaseUrl}sku_pictures/${transData[i].img_name}",
-                                SkuName: transData[i].pro_en_name,
+                                SkuName: languageController.isEnglish.value ? transData[i].pro_en_name : transData[i].pro_ar_name,
                               ),
                             ),
                           ).then((value) {
@@ -482,17 +482,17 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
                         child: Rtvcard(
                           imageName:
                           "${imageBaseUrl}sku_pictures/${transData[i].img_name}",
-                          productName: transData[i].pro_en_name,
+                          productName: languageController.isEnglish.value ? transData[i].pro_en_name : transData[i].pro_ar_name,
                           icon1: const Icon(
                             Icons.category_rounded,
                             color: MyColors.appMainColor,
                           ),
-                          category: transData[i].cat_en_name,
+                          category:  languageController.isEnglish.value ? transData[i].cat_en_name : transData[i].cat_ar_name,
                           icon2: const Icon(
                             Icons.account_tree,
                             color: MyColors.appMainColor,
                           ),
-                          brandName: transData[i].brand_en_name,
+                          brandName: languageController.isEnglish.value ?  transData[i].brand_en_name : transData[i].brand_ar_name,
                           rsp: transData[i].rsp,
                           skuId: transData[i].pro_id,
                           activityStatus: transData[i].act_status,
@@ -502,7 +502,7 @@ class _Rtv_List_ScreenState extends State<Rtv_List_Screen> {
                   ),
             ),
             BigElevatedButton(
-                buttonName: "View RTVS",
+                buttonName: "${"View".tr} RTVS",
                 submit: (){
                   Navigator.push(
                     context,

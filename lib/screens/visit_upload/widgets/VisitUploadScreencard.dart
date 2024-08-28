@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import '../../widget/loading.dart';
 
 class VisitAvlUploadScreenCard extends StatelessWidget {
@@ -198,7 +199,7 @@ class VisitAvlUploadScreenCard extends StatelessWidget {
                         padding: const EdgeInsets.only(left: 7, top: 8),
                         child: Center(
                           child: Text(
-                            isUploaded ? "Done" : "Upload",
+                            isUploaded ? "Done".tr : "Upload".tr,
                             style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -384,7 +385,7 @@ class VisitPickListUploadScreenCard extends StatelessWidget {
                         padding: EdgeInsets.only(left: 7, top: 8),
                         child: Center(
                           child: Text(
-                            isUploaded ? "Done" : "Upload",
+                            isUploaded ? "Done".tr : "Upload".tr,
                             style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -570,7 +571,7 @@ class VisitBrandShareUploadScreenCard extends StatelessWidget {
                         padding: EdgeInsets.only(left: 7, top: 8),
                         child: Center(
                           child: Text(
-                            isUploaded ? "Done" : "Upload",
+                            isUploaded ? "Done".tr : "Upload".tr,
                             style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -780,7 +781,7 @@ class VisitPlanoguideUploadScreenCard extends StatelessWidget {
                         padding: EdgeInsets.only(left: 7, top: 8),
                         child: Center(
                           child: Text(
-                            isUploaded ? "Done" : "Upload",
+                            isUploaded ? "Done".tr : "Upload".tr,
                             style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -966,7 +967,7 @@ class VisitRtvUploadScreenCard extends StatelessWidget {
                         padding: EdgeInsets.only(left: 7, top: 8),
                         child: Center(
                           child: Text(
-                            isUploaded ? "Done" : "Upload",
+                            isUploaded ? "Done".tr : "Upload".tr,
                             style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -1152,7 +1153,7 @@ class VisitPriceCheckUploadScreenCard extends StatelessWidget {
                         padding: EdgeInsets.only(left: 7, top: 8),
                         child: Center(
                           child: Text(
-                            isUploaded ? "Done" : "Upload",
+                            isUploaded ? "Done".tr : "Upload".tr,
                             style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -1311,7 +1312,7 @@ class VisitFreshnessUploadScreenCard extends StatelessWidget {
                         padding: EdgeInsets.only(left: 7, top: 8),
                         child: Center(
                           child: Text(
-                            isUploaded ? "Done" : "Upload",
+                            isUploaded ? "Done".tr : "Upload".tr,
                             style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -1509,7 +1510,7 @@ class VisitStockUploadScreenCard extends StatelessWidget {
                         padding: EdgeInsets.only(left: 7, top: 8),
                         child: Center(
                           child: Text(
-                            isUploaded ? "Done" : "Upload",
+                            isUploaded ? "Done".tr : "Upload".tr,
                             style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -1650,7 +1651,7 @@ class VisitBeforeFixingUploadScreenCard extends StatelessWidget {
                         padding: EdgeInsets.only(left: 7, top: 8),
                         child: Center(
                           child: Text(
-                            isUploaded ? "Done" : "Upload",
+                            isUploaded ? "Done".tr : "Upload".tr,
                             style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -1836,7 +1837,7 @@ class VisitPlanogramUploadScreenCard extends StatelessWidget {
                         padding: const EdgeInsets.only(left: 7, top: 8),
                         child: Center(
                           child: Text(
-                            isUploaded ? "Done" : "Upload",
+                            isUploaded ? "Done".tr : "Upload".tr,
                             style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -1985,7 +1986,7 @@ class VisitSosUploadScreenCard extends StatelessWidget {
                         padding: EdgeInsets.only(left: 7, top: 8),
                         child: Center(
                           child: Text(
-                            isUploaded ? "Done" : "Upload",
+                            isUploaded ? "Done".tr : "Upload".tr,
                             style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -2124,10 +2125,10 @@ class VisitOsdAndMarketIssueUploadScreenCard extends StatelessWidget {
                     children: [
                       Icon( isUploaded ? Icons.check : Icons.cloud_upload_outlined,color: Colors.white,size: 39,),
                       Padding(
-                        padding: EdgeInsets.only(left: 7, top: 8),
+                        padding: const EdgeInsets.only(left: 7, top: 8),
                         child: Center(
                           child: Text(
-                            isUploaded ? "Done" : "Upload",
+                            isUploaded ? "Done".tr : "Upload".tr,
                             style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,

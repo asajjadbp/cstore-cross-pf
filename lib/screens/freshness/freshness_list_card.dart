@@ -4,7 +4,7 @@ import 'package:datepicker_dropdown/order_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import '../../widget/loading.dart';
+import '../widget/loading.dart';
 import 'package:datepicker_dropdown/datepicker_dropdown.dart';
 import 'package:datepicker_dropdown/order_format.dart';
 import 'package:flutter/material.dart';
@@ -186,7 +186,7 @@ class FreshnessListCard extends StatelessWidget {
                                                       fontWeight: FontWeight.w400,
                                                       fontFamily: 'lato',
                                                     )),
-                                                Text("Month".tr,
+                                                 Text("Month".tr,
                                                     style: const TextStyle(
                                                       fontSize: 16,
                                                       fontWeight: FontWeight.w400,
@@ -215,7 +215,7 @@ class FreshnessListCard extends StatelessWidget {
                                                 child: Center(
                                                   child: DropdownDatePicker(
                                                     locale: "en",
-                                                    dateformatorder: OrderFormat.YDM, // default is myd
+                                                    dateformatorder: OrderFormat.YDM,
                                                     isDropdownHideUnderline: true, // optional
                                                     isFormValidator: true, // optional
                                                     startYear: 1900, // optional
@@ -224,12 +224,18 @@ class FreshnessListCard extends StatelessWidget {
                                                     // selectedDay: _selectedDay, // optional
                                                     selectedMonth: _selectedMonth, // optional
                                                     selectedYear: _selectedYear, // optional
+                                                    // onChangedDay: (value) {
+                                                    //     _selectedDay = int.parse(value!);
+                                                    //
+                                                    //   print('onChangedDay: $value');
+                                                    // },
                                                     onChangedMonth: (value) {
+
                                                         _selectedMonth = int.parse(value!);
                                                         },
                                                     onChangedYear: (value) {
                                                         _selectedYear = int.parse(value!);
-                                                        },
+                                                    },
                                                   ),
                                                 ),
                                               ),
@@ -261,7 +267,7 @@ class FreshnessListCard extends StatelessWidget {
                                                 valueControllerRegular,
                                                 keyboardType:
                                                 TextInputType.number,
-                                                decoration: InputDecoration(
+                                                decoration:  InputDecoration(
                                                     prefixIconColor:
                                                     MyColors.appMainColor,
                                                     focusColor:
@@ -298,17 +304,17 @@ class FreshnessListCard extends StatelessWidget {
                                                         26, 91, 140, 1),
                                                     borderRadius:
                                                     BorderRadius.circular(5)),
-                                                child: Row(
+                                                child:  Row(
                                                   mainAxisAlignment:
                                                   MainAxisAlignment.center,
                                                   children: [
-                                                    SizedBox(),
+                                                    const SizedBox(),
                                                     const SizedBox(
                                                       width: 10,
                                                     ),
                                                     Text(
                                                       "Save".tr,
-                                                      style: const TextStyle(
+                                                      style:const TextStyle(
                                                           fontSize: 18,
                                                           fontWeight:
                                                           FontWeight.w400,
@@ -366,6 +372,7 @@ class FreshnessListCard extends StatelessWidget {
           right: 6,
           child: Container(
             height: 20,
+            width: 45,
             decoration: const BoxDecoration(
                 color: Colors.blue,
                 borderRadius: BorderRadius.only(

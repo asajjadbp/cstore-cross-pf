@@ -10,6 +10,7 @@ import 'package:cstore/screens/utils/app_constants.dart';
 import 'package:cstore/screens/widget/drop_downs.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart' as path;
 import '../../Model/database_model/trans_photo_model.dart';
@@ -163,7 +164,7 @@ class _AddOtherPhotoState extends State<AddOtherPhoto> {
             upload_status: 0,
             date_time: now.toString()))
             .then((_) {
-          ToastMessage.succesMessage(context, "Data store successfully");
+          ToastMessage.succesMessage(context, "Data Saved Successfully".tr);
 
           imageFile = null;
         });
@@ -208,19 +209,18 @@ class _AddOtherPhotoState extends State<AddOtherPhoto> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Client",
-                          style: TextStyle(
+                         Text(
+                          "Client".tr,
+                          style:const TextStyle(
                               color: MyColors.appMainColor,
                               fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(
                           height: 5,
                         ),
-                        // dropdownwidget("Company Name"),
                         ClientListDropDown(
                             clientKey: clientKey,
-                            hintText: "Client", clientData: clientData, onChange: (value){
+                            hintText: "Client".tr, clientData: clientData, onChange: (value){
                           selectedClientId = value.client_id;
                           getCategoryData(selectedClientId);
                           setState(() {
@@ -233,9 +233,9 @@ class _AddOtherPhotoState extends State<AddOtherPhoto> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        "Category",
-                        style: TextStyle(
+                       Text(
+                        "Category".tr,
+                        style:const TextStyle(
                             color: MyColors.appMainColor,
                             fontWeight: FontWeight.bold),
                       ),
@@ -250,7 +250,7 @@ class _AddOtherPhotoState extends State<AddOtherPhoto> {
                           child: const MyLoadingCircle(),
                         ),
                       )
-                          : CategoryDropDown(categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
+                          : CategoryDropDown(categoryKey:categoryKey,hintText: "Category".tr, categoryData: categoryData, onChange: (value){
                         selectedCategoryId = value.id;
                         setState(() {
 
@@ -263,9 +263,9 @@ class _AddOtherPhotoState extends State<AddOtherPhoto> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Type",
-                          style: TextStyle(
+                         Text(
+                          "Type".tr,
+                          style:const TextStyle(
                               color: MyColors.appMainColor,
                               fontWeight: FontWeight.bold),
                         ),
@@ -276,7 +276,7 @@ class _AddOtherPhotoState extends State<AddOtherPhoto> {
 
                         TypeDropDown(
                             typeKey: typeKey,
-                            hintText: "Type", photoData: photoTypeData, onChange: (value){
+                            hintText: "Type".tr, photoData: photoTypeData, onChange: (value){
                           selectedTypeId =value.id;
                           setState(() {
                           });
@@ -300,7 +300,7 @@ class _AddOtherPhotoState extends State<AddOtherPhoto> {
                       ),
                     )
                         : BigElevatedButton(
-                        buttonName: "Save",
+                        buttonName: "Save".tr,
                         submit: (){
                           saveStorePhotoData();
                         },

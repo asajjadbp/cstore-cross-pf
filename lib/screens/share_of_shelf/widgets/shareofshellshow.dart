@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class shareofshellshow extends StatelessWidget {
   shareofshellshow(
@@ -29,7 +30,7 @@ class shareofshellshow extends StatelessWidget {
               semanticContainer: false,
               child: Container(
                 decoration: BoxDecoration(
-                    color: Color(0xFFFFFFFF),
+                    color: Colors.white,
                     border: Border.all(color: Colors.black12, width: 1),
                     borderRadius: BorderRadius.circular(7)),
                 child: Column(
@@ -63,9 +64,9 @@ class shareofshellshow extends StatelessWidget {
                                     fontSize: 13,
                                     color: Color.fromRGBO(68, 68, 68, 1)),
                               ),
-                              const Text(
-                                "Total ",
-                                style: TextStyle(
+                               Text(
+                                "Total".tr,
+                                style: const TextStyle(
                                     fontSize: 13,
                                     color: Color.fromRGBO(68, 68, 68, 1),
                                     fontWeight: FontWeight.w500),
@@ -84,9 +85,9 @@ class shareofshellshow extends StatelessWidget {
                                     fontSize: 13,
                                     color: Color.fromRGBO(68, 68, 68, 1)),
                               ),
-                              const Text(
-                                "Actual ",
-                                style: TextStyle(
+                               Text(
+                                "Actual".tr,
+                                style: const TextStyle(
                                     fontSize: 13,
                                     color: Color.fromRGBO(68, 68, 68, 1),
                                     fontWeight: FontWeight.w500),
@@ -105,9 +106,9 @@ class shareofshellshow extends StatelessWidget {
                                     fontSize: 13,
                                     color: Color.fromRGBO(68, 68, 68, 1)),
                               ),
-                              const Text(
-                                "Unit",
-                                style: TextStyle(
+                               Text(
+                                "Unit".tr,
+                                style: const TextStyle(
                                     fontSize: 13,
                                     color: Color.fromRGBO(68, 68, 68, 1),
                                     fontWeight: FontWeight.w500),

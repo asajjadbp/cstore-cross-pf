@@ -2,6 +2,7 @@ import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:get/get.dart';
 import '../../utils/appcolor.dart';
 
 class SidcoAvailabilityItem extends StatelessWidget {
@@ -97,7 +98,7 @@ class SidcoAvailabilityItem extends StatelessWidget {
                           ),
                           child: Row(
                             children: [
-                              const Text("Required",style: TextStyle(fontWeight: FontWeight.w600,fontSize: 12),),
+                              Text("Required".tr,style:const TextStyle(fontWeight: FontWeight.w600,fontSize: 12),),
                               Container(
                                 margin: const EdgeInsets.symmetric(horizontal: 5),
                                 padding: const EdgeInsets.all(5),

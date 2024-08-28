@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../utils/appcolor.dart';
 
@@ -142,21 +143,21 @@ class PlanogramItemCard extends StatelessWidget {
                           height: 5,
                         ),
                         isAdherence == "1"
-                            ? const Row(
+                            ?  Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Icon(
+                                  const Icon(
                                     Icons.check_circle_rounded,
                                     color: MyColors.appMainColor,
                                     size: 16,
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 10,
                                   ),
                                   Expanded(
                                       child: Text(
-                                    "Adherence",
+                                    "Adherence".tr,
                                     overflow: TextOverflow.ellipsis,
                                   ))
                                 ],

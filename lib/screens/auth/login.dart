@@ -140,6 +140,7 @@ class _LoginState extends State<Login> {
       setState(() {
         isLoading = false;
       });
+      print(onError.toString());
       ToastMessage.errorMessage(context, onError.toString());
     });
   }
@@ -236,7 +237,9 @@ class _LoginState extends State<Login> {
                             margin: const EdgeInsets.symmetric(vertical: 30),
                             child: Column(
                               children: [
-                                SvgPicture.network(agencyPhoto),
+                                Container(
+                                    width: MediaQuery.of(context).size.width/2,
+                                    child: SvgPicture.network(agencyPhoto)),
 
                                 Container(
                                   margin:const EdgeInsets.symmetric(vertical: 10),

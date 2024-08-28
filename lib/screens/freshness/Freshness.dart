@@ -2,6 +2,7 @@ import 'package:cstore/screens/freshness/ViewFreshness.dart';
 import 'package:cstore/screens/widget/elevated_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Database/db_helper.dart';
@@ -10,6 +11,7 @@ import '../../Model/database_model/client_model.dart';
 import '../../Model/database_model/freshness_graph_count.dart';
 import '../../Model/database_model/show_freshness_list_model.dart';
 import '../../Model/database_model/sys_brand_model.dart';
+import '../Language/localization_controller.dart';
 import '../utils/app_constants.dart';
 import '../utils/appcolor.dart';
 import '../utils/toast/toast.dart';
@@ -34,7 +36,9 @@ class _Freshness_ScreenState extends State<Freshness_Screen> {
   String workingId = "";
   String userId = "";
   String clientId = "";
-  String storeName = '';
+  String storeEnName = '';
+  String storeArName = '';
+  final languageController = Get.put(LocalizationController());
   int totalPieces = 0;
   bool isCategoryLoading = false;
   bool isSubCategoryLoading = false;
@@ -195,7 +199,8 @@ class _Freshness_ScreenState extends State<Freshness_Screen> {
 
     setState(() {
       workingId = sharedPreferences.getString(AppConstants.workingId)!;
-      storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+      storeEnName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+      storeArName = sharedPreferences.getString(AppConstants.storeArNAme)!;
       clientId = sharedPreferences.getString(AppConstants.clientId)!;
       userId = sharedPreferences.getString(AppConstants.userName)!;
     });
@@ -228,35 +233,22 @@ class _Freshness_ScreenState extends State<Freshness_Screen> {
 
   getUserData() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-
-    storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
     imageBaseUrl = sharedPreferences.getString(AppConstants.imageBaseUrl)!;
-
     setState(() {});
-    print(storeName);
   }
 
   void InsertTransFreshness(month, year, pieces, skuId) async {
     String startMonth = DateFormat('MMM - MM').format((DateTime.now()));
     int monthDifferenceValue = await monthDifference(startMonth,month);
-    print(startMonth);
-    print(month);
-    print(monthDifferenceValue);
-    print(DateTime.now().year);
-    print(year);
-    print(year.toString() == DateTime.now().year.toString());
-    print(monthDifferenceValue > 1);
-    print("Month ");
-
     if (month == "" || year == 0 || pieces == "") {
-      ToastMessage.errorMessage(context, "Please fill the form");
+      ToastMessage.errorMessage(context, "Please fill the form".tr);
       return;
     }
 
     if(year.toString() == DateTime.now().year.toString()) {
       if (monthDifferenceValue < 1) {
         ToastMessage.errorMessage(
-            context, "You can not enter data for current or previous month");
+            context, "You can not enter data for current or previous month".tr);
         return;
       }
     }
@@ -269,7 +261,7 @@ class _Freshness_ScreenState extends State<Freshness_Screen> {
     print(currentUserTimeStamp);
     await DatabaseHelper.insertTransFreshness(month, clientId,currentUserTimeStamp, year, skuId, workingId, int.parse(pieces))
         .then((_) {
-      ToastMessage.succesMessage(context,"Data store successfully");
+      ToastMessage.succesMessage(context,"Data Saved Successfully".tr);
       Navigator.of(context).pop();
       year = 0;
       month = 0;
@@ -326,7 +318,7 @@ class _Freshness_ScreenState extends State<Freshness_Screen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: generalAppBar(context, storeName, userId, () {
+      appBar: generalAppBar(context,  languageController.isEnglish.value ? storeEnName : storeArName, userId, () {
         Navigator.of(context).pop();
       }, true, true, false,(int getClient, int getCat, int getSubCat, int getBrand) {
 
@@ -367,7 +359,7 @@ class _Freshness_ScreenState extends State<Freshness_Screen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Text("Freshness Sku's"),
+                             Text("Freshness Skus".tr,maxLines: 1,overflow: TextOverflow.ellipsis,),
                             Container(
                                 margin: const EdgeInsets.symmetric(vertical: 5),
                                 child: const FaIcon(FontAwesomeIcons.layerGroup,color: MyColors.greenColor,)),
@@ -398,7 +390,7 @@ class _Freshness_ScreenState extends State<Freshness_Screen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Text("Freshness Pieces"),
+                             Text("Freshness Pieces".tr,maxLines: 1,overflow: TextOverflow.ellipsis,),
                             Container(
                                 margin: const EdgeInsets.symmetric(vertical: 5),
                                 child: const FaIcon(FontAwesomeIcons.cubesStacked,color: MyColors.savebtnColor,)),
@@ -412,8 +404,8 @@ class _Freshness_ScreenState extends State<Freshness_Screen> {
             ],
           ),
           Expanded(
-            child: isFilter ? filterTransData.isEmpty ? const Center(
-              child: Text("No data found"),
+            child: isFilter ? filterTransData.isEmpty ?  Center(
+              child: Text("No Data Found".tr),
             ) : ListView.builder(
                 shrinkWrap: true,
                 itemCount: filterTransData.length,
@@ -421,17 +413,16 @@ class _Freshness_ScreenState extends State<Freshness_Screen> {
                   return FreshnessListCard(
                     image:
                     "${imageBaseUrl}sku_pictures/${transData[i].img_name}",
-                    proName: filterTransData[i].pro_en_name,
-                    catName: filterTransData[i].cat_en_name,
+                    proName:languageController.isEnglish.value ?  filterTransData[i].pro_en_name:filterTransData[i].pro_ar_name,
+                    catName:languageController.isEnglish.value ?  filterTransData[i].cat_en_name:filterTransData[i].cat_ar_name,
                     rsp: filterTransData[i].rsp,
                     freshnessDate: (String pieces, String month, int year) {
                       InsertTransFreshness(
                           month, year, pieces, filterTransData[i].pro_id);
-                      print("fun is last $month,$year,$pieces");
                       setState(() {});
                     },
                     freshnessTaken: filterTransData[i].activity_status,
-                    brandName: filterTransData[i].brand_en_name,
+                    brandName: languageController.isEnglish.value ?filterTransData[i].brand_en_name:filterTransData[i].brand_ar_name,
                   );
                 }) : ListView.builder(
                 shrinkWrap: true,
@@ -440,23 +431,22 @@ class _Freshness_ScreenState extends State<Freshness_Screen> {
                   return FreshnessListCard(
                     image:
                         "${imageBaseUrl}sku_pictures/${transData[i].img_name}",
-                    proName: transData[i].pro_en_name,
-                    catName: transData[i].cat_en_name,
+                    proName:languageController.isEnglish.value ?  transData[i].pro_en_name:transData[i].pro_ar_name,
+                    catName:languageController.isEnglish.value ?  transData[i].cat_en_name:transData[i].cat_ar_name,
                     rsp: transData[i].rsp,
                     freshnessDate: (String pieces, String month, int year) {
                       InsertTransFreshness(
                           month, year, pieces, transData[i].pro_id);
-                      print("fun is last $month,$year,$pieces");
                       setState(() {});
                     },
                     freshnessTaken: transData[i].activity_status,
-                    brandName: transData[i].brand_en_name,
+                    brandName:languageController.isEnglish.value ? transData[i].brand_en_name:transData[i].brand_ar_name,
                   );
                 }),
           ),
 
          BigElevatedButton(
-             buttonName: "View Freshness",
+             buttonName: "View Freshness".tr,
              submit: (){
                Navigator.of(context)
                    .pushNamed(ViewFreshness_Screen.routeName);

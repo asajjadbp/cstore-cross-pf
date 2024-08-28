@@ -2,6 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import '../../Language/localization_controller.dart';
 import '../../widget/elevated_buttons.dart';
 import '../../widget/loading.dart';
 
@@ -31,6 +33,7 @@ class StockListCard extends StatelessWidget {
   TextEditingController valueControllerCases=TextEditingController();
   TextEditingController valueControllerOuter=TextEditingController();
   TextEditingController valueControllerPieces=TextEditingController();
+  final languageController = Get.put(LocalizationController());
   @override
   Widget build(BuildContext context) {
 
@@ -105,27 +108,24 @@ class StockListCard extends StatelessWidget {
                     Container(
                       width: screenWidth / 1.2,
                       margin: const EdgeInsets.only(left: 15, top: 15),
-                      child: const Row(
+                      child:  Row(
                         mainAxisAlignment:
                         MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("Cases",
-                              style: TextStyle(
+                          Text("Cases".tr,
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w400,
-                                fontFamily: 'lato',
                               )),
-                          Text("Outer",
-                              style: TextStyle(
+                          Text("Outer".tr,
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w400,
-                                fontFamily: 'lato',
                               )),
-                          Text("Pieces",
-                              style: TextStyle(
+                          Text("Pieces".tr,
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w400,
-                                fontFamily: 'lato',
                               )),
                         ],
                       ),
@@ -480,7 +480,7 @@ class StockListCard extends StatelessWidget {
                     )),
               ),
             ),
-            Positioned(
+            languageController.isEnglish.value ? Positioned(
                 top: 5,
                 left: 5,
                 child: Container(
@@ -493,7 +493,20 @@ class StockListCard extends StatelessWidget {
                         )),
                     child: actStatus != 0
                         ? const Icon(Icons.check_circle, color: MyColors.greenColor)
-                        : SizedBox()))
+                        : const SizedBox())): Positioned(
+                top: 5,
+                right: 5,
+                child: Container(
+                    decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10.0),
+                          bottomLeft: Radius.circular(10.0),
+                          topRight: Radius.circular(10.0),
+                          bottomRight: Radius.circular(10.0),
+                        )),
+                    child: actStatus != 0
+                        ? const Icon(Icons.check_circle, color: MyColors.greenColor)
+                        : const SizedBox()))
           ],
         ),
       ),
