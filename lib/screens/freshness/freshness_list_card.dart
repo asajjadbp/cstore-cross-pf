@@ -4,10 +4,10 @@ import 'package:datepicker_dropdown/order_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import '../Language/localization_controller.dart';
 import '../widget/loading.dart';
 import 'package:datepicker_dropdown/datepicker_dropdown.dart';
-import 'package:datepicker_dropdown/order_format.dart';
-import 'package:flutter/material.dart';
+
 class FreshnessListCard extends StatelessWidget {
   FreshnessListCard(
       {super.key,
@@ -32,6 +32,8 @@ class FreshnessListCard extends StatelessWidget {
   int _selectedDay = 14;
   int _selectedMonth = 10;
   int _selectedYear = 1993;
+
+  final languageController = Get.put(LocalizationController());
 
   @override
   Widget build(BuildContext context) {
@@ -367,12 +369,28 @@ class FreshnessListCard extends StatelessWidget {
             ],
           ),
         ),
-        Positioned(
+        languageController.isEnglish.value ? Positioned(
           bottom: 6,
           right: 6,
           child: Container(
-            height: 20,
-            width: 45,
+            decoration: const BoxDecoration(
+                color: Colors.blue,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(5),
+                    bottomRight: Radius.circular(5))),
+            child: Center(
+                child: Text(
+              rsp,
+              style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
+            )),
+          ),
+        ) : Positioned(
+          bottom: 6,
+          left: 6,
+          child: Container(
             decoration: const BoxDecoration(
                 color: Colors.blue,
                 borderRadius: BorderRadius.only(
@@ -388,20 +406,20 @@ class FreshnessListCard extends StatelessWidget {
             )),
           ),
         ),
-        Positioned(
-            top: 8,
-            left: 8,
-            child: Container(
-                decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10.0),
-                  bottomLeft: Radius.circular(10.0),
-                  topRight: Radius.circular(10.0),
-                  bottomRight: Radius.circular(10.0),
-                )),
-                child: freshnessTaken != 0
-                    ? SizedBox()
-                    : SizedBox()))
+        // Positioned(
+        //     top: 8,
+        //     left: 8,
+        //     child: Container(
+        //         decoration: const BoxDecoration(
+        //             borderRadius: BorderRadius.only(
+        //           topLeft: Radius.circular(10.0),
+        //           bottomLeft: Radius.circular(10.0),
+        //           topRight: Radius.circular(10.0),
+        //           bottomRight: Radius.circular(10.0),
+        //         )),
+        //         child: freshnessTaken != 0
+        //             ? SizedBox()
+        //             : SizedBox()))
       ],
     );
   }

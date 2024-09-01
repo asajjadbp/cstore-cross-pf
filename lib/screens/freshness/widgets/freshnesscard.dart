@@ -6,6 +6,7 @@ import 'package:datepicker_dropdown/order_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import '../../Language/localization_controller.dart';
 import '../../widget/drop_downs.dart';
 import '../../widget/elevated_buttons.dart';
 import '../../widget/loading.dart';
@@ -28,7 +29,7 @@ class FreshnessListCard extends StatelessWidget {
   final int freshnessTaken;
   final Function(String pieces, String month, int year) freshnessDate;
   TextEditingController valueControllerPieces = TextEditingController();
-  AutovalidateMode _autovalidate = AutovalidateMode.disabled;
+  final languageController = Get.put(LocalizationController());
   String _selectedMonth = "";
   String _selectedYear = "";
   List<String> unitList = ['Jan - 01', 'Feb - 02', 'Mar - 03','Apr - 04','May - 05','Jun - 06','Jul - 07','Aug - 08','Sep - 09','Oct - 10','Nov - 11','Dec - 12'];
@@ -315,12 +316,11 @@ class FreshnessListCard extends StatelessWidget {
               ],
             ),
           ),
-          Positioned(
-            bottom: 3,
-            right: 3,
+          languageController.isEnglish.value ? Positioned(
+            bottom: 6,
+            right: 6,
             child: Container(
-              height: 20,
-              width: 45,
+              padding: const EdgeInsets.symmetric(horizontal: 5,vertical: 3),
               decoration: const BoxDecoration(
                   color: Colors.blue,
                   borderRadius: BorderRadius.only(
@@ -329,6 +329,25 @@ class FreshnessListCard extends StatelessWidget {
               child: Center(
                   child: Text(
                     rsp,
+                    style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  )),
+            ),
+          ) : Positioned(
+            bottom: 6,
+            left: 6,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 5,vertical: 3),
+              decoration: const BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(5),
+                  )),
+              child: Center(
+                  child: Text(
+                    "RSP $rsp",
                     style: const TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.bold,

@@ -1,11 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../Language/localization_controller.dart';
 import '../../utils/appcolor.dart';
 import '../../widget/loading.dart';
 
 class ExpiryCard extends StatelessWidget {
-  const ExpiryCard({
+   ExpiryCard({
     super.key,
     required this.sku_id,
     required this.year,
@@ -65,11 +66,10 @@ class ExpiryCard extends StatelessWidget {
   final Function onOctTap;
   final Function onNovTap;
   final Function onDecTap;
-
+  final languageController = Get.put(LocalizationController());
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
     return Card(
       elevation: 1,
       child: Container(
@@ -84,8 +84,8 @@ class ExpiryCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 5),
                   margin: const EdgeInsets.only(right: 5),
-                  decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.only(bottomRight: Radius.circular(10)),
+                  decoration: BoxDecoration(
+                      borderRadius:languageController.isEnglish.value ?const BorderRadius.only(bottomRight: Radius.circular(10)) : const BorderRadius.only(bottomLeft: Radius.circular(10)),
                       color: MyColors.appMainColor),
                   child: Text(year,style: const TextStyle(color: MyColors.whiteColor),),
                 ),

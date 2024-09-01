@@ -21,7 +21,7 @@ class PasswordTextField extends StatelessWidget {
           border: const OutlineInputBorder()),
       validator: (value) {
         if (value!.isEmpty) {
-          return "Please enter your password";
+          return "Please enter your password".tr;
         }
         return null;
       },

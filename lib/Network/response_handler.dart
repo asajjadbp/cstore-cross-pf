@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:cstore/screens/utils/services/vpn_detector.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -77,9 +78,9 @@ class ResponseHandler {
       }
       return responseJson;
     } on TimeoutException {
-      throw FetchDataException("Slow internet connection");
+      throw FetchDataException("Slow internet connection".tr);
     } on SocketException {
-      throw FetchDataException('No Internet connection');
+      throw FetchDataException('No Internet connection'.tr);
     }
   }
 }

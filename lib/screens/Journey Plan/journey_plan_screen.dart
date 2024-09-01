@@ -259,17 +259,17 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
                         showDialog(context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: const Text("Do you want to UnDrop this visit?"),
+                              title: Text("Do you want to Activate this visit?".tr),
                               actions: [
                                 TextButton(
-                                  child: const Text("No"),
+                                  child:  Text("No".tr),
                                   onPressed: () {
                                     // returnValue = true;
                                     Navigator.of(context).pop(true);
                                   },
                                 ),
                                 TextButton(
-                                  child: const Text("Yes"),
+                                  child:  Text("Yes".tr),
                                   onPressed: () {
                                     // returnValue = true;
                                     undropVisit(jpData[i].workingId.toString());
@@ -319,7 +319,7 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
   Future<void> getImage(JourneyPlanDetail journeyPlanDetail) async {
     await ImageTakingService.imageSelect().then((value) {
       if (value == null) {
-        ToastMessage.errorMessage(context, "No Image Picked");
+        ToastMessage.errorMessage(context, "No Image Picked".tr);
         return;
       }
       print("working id is ");
@@ -338,7 +338,7 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
 
   Future<void> dropVisit(String workingId) async {
     if (selectedReasonId == -1) {
-      ToastMessage.errorMessage(context, "Please Select Reason first");
+      ToastMessage.errorMessage(context, "Please Select Reason first".tr);
       return;
     }
     setState(() {
@@ -354,7 +354,7 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
         dropWorkingId = workingId;
       });
       if (value.status) {
-        ToastMessage.succesMessage(context, value.msg);
+        ToastMessage.succesMessage(context, "Visit Drop Successfully".tr);
       } else {
         ToastMessage.errorMessage(context, value.msg);
       }
@@ -380,7 +380,7 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
         isDropLoading = false;
       });
       if (value.status) {
-        ToastMessage.succesMessage(context, value.msg);
+        ToastMessage.succesMessage(context, "Visit Activate Successfully".tr);
       } else {
         ToastMessage.errorMessage(context, value.msg);
       }

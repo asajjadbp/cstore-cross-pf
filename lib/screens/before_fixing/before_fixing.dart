@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:camera/camera.dart';
 import 'package:cstore/Model/database_model/category_model.dart';
 import 'package:cstore/Model/database_model/client_model.dart';
 import 'package:cstore/Database/db_helper.dart';
@@ -15,6 +16,7 @@ import 'package:path/path.dart' as path;
 
 import '../../Model/database_model/trans_before_faxing.dart';
 import '../Language/localization_controller.dart';
+import '../camera/camera_screen.dart';
 import '../utils/appcolor.dart';
 import '../utils/services/image_picker.dart';
 import '../utils/services/take_image_and_save_to_folder.dart';
@@ -74,6 +76,28 @@ class _BeforeFixingState extends State<BeforeFixing> {
   }
 
   Future<void> getImage() async {
+
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => CameraPage(
+    //       onImageCaptured: (XFile image) {
+    //         // Handle the captured image here
+    //         if (image == null) {
+    //           return;
+    //         }
+    //         imageFile = File(image.path);
+    //
+    //         final String extension = path.extension(imageFile!.path);
+    //         imageName = "${userName}_${DateTime.now().millisecondsSinceEpoch}$extension";
+    //         setState(() {
+    //
+    //         });
+    //       },
+    //     ),
+    //   ),
+    // );
+
     await ImageTakingService.imageSelect().then((value) {
       if (value == null) {
         return;

@@ -379,7 +379,7 @@ class _DashBoardState extends State<DashBoard> {
               animationDuration: 2500,
               percent: percentValue.toInt() >= 100 ? 1 : percentValue / 100,
               center: Text(
-                barname,
+                barname,maxLines: 1,overflow: TextOverflow.ellipsis,
                 style: const TextStyle(color: Colors.white),
               ),
               linearStrokeCap: LinearStrokeCap.roundAll,
@@ -527,7 +527,7 @@ class _DashBoardState extends State<DashBoard> {
                             padding: const EdgeInsets.all(5.0),
                             child: Column(
                               children: [
-                                 Text("Efficiency".tr,
+                                 Text("Efficiency".tr,maxLines: 1,overflow: TextOverflow.ellipsis,
                                     style:
                                     const TextStyle(fontWeight: FontWeight.w600)),
                                 SvgPicture.asset(
@@ -556,7 +556,7 @@ class _DashBoardState extends State<DashBoard> {
                             padding: const EdgeInsets.all(5.0),
                             child: Column(
                               children: [
-                                 Text("Deduction".tr,
+                                 Text("Deduction".tr,maxLines: 1,overflow: TextOverflow.ellipsis,
                                     style:
                                     const TextStyle(fontWeight: FontWeight.w600)),
                                 SvgPicture.asset(
@@ -587,7 +587,7 @@ class _DashBoardState extends State<DashBoard> {
                             padding: const EdgeInsets.all(5.0),
                             child: Column(
                               children: [
-                                 Text("Incentives".tr,
+                                 Text("Incentives".tr,maxLines: 1,overflow: TextOverflow.ellipsis,
                                     style:
                                     const  TextStyle(fontWeight: FontWeight.w600)),
                                 SvgPicture.asset(

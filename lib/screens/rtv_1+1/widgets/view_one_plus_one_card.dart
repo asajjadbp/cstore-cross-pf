@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
+import '../../Language/localization_controller.dart';
 import '../../promoplane/widgets/promo_plan_card_row_item.dart';
 
 class ViewrtvOnePlusOnecard extends StatelessWidget {
-  const ViewrtvOnePlusOnecard({
+  ViewrtvOnePlusOnecard({
     super.key,
     required this.time,
     required this.proName,
@@ -29,7 +31,7 @@ class ViewrtvOnePlusOnecard extends StatelessWidget {
   final String comment;
   final String docNumber;
   final Function onDelete;
-
+  final languageController = Get.put(LocalizationController());
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -52,10 +54,10 @@ class ViewrtvOnePlusOnecard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  decoration:  const BoxDecoration(
+                  decoration:  BoxDecoration(
                       color: MyColors.appMainColor,
                       borderRadius:
-                      BorderRadius.only(bottomRight: Radius.circular(10))),
+                      languageController .isEnglish.value ? const BorderRadius.only(bottomRight: Radius.circular(10)) :const BorderRadius.only(bottomLeft: Radius.circular(10))  ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 5,vertical: 3),
                     child: Text(
@@ -69,7 +71,7 @@ class ViewrtvOnePlusOnecard extends StatelessWidget {
                 ),
                 Expanded(
                   child: Container(
-                      margin: const EdgeInsets.only(top: 5,left: 5),
+                      margin: const EdgeInsets.symmetric(horizontal: 5,vertical: 5),
                       child: Text(
                         proName,
                         overflow: TextOverflow.ellipsis,
@@ -139,20 +141,20 @@ class ViewrtvOnePlusOnecard extends StatelessWidget {
                 height: 00,
                 thickness: 1,
                 color: Color.fromRGBO(26, 91, 140, 1)),
-            PromoPlanCardRowItems(title: "Type",value: type,isWhiteBackGround: false,),
+            PromoPlanCardRowItems(title: "Type".tr,value: type,isWhiteBackGround: false,),
             const Divider(
                 height: 00,
                 thickness: 1,
                 color: Color.fromRGBO(26, 91, 140, 1)),
-            PromoPlanCardRowItems(title: "Pieces",value: piece,isWhiteBackGround: true,),
+            PromoPlanCardRowItems(title: "Pieces".tr,value: piece,isWhiteBackGround: true,),
             const Divider(
                 height: 00,
                 thickness: 1,
                 color: Color.fromRGBO(26, 91, 140, 1)),
-            PromoPlanCardRowItems(title: "Document No.",value: docNumber,isWhiteBackGround: false,),
+            PromoPlanCardRowItems(title: "Document No".tr,value: docNumber,isWhiteBackGround: false,),
             const Divider(
                 height: 00, thickness: 1, color: MyColors.appMainColor),
-            PromoPlanCardRowItems(title: "Comment",value: comment,isWhiteBackGround: true,),
+            PromoPlanCardRowItems(title: "Comment".tr,value: comment,isWhiteBackGround: true,),
 
           ],
         ),

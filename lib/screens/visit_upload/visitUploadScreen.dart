@@ -342,7 +342,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
                         if(sosCountModel.totalSosItems  > 0)
                           VisitSosUploadScreenCard(
-                              screenName: "Share of Shelf".tr,
+                              screenName: "Share Of Shelf".tr,
                               moduleName: "Records".tr,
                               onUploadTap: () async {
 

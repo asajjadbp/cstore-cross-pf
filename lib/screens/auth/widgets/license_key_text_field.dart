@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class LicenseKeyTextField extends StatelessWidget {
   const LicenseKeyTextField({super.key,required this.licenseKey});
@@ -19,7 +20,7 @@ class LicenseKeyTextField extends StatelessWidget {
           border: InputBorder.none),
       validator: (value) {
         if (value!.isEmpty) {
-          return "Please enter your license key";
+          return "Please enter your license key".tr;
         }
         return null;
       },

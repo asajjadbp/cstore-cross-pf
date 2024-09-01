@@ -2305,8 +2305,8 @@ class DatabaseHelper {
         categoryArName: transphoto[index]["cat_ar_name"] as String,
         categoryEnName: transphoto[index]["cat_en_name"] as String,
         gcs_status: transphoto[index][TableName.gcsStatus] as int,
-        type_ar_name: transphoto[index]["type_en_name"] as String,
-        type_en_name: transphoto[index]["type_ar_name"] as String,
+        type_ar_name: transphoto[index]["type_ar_name"] as String,
+        type_en_name: transphoto[index]["type_en_name"] as String,
         upload_status: transphoto[index]["upload_status"] as int,
       );
     });
@@ -2586,7 +2586,8 @@ class DatabaseHelper {
     final db = await initDataBase();
     final List<Map<String, dynamic>> planogram = await db.rawQuery(
         "SELECT trans_planogram.id,trans_planogram.client_id,trans_planogram.date_time,trans_planogram.category_id,trans_planogram.brand_id,trans_planogram.reason_id,trans_planogram.gcs_status,trans_planogram.upload_status,sys_client.client_name,sys_category.en_name as cat_en_name,sys_category.ar_name as cat_ar_name, sys_brand.en_name as brand_en_name, sys_brand.ar_name as brand_ar_name,is_adherence,image_name, "
-            "CASE WHEN sys_planogram_reason.id >0 then sys_planogram_reason.en_name  else 0 END as not_adh_reason "
+            "CASE WHEN sys_planogram_reason.id >0 then sys_planogram_reason.en_name  else 0 END as not_adh_en_reason, "
+            "CASE WHEN sys_planogram_reason.id >0 then sys_planogram_reason.ar_name  else 0 END as not_adh_ar_reason "
             "FROM trans_planogram "
             "JOIN sys_client on sys_client.client_id=trans_planogram.client_id "
             "JOIN sys_category on sys_category.id=trans_planogram.category_id "
@@ -2611,7 +2612,8 @@ class DatabaseHelper {
         is_adherence:planogram[index]['is_adherence'].toString(),
         image_name:planogram[index]['image_name'] as String,
         imageFile: null,
-        not_adherence_reason:planogram[index]['not_adh_reason'].toString(),
+        not_en_adherence_reason:planogram[index]['not_adh_en_reason'].toString(),
+        not_ar_adherence_reason:planogram[index]['not_adh_ar_reason'].toString(),
         gcs_status:planogram[index]['gcs_status'] as int,
         upload_status:planogram[index]['upload_status'] as int,
 
@@ -3419,11 +3421,12 @@ class DatabaseHelper {
       );
     });
   }
-  static Future<List<SYS_BrandModel>> getBrandListOSDC() async {
+  static Future<List<SYS_BrandModel>> getBrandListOSDC(String clientId) async {
     final db = await initDataBase();
     final List<Map<String, dynamic>> brandMaps = await db.rawQuery(
         "SELECT sys_brand.id,sys_brand.en_name ,sys_brand.ar_name,sys_brand.client_id "
-            "FROM sys_brand JOIN sys_client on sys_client.client_id=sys_brand.client_id");
+            "FROM sys_brand JOIN sys_client on sys_client.client_id=sys_brand.client_id "
+            "WHERE sys_client.client_id IN($clientId)");
 
     print(jsonEncode(brandMaps));
     print("________BRAND List ________________");
@@ -4148,6 +4151,14 @@ class DatabaseHelper {
     String writeQuery = "update trans_pricing set regular_price=${wrapIfString(regular)},promo_price=${wrapIfString(promo)},upload_status=0 Where sku_id=$skuId AND working_id=$workingID";
     var db = await initDataBase();
     print("_______________UpdATE________________");
+    print(writeQuery);
+    return await db.rawUpdate(writeQuery);
+  }
+
+  static Future<int> deleteTransPromoPricing(int skuId,String workingID) async {
+    String writeQuery = "DELETE FROM trans_pricing WHERE sku_id=$skuId AND working_id=$workingID";
+    var db = await initDataBase();
+    print("_______________DELETE PROMO PRICE________________");
     print(writeQuery);
     return await db.rawUpdate(writeQuery);
   }
@@ -5740,7 +5751,7 @@ class DatabaseHelper {
   static Future<List<Sys_OSDCReasonModel>> getSosUnitListData() async {
     final db = await initDataBase();
     final List<Map<String, dynamic>> osdcTypeMaps = await db.rawQuery(
-        "SELECT *from sys_sos_unit");
+        "SELECT *from sys_sos_units");
     print(jsonEncode(osdcTypeMaps));
     print("________ SOS Unit List ________________");
     return List.generate(osdcTypeMaps.length, (index) {

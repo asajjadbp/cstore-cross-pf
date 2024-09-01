@@ -11,6 +11,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Database/table_name.dart';
+import '../Language/localization_controller.dart';
 import '../auth/login.dart';
 import '../widget/app_bar_widgets.dart';
 import '../widget/elevated_buttons.dart';
@@ -28,7 +29,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
 
   late AnimationController _controller;
   late Animation<double> _animation;
-
+  final languageController = Get.put(LocalizationController());
   bool isLoading = false;
   var userName = "";
   var token = "";
@@ -38,7 +39,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
   double currentVersion = 0.0;
   double updatedVersion = 0.0;
   String agencyPhoto = "";
-  String welcomeMessage = "";
+  String welcomeEnMessage = "";
+  String welcomeArMessage = "";
 
   bool isinit = true;
 
@@ -85,7 +87,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
     baseUrl = prefs.getString(AppConstants.baseUrl)!;
     isSyncronize = prefs.getString(AppConstants.isSyncronize)!;
     agencyPhoto = prefs.getString(AppConstants.agencyPhoto)!;
-    welcomeMessage = prefs.getString(AppConstants.userEnMessage)!;
+    welcomeEnMessage = prefs.getString(AppConstants.userEnMessage)!;
+    welcomeArMessage = prefs.getString(AppConstants.userArMessage)!;
+
 
     if(prefs.containsKey(AppConstants.appCurrentVersion)) {
       currentVersion = prefs.getDouble(AppConstants.appCurrentVersion)!;
@@ -137,7 +141,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
         print("Product Placement List");
         print(syncroniseData[0].sysProductPlacement.length);
 
-        ToastMessage.succesMessage(context, "Data synchronization started now");
+        ToastMessage.succesMessage(context, "Data synchronization started now".tr);
 
        ///Table Deletion
        DatabaseHelper.delete_table(TableName.tblSysAgencyDashboard);
@@ -249,7 +253,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
                   Container(
                       constraints:  BoxConstraints(maxHeight: MediaQuery.of(context).size.height/3.5),
                       margin: const EdgeInsets.symmetric(vertical: 10 ),
-                      child:  SingleChildScrollView(child: Text(welcomeMessage,style: const TextStyle(fontSize: 17),))),
+                      child:  SingleChildScrollView(child:
+                      Text(languageController.isEnglish.value ? welcomeEnMessage : welcomeArMessage,style: const TextStyle(fontSize: 17),))),
                   Container(
                       width: MediaQuery.of(context).size.width/2,
                       margin:const EdgeInsets.symmetric(vertical: 20),
@@ -266,7 +271,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
                   child: Column(
                     children: [
                       const SizedBox(width: 60,height: 60,child: MyLoadingCircle(),),
-                      FadeTransition(opacity: _animation,child: const Text("Synchronization in Progress...",style: TextStyle(fontSize: 16,color: MyColors.appMainColor),)),
+                      FadeTransition(opacity: _animation,child: Text("Synchronization in Progress...".tr,style: const TextStyle(fontSize: 16,color: MyColors.appMainColor),)),
                     ],
                   ),
                 )

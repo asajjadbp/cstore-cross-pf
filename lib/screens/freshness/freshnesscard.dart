@@ -5,6 +5,7 @@ import 'package:datepicker_dropdown/order_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import '../Language/localization_controller.dart';
 import '../widget/drop_downs.dart';
 import '../widget/loading.dart';
 class FreshnessListCard extends StatelessWidget {
@@ -26,7 +27,7 @@ class FreshnessListCard extends StatelessWidget {
   final int freshnessTaken;
   final Function(String pieces, String month, int year) freshnessDate;
   TextEditingController valueControllerPieces = TextEditingController();
-  AutovalidateMode _autovalidate = AutovalidateMode.disabled;
+  final languageController = Get.put(LocalizationController());
   String _selectedMonth = "";
   String _selectedYear = "";
   List<String> unitList = ['jan', 'feb', 'mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
@@ -341,12 +342,28 @@ class FreshnessListCard extends StatelessWidget {
             ],
           ),
         ),
-        Positioned(
-          bottom: 3,
-          right: 3,
+        languageController.isEnglish.value ? Positioned(
+          bottom: 6,
+          right: 6,
           child: Container(
-            height: 20,
-            width: 45,
+            decoration: const BoxDecoration(
+                color: Colors.blue,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(5),
+                    bottomRight: Radius.circular(5))),
+            child: Center(
+                child: Text(
+                  rsp,
+                  style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                )),
+          ),
+        ) : Positioned(
+          bottom: 6,
+          left: 6,
+          child: Container(
             decoration: const BoxDecoration(
                 color: Colors.blue,
                 borderRadius: BorderRadius.only(
@@ -362,6 +379,27 @@ class FreshnessListCard extends StatelessWidget {
                 )),
           ),
         ),
+        // Positioned(
+        //   bottom: 3,
+        //   right: 3,
+        //   child: Container(
+        //     height: 20,
+        //     width: 45,
+        //     decoration: const BoxDecoration(
+        //         color: Colors.blue,
+        //         borderRadius: BorderRadius.only(
+        //             topLeft: Radius.circular(5),
+        //             bottomRight: Radius.circular(5))),
+        //     child: Center(
+        //         child: Text(
+        //           rsp,
+        //           style: const TextStyle(
+        //               fontSize: 13,
+        //               fontWeight: FontWeight.bold,
+        //               color: Colors.white),
+        //         )),
+        //   ),
+        // ),
         Positioned(
             top: 8,
             left: 8,

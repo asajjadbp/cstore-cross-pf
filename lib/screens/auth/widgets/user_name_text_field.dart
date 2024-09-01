@@ -21,7 +21,7 @@ class UserNameTextField extends StatelessWidget {
           border:const OutlineInputBorder()),
       validator: (value) {
         if (value!.isEmpty) {
-          return "Please enter your username";
+          return "Please enter your username".tr;
         }
         return null;
       },

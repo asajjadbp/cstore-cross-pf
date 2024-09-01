@@ -7,6 +7,7 @@ import 'package:cstore/screens/widget/drop_downs.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart' as path;
 import '../../Model/database_model/sys_brand_model.dart';
@@ -130,7 +131,7 @@ class _AddOSDCState extends State<AddOSDC> {
 
   void getBrandData() async {
     setState(() {});
-    await DatabaseHelper.getBrandListOSDC().then((value) {
+    await DatabaseHelper.getBrandListOSDC(clientId).then((value) {
       setState(() {});
       brandData = value;
     });
@@ -143,7 +144,7 @@ class _AddOSDCState extends State<AddOSDC> {
         selectedTypeId == -1 ||
         selectedReasonId == -1 ||
         imagesList.isEmpty) {
-      ToastMessage.errorMessage(context, "Please fill the form and take image");
+      ToastMessage.errorMessage(context, "Please fill the form and take image".tr);
       return;
     }
     setState(() {
@@ -188,7 +189,7 @@ class _AddOSDCState extends State<AddOSDC> {
 
      }
 
-     ToastMessage.succesMessage(context, "Data store successfully");
+     ToastMessage.succesMessage(context, "Data Saved Successfully".tr);
      imagesList.clear();
      imagesNameList.clear();
      valueControllerQty.clear();
@@ -234,9 +235,9 @@ class _AddOSDCState extends State<AddOSDC> {
                                mainAxisAlignment: MainAxisAlignment.start,
                                crossAxisAlignment: CrossAxisAlignment.start,
                                children: [
-                                 const Text(
-                                   "Brand",
-                                   style: TextStyle(
+                                 Text(
+                                   "Brand".tr,
+                                   style: const TextStyle(
                                        color: MyColors.appMainColor,
                                        fontWeight: FontWeight.bold),
                                  ),
@@ -244,7 +245,7 @@ class _AddOSDCState extends State<AddOSDC> {
                                    height: 5,
                                  ),
                                  OsdcBrandDropDown(
-                                     hintText: "Brand",
+                                     hintText: "Brand".tr,
                                      osdcBrandData: brandData,
                                      onChange: (value) {
                                        selectedBrandId = value.id;
@@ -257,9 +258,9 @@ class _AddOSDCState extends State<AddOSDC> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  "Type",
-                                  style: TextStyle(
+                                 Text(
+                                  "Type".tr,
+                                  style:const TextStyle(
                                       color: MyColors.appMainColor,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -267,7 +268,7 @@ class _AddOSDCState extends State<AddOSDC> {
                                   height: 5,
                                 ),
                                 OsdcTypeDropDown(
-                                    hintText: "OSDC Type",
+                                    hintText: "Type".tr,
                                     osdcTypeData: typeData,
                                     onChange: (value) {
                                       selectedTypeId = value.id;
@@ -282,9 +283,9 @@ class _AddOSDCState extends State<AddOSDC> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  const Text(
-                                    "Reason",
-                                    style: TextStyle(
+                                   Text(
+                                    "Reason".tr,
+                                    style:const TextStyle(
                                         color: MyColors.appMainColor,
                                         fontWeight: FontWeight.bold),
                                   ),
@@ -292,7 +293,7 @@ class _AddOSDCState extends State<AddOSDC> {
                                     height: 5,
                                   ),
                                   OsdcReasonDropDown(
-                                      hintText: "OSDC Reason",
+                                      hintText: "Reason".tr,
                                       osdcReasonData: reasonData,
                                       onChange: (value) {
                                         selectedReasonId = value.id;
@@ -305,38 +306,41 @@ class _AddOSDCState extends State<AddOSDC> {
                              mainAxisAlignment: MainAxisAlignment.start,
                              crossAxisAlignment: CrossAxisAlignment.start,
                              children: [
-                               const Text(
-                                 "Quantity",
-                                 style: TextStyle(
+                                Text(
+                                 "Quantity".tr,
+                                 style:const TextStyle(
                                      color: MyColors.appMainColor,
                                      fontWeight: FontWeight.bold),
                                ),
                                const SizedBox(
                                  height: 5,
                                ),
-                               TextField(
-                                 showCursor: true,
-                                 enableInteractiveSelection: false,
-                                 onChanged: (value) {
-                                   print(value);
-                                 },
-                                 controller: valueControllerQty,
-                                 keyboardType: TextInputType.number,
-                                 decoration: const InputDecoration(
-                                     prefixIconColor: MyColors.appMainColor,
-                                     focusColor: MyColors.appMainColor,
-                                     fillColor: MyColors.dropBorderColor,
-                                     labelStyle: TextStyle(
-                                         color: MyColors.appMainColor, height: 50.0),
-                                     focusedBorder: OutlineInputBorder(
-                                         borderSide: BorderSide(
-                                             width: 1, color: MyColors.appMainColor)),
-                                     border: OutlineInputBorder(),
-                                     hintText: 'Enter Qty'),
-                                 inputFormatters: [
-                                   FilteringTextInputFormatter.allow(
-                                       RegExp(r'^[0-9][0-9]*'))
-                                 ],
+                               SizedBox(
+                                 height: 55,
+                                 child: TextField(
+                                   showCursor: true,
+                                   enableInteractiveSelection: false,
+                                   onChanged: (value) {
+                                     print(value);
+                                   },
+                                   controller: valueControllerQty,
+                                   keyboardType: TextInputType.number,
+                                   decoration:  InputDecoration(
+                                       prefixIconColor: MyColors.appMainColor,
+                                       focusColor: MyColors.appMainColor,
+                                       fillColor: MyColors.dropBorderColor,
+                                       labelStyle:const TextStyle(
+                                           color: MyColors.appMainColor, height: 50.0),
+                                       focusedBorder:const OutlineInputBorder(
+                                           borderSide: BorderSide(
+                                               width: 1, color: MyColors.appMainColor)),
+                                       border:const OutlineInputBorder(),
+                                       hintText: 'Enter quantity'.tr),
+                                   inputFormatters: [
+                                     FilteringTextInputFormatter.allow(
+                                         RegExp(r'^[0-9][0-9]*'))
+                                   ],
+                                 ),
                                ),
                              ],
                            ),
@@ -356,7 +360,7 @@ class _AddOSDCState extends State<AddOSDC> {
                               height: 60,
                               child:  MyLoadingCircle(),
                             ) : BigElevatedButton(
-                                buttonName: "Save",
+                                buttonName: "Save".tr,
                                 submit: (){
                                   saveStorePhotoData();
                                 },
@@ -371,7 +375,7 @@ class _AddOSDCState extends State<AddOSDC> {
               Container(
                 margin:const EdgeInsets.symmetric(vertical: 10),
                 child: BigElevatedButton(
-                    buttonName: "View OSD",
+                    buttonName: "View OSD".tr,
                     submit: (){
                       Navigator.of(context).pushNamed(ViewOSDC.routename);
                     },

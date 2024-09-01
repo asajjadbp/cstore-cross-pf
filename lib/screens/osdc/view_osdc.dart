@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,6 +9,7 @@ import '../../Database/db_helper.dart';
 import '../../Database/table_name.dart';
 import '../../Model/database_model/show_trans_osdc_model.dart';
 import '../Gallery/gallery_screen.dart';
+import '../Language/localization_controller.dart';
 import '../utils/app_constants.dart';
 import '../utils/toast/toast.dart';
 import 'widgets/ViewOSDcard.dart';
@@ -31,6 +33,8 @@ class _ViewOSDCState extends State<ViewOSDC> {
   String workingId = "";
   String storeName = '';
   String userName = '';
+
+  final languageController = Get.put(LocalizationController());
 
   @override
   void initState() {
@@ -144,10 +148,10 @@ class _ViewOSDCState extends State<ViewOSDC> {
 
       } else {
         // print('Permission denied');
-        ToastMessage.errorMessage(context, "Permissing denied");
+        ToastMessage.errorMessage(context, "Permission denied".tr);
       }
     } catch (e) {
-      ToastMessage.errorMessage(context, "Permissing denied");
+      ToastMessage.errorMessage(context, "Permission denied".tr);
     }
   }
   void deletePhoto(int recordId, String imgName) async {
@@ -174,7 +178,7 @@ class _ViewOSDCState extends State<ViewOSDC> {
             )
           : transData.isEmpty
               ? const Center(
-                  child: Text("No data found"),
+                  child: Text("No Data Found"),
                 )
               : ListView.builder(
                   padding: EdgeInsets.only(left: 5, right: 5, top: 15),
@@ -189,33 +193,33 @@ class _ViewOSDCState extends State<ViewOSDC> {
                         });
                       },
                       uploadStatus: transData[i].upload_status,
-                      imageName:transData[i].imageFile,
-                      brandName: transData[i].brand_en_name,
+                      imageName: transData[i].imageFile,
+                      brandName: languageController.isEnglish.value ? transData[i].brand_en_name : transData[i].brand_ar_name,
                       icon1: "assets/icons/Component 13.svg",
-                      OSDCReason: transData[i].reason_en_name,
+                      OSDCReason: languageController.isEnglish.value ? transData[i].reason_en_name : transData[i].reason_ar_name,
                       icon2: "assets/icons/Masseage.svg",
-                      OSDCType: transData[i].type_en_name,
+                      OSDCType: languageController.isEnglish.value ? transData[i].type_en_name : transData[i].type_ar_name,
                       icon3: "assets/icons/Handplus.svg",
                       Qty: transData[i].quantity,
                       onDelete: (){
                         showDialog(context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: const Text("Are you sure you want to delete this item Permanently",
-                              style: TextStyle(
+                              title:  Text("Are you sure you want to delete this item Permanently".tr,
+                              style:const TextStyle(
                                 fontSize: 13,
                               ),),
                               actions: [
                                 TextButton.icon(
                                   icon: const Icon(Icons.cancel_outlined),
-                                  label: const Text("No"),
+                                  label:  Text("No".tr),
                                   onPressed: () {
                                     Navigator.of(context).pop(true);
                                   },
                                 ),
                                 TextButton.icon(
                                   icon: const Icon(Icons.check),
-                                  label: const Text("Yes"),
+                                  label:  Text("Yes".tr),
                                   onPressed: () {
                                     deletePhoto(transData[i].id, transData[i].img_name);
                                     Navigator.of(context).pop(true);

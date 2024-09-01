@@ -122,7 +122,7 @@ class _StockListScreenState extends State<StockListScreen> {
       await DatabaseHelper.insertTransStockeCheck(
               skuId, int.parse(cases),int.parse(outer),int.parse(pieces), workingId,currentUserTimeStamp,pro_client_id,)
           .then((_) {
-        ToastMessage.succesMessage(context, "Data store successfully");
+        ToastMessage.succesMessage(context, "Data Saved Successfully".tr);
         cases = "";
         outer = "";
         pieces = "";
@@ -331,7 +331,7 @@ class _StockListScreenState extends State<StockListScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Text("Sku's"),
+                            Text("Sku's".tr),
                             Container(
                                 margin: const EdgeInsets.symmetric(vertical: 5),
                                 child: const FaIcon(FontAwesomeIcons.layerGroup,color: MyColors.savebtnColor,)),
@@ -363,7 +363,7 @@ class _StockListScreenState extends State<StockListScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Text("CA's"),
+                             Text("CA's".tr),
                             Container(
                                 margin: const EdgeInsets.symmetric(vertical: 5),
                                 child: const FaIcon(FontAwesomeIcons.box,color: MyColors.savebtnColor,)),
@@ -395,7 +395,7 @@ class _StockListScreenState extends State<StockListScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Text("OUs",),
+                            Text("OUs".tr,),
                             Container(
                                 margin: const EdgeInsets.symmetric(vertical: 5),
                                 child: const FaIcon(FontAwesomeIcons.boxesStacked,color: MyColors.savebtnColor,)),
@@ -427,7 +427,7 @@ class _StockListScreenState extends State<StockListScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Text("PCs",),
+                            Text("PCs".tr,),
                             Container(
                                 margin: const EdgeInsets.symmetric(vertical: 5),
                                 child: const FaIcon(FontAwesomeIcons.cubesStacked,color: MyColors.savebtnColor,)),
@@ -548,7 +548,7 @@ class _StockListScreenState extends State<StockListScreen> {
                     transData[transIndex].act_status = 0;
 
                   });
-                  ToastMessage.succesMessage(context, "Data deleted Successfully");
+                  // ToastMessage.succesMessage(context, "Data deleted Successfully");
                   Navigator.of(context).pop();
                 });
               },

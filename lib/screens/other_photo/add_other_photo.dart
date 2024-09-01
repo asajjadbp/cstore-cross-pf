@@ -313,7 +313,7 @@ class _AddOtherPhotoState extends State<AddOtherPhoto> {
             Container(
               margin: const EdgeInsets.only(bottom: 5),
               child: BigElevatedButton(
-                  buttonName: "View Other Photo",
+                  buttonName: "View Other Photo".tr,
                   submit: (){
                     Navigator.of(context)
                         .pushNamed(ViewOtherPhoto.routename);

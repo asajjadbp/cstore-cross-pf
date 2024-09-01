@@ -151,30 +151,26 @@ class Viewrtvcard extends StatelessWidget {
                 color: Color.fromRGBO(26, 91, 140, 1)),
             Container(
               height: 35,
+              margin: const EdgeInsets.symmetric(horizontal: 5),
               decoration: const BoxDecoration(
                   color: Colors.white, border: Border(top: BorderSide.none)),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Container(
-                      margin: const EdgeInsets.only(left: 20),
-                      child:  Text('Type'.tr,
-                          style:const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black))),
-                  const SizedBox(
-                    width: 110,
+                  Expanded(
+                    child: Text('Type'.tr,
+                        style:const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black)),
                   ),
-                  Container(
-                      margin: const EdgeInsets.only(
-                        right: 90,
-                      ),
-                      child: Text(type,
-                          style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black)))
+                  Expanded(
+                    child: Text(type,textAlign: TextAlign.end,
+                        style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black)),
+                  )
                 ],
               ),
             ),
@@ -184,31 +180,25 @@ class Viewrtvcard extends StatelessWidget {
                 color: Color.fromRGBO(26, 91, 140, 1)),
             Container(
               height: 35,
+              margin: const EdgeInsets.symmetric(horizontal: 5),
               decoration: const BoxDecoration(
                   color: Color.fromRGBO(244, 247, 253, 1),
                   border: Border(top: BorderSide.none)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Container(
-                      margin: const EdgeInsets.only(left: 15),
-                      child:  Text('Pieces'.tr,
-                          style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black))),
-                  const SizedBox(
-                    width: 110,
+                  Expanded(
+                    child: Text('Pieces'.tr,
+                        style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black)),
                   ),
-                  Container(
-                      margin: const EdgeInsets.only(
-                        right: 120,
-                      ),
-                      child: Text(piece,
-                          style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black)))
+                  Text(piece,textAlign: TextAlign.end,
+                      style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black))
                 ],
               ),
             ),
@@ -217,6 +207,7 @@ class Viewrtvcard extends StatelessWidget {
             expdate != "Select Date"
                 ? Container(
                     height: 35,
+              margin: const EdgeInsets.symmetric(horizontal: 5),
                     decoration: const BoxDecoration(
                         color: Colors.white,
                         border: Border(top: BorderSide.none),
@@ -226,21 +217,20 @@ class Viewrtvcard extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Container(
-                            margin: const EdgeInsets.only(left: 20),
-                            child:  Text('Exp Date'.tr,
-                                style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black))),
-                        const SizedBox(
-                          width: 110,
+                        Expanded(
+                          child: Text('Exp Date'.tr,
+                              style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black)),
                         ),
-                        Text(expdate,
-                            style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black))
+                        Expanded(
+                          child: Text(expdate,textAlign: TextAlign.end,
+                              style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black)),
+                        )
                       ],
                     ),
                   )

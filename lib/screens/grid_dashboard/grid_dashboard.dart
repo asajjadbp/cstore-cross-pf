@@ -435,11 +435,10 @@ class _GridDashBoardState extends State<GridDashBoard> {
                               itemCount: agencyData.length,
                               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 2,
-                                  crossAxisSpacing: 0,
-                                  mainAxisSpacing: 10.0),
+                                  crossAxisSpacing: 5,
+                                  mainAxisSpacing: 15.0),
                               itemBuilder: (context, i) {
-                                print(agencyData[i].id);
-                                print(agencyData[i].en_name);
+
                                 return Container(
                                   margin: const EdgeInsets.only(left: 4, right: 4),
                                   child: CardWidget(

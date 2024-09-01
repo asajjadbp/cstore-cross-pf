@@ -74,12 +74,19 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
       workingId = sharedPreferences.getString(AppConstants.workingId)!;
-      storeArName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+      storeENName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
       storeArName = sharedPreferences.getString(AppConstants.storeArNAme)!;
       userName = sharedPreferences.getString(AppConstants.userName)!;
       clientId = sharedPreferences.getString(AppConstants.clientId)!;
       imageBaseUrl = sharedPreferences.getString(AppConstants.imageBaseUrl)!;
     });
+
+    setState(() {
+
+    });
+    print("STORE NAME");
+    print(storeENName);
+    print(storeArName);
     getTransPricingOne();
     getClientData();
     getPricingCount();
@@ -386,8 +393,10 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
                 itemCount: filterTransData.length,
                 itemBuilder: (ctx, i) {
                   return pricecheckcard(
-                    image:
-                    "${imageBaseUrl}sku_pictures/${filterTransData[i].img_name}",
+                    onDeleteTap: () {
+                      deletePriceCheckData(filterTransData[i].pro_id);
+                    },
+                    image: "${imageBaseUrl}sku_pictures/${filterTransData[i].img_name}",
                     proName: languageController.isEnglish.value ? filterTransData[i].pro_en_name:filterTransData[i].pro_ar_name,
                     regular: filterTransData[i].regular_price,
                     promo:filterTransData[i].promo_price,
@@ -425,6 +434,9 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
                   regularController[i].text = transData[i].regular_price;
 
                   return pricecheckcard(
+                    onDeleteTap: () {
+                      deletePriceCheckData(transData[i].pro_id);
+                    },
                     image:
                         "${imageBaseUrl}sku_pictures/${transData[i].img_name}",
                     proName: languageController.isEnglish.value ? transData[i].pro_en_name:transData[i].pro_ar_name,
@@ -450,6 +462,55 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
           ),
         ]),
       ),
+    );
+  }
+  deletePriceCheckData(int proId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title:  Text(
+            "Are you sure you want to delete this item Permanently".tr,
+            style: const TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 12,
+            ),
+          ),
+          actions: [
+            TextButton(
+              child:  Text("No".tr),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+            TextButton(
+              child:  Text("Yes".tr),
+              onPressed: () async {
+
+                await DatabaseHelper.deleteTransPromoPricing(proId,workingId).then((value) {
+                  setState(() {
+                    int transIndex = transData.indexWhere((element) => element.pro_id == proId);
+
+                    if(filterTransData.isNotEmpty) {
+                      int filteredIndex = filterTransData.indexWhere((element) => element.pro_id == proId);
+
+                      filterTransData[filteredIndex].regular_price = "";
+                      filterTransData[filteredIndex].promo_price = "";
+                      filterTransData[filteredIndex].act_status = 0;
+                    }
+                    transData[transIndex].regular_price = "";
+                    transData[transIndex].promo_price = "";
+                    transData[transIndex].act_status = 0;
+
+                  });
+                  // ToastMessage.succesMessage(context, "Data deleted Successfully");
+                  Navigator.of(context).pop();
+                });
+              },
+            )
+          ],
+        );
+      },
     );
   }
 }

@@ -14,8 +14,10 @@ class pricecheckcard extends StatelessWidget {
     required this.actStatus,
     required this.promo,
     required this.pricingValues,
+    required this.onDeleteTap,
     required this.rsp});
 
+  final Function onDeleteTap;
   final String image;
   final String proName;
   final String regular;
@@ -76,17 +78,30 @@ class pricecheckcard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    margin: const EdgeInsets.only(left: 7, top: 5),
+                    margin: const EdgeInsets.symmetric(horizontal: 5,vertical: 5),
                     width: screenWidth / 1.7,
-                    child: Text(
-                      proName,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                      style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'lato',
-                          color: MyColors.appMainColor),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            proName,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                            style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: 'lato',
+                                color: MyColors.appMainColor),
+                          ),
+                        ),
+
+                        if(actStatus!=0)
+                          InkWell(
+                              onTap: () {
+                                onDeleteTap();
+                              },
+                              child:const Icon(Icons.delete,color: MyColors.backbtnColor,))
+                      ],
                     ),
                   ),
                   Container(
@@ -281,7 +296,10 @@ class pricecheckcard extends StatelessWidget {
                                                       border:
                                                       OutlineInputBorder(),
                                                       hintText: ""),
-                                                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^[0-9.]*'))],
+                                                  inputFormatters: [
+                                                    FilteringTextInputFormatter.allow(RegExp(r'^[0-9.]*')),
+                                                    FilteringTextInputFormatter.deny(RegExp('^0+'))
+                                                  ],
                                                 ),
                                               ),
                                             ),
@@ -329,7 +347,8 @@ class pricecheckcard extends StatelessWidget {
                                                       border:
                                                       OutlineInputBorder(),
                                                       hintText: ""),
-                                                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^[0-9.]*'))],
+                                                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^[0-9.]*')),
+                                                    FilteringTextInputFormatter.deny(RegExp('^0+'))],
                                                 ),
                                               ),
                                             ),

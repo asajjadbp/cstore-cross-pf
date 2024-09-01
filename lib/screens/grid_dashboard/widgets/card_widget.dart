@@ -37,8 +37,8 @@ class CardWidget extends StatelessWidget {
                   // placeholder:
                   //     const CircularProgressIndicator(color: Colors.green),
                   // errorWidget: const Icon(Icons.error, color: Colors.red),
-                  width: 80.0,
-                  height: 70.0,
+                  width: 60.0,
+                  height: 60.0,
                   // fadeDuration: const Duration(milliseconds: 500),
                 ),
                 Padding(

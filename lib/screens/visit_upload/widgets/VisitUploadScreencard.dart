@@ -78,6 +78,8 @@ class VisitAvlUploadScreenCard extends StatelessWidget {
                               child: Center(
                                 child: Text(
                                   moduleName,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w600,
@@ -186,8 +188,7 @@ class VisitAvlUploadScreenCard extends StatelessWidget {
                   onUploadTap();
                 },
                 child: Container(
-                  width: screenWidth/5.3,
-                  height: screenHeight/11.1,
+                  padding:const EdgeInsets.symmetric(horizontal: 12,vertical: 5),
                   decoration: BoxDecoration(
                       color: MyColors.appMainColor,
                       border: Border.all(color: MyColors.appMainColor, width: 1),
@@ -195,8 +196,8 @@ class VisitAvlUploadScreenCard extends StatelessWidget {
                   child: Column(
                     children: [
                       Icon( isUploaded ? Icons.check : Icons.cloud_upload_outlined,color: Colors.white,size: 39,),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 7, top: 8),
+                      Container(
+                        padding: const EdgeInsets.all(2),
                         child: Center(
                           child: Text(
                             isUploaded ? "Done".tr : "Upload".tr,
@@ -286,6 +287,8 @@ class VisitPickListUploadScreenCard extends StatelessWidget {
                               child: Center(
                                 child: Text(
                                   moduleName,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w600,
@@ -372,8 +375,7 @@ class VisitPickListUploadScreenCard extends StatelessWidget {
                   onUploadTap();
                 },
                 child: Container(
-                  width: screenWidth/5.3,
-                  height: screenHeight/11.1,
+                  padding:const EdgeInsets.symmetric(horizontal: 12,vertical: 5),
                   decoration: BoxDecoration(
                       color: MyColors.appMainColor,
                       border: Border.all(color: MyColors.appMainColor, width: 1),
@@ -381,8 +383,8 @@ class VisitPickListUploadScreenCard extends StatelessWidget {
                   child: Column(
                     children: [
                       Icon( isUploaded ? Icons.check : Icons.cloud_upload_outlined,color: Colors.white,size: 39,),
-                      Padding(
-                        padding: EdgeInsets.only(left: 7, top: 8),
+                      Container(
+                        padding: const EdgeInsets.all(2),
                         child: Center(
                           child: Text(
                             isUploaded ? "Done".tr : "Upload".tr,
@@ -441,7 +443,7 @@ class VisitBrandShareUploadScreenCard extends StatelessWidget {
             child: Text(
               screenName,
               overflow: TextOverflow.ellipsis,
-              maxLines: 2,
+              maxLines: 1,
               style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -472,6 +474,8 @@ class VisitBrandShareUploadScreenCard extends StatelessWidget {
                               child: Center(
                                 child: Text(
                                   moduleName,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w600,
@@ -558,8 +562,7 @@ class VisitBrandShareUploadScreenCard extends StatelessWidget {
                   onUploadTap();
                 },
                 child: Container(
-                  width: screenWidth/5.3,
-                  height: screenHeight/11.1,
+                  padding:const EdgeInsets.symmetric(horizontal: 12,vertical: 5),
                   decoration: BoxDecoration(
                       color: MyColors.appMainColor,
                       border: Border.all(color: MyColors.appMainColor, width: 1),
@@ -567,8 +570,8 @@ class VisitBrandShareUploadScreenCard extends StatelessWidget {
                   child: Column(
                     children: [
                       Icon( isUploaded ? Icons.check : Icons.cloud_upload_outlined,color: Colors.white,size: 39,),
-                      Padding(
-                        padding: EdgeInsets.only(left: 7, top: 8),
+                      Container(
+                        padding: const EdgeInsets.all(2),
                         child: Center(
                           child: Text(
                             isUploaded ? "Done".tr : "Upload".tr,
@@ -660,6 +663,8 @@ class VisitPlanoguideUploadScreenCard extends StatelessWidget {
                               child: Center(
                                 child: Text(
                                   moduleName,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w600,
@@ -768,8 +773,7 @@ class VisitPlanoguideUploadScreenCard extends StatelessWidget {
                   onUploadTap();
                 },
                 child: Container(
-                  width: screenWidth/5.3,
-                  height: screenHeight/11.1,
+                  padding:const EdgeInsets.symmetric(horizontal: 12,vertical: 5),
                   decoration: BoxDecoration(
                       color: MyColors.appMainColor,
                       border: Border.all(color: MyColors.appMainColor, width: 1),
@@ -777,8 +781,8 @@ class VisitPlanoguideUploadScreenCard extends StatelessWidget {
                   child: Column(
                     children: [
                       Icon( isUploaded ? Icons.check : Icons.cloud_upload_outlined,color: Colors.white,size: 39,),
-                      Padding(
-                        padding: EdgeInsets.only(left: 7, top: 8),
+                      Container(
+                        padding: const EdgeInsets.all(2),
                         child: Center(
                           child: Text(
                             isUploaded ? "Done".tr : "Upload".tr,
@@ -837,7 +841,7 @@ class VisitRtvUploadScreenCard extends StatelessWidget {
             child: Text(
               screenName,
               overflow: TextOverflow.ellipsis,
-              maxLines: 2,
+              maxLines: 1,
               style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -868,6 +872,8 @@ class VisitRtvUploadScreenCard extends StatelessWidget {
                               child: Center(
                                 child: Text(
                                   moduleName,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w600,
@@ -954,8 +960,7 @@ class VisitRtvUploadScreenCard extends StatelessWidget {
                   onUploadTap();
                 },
                 child: Container(
-                  width: screenWidth/5.3,
-                  height: screenHeight/11.1,
+                  padding:const EdgeInsets.symmetric(horizontal: 12,vertical: 5),
                   decoration: BoxDecoration(
                       color: MyColors.appMainColor,
                       border: Border.all(color: MyColors.appMainColor, width: 1),
@@ -963,8 +968,8 @@ class VisitRtvUploadScreenCard extends StatelessWidget {
                   child: Column(
                     children: [
                       Icon( isUploaded ? Icons.check : Icons.cloud_upload_outlined,color: Colors.white,size: 39,),
-                      Padding(
-                        padding: EdgeInsets.only(left: 7, top: 8),
+                      Container(
+                        padding: const EdgeInsets.all(2),
                         child: Center(
                           child: Text(
                             isUploaded ? "Done".tr : "Upload".tr,
@@ -1054,6 +1059,8 @@ class VisitPriceCheckUploadScreenCard extends StatelessWidget {
                               child: Center(
                                 child: Text(
                                   moduleName,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w600,
@@ -1140,8 +1147,7 @@ class VisitPriceCheckUploadScreenCard extends StatelessWidget {
                   onUploadTap();
                 },
                 child: Container(
-                  width: screenWidth/5.3,
-                  height: screenHeight/11.1,
+                  padding:const EdgeInsets.symmetric(horizontal: 12,vertical: 5),
                   decoration: BoxDecoration(
                       color: MyColors.appMainColor,
                       border: Border.all(color: MyColors.appMainColor, width: 1),
@@ -1149,8 +1155,8 @@ class VisitPriceCheckUploadScreenCard extends StatelessWidget {
                   child: Column(
                     children: [
                       Icon( isUploaded ? Icons.check : Icons.cloud_upload_outlined,color: Colors.white,size: 39,),
-                      Padding(
-                        padding: EdgeInsets.only(left: 7, top: 8),
+                      Container(
+                        padding: const EdgeInsets.all(2),
                         child: Center(
                           child: Text(
                             isUploaded ? "Done".tr : "Upload".tr,
@@ -1238,6 +1244,8 @@ class VisitFreshnessUploadScreenCard extends StatelessWidget {
                               child: Center(
                                 child: Text(
                                   moduleName,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w600,
@@ -1299,8 +1307,7 @@ class VisitFreshnessUploadScreenCard extends StatelessWidget {
                   onUploadTap();
                 },
                 child: Container(
-                  width: screenWidth/5.3,
-                  height: screenHeight/11.1,
+                  padding:const EdgeInsets.symmetric(horizontal: 12,vertical: 5),
                   decoration: BoxDecoration(
                       color: MyColors.appMainColor,
                       border: Border.all(color: MyColors.appMainColor, width: 1),
@@ -1308,8 +1315,8 @@ class VisitFreshnessUploadScreenCard extends StatelessWidget {
                   child: Column(
                     children: [
                       Icon( isUploaded ? Icons.check : Icons.cloud_upload_outlined,color: Colors.white,size: 39,),
-                      Padding(
-                        padding: EdgeInsets.only(left: 7, top: 8),
+                      Container(
+                        padding: const EdgeInsets.all(2),
                         child: Center(
                           child: Text(
                             isUploaded ? "Done".tr : "Upload".tr,
@@ -1399,6 +1406,8 @@ class VisitStockUploadScreenCard extends StatelessWidget {
                               margin:const EdgeInsets.symmetric(horizontal: 3,vertical: 3),
                               child: Text(
                                 moduleName,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w600,
@@ -1497,8 +1506,7 @@ class VisitStockUploadScreenCard extends StatelessWidget {
                   onUploadTap();
                 },
                 child: Container(
-                  width: screenWidth/5.3,
-                  height: screenHeight/11.1,
+                  padding:const EdgeInsets.symmetric(horizontal: 12,vertical: 5),
                   decoration: BoxDecoration(
                       color: MyColors.appMainColor,
                       border: Border.all(color: MyColors.appMainColor, width: 1),
@@ -1506,8 +1514,8 @@ class VisitStockUploadScreenCard extends StatelessWidget {
                   child: Column(
                     children: [
                       Icon( isUploaded ? Icons.check : Icons.cloud_upload_outlined,color: Colors.white,size: 39,),
-                      Padding(
-                        padding: EdgeInsets.only(left: 7, top: 8),
+                      Container(
+                        padding: const EdgeInsets.all(2),
                         child: Center(
                           child: Text(
                             isUploaded ? "Done".tr : "Upload".tr,
@@ -1591,6 +1599,8 @@ class VisitBeforeFixingUploadScreenCard extends StatelessWidget {
                           Center(
                             child: Text(
                               moduleName,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,
@@ -1638,8 +1648,7 @@ class VisitBeforeFixingUploadScreenCard extends StatelessWidget {
                   onUploadTap();
                 },
                 child: Container(
-                  width: screenWidth/5.3,
-                  height: screenHeight/11.1,
+                  padding:const EdgeInsets.symmetric(horizontal: 12,vertical: 5),
                   decoration: BoxDecoration(
                       color: MyColors.appMainColor,
                       border: Border.all(color: MyColors.appMainColor, width: 1),
@@ -1647,8 +1656,8 @@ class VisitBeforeFixingUploadScreenCard extends StatelessWidget {
                   child: Column(
                     children: [
                       Icon( isUploaded ? Icons.check : Icons.cloud_upload_outlined,color: Colors.white,size: 39,),
-                      Padding(
-                        padding: EdgeInsets.only(left: 7, top: 8),
+                      Container(
+                        padding: const EdgeInsets.all(2),
                         child: Center(
                           child: Text(
                             isUploaded ? "Done".tr : "Upload".tr,
@@ -1738,6 +1747,8 @@ class VisitPlanogramUploadScreenCard extends StatelessWidget {
                               child: Center(
                                 child: Text(
                                   moduleName,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w600,
@@ -1824,8 +1835,7 @@ class VisitPlanogramUploadScreenCard extends StatelessWidget {
                   onUploadTap();
                 },
                 child: Container(
-                  width: screenWidth/5.3,
-                  height: screenHeight/11.1,
+                  padding:const EdgeInsets.symmetric(horizontal: 12,vertical: 5),
                   decoration: BoxDecoration(
                       color: MyColors.appMainColor,
                       border: Border.all(color: MyColors.appMainColor, width: 1),
@@ -1833,8 +1843,8 @@ class VisitPlanogramUploadScreenCard extends StatelessWidget {
                   child: Column(
                     children: [
                       Icon( isUploaded ? Icons.check : Icons.cloud_upload_outlined,color: Colors.white,size: 39,),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 7, top: 8),
+                      Container(
+                        padding: const EdgeInsets.all(2),
                         child: Center(
                           child: Text(
                             isUploaded ? "Done".tr : "Upload".tr,
@@ -1918,6 +1928,8 @@ class VisitSosUploadScreenCard extends StatelessWidget {
                           Center(
                             child: Text(
                               moduleName,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,
@@ -1973,8 +1985,7 @@ class VisitSosUploadScreenCard extends StatelessWidget {
                   onUploadTap();
                 },
                 child: Container(
-                  width: screenWidth/5.3,
-                  height: screenHeight/11.1,
+                  padding:const EdgeInsets.symmetric(horizontal: 12,vertical: 5),
                   decoration: BoxDecoration(
                       color: MyColors.appMainColor,
                       border: Border.all(color: MyColors.appMainColor, width: 1),
@@ -1982,8 +1993,8 @@ class VisitSosUploadScreenCard extends StatelessWidget {
                   child: Column(
                     children: [
                       Icon( isUploaded ? Icons.check : Icons.cloud_upload_outlined,color: Colors.white,size: 39,),
-                      Padding(
-                        padding: EdgeInsets.only(left: 7, top: 8),
+                      Container(
+                        padding: const EdgeInsets.all(2),
                         child: Center(
                           child: Text(
                             isUploaded ? "Done".tr : "Upload".tr,
@@ -2069,6 +2080,8 @@ class VisitOsdAndMarketIssueUploadScreenCard extends StatelessWidget {
                               child: Center(
                                 child: Text(
                                   moduleName,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w600,
@@ -2115,8 +2128,7 @@ class VisitOsdAndMarketIssueUploadScreenCard extends StatelessWidget {
                   onUploadTap();
                 },
                 child: Container(
-                  width: screenWidth/5.3,
-                  height: screenHeight/11.1,
+                  padding:const EdgeInsets.symmetric(horizontal: 12,vertical: 5),
                   decoration: BoxDecoration(
                       color: MyColors.appMainColor,
                       border: Border.all(color: MyColors.appMainColor, width: 1),
@@ -2124,8 +2136,8 @@ class VisitOsdAndMarketIssueUploadScreenCard extends StatelessWidget {
                   child: Column(
                     children: [
                       Icon( isUploaded ? Icons.check : Icons.cloud_upload_outlined,color: Colors.white,size: 39,),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 7, top: 8),
+                      Container(
+                        padding: const EdgeInsets.all(2),
                         child: Center(
                           child: Text(
                             isUploaded ? "Done".tr : "Upload".tr,

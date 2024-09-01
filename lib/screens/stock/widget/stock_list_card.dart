@@ -178,7 +178,10 @@ class StockListCard extends StatelessWidget {
                                   border:
                                   OutlineInputBorder(),
                                   hintText: ""),
-                              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^[0-9.]*'))],
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*')),
+                                FilteringTextInputFormatter.deny(RegExp('^0+'))
+                              ],
                             ),
                           ),
                         ),
@@ -226,7 +229,10 @@ class StockListCard extends StatelessWidget {
                                   border:
                                   OutlineInputBorder(),
                                   hintText: ""),
-                              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^[0-9.]*'))],
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*')),
+                                FilteringTextInputFormatter.deny(RegExp('^0+'))
+                              ],
                             ),
                           ),
                         ),
@@ -274,7 +280,10 @@ class StockListCard extends StatelessWidget {
                                   border:
                                   OutlineInputBorder(),
                                   hintText: ""),
-                              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^[0-9.]*'))],
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*')),
+                                FilteringTextInputFormatter.deny(RegExp('^0+'))
+                              ],
                             ),
                           ),
                         ),
@@ -283,7 +292,7 @@ class StockListCard extends StatelessWidget {
                     Container(
                       margin: const EdgeInsets.symmetric(horizontal: 5),
                       child: BigElevatedButton(
-                          buttonName: "Save",
+                          buttonName: "Save".tr,
                           submit: (){
                             stockCheckValues(valueControllerCases.text,valueControllerOuter.text,valueControllerPieces.text,);
                           },
@@ -382,9 +391,9 @@ class StockListCard extends StatelessWidget {
                                     const SizedBox(
                                       height: 6,
                                     ),
-                                    const Text(
-                                      "Cases ",
-                                      style: TextStyle(
+                                     Text(
+                                      "Cases".tr,
+                                      style: const TextStyle(
                                         fontSize: 14,
                                         fontFamily: 'lato',
                                         fontWeight: FontWeight.w500,
@@ -410,9 +419,9 @@ class StockListCard extends StatelessWidget {
                                     const SizedBox(
                                       height: 6,
                                     ),
-                                    const Text(
-                                      "Outer ",
-                                      style: TextStyle(
+                                    Text(
+                                      "Outer".tr,
+                                      style:const TextStyle(
                                         fontSize: 14,
                                         fontFamily: 'lato',
                                         fontWeight: FontWeight.w500,
@@ -438,9 +447,9 @@ class StockListCard extends StatelessWidget {
                                     const SizedBox(
                                       height: 6,
                                     ),
-                                    const Text(
-                                      "Pieces ",
-                                      style: TextStyle(
+                                    Text(
+                                      "Pieces".tr,
+                                      style:const TextStyle(
                                         fontSize: 14,
                                         fontFamily: 'lato',
                                         fontWeight: FontWeight.w500,
@@ -459,7 +468,7 @@ class StockListCard extends StatelessWidget {
                 ),
               ],
             ),
-            Positioned(
+            languageController.isEnglish.value ? Positioned(
               bottom: 0,
               right: 0,
               child: Container(
@@ -469,6 +478,26 @@ class StockListCard extends StatelessWidget {
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(5),
                         bottomRight: Radius.circular(5))),
+                child: Center(
+                    child: Text(
+                      "RSP $rsp",
+                      maxLines: 1,
+                      style: const TextStyle(
+                          fontSize: 10,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600),
+                    )),
+              ),
+            ) : Positioned(
+              bottom: 0,
+              left: 0,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 5,vertical: 3),
+                decoration: const BoxDecoration(
+                    color: MyColors.appMainColor,
+                    borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(5),
+                    )),
                 child: Center(
                     child: Text(
                       "RSP $rsp",

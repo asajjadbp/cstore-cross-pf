@@ -211,7 +211,7 @@ class _ViewPlanogramScreenState extends State<ViewPlanogramScreen> {
                     return PlanogramItemCard(
                       uploadStatus: transData[i].upload_status,
                       itemTime: DateFormat('hh:mm aa').format(DateTime.parse(transData[i].dateTime)),
-                        reason: transData[i].not_adherence_reason,
+                        reason: languageController.isEnglish.value ? transData[i].not_en_adherence_reason : transData[i].not_ar_adherence_reason,
                         clientName: transData[i].client_name,
                         brandName:languageController.isEnglish.value ? transData[i].brand_en_name:transData[i].brand_ar_name,
                         imageFile: transData[i].imageFile as File,

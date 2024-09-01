@@ -1,4 +1,5 @@
 import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
 
 class LocationService {
   static Future<Map<String, dynamic>> getLocation() async {
@@ -8,7 +9,7 @@ class LocationService {
         "locationIsPicked": false,
         "lat": "",
         "long": "",
-        "msg": "Please enable your device location"
+        "msg": "Please enable your device location".tr
       };
       return myMap;
     }
@@ -21,7 +22,7 @@ class LocationService {
           "locationIsPicked": false,
           "lat": "",
           "long": "",
-          "msg": "Please allow your device location"
+          "msg": "Please allow your device location".tr
         };
         return myMap;
       }
@@ -32,7 +33,7 @@ class LocationService {
         "locationIsPicked": false,
         "lat": "",
         "long": "",
-        "msg": "Please allow your device location"
+        "msg": "Please allow your device location".tr
       };
       return myMap;
     }
@@ -42,7 +43,7 @@ class LocationService {
       "locationIsPicked": true,
       "lat": u.latitude.toString(),
       "long": u.longitude.toString(),
-      "msg": "Location access successfully"
+      "msg": "Location access successfully".tr
     };
     return myMap;
   }

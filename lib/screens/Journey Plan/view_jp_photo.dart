@@ -71,7 +71,7 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
         isLoading = false;
       });
           callJp();
-        ToastMessage.succesMessage(context, value['msg']);
+        ToastMessage.succesMessage(context, "Visit Started Successfully".tr);
 
         Navigator.of(context).pushNamed(GridDashBoard.routeName).then((value) => {
           Navigator.of(context).pop(),

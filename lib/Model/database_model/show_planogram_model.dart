@@ -15,7 +15,8 @@ class ShowPlanogramModel {
   late int upload_status = 0;
   File? imageFile;
   late String is_adherence;
-  late String not_adherence_reason;
+  late String not_en_adherence_reason;
+  late String not_ar_adherence_reason;
   late int cat_id;
   late int client_id;
   late int brand_id;
@@ -34,7 +35,8 @@ class ShowPlanogramModel {
     required this.upload_status,
     required this.imageFile,
     required this.is_adherence,
-    required this.not_adherence_reason,
+    required this.not_en_adherence_reason,
+    required this.not_ar_adherence_reason,
     required this.client_id,
     required this.cat_id,
     required this.brand_id,
@@ -59,7 +61,8 @@ class ShowPlanogramModel {
       TableName.gcsStatus: gcs_status,
       TableName.uploadStatus: upload_status,
       TableName.transPlanogramIsAdherence: is_adherence,
-      TableName.transPlanogramReasonId: not_adherence_reason,
+      TableName.transPlanogramReasonId: not_en_adherence_reason,
+      'not_ar_adherence_reason': not_ar_adherence_reason,
     };
   }
 
@@ -79,11 +82,12 @@ class ShowPlanogramModel {
     gcs_status = json[TableName.gcsStatus];
     upload_status = json[TableName.uploadStatus];
     is_adherence = json[TableName.transPlanogramIsAdherence];
-    not_adherence_reason = json[TableName.transPlanogramReasonId];
+    not_en_adherence_reason = json[TableName.transPlanogramReasonId];
+    not_ar_adherence_reason = json['not_ar_adherence_reason'];
   }
 
   @override
   String toString() {
-    return 'ShowPlanogramModel{id: $id,client_id: $client_id,date_time:$dateTime,cat_id: $cat_id,brand_id: $brand_id,reason_id: $reason_id, cat_en_name: $cat_en_name, client_name: $client_name, cat_ar_name: $cat_ar_name, brand_en_name: $brand_en_name, brand_ar_name: $brand_ar_name, image_name: $image_name, gcs_status: $gcs_status, upload_status: $upload_status, imageFile: $imageFile, is_adherence: $is_adherence, not_adherence_reason: $not_adherence_reason}';
+    return 'ShowPlanogramModel{id: $id,client_id: $client_id,date_time:$dateTime,cat_id: $cat_id,brand_id: $brand_id,reason_id: $reason_id, cat_en_name: $cat_en_name, client_name: $client_name, cat_ar_name: $cat_ar_name, brand_en_name: $brand_en_name, brand_ar_name: $brand_ar_name, image_name: $image_name, gcs_status: $gcs_status, upload_status: $upload_status, imageFile: $imageFile, is_adherence: $is_adherence, not_adherence_reason: $not_en_adherence_reason}, not_ar_adherence_reason: $not_ar_adherence_reason';
   }
 }
