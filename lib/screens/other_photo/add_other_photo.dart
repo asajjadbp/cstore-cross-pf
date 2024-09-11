@@ -142,7 +142,7 @@ class _AddOtherPhotoState extends State<AddOtherPhoto> {
     if (selectedClientId == -1 ||
         selectedCategoryId == -1 ||
         imageFile == null) {
-      ToastMessage.errorMessage(context, "Please fill the form and take image");
+      showAnimatedToastMessage("Error!".tr, "Please fill the form and take image".tr, false);
       return;
     }
     // print(selectedCategoryId);
@@ -164,7 +164,7 @@ class _AddOtherPhotoState extends State<AddOtherPhoto> {
             upload_status: 0,
             date_time: now.toString()))
             .then((_) {
-          ToastMessage.succesMessage(context, "Data Saved Successfully".tr);
+          showAnimatedToastMessage("Success".tr, "Data Saved Successfully".tr, true);
 
           imageFile = null;
         });
@@ -176,7 +176,7 @@ class _AddOtherPhotoState extends State<AddOtherPhoto> {
       setState(() {
         isBtnLoading = false;
       });
-      ToastMessage.errorMessage(context, error.toString());
+      showAnimatedToastMessage("Error!".tr, error.toString().tr, false);
     }
   }
   @override

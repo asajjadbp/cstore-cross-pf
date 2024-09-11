@@ -198,7 +198,7 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
       });
       // Handle any errors that occur during the upload
       print("Upload GCS Error $e");
-      ToastMessage.errorMessage(context, e.toString());
+      ToastMessage.errorMessage(context, "Uploading images error please try again!".tr);
     }
   }
 

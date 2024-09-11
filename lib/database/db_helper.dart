@@ -12,7 +12,7 @@ import 'package:cstore/Model/database_model/trans_sos_model.dart';
 import 'package:cstore/Model/database_model/trans_stock_model.dart';
 import 'package:cstore/Model/request_model.dart/save_one_plus_one_request.dart';
 import 'package:cstore/database/table_name.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:get/get.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../Model/database_model/app_setting_model.dart';
@@ -58,7 +58,6 @@ import '../Model/database_model/get_trans_photo_model.dart';
 import '../Model/database_model/trans_photo_model.dart';
 import '../Model/database_model/trans_planoguide_model.dart';
 import '../Model/database_model/trans_pricing_model.dart';
-import '../Model/database_model/trans_promo_model.dart';
 import '../Model/database_model/trans_promo_plan_list_model.dart';
 import '../Model/database_model/trans_rtv_model.dart';
 import '../Model/database_model/trans_rtv_one_plus_one.dart';
@@ -81,9 +80,13 @@ import '../Model/response_model.dart/adherence_response_model.dart';
 import '../Model/response_model.dart/jp_response_model.dart';
 import '../Model/response_model.dart/syncronise_response_model.dart';
 import '../Model/response_model.dart/user_dashboard_model.dart';
+import '../Network/app_exceptions.dart';
+import '../screens/important_service/genral_checks_status.dart';
+import '../screens/utils/services/general_checks_controller_call_function.dart';
 
 class DatabaseHelper {
   static var instance;
+
   static Future<Database?> get database async {
     // Get a location using getDatabasesPath()
     const databaseName = "cstore_pro.db";
@@ -373,6 +376,14 @@ class DatabaseHelper {
           TableName.sys_app_settingBgServiceMinute +
           " TEXT, " +
           TableName.sys_app_settingPicklisService +
+          " TEXT, " +
+          TableName.sys_app_auto_time +
+          " TEXT, " +
+          TableName.sys_app_location +
+          " TEXT, " +
+          TableName.sys_app_fake_location_check +
+          " TEXT, " +
+          TableName.sys_app_vpn_check +
           " TEXT, " +
           TableName.sys_app_settingPicklisTime +
           " TEXT" +
@@ -1124,8 +1135,8 @@ class DatabaseHelper {
         });
 
   }
-  static Future<Database> initDataBase() async {
 
+  static Future<Database> initDataBase() async {
     return await openDatabase('cstore_pro.db');
   }
   //   ---****** Check Duplicate Data In List-----********
@@ -1150,6 +1161,10 @@ class DatabaseHelper {
         TableName.sys_app_settingBgServiceMinute: data.isBgMinute.toString(),
         TableName.sys_app_settingPicklisService: data.isPicklistService.toString(),
         TableName.sys_app_settingPicklisTime: data.isPicklistTime.toString(),
+        TableName.sys_app_auto_time: data.isAutoTimeEnabled.toString(),
+        TableName.sys_app_location: data.isLocationEnabled.toString(),
+        TableName.sys_app_fake_location_check: data.isFakeLocationEnabled.toString(),
+        TableName.sys_app_vpn_check: data.isVpnEnabled.toString(),
       };
       bool isDuplicate = await hasDuplicateEntry(
           db, TableName.tblSysAppSetting, fields);
@@ -1165,6 +1180,10 @@ class DatabaseHelper {
             TableName.sys_app_settingBgServiceMinute: data.isBgMinute.toString(),
             TableName.sys_app_settingPicklisService: data.isPicklistService.toString(),
             TableName.sys_app_settingPicklisTime: data.isPicklistTime.toString(),
+            TableName.sys_app_auto_time: data.isAutoTimeEnabled.toString(),
+            TableName.sys_app_location: data.isLocationEnabled.toString(),
+            TableName.sys_app_fake_location_check: data.isFakeLocationEnabled.toString(),
+            TableName.sys_app_vpn_check: data.isVpnEnabled.toString(),
           },
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
@@ -1968,14 +1987,52 @@ class DatabaseHelper {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
+
+  ///Insert Trans Before Fixing
   static Future<void> insertBeforeFaxing(TransBeforeFaxingModel beforeFaxing) async {
     var db = await initDataBase();
-    await db.insert(
-      TableName.tblTransBeforeFaxing,
-      beforeFaxing.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+
+    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+    if(generalStatusController.isVpnStatus.value) {
+      throw FetchDataException("Please Disable Your VPN".tr);
+    } else if(generalStatusController.isMockLocation.value) {
+      throw FetchDataException("Please Disable Your Fake Locator".tr);
+    } else if(!generalStatusController.isAutoTimeStatus.value) {
+      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
+    } else if(!generalStatusController.isLocationStatus.value) {
+      throw FetchDataException("Please Enable Your Location".tr);
+    } else {
+      Get.delete<GeneralChecksStatusController>();
+      await db.insert(
+        TableName.tblTransBeforeFaxing,
+        beforeFaxing.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
   }
+
+  ///Get System Setting Details
+  static Future<SysAppSettingModel> getTransSysAppSetting() async {
+    var db = await initDataBase();
+    final List<Map<String, dynamic>> transSysAppSetting =
+    await db.rawQuery("SELECT * FROM sys_app_setting");
+
+    print(jsonEncode(transSysAppSetting));
+    print("--------------SYS APP SETTING -----------");
+
+      return SysAppSettingModel(
+           isBgServices : transSysAppSetting[0]['bg_service'] ?? "",
+           isBgMinute : transSysAppSetting[0]['bg_service_minutes'] ?? "",
+           isPicklistService: transSysAppSetting[0]['is_picklist_service'] ?? "",
+           isPicklistTime: transSysAppSetting[0]['picklist_time'] ?? "",
+           isAutoTimeEnabled: transSysAppSetting[0]['is_autotime_enabled'] ?? "",
+           isLocationEnabled: transSysAppSetting[0]['is_location_enabled'] ?? "",
+           isFakeLocationEnabled: transSysAppSetting[0]['is_fake_gps_check_enabled'] ?? "",
+           isVpnEnabled: transSysAppSetting[0]['is_vpn_checked'] ?? "",
+      );
+  }
+
 
 // ----********* trans table data insert-----************
   static Future<List<AvailabilityShowModel>> getAvlDataList(String workingId, String clientId, String brandId,String categoryId,String subCategoryId) async {
@@ -2789,10 +2846,11 @@ class DatabaseHelper {
 
     final db = await initDataBase();
     final List<Map<String, dynamic>> sos = await db.rawQuery(
-        "SELECT trans_sos.id,sys_client.client_name,sys_category.en_name as cat_en_name,sys_category.ar_name as cat_ar_name, sys_brand.en_name as brand_en_name, sys_brand.ar_name as brand_ar_name,trans_sos.unit,trans_sos.cat_space as total_space,trans_sos.actual_space "
+        "SELECT trans_sos.id,sys_client.client_name,sys_category.en_name as cat_en_name,sys_category.ar_name as cat_ar_name, sys_brand.en_name as brand_en_name, sys_brand.ar_name as brand_ar_name,trans_sos.unit,trans_sos.cat_space as total_space,trans_sos.actual_space,sys_sos_units.en_name as unit_en_name,sys_sos_units.ar_name as unit_ar_name "
             " FROM trans_sos "
             "JOIN sys_client on sys_client.client_id=trans_sos.client_id "
             "JOIN sys_category on sys_category.id=trans_sos.category_id "
+            "JOIN sys_sos_units on sys_sos_units.id=trans_sos.unit "
             "LEFT JOIN sys_brand on sys_brand.id=trans_sos.brand_id "
             "WHERE trans_sos.working_id=$workingId ORDER BY sys_category.en_name,sys_brand.en_name ASC");
     print(jsonEncode(sos));
@@ -2807,7 +2865,8 @@ class DatabaseHelper {
         brand_ar_name:sos[index]['brand_ar_name'] ?? "---",
         total_cat_space:sos[index]['total_space'] as String,
         actual_space:sos[index]['actual_space'] as String,
-        unit:sos[index]['unit'].toString(),
+        unitEnName:sos[index]['unit_en_name'].toString(),
+        unitArName:sos[index]['unit_ar_name'].toString(),
 
       );
     });
@@ -3164,28 +3223,75 @@ class DatabaseHelper {
   static Future<void> insertTransMarketIssue(
       TransMarketIssueModel marketIssueModel) async {
     var db = await initDataBase();
-    await db.insert(
-      TableName.tblTransMarketIssue,
-      marketIssueModel.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+
+    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+    if(generalStatusController.isVpnStatus.value) {
+      throw FetchDataException("Please Disable Your VPN".tr);
+    } else if(generalStatusController.isMockLocation.value) {
+      throw FetchDataException("Please Disable Your Fake Locator".tr);
+    } else if(!generalStatusController.isAutoTimeStatus.value) {
+      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
+    } else if(!generalStatusController.isLocationStatus.value) {
+      throw FetchDataException("Please Enable Your Location".tr);
+    } else {
+      Get.delete<GeneralChecksStatusController>();
+
+      await db.insert(
+        TableName.tblTransMarketIssue,
+        marketIssueModel.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
   }
 
   static Future<void> insertTransPhoto(TransPhotoModel transPhotoModel) async {
     var db = await initDataBase();
-    await db.insert(
-      TableName.tblTransPhoto,
-      transPhotoModel.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+
+    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+    if(generalStatusController.isVpnStatus.value) {
+      throw FetchDataException("Please Disable Your VPN".tr);
+    } else if(generalStatusController.isMockLocation.value) {
+      throw FetchDataException("Please Disable Your Fake Locator".tr);
+    } else if(!generalStatusController.isAutoTimeStatus.value) {
+      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
+    } else if(!generalStatusController.isLocationStatus.value) {
+      throw FetchDataException("Please Enable Your Location".tr);
+    } else {
+
+      Get.delete<GeneralChecksStatusController>();
+
+      await db.insert(
+        TableName.tblTransPhoto,
+        transPhotoModel.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
   }
+
   static Future<void> insertTransPlanogram(TransPlanogramModel transPlanogramModel) async {
     var db = await initDataBase();
-    await db.insert(
-      TableName.tblTransPlanogram,
-      transPlanogramModel.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+    if(generalStatusController.isVpnStatus.value) {
+      throw FetchDataException("Please Disable Your VPN".tr);
+    } else if(generalStatusController.isMockLocation.value) {
+      throw FetchDataException("Please Disable Your Fake Locator".tr);
+    } else if(!generalStatusController.isAutoTimeStatus.value) {
+      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
+    } else if(!generalStatusController.isLocationStatus.value) {
+      throw FetchDataException("Please Enable Your Location".tr);
+    } else {
+
+      Get.delete<GeneralChecksStatusController>();
+
+      await db.insert(
+        TableName.tblTransPlanogram,
+        transPlanogramModel.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
   }
 
   static Future<int>  updateTransAVL(int avlStatus,String workingId,String skuId) async {
@@ -3196,7 +3302,22 @@ class DatabaseHelper {
     print("_______________UpdATE________________");
     print(writeQuery);
 
-    return await db.rawUpdate(writeQuery);
+    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+    if(generalStatusController.isVpnStatus.value) {
+      throw FetchDataException("Please Disable Your VPN".tr);
+    } else if(generalStatusController.isMockLocation.value) {
+      throw FetchDataException("Please Disable Your Fake Locator".tr);
+    } else if(!generalStatusController.isAutoTimeStatus.value) {
+      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
+    } else if(!generalStatusController.isLocationStatus.value) {
+      throw FetchDataException("Please Enable Your Location".tr);
+    } else {
+
+      Get.delete<GeneralChecksStatusController>();
+
+      return await db.rawUpdate(writeQuery);
+    }
   }
 
   static Future<int>  updateSavePickList(String workingId,String reqPickList,String skuId) async {
@@ -3207,59 +3328,174 @@ class DatabaseHelper {
     print("_______________UpdATE________________");
     print(writeQuery);
 
-    return await db.rawUpdate(writeQuery);
-  }
+    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
+    if(generalStatusController.isVpnStatus.value) {
+      throw FetchDataException("Please Disable Your VPN".tr);
+    } else if(generalStatusController.isMockLocation.value) {
+      throw FetchDataException("Please Disable Your Fake Locator".tr);
+    } else if(!generalStatusController.isAutoTimeStatus.value) {
+      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
+    } else if(!generalStatusController.isLocationStatus.value) {
+      throw FetchDataException("Please Enable Your Location".tr);
+    } else {
+
+      Get.delete<GeneralChecksStatusController>();
+
+      return await db.rawUpdate(writeQuery);
+    }
+  }
 
   static Future<void> insertTransSOS(TransSOSModel transSOSModel) async {
     var db = await initDataBase();
-    await db.insert(
-      TableName.tblTransSos,
-      transSOSModel.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+
+    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+    if(generalStatusController.isVpnStatus.value) {
+      throw FetchDataException("Please Disable Your VPN".tr);
+    } else if(generalStatusController.isMockLocation.value) {
+      throw FetchDataException("Please Disable Your Fake Locator".tr);
+    } else if(!generalStatusController.isAutoTimeStatus.value) {
+      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
+    } else if(!generalStatusController.isLocationStatus.value) {
+      throw FetchDataException("Please Enable Your Location".tr);
+    } else {
+
+      Get.delete<GeneralChecksStatusController>();
+
+      await db.insert(
+        TableName.tblTransSos,
+        transSOSModel.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
   }
+
   static Future<void> insertTransPricing(TransPricingModel pricingModel) async {
     var db = await initDataBase();
-    await db.insert(
-      TableName.tblTransPricing,
-      pricingModel.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+
+    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+    if(generalStatusController.isVpnStatus.value) {
+      throw FetchDataException("Please Disable Your VPN".tr);
+    } else if(generalStatusController.isMockLocation.value) {
+      throw FetchDataException("Please Disable Your Fake Locator".tr);
+    } else if(!generalStatusController.isAutoTimeStatus.value) {
+      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
+    } else if(!generalStatusController.isLocationStatus.value) {
+      throw FetchDataException("Please Enable Your Location".tr);
+    } else {
+
+      Get.delete<GeneralChecksStatusController>();
+
+      await db.insert(
+        TableName.tblTransPricing,
+        pricingModel.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
   }
+
   static Future<void> insertTransStock(TransStockModel transStockModel) async {
     var db = await initDataBase();
-    await db.insert(
-      TableName.tblTransStock,
-      transStockModel.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+
+    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+    if(generalStatusController.isVpnStatus.value) {
+      throw FetchDataException("Please Disable Your VPN".tr);
+    } else if(generalStatusController.isMockLocation.value) {
+      throw FetchDataException("Please Disable Your Fake Locator".tr);
+    } else if(!generalStatusController.isAutoTimeStatus.value) {
+      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
+    } else if(!generalStatusController.isLocationStatus.value) {
+      throw FetchDataException("Please Enable Your Location".tr);
+    } else {
+
+      Get.delete<GeneralChecksStatusController>();
+
+      await db.insert(
+        TableName.tblTransStock,
+        transStockModel.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
   }
+
   static Future<int> insertTransOSDC(TransOSDCModel transOSDCModel) async {
     var db = await initDataBase();
-    final osdcId = await db.insert(
-      TableName.tblTransOsdc,
-      transOSDCModel.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
 
-    return osdcId;
+    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+    if(generalStatusController.isVpnStatus.value) {
+      throw FetchDataException("Please Disable Your VPN".tr);
+    } else if(generalStatusController.isMockLocation.value) {
+      throw FetchDataException("Please Disable Your Fake Locator".tr);
+    } else if(!generalStatusController.isAutoTimeStatus.value) {
+      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
+    } else if(!generalStatusController.isLocationStatus.value) {
+      throw FetchDataException("Please Enable Your Location".tr);
+    } else {
+
+      Get.delete<GeneralChecksStatusController>();
+
+      final osdcId = await db.insert(
+        TableName.tblTransOsdc,
+        transOSDCModel.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+
+      return osdcId;
+    }
   }
+
   static Future<void> insertTransOSDCImage(TransOSDCImagesModel transOSDCImage) async {
     var db = await initDataBase();
-    await db.insert(
-      TableName.tblTransOsdcImages,
-      transOSDCImage.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+
+    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+    if(generalStatusController.isVpnStatus.value) {
+      throw FetchDataException("Please Disable Your VPN".tr);
+    } else if(generalStatusController.isMockLocation.value) {
+      throw FetchDataException("Please Disable Your Fake Locator".tr);
+    } else if(!generalStatusController.isAutoTimeStatus.value) {
+      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
+    } else if(!generalStatusController.isLocationStatus.value) {
+      throw FetchDataException("Please Enable Your Location".tr);
+    } else {
+
+      Get.delete<GeneralChecksStatusController>();
+
+      await db.insert(
+        TableName.tblTransOsdcImages,
+        transOSDCImage.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
   }
+
   static Future<void> insertTransOnePlusOne(TransOnePlusOneModel transOnePlusOneModel) async {
     var db = await initDataBase();
-    await db.insert(
-      TableName.tblTransOnePlusOne,
-      transOnePlusOneModel.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+
+    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+    if(generalStatusController.isVpnStatus.value) {
+      throw FetchDataException("Please Disable Your VPN".tr);
+    } else if(generalStatusController.isMockLocation.value) {
+      throw FetchDataException("Please Disable Your Fake Locator".tr);
+    } else if(!generalStatusController.isAutoTimeStatus.value) {
+      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
+    } else if(!generalStatusController.isLocationStatus.value) {
+      throw FetchDataException("Please Enable Your Location".tr);
+    } else {
+
+      Get.delete<GeneralChecksStatusController>();
+
+      await db.insert(
+        TableName.tblTransOnePlusOne,
+        transOnePlusOneModel.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
   }
   // static Future<void> insertTransPromoPlan(TransPromoPlanModel transPromoPlanModel) async {
   //   var db = await initDataBase();
@@ -3276,8 +3512,25 @@ class DatabaseHelper {
     var db = await initDataBase();
     print("_______________INSERT TransPlanoGuide________________");
     print(insertQuery);
-    return await db.rawInsert(insertQuery);
+
+    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+    if(generalStatusController.isVpnStatus.value) {
+      throw FetchDataException("Please Disable Your VPN".tr);
+    } else if(generalStatusController.isMockLocation.value) {
+      throw FetchDataException("Please Disable Your Fake Locator".tr);
+    } else if(!generalStatusController.isAutoTimeStatus.value) {
+      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
+    } else if(!generalStatusController.isLocationStatus.value) {
+      throw FetchDataException("Please Enable Your Location".tr);
+    } else {
+
+      Get.delete<GeneralChecksStatusController>();
+
+      return await db.rawInsert(insertQuery);
+    }
   }
+
   static Future<int>  insertTransBrandShares(String workingID) async {
     String insertQuery = "INSERT OR IGNORE INTO trans_brand_share (client_id,store_id, category_id, brand_id, given_faces,actual_faces,date_time,activity_status,upload_status,working_id) "
         " SELECT client_id,store_id, category_id, brand_id, given_faces,'',CURRENT_TIMESTAMP,0,0,$workingID"
@@ -3285,8 +3538,24 @@ class DatabaseHelper {
     var db = await initDataBase();
     print("_______________INSERT BransShare________________");
     print(insertQuery);
-    return await db.rawInsert(insertQuery);
+    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+    if(generalStatusController.isVpnStatus.value) {
+      throw FetchDataException("Please Disable Your VPN".tr);
+    } else if(generalStatusController.isMockLocation.value) {
+      throw FetchDataException("Please Disable Your Fake Locator".tr);
+    } else if(!generalStatusController.isAutoTimeStatus.value) {
+      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
+    } else if(!generalStatusController.isLocationStatus.value) {
+      throw FetchDataException("Please Enable Your Location".tr);
+    } else {
+
+      Get.delete<GeneralChecksStatusController>();
+
+      return await db.rawInsert(insertQuery);
+    }
   }
+
   static Future<int>  insertTransAvailability(String workingID,String clientId,String now) async {
 
     String searchWhere = "";
@@ -3304,9 +3573,24 @@ class DatabaseHelper {
     var db = await initDataBase();
     print("_______________INSERT AVAILABILITY________________");
     print(insertQuery);
-    return await db.rawInsert(insertQuery);
-  }
 
+    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+    if(generalStatusController.isVpnStatus.value) {
+      throw FetchDataException("Please Disable Your VPN".tr);
+    } else if(generalStatusController.isMockLocation.value) {
+      throw FetchDataException("Please Disable Your Fake Locator".tr);
+    } else if(!generalStatusController.isAutoTimeStatus.value) {
+      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
+    } else if(!generalStatusController.isLocationStatus.value) {
+      throw FetchDataException("Please Enable Your Location".tr);
+    } else {
+
+      Get.delete<GeneralChecksStatusController>();
+
+      return await db.rawInsert(insertQuery);
+    }
+  }
 
 //--------************get drop down data-------**********
   static Future<List<ClientModel>> getVisitClientList(String client_ids) async {
@@ -3334,6 +3618,7 @@ class DatabaseHelper {
       );
     });
   }
+
   static Future<List<CategoryModel>> getCategoryList(int client_ids) async {
     final db = await initDataBase();
     final List<Map<String, dynamic>> categoryMaps = await db.rawQuery(
@@ -3351,6 +3636,7 @@ class DatabaseHelper {
       );
     });
   }
+
   static Future<List<CategoryModel>> getSubCategoryList(int client_ids,String categoryId) async {
     final db = await initDataBase();
 
@@ -3379,6 +3665,7 @@ class DatabaseHelper {
       );
     });
   }
+
   static Future<List<Sys_PhotoTypeModel>> getPhotoTypeList() async {
     final db = await initDataBase();
     final List<Map<String, dynamic>> photoTypeMaps = await db.rawQuery(
@@ -3393,6 +3680,7 @@ class DatabaseHelper {
       );
     });
   }
+
   static Future<List<SYS_BrandModel>> getBrandList(int client_id, String categoryId) async {
     final db = await initDataBase();
 
@@ -3421,6 +3709,7 @@ class DatabaseHelper {
       );
     });
   }
+
   static Future<List<SYS_BrandModel>> getBrandListOSDC(String clientId) async {
     final db = await initDataBase();
     final List<Map<String, dynamic>> brandMaps = await db.rawQuery(
@@ -3452,6 +3741,7 @@ class DatabaseHelper {
       notAdhereCount: int.parse(adhereMaps[0]['total_not_adhere'].toString() == "null" ? "0" : adhereMaps[0]['total_not_adhere'].toString()),
     );
   }
+
   static Future<AvailableCountModel> getAvailableCountData(String workingId) async {
     print(workingId);
     final db = await initDataBase();
@@ -3466,6 +3756,7 @@ class DatabaseHelper {
       totalNotAvl: int.parse(result[0]['total_not_avl'].toString()),
     );
   }
+
   static Future<List<Sys_OSDCReasonModel>> getOsdcReasonList() async {
     final db = await initDataBase();
     final List<Map<String, dynamic>> osdcReasonMaps = await db.rawQuery(
@@ -3480,6 +3771,7 @@ class DatabaseHelper {
       );
     });
   }
+
   static Future<List<Sys_OSDCTypeModel>> getAppSettingList() async {
     final db = await initDataBase();
     final List<Map<String, dynamic>> osdcTypeMaps = await db.rawQuery(
@@ -3494,6 +3786,7 @@ class DatabaseHelper {
       );
     });
   }
+
   static Future<List<Sys_OSDCTypeModel>> getDailyCheckList() async {
     final db = await initDataBase();
     final List<Map<String, dynamic>> osdcTypeMaps = await db.rawQuery(
@@ -3508,6 +3801,7 @@ class DatabaseHelper {
       );
     });
   }
+
   static Future<List<Sys_OSDCTypeModel>> getOsdcTypeList() async {
     final db = await initDataBase();
     final List<Map<String, dynamic>> osdcTypeMaps = await db.rawQuery(
@@ -3527,6 +3821,7 @@ class DatabaseHelper {
     var db = await initDataBase();
     await db.rawDelete('DELETE FROM ${tbl_name}');
   }
+
   static Future<void> deleteOneRecord(String tblName, int id) async {
     print(tblName);
     print(id);
@@ -3534,7 +3829,6 @@ class DatabaseHelper {
     var db = await initDataBase();
     await db.delete(tblName, where: 'id = ?', whereArgs: [id]);
   }
-
 
   /// Get PickList From Query Sql
 
@@ -3571,16 +3865,32 @@ class DatabaseHelper {
       );
     });
   }
+
   static Future<int> insertPickListByQuery (String queryBulkInsertion) async {
-  String insertQuery = "INSERT OR IGNORE INTO picklist (working_id,picklist_id,store_id, category_id, tmr_id,tmr_name,stocker_id,stocker_name,shift_time,en_cat_name,ar_cat_name,sku_picture,en_sku_name,ar_sku_name,req_picklist,act_picklist,picklist_ready,upload_status,pick_list_send_time,pick_list_receive_time,picklist_reason)"
+     String insertQuery = "INSERT OR IGNORE INTO picklist (working_id,picklist_id,store_id, category_id, tmr_id,tmr_name,stocker_id,stocker_name,shift_time,en_cat_name,ar_cat_name,sku_picture,en_sku_name,ar_sku_name,req_picklist,act_picklist,picklist_ready,upload_status,pick_list_send_time,pick_list_receive_time,picklist_reason)"
                         "VALUES $queryBulkInsertion";
                         // "VALUES($pickListId,$storeId,$catId,$tmrId,$tmrName,$stockerId, $stockerName,$shiftTime,$enCatName,$arCatName,$skuPicture,$enSkuName,$arSkuName,$reqPickList,$actPickList,$pickListReady)";
   var db = await initDataBase();
   print("_______________INSERT PICKLIST________________");
   print(queryBulkInsertion);
 
-  return await db.rawInsert(insertQuery);
-}
+  GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+  if(generalStatusController.isVpnStatus.value) {
+    throw FetchDataException("Please Disable Your VPN".tr);
+  } else if(generalStatusController.isMockLocation.value) {
+    throw FetchDataException("Please Disable Your Fake Locator".tr);
+  } else if(!generalStatusController.isAutoTimeStatus.value) {
+    throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
+  } else if(!generalStatusController.isLocationStatus.value) {
+    throw FetchDataException("Please Enable Your Location".tr);
+  } else {
+
+    Get.delete<GeneralChecksStatusController>();
+
+      return await db.rawInsert(insertQuery);
+    }
+  }
 
   // static Future<void> insertPicklistArray(List<PickListModel> modelList) async {
   //   var db = await initDataBase();
@@ -3647,7 +3957,23 @@ class DatabaseHelper {
     var db = await initDataBase();
     print("_______________UpdATE________________");
     print(writeQuery);
-    return await db.rawUpdate(writeQuery);
+
+    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+    if(generalStatusController.isVpnStatus.value) {
+      throw FetchDataException("Please Disable Your VPN".tr);
+    } else if(generalStatusController.isMockLocation.value) {
+      throw FetchDataException("Please Disable Your Fake Locator".tr);
+    } else if(!generalStatusController.isAutoTimeStatus.value) {
+      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
+    } else if(!generalStatusController.isLocationStatus.value) {
+      throw FetchDataException("Please Enable Your Location".tr);
+    } else {
+
+      Get.delete<GeneralChecksStatusController>();
+
+      return await db.rawUpdate(writeQuery);
+    }
   }
 
   ///Trans Pick list update Sql
@@ -3656,7 +3982,24 @@ class DatabaseHelper {
     var db = await initDataBase();
     print("_______________UpdATE________________");
     print(writeQuery);
-    return await db.rawUpdate(writeQuery,[actPicklist,picklistReady,picklistId]);
+
+    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+    if(generalStatusController.isVpnStatus.value) {
+      throw FetchDataException("Please Disable Your VPN".tr);
+    } else if(generalStatusController.isMockLocation.value) {
+      throw FetchDataException("Please Disable Your Fake Locator".tr);
+    } else if(!generalStatusController.isAutoTimeStatus.value) {
+      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
+    } else if(!generalStatusController.isLocationStatus.value) {
+      throw FetchDataException("Please Enable Your Location".tr);
+    } else {
+
+      Get.delete<GeneralChecksStatusController>();
+
+      return await db
+          .rawUpdate(writeQuery, [actPicklist, picklistReady, picklistId]);
+    }
   }
 
   ///Trans Pick list update Sql after APi
@@ -3829,8 +4172,22 @@ class DatabaseHelper {
     var db = await initDataBase();
     print("_______________UpdATE Share Shelf________________");
     print(writeQuery);
+    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-    return await db.rawUpdate(writeQuery);
+    if(generalStatusController.isVpnStatus.value) {
+      throw FetchDataException("Please Disable Your VPN".tr);
+    } else if(generalStatusController.isMockLocation.value) {
+      throw FetchDataException("Please Disable Your Fake Locator".tr);
+    } else if(!generalStatusController.isAutoTimeStatus.value) {
+      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
+    } else if(!generalStatusController.isLocationStatus.value) {
+      throw FetchDataException("Please Enable Your Location".tr);
+    } else {
+
+      Get.delete<GeneralChecksStatusController>();
+
+      return await db.rawUpdate(writeQuery);
+    }
   }
 
   ///get planoguide Images For GCS upload
@@ -4144,7 +4501,22 @@ class DatabaseHelper {
     var db = await initDataBase();
     print("_______________INSERT TransPromoPrice________________");
     print(insertQuery);
-    return await db.rawInsert(insertQuery);
+    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+    if(generalStatusController.isVpnStatus.value) {
+      throw FetchDataException("Please Disable Your VPN".tr);
+    } else if(generalStatusController.isMockLocation.value) {
+      throw FetchDataException("Please Disable Your Fake Locator".tr);
+    } else if(!generalStatusController.isAutoTimeStatus.value) {
+      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
+    } else if(!generalStatusController.isLocationStatus.value) {
+      throw FetchDataException("Please Enable Your Location".tr);
+    } else {
+
+      Get.delete<GeneralChecksStatusController>();
+
+      return await db.rawInsert(insertQuery);
+    }
   }
 
   static Future<int> updateTransPromoPricing(int skuId, String regular, String promo, String workingID) async {
@@ -4167,13 +4539,27 @@ class DatabaseHelper {
 
   static Future<void> insertTransRtvData(TransRtvModel transRtvModel) async {
     var db = await initDataBase();
-    await db.insert(
-      TableName.tblTransRtv,
-      transRtvModel.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-  }
+    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
+    if(generalStatusController.isVpnStatus.value) {
+      throw FetchDataException("Please Disable Your VPN".tr);
+    } else if(generalStatusController.isMockLocation.value) {
+      throw FetchDataException("Please Disable Your Fake Locator".tr);
+    } else if(!generalStatusController.isAutoTimeStatus.value) {
+      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
+    } else if(!generalStatusController.isLocationStatus.value) {
+      throw FetchDataException("Please Enable Your Location".tr);
+    } else {
+
+      Get.delete<GeneralChecksStatusController>();
+
+      await db.insert(
+        TableName.tblTransRtv,
+        transRtvModel.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+  }
 
   static Future<List<Sys_RTVReasonModel>> getRtvReasonList() async {
     final db = await initDataBase();
@@ -4257,6 +4643,7 @@ class DatabaseHelper {
       );
     });
   }
+
   static Future<RTVCountModel>  getRTVCountData(String workingId, String clientId, String brandId,String categoryId,String subCategoryId) async {
 
     String searchWhere = "";
@@ -4326,16 +4713,9 @@ class DatabaseHelper {
     );
   }
 
-
   ///Freshness Queries
 
-  static Future<List<FreshnessListShowModel>> getDataListFreshness(
-      String workingId,
-      String clientId,
-      String jpSessionClientIds,
-      String brandId,
-      String categoryId,
-      String subCategoryId) async {
+  static Future<List<FreshnessListShowModel>> getDataListFreshness(String workingId, String clientId, String jpSessionClientIds, String brandId, String categoryId, String subCategoryId) async {
 
     String searchOtherExclude = "";
     String otherExclSearchParam = await getOtherExcludesString(workingId);
@@ -4404,8 +4784,7 @@ class DatabaseHelper {
     });
   }
 
-  static Future<int> insertTransFreshness(String month, String clientId,String currentTime,
-      int year, int skuId, String workingID, int pieces) async {
+  static Future<int> insertTransFreshness(String month, String clientId,String currentTime, int year, int skuId, String workingID, int pieces) async {
 
     String monthSubString = month.replaceAll(" ", "").substring(0,3).toLowerCase();
 
@@ -4415,15 +4794,25 @@ class DatabaseHelper {
     var db = await initDataBase();
     print("_______________INSERT Trans Freshness________________");
     print(insertQuery);
-    return await db.rawInsert(insertQuery);
+    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+    if(generalStatusController.isVpnStatus.value) {
+      throw FetchDataException("Please Disable Your VPN".tr);
+    } else if(generalStatusController.isMockLocation.value) {
+      throw FetchDataException("Please Disable Your Fake Locator".tr);
+    } else if(!generalStatusController.isAutoTimeStatus.value) {
+      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
+    } else if(!generalStatusController.isLocationStatus.value) {
+      throw FetchDataException("Please Enable Your Location".tr);
+    } else {
+
+      Get.delete<GeneralChecksStatusController>();
+
+      return await db.rawInsert(insertQuery);
+    }
   }
 
-  static Future<List<TransFreshnessModel>> getTransFreshnessDataList(
-      String workingId,
-      String clientId,
-      String brandId,
-      String categoryId,
-      String subCategoryId) async {
+  static Future<List<TransFreshnessModel>> getTransFreshnessDataList(String workingId, String clientId, String brandId, String categoryId, String subCategoryId) async {
 
     String searchOtherExclude = "";
     String otherExclSearchParam = await getOtherExcludesString(workingId);
@@ -4501,13 +4890,7 @@ class DatabaseHelper {
     });
   }
 
-  static Future<FreshnessGraphCountShowModel> getFreshnessGraphCount(
-      String workingId,
-      String clientId,
-      String jpSessionClientIds,
-      String brandId,
-      String categoryId,
-      String subCategoryId) async {
+  static Future<FreshnessGraphCountShowModel> getFreshnessGraphCount(String workingId, String clientId, String jpSessionClientIds, String brandId, String categoryId, String subCategoryId) async {
 
     String searchWhere = "";
 
@@ -4686,7 +5069,23 @@ class DatabaseHelper {
     var db = await initDataBase();
     print("_______________UpdATE Promo Plan________________");
     print(writeQuery);
-    return await db.rawUpdate(writeQuery);
+
+    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+    if(generalStatusController.isVpnStatus.value) {
+      throw FetchDataException("Please Disable Your VPN".tr);
+    } else if(generalStatusController.isMockLocation.value) {
+      throw FetchDataException("Please Disable Your Fake Locator".tr);
+    } else if(!generalStatusController.isAutoTimeStatus.value) {
+      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
+    } else if(!generalStatusController.isLocationStatus.value) {
+      throw FetchDataException("Please Enable Your Location".tr);
+    } else {
+
+      Get.delete<GeneralChecksStatusController>();
+
+      return await db.rawUpdate(writeQuery);
+    }
   }
 
   static Future<PromoPlanGraphAndApiCountShowModel> getPromoGraphAndApiCount(String workingId,) async {
@@ -4752,9 +5151,7 @@ class DatabaseHelper {
   }
 
   //trans stock list
-  static Future<List<TransStockModel>> getDataListStock(String workingId,
-      String clientId, String jpSessionClientIds, String brandId,
-      String categoryId, String subCategoryId) async {
+  static Future<List<TransStockModel>> getDataListStock(String workingId, String clientId, String jpSessionClientIds, String brandId, String categoryId, String subCategoryId) async {
 
     String searchOtherExclude = "";
     String otherExclSearchParam = await getOtherExcludesString(workingId);
@@ -4834,12 +5231,7 @@ class DatabaseHelper {
     return await db.rawUpdate(writeQuery);
   }
 
-  static Future<TotalStockCountData> getStockCount(
-      String workingId,
-      String clientId,
-      String brandId,
-      String categoryId,
-      String subCategoryId) async {
+  static Future<TotalStockCountData> getStockCount(String workingId, String clientId, String brandId, String categoryId, String subCategoryId) async {
 
     String searchWhere = "";
 
@@ -4889,7 +5281,22 @@ class DatabaseHelper {
     var db = await initDataBase();
     print("_______________INSERT Trans stock________________");
     print(insertQuery);
-    return await db.rawInsert(insertQuery);
+    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+    if(generalStatusController.isVpnStatus.value) {
+      throw FetchDataException("Please Disable Your VPN".tr);
+    } else if(generalStatusController.isMockLocation.value) {
+      throw FetchDataException("Please Disable Your Fake Locator".tr);
+    } else if(!generalStatusController.isAutoTimeStatus.value) {
+      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
+    } else if(!generalStatusController.isLocationStatus.value) {
+      throw FetchDataException("Please Enable Your Location".tr);
+    } else {
+
+      Get.delete<GeneralChecksStatusController>();
+
+      return await db.rawInsert(insertQuery);
+    }
   }
 
   static Future<List<SaveStockListData>> getStockDataListFromApi(String workingId) async {
@@ -5028,18 +5435,31 @@ class DatabaseHelper {
     print("Table data delet $tblName,  $workingId");
   }
 
-  static Future<void> insertTransPOS(
-      TransAddProfOfSale transAddProfOfSale) async {
+  static Future<void> insertTransPOS(TransAddProfOfSale transAddProfOfSale) async {
     var db = await initDataBase();
-    await db.insert(
-      TableName.tblTransPOS,
-      transAddProfOfSale.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+    if(generalStatusController.isVpnStatus.value) {
+      throw FetchDataException("Please Disable Your VPN".tr);
+    } else if(generalStatusController.isMockLocation.value) {
+      throw FetchDataException("Please Disable Your Fake Locator".tr);
+    } else if(!generalStatusController.isAutoTimeStatus.value) {
+      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
+    } else if(!generalStatusController.isLocationStatus.value) {
+      throw FetchDataException("Please Enable Your Location".tr);
+    } else {
+
+      Get.delete<GeneralChecksStatusController>();
+
+      await db.insert(
+        TableName.tblTransPOS,
+        transAddProfOfSale.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
   }
 
-  static Future<List<ShowProofOfSaleModel>> getTransPOS(
-      String workingId) async {
+  static Future<List<ShowProofOfSaleModel>> getTransPOS(String workingId) async {
 
     final db = await initDataBase();
     final List<Map<String, dynamic>> posData = await db.rawQuery(
@@ -5177,7 +5597,7 @@ class DatabaseHelper {
 
     final db = await initDataBase();
     final List<Map<String, dynamic>> photoTypeMaps = await db.rawQuery(
-        "SELECT sys_product.id,sys_product.en_name,sys_product.ar_name from sys_product where sys_product.category_id=$catId $searchOtherExclude");
+        "SELECT sys_product.id,sys_product.en_name,sys_product.ar_name from sys_product where sys_product.category_id=$catId $searchOtherExclude ORDER BY category_id,brand_id ASC");
     print(jsonEncode(photoTypeMaps));
     print("________Photo type List ________________");
     return List.generate(photoTypeMaps.length, (index) {
@@ -5189,23 +5609,31 @@ class DatabaseHelper {
     });
   }
 
-  static Future<void> insertTransRtvOnePlusOne(
-      TransRtvOnePlusOneModel transRtvModel) async {
+  static Future<void> insertTransRtvOnePlusOne(TransRtvOnePlusOneModel transRtvModel) async {
     var db = await initDataBase();
-    await db.insert(
-      TableName.tblTransOnePlusOne,
-      transRtvModel.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+    if(generalStatusController.isVpnStatus.value) {
+      throw FetchDataException("Please Disable Your VPN".tr);
+    } else if(generalStatusController.isMockLocation.value) {
+      throw FetchDataException("Please Disable Your Fake Locator".tr);
+    } else if(!generalStatusController.isAutoTimeStatus.value) {
+      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
+    } else if(!generalStatusController.isLocationStatus.value) {
+      throw FetchDataException("Please Enable Your Location".tr);
+    } else {
+
+      Get.delete<GeneralChecksStatusController>();
+
+      await db.insert(
+        TableName.tblTransOnePlusOne,
+        transRtvModel.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
   }
 
-  static Future<List<RTVShowModel>> getDataListRTVOnePlusOne(
-      String workingId,
-      String clientId,
-      String jpSessionClientIds,
-      String brandId,
-      String categoryId,
-      String subCategoryId) async {
+  static Future<List<RTVShowModel>> getDataListRTVOnePlusOne(String workingId, String clientId, String jpSessionClientIds, String brandId, String categoryId, String subCategoryId) async {
     String searchWhere = "";
     String clientIds = "";
     if (clientId != "-1") {
@@ -5262,8 +5690,7 @@ class DatabaseHelper {
     });
   }
 
-  static Future<List<TransOnePlusOneModel>> getTransRTVOnePluOneDataList(
-      String workingId) async {
+  static Future<List<TransOnePlusOneModel>> getTransRTVOnePluOneDataList(String workingId) async {
     final db = await initDataBase();
     String query =
         " SELECT trans_one_plus_one.id as trans_id,sys_product.en_name as pro_en_name, sys_product.ar_name as pro_ar_name,trans_one_plus_one.date_time,"
@@ -5296,7 +5723,6 @@ class DatabaseHelper {
           imageFileDoc: null);
     });
   }
-
 
   ///Get One Plus One COUNT RECORDS FOR API UPLOAD
   static Future<RtvCountModel> getOnePLusOneCountDataServices(String workingId) async {
@@ -5343,7 +5769,6 @@ class DatabaseHelper {
       );
     });
   }
-
 
   static Future<List<SaveOnePlusOneListData>> getTransOnePlusPneApiUploadDataList(String workingId) async {
     final db = await initDataBase();
@@ -5411,8 +5836,8 @@ class DatabaseHelper {
     });
   }
 
-  static Future<bool> insertSysKnowledgeShareArray(
-      List<KnowledgeShareModel> modelList) async {
+  /// Insert Knowledge Share
+  static Future<bool> insertSysKnowledgeShareArray(List<KnowledgeShareModel> modelList) async {
     var db = await initDataBase();
 
     for (KnowledgeShareModel data in modelList) {
@@ -5458,8 +5883,7 @@ class DatabaseHelper {
     return false;
   }
 
-  static Future<List<ShowMarketIssueModel>> getTransMarketIssue(
-      String workingId) async {
+  static Future<List<ShowMarketIssueModel>> getTransMarketIssue(String workingId) async {
     print("__________________TransMarketIssue__________________");
     final db = await initDataBase();
     final List<Map<String, dynamic>> issueData = await db.rawQuery(
@@ -5480,11 +5904,11 @@ class DatabaseHelper {
     });
   }
 
-
   static Future<List<sysMarketIssueModel>> getMarketIssueDropDownList() async {
     final db = await initDataBase();
     final List<Map<String, dynamic>> issueModel =
     await db.rawQuery("SELECT *FROM sys_market_issues WHERE status=1");
+    print(jsonEncode(issueModel));
     return List.generate(issueModel.length, (index) {
       return sysMarketIssueModel(
           id: issueModel[index]['id'] ?? 0,
@@ -5494,10 +5918,7 @@ class DatabaseHelper {
     });
   }
 
-
-
-  static Future<bool> insertMarketIssueArray(
-      List<sysMarketIssueModel> modelList) async {
+  static Future<bool> insertMarketIssueArray(List<sysMarketIssueModel> modelList) async {
     var db = await initDataBase();
     for (sysMarketIssueModel data in modelList) {
       Map<String, dynamic> fields = {
@@ -5589,7 +6010,6 @@ class DatabaseHelper {
     });
   }
 
-
   static Future<int> updateMarketIssueAfterGcsImageUpload(String workingId,String promoId) async {
     String writeQuery = "UPDATE trans_market_issue SET gcs_status=1 WHERE working_id=$workingId AND id = $promoId";
 
@@ -5609,8 +6029,6 @@ class DatabaseHelper {
 
     return await db.rawUpdate(writeQuery);
   }
-
-
 
   static Future<bool> insertSysStoreArray(List<SysStoreModel> modelList) async {
     var db = await initDataBase();
@@ -5662,6 +6080,7 @@ class DatabaseHelper {
     }
     return false;
   }
+
   static Future<bool> insertSosUnitArray(List<Sys_OSDCReasonModel> modelList) async {
     var db = await initDataBase();
 
@@ -5690,6 +6109,7 @@ class DatabaseHelper {
     }
     return false;
   }
+
   static Future<bool> insertPromoPlaneReasonArray(List<Sys_OSDCReasonModel> modelList) async {
     var db = await initDataBase();
 
@@ -5718,6 +6138,7 @@ class DatabaseHelper {
     }
     return false;
   }
+
   static Future<List<Sys_OSDCReasonModel>> getPromoPlaneReasonList() async {
     final db = await initDataBase();
     final List<Map<String, dynamic>> osdcTypeMaps = await db.rawQuery(
@@ -5732,6 +6153,7 @@ class DatabaseHelper {
       );
     });
   }
+
   static Future<List<Sys_OSDCTypeModel>> getSysDailyCheckList() async {
     final db = await initDataBase();
     final List<Map<String, dynamic>> osdcTypeMaps = await db.rawQuery(
@@ -5746,7 +6168,6 @@ class DatabaseHelper {
       );
     });
   }
-
 
   static Future<List<Sys_OSDCReasonModel>> getSosUnitListData() async {
     final db = await initDataBase();
@@ -5764,6 +6185,15 @@ class DatabaseHelper {
   }
 
 }
+
+// Future <GeneralChecksStatusController> generalControllerInitialization () async {
+//   GeneralChecksStatusController generalStatusController;
+//   generalStatusController = Get.put(GeneralChecksStatusController());
+//
+//   await generalStatusController.getAppSetting();
+//
+//   return generalStatusController;
+// }
 
 String wrapIfString(dynamic value) {
   if (value is String) {

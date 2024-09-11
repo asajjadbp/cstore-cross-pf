@@ -40,5 +40,8 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <meta-data
+            android:name="com.example.cstore.AutoTimeEnablePlugin"
+            android:value="android.app.src.main.kotlin.com.catalist.cstoreCross.AutoTimeEnablePlugin"/>
     </application>
 </manifest>

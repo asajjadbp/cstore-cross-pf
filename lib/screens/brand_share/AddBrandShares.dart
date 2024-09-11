@@ -242,7 +242,7 @@ class BrandShares_ScreenState extends State<BrandShares_Screen> {
 
   void saveBrandShareData(TransBransShareModel transBransShareModel) async {
     if (transBransShareModel.actual_faces.isEmpty ) {
-      ToastMessage.errorMessage(context, "Please add actual faces".tr);
+      showAnimatedToastMessage("Error!".tr, "Please add actual faces".tr, false);
     } else {
       setState(() {
         isBtnLoading = true;
@@ -257,15 +257,14 @@ class BrandShares_ScreenState extends State<BrandShares_Screen> {
           }
 
           getTransBrandShareOne(false);
-
-          ToastMessage.succesMessage(context, "Data Saved Successfully".tr);
+          showAnimatedToastMessage("Success".tr, "Data Saved Successfully".tr, true);
 
           setState(() {
             isBtnLoading = false;
           });
         }).catchError((e) {
           setState(() {
-            ToastMessage.errorMessage(context, e.toString());
+            showAnimatedToastMessage("Error!".tr, e.toString(), false);
             isBtnLoading = false;
           });
         });

@@ -146,46 +146,47 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
     print(unitData[0].en_name);
   }
 
-
-
-
-  void StoreUnitDataDB() async{
-    if (selectedClientId == -1 ||
-        selectedCategoryId == -1 ||
-        _selectedUnit == -1||
-        valueControllerActual.text==""||valueControllerCatSpace.text=="" ) {
-      ToastMessage.errorMessage(context, "Please fill the form".tr);
-      return;
+  void storeUnitDataDB() async {
+    try {
+      if (selectedClientId == -1 ||
+          selectedCategoryId == -1 ||
+          _selectedUnit == -1 ||
+          valueControllerActual.text == "" ||
+          valueControllerCatSpace.text == "") {
+        showAnimatedToastMessage("Error!".tr, "Please fill the form".tr, false);
+        return;
+      }
+      if ((double.parse(valueControllerActual.text)) >
+          (double.parse(valueControllerCatSpace.text))) {
+        showAnimatedToastMessage("Error!".tr, "Actual Space cannot be greater or equal than category space".tr, false);
+        return;
+      }
+      setState(() {
+        isBtnLoading = false;
+      });
+      var now = DateTime.now();
+      await DatabaseHelper.insertTransSOS(TransSOSModel(
+          client_id: selectedClientId,
+          cat_id: selectedCategoryId,
+          brand_id: selectedBrandId,
+          category_space: valueControllerCatSpace.text,
+          actual_space: valueControllerActual.text,
+          unit: _selectedUnit.toString(),
+          date_time: now.toString(),
+          uploadStatus: 0,
+          working_id: int.parse(workingId)))
+          .then((_) {
+        showAnimatedToastMessage("Success".tr, "Data Store SuccessFully".tr, true);
+        valueControllerActual.clear();
+        valueControllerCatSpace.clear();
+        isBtnLoading = false;
+      });
+    } catch (e) {
+      showAnimatedToastMessage("Error!".tr, e.toString(), false);
     }
-    if((double.parse( valueControllerActual.text)) > (double.parse(valueControllerCatSpace.text))) {
-      ToastMessage.errorMessage(context, "Actual Space cannot be greater or equal than category space".tr);
-      return;
-    }
-    setState(() {
-      isBtnLoading = false;
-    });
-    var now= DateTime.now();
-    await DatabaseHelper.insertTransSOS(TransSOSModel(
-        client_id: selectedClientId,
-        cat_id: selectedCategoryId,
-        brand_id: selectedBrandId,
-        category_space: valueControllerCatSpace.text,
-        actual_space: valueControllerActual.text,
-        unit: _selectedUnit.toString(),
-        date_time: now.toString(),
-        uploadStatus: 0,
-        working_id: int.parse(workingId)))
-        .then((_) {
-      ToastMessage.succesMessage(context, "Data Store SuccessFully".tr);
-      valueControllerActual.clear();
-      valueControllerCatSpace.clear();
-      isBrandLoading=false;
-    });
   }
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       backgroundColor: MyColors.background,
@@ -421,7 +422,7 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
                               :  BigElevatedButton(
                               buttonName: "Save".tr,
                               submit: (){
-                                StoreUnitDataDB();
+                                storeUnitDataDB();
                               },
                               isBlueColor: true),
 

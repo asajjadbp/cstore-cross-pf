@@ -104,25 +104,35 @@ class _StockListScreenState extends State<StockListScreen> {
     });
   }
   void InsertTransStock(String cases, String outer,String pieces, skuId,pro_client_id) async {
-    print("Insert Data Getting");
-    if (cases.isEmpty && outer.isEmpty && pieces.isEmpty) {
-      ToastMessage.errorMessage(context, "Please add stock data".tr);
-      return;
-    }
-    if(cases == "0" && outer == "0" && pieces == "0") {
-      ToastMessage.errorMessage(context, "Please add stock data".tr);
-      return;
-    }
+
+    try {
+      if (cases.isEmpty && outer.isEmpty && pieces.isEmpty) {
+        showAnimatedToastMessage("Error!".tr, "Please add stock data".tr, false);
+        return;
+      }
+      if (cases == "0" && outer == "0" && pieces == "0") {
+        showAnimatedToastMessage("Error!".tr, "Please add stock data".tr, false);
+        return;
+      }
       setState(() {
         isBtnLoading = false;
       });
-    String timeStamp = DateTime.now().millisecondsSinceEpoch.toString();
-    String currentUserTimeStamp = "${UserId}_$timeStamp";
-    print(currentUserTimeStamp);
+      String timeStamp = DateTime
+          .now()
+          .millisecondsSinceEpoch
+          .toString();
+      String currentUserTimeStamp = "${UserId}_$timeStamp";
+      print(currentUserTimeStamp);
       await DatabaseHelper.insertTransStockeCheck(
-              skuId, int.parse(cases),int.parse(outer),int.parse(pieces), workingId,currentUserTimeStamp,pro_client_id,)
+        skuId,
+        int.parse(cases),
+        int.parse(outer),
+        int.parse(pieces),
+        workingId,
+        currentUserTimeStamp,
+        pro_client_id,)
           .then((_) {
-        ToastMessage.succesMessage(context, "Data Saved Successfully".tr);
+        showAnimatedToastMessage("Success".tr, "Data Saved Successfully".tr, true);
         cases = "";
         outer = "";
         pieces = "";
@@ -130,6 +140,9 @@ class _StockListScreenState extends State<StockListScreen> {
         getTransStockOne();
         getStockCount();
       });
+    } catch (e) {
+      showAnimatedToastMessage("Error!".tr, e.toString(), false);
+    }
   }
   void getClientData() async {
     setState(() {

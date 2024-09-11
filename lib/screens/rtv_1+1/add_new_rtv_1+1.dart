@@ -169,7 +169,7 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
         edDocNumber.text.isEmpty ||
         totalPieces.text.isEmpty ||
         selectedSkuId == -1 || selectedCategoryId == -1 || selectedClientId == -1) {
-      ToastMessage.errorMessage(context, "Please fill the form and take image".tr);
+      showAnimatedToastMessage("Error!".tr,"Please fill the form and take image".tr, false);
       return;
     }
     setState(() {
@@ -195,8 +195,7 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
                 doc_no: edDocNumber.text,
                 doc_image_name: docImageName))
             .then((_) {
-
-          ToastMessage.succesMessage(context, "Data Store SuccessFully".tr);
+          showAnimatedToastMessage("Success".tr,"Data Store SuccessFully".tr, true);
       });
 
         await takePicture(context, docImageFile, docImageName, workingId, AppConstants.onePlusOne)
@@ -215,7 +214,7 @@ class _AddRtvOnePlusOneState extends State<AddRtvOnePlusOne> {
       setState(() {
         isBtnLoading = false;
       });
-      ToastMessage.errorMessage(context, error.toString());
+      showAnimatedToastMessage("Error!".tr,error.toString().tr, false);
     }
   }
 

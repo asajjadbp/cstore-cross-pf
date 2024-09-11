@@ -238,36 +238,58 @@ class _Freshness_ScreenState extends State<Freshness_Screen> {
   }
 
   void InsertTransFreshness(month, year, pieces, skuId) async {
-    String startMonth = DateFormat('MMM - MM').format((DateTime.now()));
-    int monthDifferenceValue = await monthDifference(startMonth,month);
-    if (month == "" || year == 0 || pieces == "") {
-      ToastMessage.errorMessage(context, "Please fill the form".tr);
-      return;
-    }
-
-    if(year.toString() == DateTime.now().year.toString()) {
-      if (monthDifferenceValue < 1) {
-        ToastMessage.errorMessage(
-            context, "You can not enter data for current or previous month".tr);
+    try {
+      String startMonth = DateFormat('MMM - MM').format((DateTime.now()));
+      int monthDifferenceValue = await monthDifference(startMonth, month);
+      if (month == ""  || year == 0 || pieces == "") {
+        showAnimatedToastMessage("Error!", "Please fill the form".tr, false);
         return;
       }
-    }
 
-    setState(() {
-      isLoading = false;
-    });
-    String timeStamp = DateTime.now().millisecondsSinceEpoch.toString();
-    String currentUserTimeStamp = "${userId}_$timeStamp";
-    print(currentUserTimeStamp);
-    await DatabaseHelper.insertTransFreshness(month, clientId,currentUserTimeStamp, year, skuId, workingId, int.parse(pieces))
-        .then((_) {
-      ToastMessage.succesMessage(context,"Data Saved Successfully".tr);
-      Navigator.of(context).pop();
-      year = 0;
-      month = 0;
-      pieces = 0;
-      getFreshnessListOne();
-    });
+      if (month == "0" || pieces == "0") {
+        showAnimatedToastMessage("Error!", "Please add correct value in field".tr, false);
+        return;
+      }
+
+      if (year.toString() == DateTime
+          .now()
+          .year
+          .toString()) {
+        if (monthDifferenceValue < 1) {
+          showAnimatedToastMessage("Error!", "You can not enter data for current or previous month".tr, false);
+          return;
+        }
+      }
+
+      setState(() {
+        isLoading = false;
+      });
+      String timeStamp = DateTime
+          .now()
+          .millisecondsSinceEpoch
+          .toString();
+      String currentUserTimeStamp = "${userId}_$timeStamp";
+      print(currentUserTimeStamp);
+      await DatabaseHelper.insertTransFreshness(
+          month,
+          clientId,
+          currentUserTimeStamp,
+          year,
+          skuId,
+          workingId,
+          int.parse(pieces))
+          .then((_) {
+        showAnimatedToastMessage("Success".tr, "Data Saved Successfully".tr, true);
+
+        Navigator.of(context).pop();
+        year = 0;
+        month = 0;
+        pieces = 0;
+        getFreshnessListOne();
+      });
+    } catch (e) {
+      showAnimatedToastMessage("Error!", e.toString(), false);
+    }
   }
 
   searchFilter() {
@@ -315,8 +337,7 @@ class _Freshness_ScreenState extends State<Freshness_Screen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: generalAppBar(context,  languageController.isEnglish.value ? storeEnName : storeArName, userId, () {
         Navigator.of(context).pop();

@@ -44,8 +44,10 @@ import '../../Model/request_model.dart/sos_end_api_request_model.dart';
 import '../../Network/jp_http.dart';
 import '../../Network/sql_data_http_manager.dart';
 import '../Language/localization_controller.dart';
+import '../important_service/genral_checks_status.dart';
 import '../utils/app_constants.dart';
 import '../utils/appcolor.dart';
+import '../utils/services/general_checks_controller_call_function.dart';
 import '../utils/services/getting_gps.dart';
 import '../utils/services/take_image_and_save_to_folder.dart';
 import '../utils/toast/toast.dart';
@@ -73,6 +75,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
   String userRole = "";
   String workingId = "";
   String clientId = "";
+  String gcode = "";
   String checkInTime = "";
   List<File> _imageFiles = [];
   String workingDate="";
@@ -201,6 +204,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
     workingDate = sharedPreferences.getString(AppConstants.workingDate)!;
     userRole = sharedPreferences.getString(AppConstants.userRole)!;
     visitActivity = sharedPreferences.getString(AppConstants.visitActivity)!;
+    gcode = sharedPreferences.getString(AppConstants.gcode)!;
 
     print("USER ROLE");
     print(token);
@@ -312,11 +316,9 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                           VisitBeforeFixingUploadScreenCard(
                               screenName: "Before Fixing".tr,
                               moduleName: "Category".tr,
-                              onUploadTap: () async {
+                              onUploadTap: () {
 
-                                await uploadImagesToGcs(AppConstants.beforeFixing);
-
-                               beforeFixingUploadApi();
+                                uploadImagesToGcs(AppConstants.beforeFixing);
 
                               },
                               totalBeforeFixing: beforeFixingCountModel.totalBeforeFixing,
@@ -328,12 +330,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                           VisitBeforeFixingUploadScreenCard(
                               screenName: "Other Photo".tr,
                               moduleName: "Category".tr,
-                              onUploadTap: () async {
-
-                                await uploadImagesToGcs(AppConstants.otherPhoto);
-
-                                otherPhotoUploadApi();
-
+                              onUploadTap: ()  {
+                                 uploadImagesToGcs(AppConstants.otherPhoto);
                               },
                               totalBeforeFixing: otherPhotoCountModel.totalOtherPhotos,
                               uploadedData: otherPhotoCountModel.totalCategories,
@@ -344,10 +342,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                           VisitSosUploadScreenCard(
                               screenName: "Share Of Shelf".tr,
                               moduleName: "Records".tr,
-                              onUploadTap: () async {
-
+                              onUploadTap: ()  {
                                 sosUploadApi();
-
                               },
                               totalBeforeFixing: sosCountModel.totalSosItems,
                               uploadedData: sosCountModel.totalCategories,
@@ -358,10 +354,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                           VisitPlanogramUploadScreenCard(
                               screenName: "Planogram".tr,
                               moduleName: "Category".tr,
-                              onUploadTap: () async {
-                                await uploadImagesToGcs(AppConstants.planogram);
-
-                                planogramUploadApi();
+                              onUploadTap: ()  {
+                                 uploadImagesToGcs(AppConstants.planogram);
                               },
                               totalPlanogram: planogramCountModel.totalPlanogramItems,
                               totalAdhere: planogramCountModel.totalAdhere,
@@ -384,10 +378,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
                         if (planoguideCountModel.totalPlano > 0 )
                           VisitPlanoguideUploadScreenCard(
-                            onUploadTap: () async {
-                              await uploadImagesToGcs(AppConstants.planoguide);
-
-                              planoguideUploadApi();
+                            onUploadTap: ()  {
+                               uploadImagesToGcs(AppConstants.planoguide);
                             },
                             isUploaded: planoguideCountModel.totalNotUploaded == 0,
                             isUploadData: isPlanoguideFinishLoading,
@@ -426,10 +418,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
                         if (rtvCountModel.totalRtv > 0 )
                           VisitRtvUploadScreenCard(
-                            onUploadTap: () async {
-                              await uploadImagesToGcs(AppConstants.rtv);
-
-                              rtvUploadApi();
+                            onUploadTap: ()  {
+                               uploadImagesToGcs(AppConstants.rtv);
                             },
                             isUploaded: rtvCountModel.totalNotUpload == 0,
                             isUploadData: isRtvFinishLoading,
@@ -454,7 +444,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
                         if (freshnessGraphCountShowModel.totalFreshnessTaken > 0 )
                           VisitFreshnessUploadScreenCard(
-                            onUploadTap: () async {
+                            onUploadTap: ()  {
                               freshnessUploadApi();
                             },
                             isUploaded: freshnessGraphCountShowModel.totalNotUploadCount == 0,
@@ -466,10 +456,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
                         if (promoPlanGraphAndApiCountShowModel.totalPromoPLan > 0 )
                           VisitPlanoguideUploadScreenCard(
-                            onUploadTap: () async {
-                              await uploadImagesToGcs(AppConstants.promoPlan);
-
-                              promoPlanUploadApi();
+                            onUploadTap: () {
+                              uploadImagesToGcs(AppConstants.promoPlan);
                             },
                             isUploaded: promoPlanGraphAndApiCountShowModel.totalNotUploadCount == 0,
                             isUploadData: isPromoPlanFinishLoading,
@@ -497,10 +485,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
                         if (onePlusOneCountModel.totalRtv > 0 )
                           VisitRtvUploadScreenCard(
-                            onUploadTap: () async {
-                              await uploadImagesToGcs(AppConstants.onePlusOne);
-                              //
-                              onePlusOneUploadApi();
+                            onUploadTap: ()  {
+                               uploadImagesToGcs(AppConstants.onePlusOne);
                             },
                             isUploaded: onePlusOneCountModel.totalNotUpload == 0,
                             isUploadData: isOnePlusOneFinishLoading,
@@ -512,11 +498,9 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
                         if (osdCountModel.totalItems > 0 )
                           VisitOsdAndMarketIssueUploadScreenCard(
-                            onUploadTap: () async {
-                              print("OSDC Click");
-                              await uploadImagesToGcs(AppConstants.osdc);
-                              //
-                              osdUploadApi();
+                            onUploadTap: ()  {
+
+                               uploadImagesToGcs(AppConstants.osdc);
                             },
                             isUploaded: osdCountModel.totalNotUpload == 0,
                             isUploadData: isOsdFinishLoading,
@@ -526,11 +510,9 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
                         if (marketIssueCountModel.totalItems > 0 )
                           VisitOsdAndMarketIssueUploadScreenCard(
-                            onUploadTap: () async {
+                            onUploadTap: ()  {
 
-                              await uploadImagesToGcs(AppConstants.marketIssues);
-                              //
-                              marketIssueUploadApi();
+                               uploadImagesToGcs(AppConstants.marketIssues);
                             },
                             isUploaded: marketIssueCountModel.totalNotUpload == 0,
                             isUploadData: isMarketIssueFinishLoading,
@@ -540,13 +522,11 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
                         if (posCountModel.totalPosItems > 0 )
                           VisitRtvUploadScreenCard(
-                            onUploadTap: () async {
-                              await uploadImagesToGcs(AppConstants.pos);
-
-                              posUploadApi();
+                            onUploadTap: () {
+                               uploadImagesToGcs(AppConstants.pos);
                             },
                             isUploaded: posCountModel.totalNotUpload == 0,
-                            isUploadData: isRtvFinishLoading,
+                            isUploadData: isPosFinishLoading,
                             moduleName: "Total".tr,
                             screenName: "POS".tr,
                             uploadedData:posCountModel.quantity.toInt(),
@@ -578,114 +558,188 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
               ),
-              onPressed:isDataUploading ? null : isFinishButton ? (){
-                print((moduleIdList.contains("15")) &&
-                    (planoguideCountModel.totalUploaded.toString() == "null" ||
-                    planoguideCountModel.totalUploaded == 0));
-                if(userRole == "TMR") {
-                  if ((moduleIdList.contains("3") || moduleIdList.contains("17") ) && ((availabilityCountModel.totalSku != availabilityCountModel.totalUploaded) || availabilityCountModel.totalSku == 0 || availabilityCountModel.totalUploaded.toString() == "null")) {
-                    ToastMessage.errorMessage(context, "Please Mark All Sku's Availability".tr);
-                  } else if ((moduleIdList.contains("3")) && (tmrPickListCountModel.totalPickListItems != tmrPickListCountModel.totalPickReady)) {
-                    ToastMessage.errorMessage(context, "Please Wait for pick list response".tr);
-                  } else if ((moduleIdList.contains("15")) && (planoguideCountModel.totalUploaded.toString() == "null" || planoguideCountModel.totalUploaded == 0)) {
-                    ToastMessage.errorMessage(
-                        context, "PLease Add At lease one planoguide".tr);
-                  } else if ((moduleIdList.contains("16")) && (brandShareCountModel.totalUpload.toString() == "null" || brandShareCountModel.totalUpload == 0)) {
-                    ToastMessage.errorMessage(
-                        context, "Please Add at least one brand share".tr);
-                  } else {
-                    // print("Visit Finished Successfully");
+              onPressed:isDataUploading ? null : isFinishButton ? () async {
 
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (BuildContext context) {
-                        return StatefulBuilder(
-                            builder: (BuildContext context1, StateSetter menuState) {
-                              return AlertDialog(
-                                title:  Text('Visit'.tr),
-                                content:  Text('Are you sure you want to finish this visit?'.tr),
-                                actions: <Widget>[
-                                  isDataUploading ? const Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                       CircularProgressIndicator(color: MyColors.appMainColor2,),
-                                    ],
-                                  ) : Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop(); // Close the dialog
-                                        },
-                                        child:  Text('No'.tr),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          // Perform logout operation
-                                          finishVisit(menuState);
-                                        },
-                                        child:  Text('Yes'.tr),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              );
-                            }
-                        );
-                      },
-                    );
-                  }
+                List<String> latLong = gcode.split('=')[1].split(',');
+                String storeLat = latLong[0];
+                String storeLong = latLong[1];
+
+                GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+                if(generalStatusController.isLocationStatus.value) {
+
+                  await generalStatusController.getGeoLocationDistance(
+                      double.parse(generalStatusController.isLat.value), double.parse(generalStatusController.isLong.value), double.parse(storeLat), double.parse(storeLong));
+
+                  print("Store Lat Long");
+                  print(storeLong);
+                  print(storeLat);
+                  print("User Lat Long");
+                  print(generalStatusController.isLat);
+                  print(generalStatusController.isLong);
+                  print("Distance From Store");
+                  print(generalStatusController.isGeoFenceDistance.value);
+                }
+                if(generalStatusController.isVpnStatus.value) {
+                  showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false);
+                } else if(generalStatusController.isMockLocation.value) {
+                  showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false);
+                } else if(!generalStatusController.isAutoTimeStatus.value) {
+                  showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false);
+                } else if(!generalStatusController.isLocationStatus.value) {
+                  showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false);
+                } else if(generalStatusController.isGeoFenceDistance.value > 0.7) {
+                  showAnimatedToastMessage("Error!".tr, "You are outside of this store".tr, false);
                 } else {
+                  Get.delete<GeneralChecksStatusController>();
 
-                  if ((moduleIdList.contains("4")) && (pickListCountModel.totalPickListItems != pickListCountModel.totalPickReady) && (pickListCountModel.totalPickListItems != pickListCountModel.totalUpload) || pickListCountModel.totalUpload.toString() == "null") {
+                  print((moduleIdList.contains("15")) &&
+                      (planoguideCountModel.totalUploaded.toString() ==
+                          "null" ||
+                          planoguideCountModel.totalUploaded == 0));
+                  if (userRole == "TMR") {
+                    if ((moduleIdList.contains("3") ||
+                        moduleIdList.contains("17")) &&
+                        ((availabilityCountModel.totalSku !=
+                            availabilityCountModel.totalUploaded) ||
+                            availabilityCountModel.totalSku == 0 ||
+                            availabilityCountModel.totalUploaded.toString() ==
+                                "null")) {
+                      showAnimatedToastMessage(
+                          "Error!".tr, "Please Mark All Sku's Availability".tr,
+                          false);
+                    } else if ((moduleIdList.contains("3")) &&
+                        (tmrPickListCountModel.totalPickListItems !=
+                            tmrPickListCountModel.totalPickReady)) {
+                      showAnimatedToastMessage(
+                          "Error!".tr, "Please Wait for pick list response".tr,
+                          false);
+                    } else
+                    if ((moduleIdList.contains("15")) && (planoguideCountModel
+                        .totalUploaded.toString() == "null" ||
+                        planoguideCountModel.totalUploaded == 0)) {
+                      showAnimatedToastMessage("Error!".tr,
+                          "PLease Add At lease one planoguide".tr, false);
+                    } else if ((moduleIdList.contains("16")) &&
+                        (brandShareCountModel.totalUpload.toString() ==
+                            "null" || brandShareCountModel.totalUpload == 0)) {
+                      showAnimatedToastMessage("Error!".tr,
+                          "Please Add at least one brand share".tr, false);
+                    } else {
+                      // print("Visit Finished Successfully");
 
-                    ToastMessage.errorMessage(context, "Please make all pick list ready and upload it".tr);
-
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (BuildContext context) {
+                          return StatefulBuilder(
+                              builder: (BuildContext context1,
+                                  StateSetter menuState) {
+                                return AlertDialog(
+                                  title: Text('Visit'.tr),
+                                  content: Text(
+                                      'Are you sure you want to finish this visit?'
+                                          .tr),
+                                  actions: <Widget>[
+                                    isDataUploading ? const Row(
+                                      mainAxisAlignment: MainAxisAlignment
+                                          .center,
+                                      crossAxisAlignment: CrossAxisAlignment
+                                          .center,
+                                      children: [
+                                        CircularProgressIndicator(
+                                          color: MyColors.appMainColor2,),
+                                      ],
+                                    ) : Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      crossAxisAlignment: CrossAxisAlignment
+                                          .end,
+                                      children: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context)
+                                                .pop(); // Close the dialog
+                                          },
+                                          child: Text('No'.tr),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            // Perform logout operation
+                                            finishVisit(menuState);
+                                          },
+                                          child: Text('Yes'.tr),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                );
+                              }
+                          );
+                        },
+                      );
+                    }
                   } else {
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (BuildContext context) {
-                        return StatefulBuilder(
-                            builder: (BuildContext context1, StateSetter menuState) {
-                              return AlertDialog(
-                                title: Text('Visit'.tr),
-                                content: Text('Are you sure you want to finish this visit?'.tr),
-                                actions: <Widget>[
-                                  isDataUploading ? const Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      CircularProgressIndicator(color: MyColors.appMainColor2,),
-                                    ],
-                                  ) : Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop(); // Close the dialog
-                                        },
-                                        child:  Text('No'.tr),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          // Perform logout operation
-                                          finishVisit(menuState);
-                                        },
-                                        child:  Text('Yes'.tr),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              );
-                            }
-                        );
-                      },
-                    );
+                    if ((moduleIdList.contains("4")) &&
+                        (pickListCountModel.totalPickListItems !=
+                            pickListCountModel.totalPickReady) &&
+                        (pickListCountModel.totalPickListItems !=
+                            pickListCountModel.totalUpload) ||
+                        pickListCountModel.totalUpload.toString() == "null") {
+                      // ToastMessage.errorMessage(context, "Please make all pick list ready and upload it".tr);
+                      showAnimatedToastMessage("Error!".tr,
+                          "Please make all pick list ready and upload it".tr,
+                          false);
+                    } else {
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (BuildContext context) {
+                          return StatefulBuilder(
+                              builder: (BuildContext context1,
+                                  StateSetter menuState) {
+                                return AlertDialog(
+                                  title: Text('Visit'.tr),
+                                  content: Text(
+                                      'Are you sure you want to finish this visit?'
+                                          .tr),
+                                  actions: <Widget>[
+                                    isDataUploading ? const Row(
+                                      mainAxisAlignment: MainAxisAlignment
+                                          .center,
+                                      crossAxisAlignment: CrossAxisAlignment
+                                          .center,
+                                      children: [
+                                        CircularProgressIndicator(
+                                          color: MyColors.appMainColor2,),
+                                      ],
+                                    ) : Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      crossAxisAlignment: CrossAxisAlignment
+                                          .end,
+                                      children: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context)
+                                                .pop(); // Close the dialog
+                                          },
+                                          child: Text('No'.tr),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            // Perform logout operation
+                                            finishVisit(menuState);
+                                          },
+                                          child: Text('Yes'.tr),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                );
+                              }
+                          );
+                        },
+                      );
+                    }
                   }
                 }
               } : null,
@@ -1142,6 +1196,9 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         setState(() {
           isPlanoguideFinishLoading = false;
         });
+
+        planoguideUploadApi();
+
       }
 
       if(moduleName == AppConstants.rtv) {
@@ -1189,6 +1246,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         setState(() {
           isRtvFinishLoading = false;
         });
+
+        rtvUploadApi();
       }
 
       if(moduleName == AppConstants.promoPlan) {
@@ -1234,6 +1293,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         setState(() {
           isPromoPlanFinishLoading = false;
         });
+
+        promoPlanUploadApi();
       }
 
       if(moduleName == AppConstants.beforeFixing) {
@@ -1279,6 +1340,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         setState(() {
           isBeforeFixingFinishLoading = false;
         });
+
+        beforeFixingUploadApi();
       }
 
       if(moduleName == AppConstants.otherPhoto) {
@@ -1324,6 +1387,9 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         setState(() {
           isOtherPhotoFinishLoading = false;
         });
+
+        otherPhotoUploadApi();
+
       }
 
       if(moduleName == AppConstants.planogram) {
@@ -1369,6 +1435,9 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         setState(() {
           isPlanogramFinishLoading = false;
         });
+
+        planogramUploadApi();
+
       }
 
       if(moduleName == AppConstants.marketIssues) {
@@ -1415,6 +1484,9 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         setState(() {
           isMarketIssueFinishLoading = false;
         });
+
+        marketIssueUploadApi();
+
       }
 
       if(moduleName == AppConstants.pos) {
@@ -1461,6 +1533,9 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         setState(() {
           isPosFinishLoading = false;
         });
+
+        posUploadApi();
+
       }
 
       if(moduleName == AppConstants.osdc) {
@@ -1508,6 +1583,9 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         setState(() {
           isOsdFinishLoading = false;
         });
+
+        osdUploadApi();
+
       }
 
       if(moduleName == AppConstants.onePlusOne) {
@@ -1569,6 +1647,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         setState(() {
           isOnePlusOneFinishLoading = false;
         });
+
+        onePlusOneUploadApi();
       }
 
       return true;
@@ -1594,7 +1674,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
          isOnePlusOneFinishLoading = false;
          isPosFinishLoading = false;
       });
-      ToastMessage.errorMessage(context, "Uploading images error please try again!".tr);
+      showAnimatedToastMessage("Error!".tr,"Uploading images error please try again!".tr,false);
       return false;
     }
   }
@@ -1723,9 +1803,13 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       isAvlUp = true,
       setState(() {
       }),
-      ToastMessage.succesMessage(context, "Availability data Uploaded Successfully".tr),
+
+      showAnimatedToastMessage("Success".tr, "Availability data Uploaded Successfully".tr, true),
+
+      // ToastMessage.succesMessage(context, "Availability data Uploaded Successfully".tr),
     }).catchError((onError)=>{
-      ToastMessage.errorMessage(context, onError.toString()),
+      showAnimatedToastMessage("Error!".tr,onError.toString(),false),
+      // ToastMessage.errorMessage(context, onError.toString()),
       print(onError.toString()),
       setState(() {
         isAvlUp = false;
@@ -1794,9 +1878,10 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       setState(() {
         isBeforeFixingFinishLoading  = false;
       }),
-      ToastMessage.succesMessage(context, "Before Fixing Data Uploaded Successfully".tr),
+      showAnimatedToastMessage("Success".tr, "Before Fixing Data Uploaded Successfully".tr, true),
+      // ToastMessage.succesMessage(context, "Before Fixing Data Uploaded Successfully".tr),
     }).catchError((onError)=>{
-      ToastMessage.errorMessage(context, onError.toString()),
+      showAnimatedToastMessage("Error!".tr,onError.toString(),false),
       print(onError.toString()),
       setState(() {
         isBeforeFixingFinishLoading = false;
@@ -1852,9 +1937,12 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       setState(() {
         isOtherPhotoFinishLoading  = false;
       }),
-      ToastMessage.succesMessage(context, "Other Photo Data Uploaded Successfully".tr),
+
+      showAnimatedToastMessage("Success".tr, "Other Photo Data Uploaded Successfully".tr, true),
+
+      // ToastMessage.succesMessage(context, "Other Photo Data Uploaded Successfully".tr),
     }).catchError((onError)=>{
-      ToastMessage.errorMessage(context, onError.toString()),
+      showAnimatedToastMessage("Error!".tr,onError.toString(),false),
       print(onError.toString()),
       setState(() {
         isOtherPhotoFinishLoading = false;
@@ -1910,12 +1998,15 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       setState(() {
         isSosFinishLoading  = false;
       }),
-      ToastMessage.succesMessage(context, "Share Of Shelf Data Uploaded Successfully".tr),
+
+      showAnimatedToastMessage("Success".tr, "Share Of Shelf Data Uploaded Successfully".tr, true),
+
+      // ToastMessage.succesMessage(context, "Share Of Shelf Data Uploaded Successfully".tr),
     }).catchError((onError)=>{
-      ToastMessage.errorMessage(context, onError.toString()),
+      showAnimatedToastMessage("Error!".tr,onError.toString(),false),
       print(onError.toString()),
       setState(() {
-        isOtherPhotoFinishLoading = false;
+        isSosFinishLoading = false;
       }),
     });
 
@@ -1965,11 +2056,13 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         print("************ PickList Values **********************"),
         isPickUp = true,
         setState(() {}),
-        ToastMessage.succesMessage(
-            context, "Pick List Uploaded Successfully".tr),
-      }).catchError((onError) =>
-      {
-        ToastMessage.errorMessage(context, onError.toString()),
+
+        showAnimatedToastMessage("Success".tr, "Pick List Uploaded Successfully".tr, true),
+
+        // ToastMessage.succesMessage(
+        //     context, "Pick List Uploaded Successfully".tr),
+      }).catchError((onError) => {
+        showAnimatedToastMessage("Error!".tr,onError.toString(),false),
         print(onError.toString()),
         setState(() {
           isPickUp = false;
@@ -2045,9 +2138,12 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       setState(() {
         isShelfShareFinishLoading = false;
       }),
-      ToastMessage.succesMessage(context, "Share Shelf Data Uploaded Successfully".tr),
+
+      showAnimatedToastMessage("Success".tr, "Share Shelf Data Uploaded Successfully".tr, true),
+
+      // ToastMessage.succesMessage(context, "Share Shelf Data Uploaded Successfully".tr),
     }).catchError((onError)=>{
-      ToastMessage.errorMessage(context, onError.toString()),
+      showAnimatedToastMessage("Error!".tr,onError.toString(),false),
       print(onError.toString()),
       setState(() {
         isShelfShareFinishLoading = false;
@@ -2106,9 +2202,12 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       setState(() {
         isPlanoguideFinishLoading  = false;
       }),
-      ToastMessage.succesMessage(context, "Planoguide Data Uploaded Successfully".tr),
+
+      showAnimatedToastMessage("Success".tr, "Planoguide Data Uploaded Successfully".tr, true),
+
+      // ToastMessage.succesMessage(context, "Planoguide Data Uploaded Successfully".tr),
     }).catchError((onError)=>{
-      ToastMessage.errorMessage(context, onError.toString()),
+      showAnimatedToastMessage("Error!".tr,onError.toString(),false),
       print(onError.toString()),
       setState(() {
         isPlanoguideFinishLoading = false;
@@ -2164,10 +2263,12 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         isRtvFinishLoading = false;
       }),
 
-      ToastMessage.succesMessage(context, "RTV Data Uploaded Successfully".tr),
+      showAnimatedToastMessage("Success".tr, "RTV Data Uploaded Successfully".tr, true),
+
+      // ToastMessage.succesMessage(context, "RTV Data Uploaded Successfully".tr),
     }).catchError((e)=>{
       print(e.toString()),
-      ToastMessage.errorMessage(context, e.toString()),
+      showAnimatedToastMessage("Error!".tr,e.toString(),false),
         setState((){
       isRtvFinishLoading = false;
     }),
@@ -2227,11 +2328,13 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         isPriceCheckFinishLoading = false;
       }),
 
-      ToastMessage.succesMessage(context, "Price Check Data Uploaded Successfully".tr),
+      showAnimatedToastMessage("Success".tr, "Price Check Data Uploaded Successfully".tr, true),
+
+      // ToastMessage.succesMessage(context, "Price Check Data Uploaded Successfully".tr),
 
     }).catchError((e) =>{
       print(e.toString()),
-      ToastMessage.errorMessage(context, e.toString()),
+      showAnimatedToastMessage("Error!".tr,e.toString(),false),
       setState((){
         isPriceCheckFinishLoading = false;
       }),
@@ -2289,16 +2392,17 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         setState(() {
           isPickListFinishLoading = false;
         }),
-        ToastMessage.succesMessage(context, "Pick List Uploaded Successfully".tr),
+        showAnimatedToastMessage("Success".tr, "Pick List Uploaded Successfully".tr, true),
+        // ToastMessage.succesMessage(context, "Pick List Uploaded Successfully".tr),
       }).catchError((e) =>
       {
         setState(() {
           isPickListFinishLoading = false;
         }),
-        ToastMessage.errorMessage(context, e.toString()),
+        showAnimatedToastMessage("Error!".tr,e.toString(),false),
       });
     } else {
-      ToastMessage.errorMessage(context, "Please complete your picklist".tr);
+      showAnimatedToastMessage("Error!".tr,"Please complete your picklist".tr,false);
     }
   }
 
@@ -2357,12 +2461,12 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       setState((){
         isFreshnessFinishLoading = false;
       }),
-
-      ToastMessage.succesMessage(context, "Freshness Data Uploaded Successfully".tr),
+      showAnimatedToastMessage("Success".tr, "Freshness Data Uploaded Successfully".tr, true),
+      // ToastMessage.succesMessage(context, "Freshness Data Uploaded Successfully".tr),
 
     }).catchError((e) =>{
       print(e.toString()),
-      ToastMessage.errorMessage(context, e.toString()),
+      showAnimatedToastMessage("Error!".tr,e.toString(),false),
       setState((){
         isFreshnessFinishLoading = false;
       }),
@@ -2419,12 +2523,12 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       setState((){
         isStockFinishLoading = false;
       }),
-
-      ToastMessage.succesMessage(context, "Stock Data Uploaded Successfully".tr),
+      showAnimatedToastMessage("Success".tr, "Stock Data Uploaded Successfully".tr, true),
+      // ToastMessage.succesMessage(context, "Stock Data Uploaded Successfully".tr),
 
     }).catchError((e)=> {
       print(e.toString()),
-      ToastMessage.errorMessage(context, e.toString()),
+      showAnimatedToastMessage("Error!".tr,e.toString(),false),
       setState((){
         isStockFinishLoading = false;
       }),
@@ -2491,12 +2595,12 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       setState((){
         isPromoPlanFinishLoading = false;
       }),
-
-      ToastMessage.succesMessage(context, "Promotions Data Uploaded Successfully".tr),
+      showAnimatedToastMessage("Success".tr, "Promotions Data Uploaded Successfully".tr, true),
+      // ToastMessage.succesMessage(context, "Promotions Data Uploaded Successfully".tr),
 
     }).catchError((e) =>{
       print(e.toString()),
-      ToastMessage.errorMessage(context, e.toString()),
+      showAnimatedToastMessage("Error!".tr,e.toString(),false),
       setState((){
         isPromoPlanFinishLoading = false;
       }),
@@ -2555,11 +2659,13 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         isPlanogramFinishLoading = false;
       }),
 
-      ToastMessage.succesMessage(context, "Planogram Data Uploaded Successfully".tr),
+      showAnimatedToastMessage("Success".tr, "Planogram Data Uploaded Successfully".tr, true),
+
+      // ToastMessage.succesMessage(context, "Planogram Data Uploaded Successfully".tr),
 
     }).catchError((e) =>{
       print(e.toString()),
-      ToastMessage.errorMessage(context, e.toString()),
+      showAnimatedToastMessage("Error!".tr,e.toString(),false),
       setState((){
         isPlanogramFinishLoading = false;
       }),
@@ -2617,12 +2723,12 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       setState((){
         isPosFinishLoading = false;
       }),
-
-      ToastMessage.succesMessage(context, "POS Data Uploaded Successfully".tr),
+      showAnimatedToastMessage("Success".tr, "POS Data Uploaded Successfully".tr, true),
+      // ToastMessage.succesMessage(context, "POS Data Uploaded Successfully".tr),
 
     }).catchError((e) =>{
       print(e.toString()),
-      ToastMessage.errorMessage(context, e.toString()),
+      showAnimatedToastMessage("Error!".tr,e.toString(),false),
       setState((){
         isPosFinishLoading = false;
       }),
@@ -2681,11 +2787,12 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         isMarketIssueFinishLoading = false;
       }),
 
-      ToastMessage.succesMessage(context, "Market Issue Data Uploaded Successfully".tr),
+      showAnimatedToastMessage("Success".tr, "Market Issue Data Uploaded Successfully".tr, true),
+      // ToastMessage.succesMessage(context, "Market Issue Data Uploaded Successfully".tr),
 
     }).catchError((e) =>{
       print(e.toString()),
-      ToastMessage.errorMessage(context, e.toString()),
+      showAnimatedToastMessage("Error!".tr,e.toString(),false),
       setState((){
         isMarketIssueFinishLoading = false;
       }),
@@ -2743,12 +2850,12 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       setState((){
         isOnePlusOneFinishLoading = false;
       }),
-
-      ToastMessage.succesMessage(context, "1 + 1 Data Uploaded Successfully".tr),
+      showAnimatedToastMessage("Success".tr, "1 + 1 Data Uploaded Successfully".tr, true),
+      // ToastMessage.succesMessage(context, "1 + 1 Data Uploaded Successfully".tr),
 
     }).catchError((e) =>{
       print(e.toString()),
-      ToastMessage.errorMessage(context, e.toString()),
+      showAnimatedToastMessage("Error!".tr,e.toString(),false),
       setState((){
         isOnePlusOneFinishLoading = false;
       }),
@@ -2794,12 +2901,6 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
         });
       });
-
-      // for(int j = 0; j < osdDataImagesList.length; j++ ) {
-      //   if(osdImageList[i].id == osdDataImagesList[j].id) {
-      //     osdImageList[i].osdImagesList.add(osdDataImagesList[i]);
-      //   }
-      // }
     }
 
     SaveOsdData saveOsdData = SaveOsdData(
@@ -2828,12 +2929,12 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       setState((){
         isOsdFinishLoading = false;
       }),
-
-      ToastMessage.succesMessage(context, "OSD Data Uploaded Successfully".tr),
+      showAnimatedToastMessage("Success".tr, "OSD Data Uploaded Successfully".tr, true),
+      // ToastMessage.succesMessage(context, "OSD Data Uploaded Successfully".tr),
 
     }).catchError((e) =>{
       print(e.toString()),
-      ToastMessage.errorMessage(context, e.toString()),
+      showAnimatedToastMessage("Error!".tr,e.toString(),false),
       setState((){
         isOsdFinishLoading = false;
       }),
@@ -2881,15 +2982,15 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
           menuState(() {
             isDataUploading = false;
           }),
-
-          ToastMessage.succesMessage(context, "Visit Ended Successfully".tr),
+          showAnimatedToastMessage("Success".tr, "Visit Ended Successfully".tr, true),
+          // ToastMessage.succesMessage(context, "Visit Ended Successfully".tr),
           Navigator.popUntil(context, (route) => count++ == 3),
         }).catchError((e) =>{
           print(e.toString()),
           menuState(() {
             isDataUploading = false;
           }),
-          ToastMessage.errorMessage(context, e.toString()),
+          showAnimatedToastMessage("Error!".tr,e.toString(),false),
         });
 
       }

@@ -6,12 +6,14 @@ import 'package:cstore/screens/utils/app_constants.dart';
 import 'package:cstore/screens/utils/services/take_image_and_save_to_folder.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Model/database_model/promo_plan_graph_api_count_model.dart';
 import '../../Model/database_model/sys_osdc_reason_model.dart';
 import '../../Model/database_model/trans_promo_plan_list_model.dart';
+import '../Language/localization_controller.dart';
 import '../utils/appcolor.dart';
 import '../utils/services/image_picker.dart';
 import '../utils/toast/toast.dart';
@@ -30,8 +32,9 @@ class PromoPlan_scrren extends StatefulWidget {
 }
 
 class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
-
-  String storeName = "";
+  final languageController = Get.put(LocalizationController());
+  String storeEnName = "";
+  String storeArName = "";
   String userName = "";
   String workingId = "";
   String imageBaseUrl = "";
@@ -64,7 +67,8 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
 
     SharedPreferences sharedPreferences =  await SharedPreferences.getInstance();
 
-    storeName  = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeEnName  = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeArName  = sharedPreferences.getString(AppConstants.storeArNAme)!;
     userName  = sharedPreferences.getString(AppConstants.userName)!;
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
     imageBaseUrl = sharedPreferences.getString(AppConstants.imageBaseUrl)!;
@@ -73,7 +77,6 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
 
     });
     getPromoPlanTransData("");
-    print(storeName);
   }
 
 
@@ -88,7 +91,6 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
       });
       promoReason = value;
     });
-    print(promoReason[0].en_name);
   }
 
   getPromoPlanTransData(String promoReason) async {
@@ -187,14 +189,12 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
 
     if (promoTransData[index].promoStatus.isEmpty ||reasonValue==-1) {
       if (isMessageShow) {
-        ToastMessage.errorMessage(
-            context, "Please fill the form");
+        showAnimatedToastMessage("Error!".tr, "Please fill the form".tr, false);
       }
       return;
     } else if( promoTransData[index].imageFile == null) {
       if (isMessageShow) {
-        ToastMessage.errorMessage(
-            context, "Please take an image");
+        showAnimatedToastMessage("Error!".tr, "Please take an image".tr, false);
       }
       return;
     }
@@ -216,8 +216,7 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
             ).then((_) {
 
               if (isMessageShow) {
-                ToastMessage.succesMessage(context, "Data stored successfully");
-                print("Update data promoplan successfully");
+                showAnimatedToastMessage("Success".tr, "Data Saved Successfully".tr, true);
                 promoTransData[index].actStatus = 1;
               }
               getGraphCount();
@@ -227,7 +226,7 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
             });
       });
     } catch (error) {
-      ToastMessage.errorMessage(context, error.toString());
+      showAnimatedToastMessage("Error!".tr,error.toString(), false);
       setState(() {
         isBtnLoading = false;
       });
@@ -236,7 +235,7 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
 
   searchFilter() {
 
-    if(currentSelectedValue == "Yes") {
+    if(currentSelectedValue == "Yes".tr) {
       if(isYesFilter) {
         currentSelectedValue = "";
         isYesFilter = false;
@@ -245,9 +244,9 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
         isYesFilter = true;
         isNoFilter = false;
         isPendingFilter = false;
-        getPromoPlanTransData("Yes");
+        getPromoPlanTransData("Yes".tr);
       }
-    } else if(currentSelectedValue == "No") {
+    } else if(currentSelectedValue == "No".tr) {
       if(isNoFilter) {
         currentSelectedValue = "";
         isNoFilter = false;
@@ -256,7 +255,7 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
         isYesFilter = false;
         isNoFilter = true;
         isPendingFilter = false;
-        getPromoPlanTransData("No");
+        getPromoPlanTransData("No".tr);
       }
     } else {
       if(isPendingFilter) {
@@ -267,7 +266,7 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
         isYesFilter = false;
         isNoFilter = false;
         isPendingFilter = true;
-        getPromoPlanTransData("Pending");
+        getPromoPlanTransData("Pending".tr);
       }
     }
     setState(() {
@@ -279,7 +278,7 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F7FD),
-      appBar: generalAppBar(context, storeName, userName, (){
+      appBar: generalAppBar(context, languageController.isEnglish.value ? storeEnName:storeArName, userName, (){
         Navigator.of(context).pop();
       }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
 
@@ -298,14 +297,14 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
                       child: InkWell(
                         onTap: (){
                           setState(() {
-                            currentSelectedValue = "Yes";
+                            currentSelectedValue = "Yes".tr;
                             searchFilter();
 
                           });
                         },
                         child: PercentIndicator(
-                            isSelected: currentSelectedValue == "Yes",
-                            titleText: "Yes",
+                            isSelected: currentSelectedValue == "Yes".tr,
+                            titleText: "Yes".tr,
                             isIcon: true,
                             percentColor: MyColors.greenColor,
                             iconData: Icons.check_circle,
@@ -317,13 +316,13 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
                       child: InkWell(
                         onTap: (){
                           setState(() {
-                            currentSelectedValue = "No";
+                            currentSelectedValue = "No".tr;
                             searchFilter();
                           });
                         },
                         child: PercentIndicator(
-                            isSelected: currentSelectedValue == "No",
-                            titleText: "No",
+                            isSelected: currentSelectedValue == "No".tr,
+                            titleText: "No".tr,
                             percentColor: MyColors.backbtnColor,
                             isIcon: true,
                             iconData: Icons.warning_amber_rounded,
@@ -335,13 +334,13 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
                       child: InkWell(
                         onTap: (){
                           setState(() {
-                            currentSelectedValue = "Pending";
+                            currentSelectedValue = "Pending".tr;
                             searchFilter();
                           });
                         },
                         child: PercentIndicator(
-                            isSelected: currentSelectedValue == "Pending",
-                            titleText: "Pending",
+                            isSelected: currentSelectedValue == "Pending".tr,
+                            titleText: "Pending".tr,
                             percentColor: MyColors.warningColor,
                             isIcon: true,
                             iconData: Icons.pending,
@@ -357,7 +356,7 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
                   height: 60,
                   child: MyLoadingCircle()),) :
 
-              promoTransData.isEmpty ? const Center(child: Text("No Data Available"),)
+              promoTransData.isEmpty ?  Center(child: Text("No Data Found".tr),)
                   : ListView.builder(
                   itemCount: promoTransData.length,
                   shrinkWrap: true,
@@ -368,10 +367,10 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
                   isBtnLoading:isBtnLoading,
                   actStatus: promoTransData[index].actStatus,
                   promoStatus: promoTransData[index].promoStatus,
-                  skuName: promoTransData[index].skuEnName,
+                  skuName:languageController.isEnglish.value?  promoTransData[index].skuEnName:  promoTransData[index].skuArName,
                   skuImage: "${imageBaseUrl}sku_pictures/${promoTransData[index].skuImageName}",
-                  categoryName: promoTransData[index].catEnName,
-                  brandName: promoTransData[index].brandEnName,
+                  categoryName:languageController.isEnglish.value? promoTransData[index].catEnName:promoTransData[index].catArName,
+                  brandName:languageController.isEnglish.value?  promoTransData[index].brandEnName:  promoTransData[index].brandArName,
                   fromDate: promoTransData[index].promoFrom,
                   toDate: promoTransData[index].promoTo,
                   osdType: promoTransData[index].osdType,

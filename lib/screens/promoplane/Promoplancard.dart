@@ -7,6 +7,7 @@ import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:cstore/screens/widget/drop_downs.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../Model/database_model/sys_osdc_reason_model.dart';
 import '../widget/elevated_buttons.dart';
@@ -60,7 +61,7 @@ class PromoPlanCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            promoStatus == "Yes" ? const Icon(Icons.check_circle_rounded,color: MyColors.greenColor,) :  promoStatus == "No" ? const Icon(Icons.warning_amber_rounded,color: MyColors.backbtnColor,) : const Icon(Icons.pending,color: MyColors.warningColor,) ,
+            promoStatus == "Yes".tr ? const Icon(Icons.check_circle_rounded,color: MyColors.greenColor,) :  promoStatus == "No" ? const Icon(Icons.warning_amber_rounded,color: MyColors.backbtnColor,) : const Icon(Icons.pending,color: MyColors.warningColor,) ,
            Card(
              elevation: 2,
              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight:Radius.circular(20))),
@@ -96,15 +97,15 @@ class PromoPlanCard extends StatelessWidget {
                      ],
                    ),
                  ),
-                  PromoPlanCardRowItems(title: "Category",value: categoryName,isWhiteBackGround: false,),
-                  PromoPlanCardRowItems(title: "Brand",value: brandName,isWhiteBackGround: true,),
-                  PromoPlanCardRowItems(title: "From",value: fromDate,isWhiteBackGround: false,),
-                  PromoPlanCardRowItems(title: "To",value: toDate,isWhiteBackGround: true,),
-                  PromoPlanCardRowItems(title: "OSD Type",value: osdType,isWhiteBackGround: false,),
-                  PromoPlanCardRowItems(title: "Pieces",value: pieces,isWhiteBackGround: true,),
-                  PromoPlanCardRowItems(title: "Promo Scope",value: promoScope,isWhiteBackGround: false,),
-                  PromoPlanCardRowItems(title: "Promo Price",value: "$promoPrice SAR",isWhiteBackGround: true,),
-                  PromoPlanCardRowItems(title: "Left Over Action",value: leftOverPieces,isWhiteBackGround: false,),
+                  PromoPlanCardRowItems(title: "Category".tr,value: categoryName,isWhiteBackGround: false,),
+                  PromoPlanCardRowItems(title: "Brands".tr,value: brandName,isWhiteBackGround: true,),
+                  PromoPlanCardRowItems(title: "From".tr,value: fromDate,isWhiteBackGround: false,),
+                  PromoPlanCardRowItems(title: "To".tr,value: toDate,isWhiteBackGround: true,),
+                  PromoPlanCardRowItems(title: "OSD Type".tr,value: osdType,isWhiteBackGround: false,),
+                  PromoPlanCardRowItems(title: "Pieces".tr,value: pieces,isWhiteBackGround: true,),
+                  PromoPlanCardRowItems(title: "Promo Scope".tr,value: promoScope,isWhiteBackGround: false,),
+                  PromoPlanCardRowItems(title: "Promo Price".tr,value: "$promoPrice SAR",isWhiteBackGround: true,),
+                  PromoPlanCardRowItems(title: "Left Over Action".tr,value: leftOverPieces,isWhiteBackGround: false,),
                ],
              ),
            ),

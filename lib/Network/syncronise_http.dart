@@ -23,9 +23,9 @@ class SyncroniseHTTP {
     await Future.delayed(const Duration(seconds: 0)).then((value) async {
       response = await _handler.post(Uri.parse(url), JourneyPlanRequestModel(username: userName).toJson(), token);
     });
-    // print("_____________JSON DATA_______________");
-    // print(jsonEncode(response['data'][0]['sys_dashboard']));
-    // print("_________________________________");
+    print("_____________JSON DATA_______________");
+    print(jsonEncode(response['data'][0]['sys_app_setting']));
+    print("_________________________________");
 
     SyncroniseResponseModel syncResponseData =
         SyncroniseResponseModel.fromJson(response);

@@ -24,14 +24,14 @@ class ToastMessage {
 
 showAnimatedToastMessage(String title,String message, bool isSuccess) {
   Get.snackbar(
-    titleText: Text(title,style:  const TextStyle(color: MyColors.whiteColor),),
-    messageText: Text(message,style:  const TextStyle(color: MyColors.whiteColor),),
-    title,message,
+    titleText: Text(title.tr,style:  const TextStyle(color: MyColors.whiteColor),),
+    messageText: Text(message.tr,style:  const TextStyle(color: MyColors.whiteColor),),
+    title.tr,message.tr,
     snackPosition: SnackPosition.TOP,
     backgroundColor: MyColors.whiteColor,
     backgroundGradient: isSuccess ? const LinearGradient(colors: [
-      MyColors.appMainColor,
-      MyColors.appMainColor
+      MyColors.greenColor,
+      MyColors.greenColor
     ]) : const LinearGradient(
         colors: [
           MyColors.backbtnColor,

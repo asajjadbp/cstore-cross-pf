@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cstore/screens/proof_of_sale/widgets/proof_of_sale_card.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,6 +9,7 @@ import '../../Database/db_helper.dart';
 import '../../Database/table_name.dart';
 import '../../Model/database_model/show_proof_of_sale_model.dart';
 import '../../Model/database_model/show_trans_osdc_model.dart';
+import '../Language/localization_controller.dart';
 import '../utils/app_constants.dart';
 import '../utils/toast/toast.dart';
 import '../widget/app_bar_widgets.dart';
@@ -23,11 +25,13 @@ class ShowProofOfSaleScreen extends StatefulWidget {
 }
 
 class _ShowProofOfSaleScreenState extends State<ShowProofOfSaleScreen> {
+  final languageController = Get.put(LocalizationController());
   List<File> _imageFiles = [];
   List<ShowProofOfSaleModel> transData = [];
   bool isLoading = false;
   String workingId = "";
-  String storeName = '';
+  String storeEnName = '';
+  String storeArName = '';
 
   @override
   void initState() {
@@ -38,7 +42,8 @@ class _ShowProofOfSaleScreenState extends State<ShowProofOfSaleScreen> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
-    storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeEnName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeArName = sharedPreferences.getString(AppConstants.storeArNAme)!;
     getTransPosOne();
   }
   Future<void> getTransPosOne() async {
@@ -99,10 +104,10 @@ class _ShowProofOfSaleScreenState extends State<ShowProofOfSaleScreen> {
         }
       } else {
         // print('Permission denied');
-        ToastMessage.errorMessage(context, "Permissing denied");
+        ToastMessage.errorMessage(context, "Permissing denied".tr);
       }
     } catch (e) {
-      ToastMessage.errorMessage(context, "Permissing denied");
+      ToastMessage.errorMessage(context, "Permissing denied".tr);
     }
   }
   void deletePhoto(int recordId, String imgName) async {
@@ -118,7 +123,7 @@ class _ShowProofOfSaleScreenState extends State<ShowProofOfSaleScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F7FD),
-      appBar: generalAppBar(context, storeName, "View POS", (){
+      appBar: generalAppBar(context, languageController.isEnglish.value ? storeEnName :storeArName, "View POS".tr, (){
         Navigator.of(context).pop();
       }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
 
@@ -128,8 +133,8 @@ class _ShowProofOfSaleScreenState extends State<ShowProofOfSaleScreen> {
         child: MyLoadingCircle(),
       )
           : transData.isEmpty
-          ? const Center(
-        child: Text("No data found"),
+          ?  Center(
+        child: Text("No Data Found".tr),
       )
           : ListView.builder(
           padding: const EdgeInsets.only(top: 10),
@@ -139,8 +144,8 @@ class _ShowProofOfSaleScreenState extends State<ShowProofOfSaleScreen> {
             return ProofOfSaleCard(
                 imageName:transData[i].imageFile as File,
                 time:transData[i].dateTime!,
-                proName: transData[i].pro_en_name,
-                catName: transData[i].cat_en_name,
+                proName: languageController.isEnglish.value ? transData[i].pro_en_name:transData[i].pro_ar_name,
+                catName:languageController.isEnglish.value ? transData[i].cat_en_name: transData[i].cat_ar_name,
                 name: transData[i].name,
                 phone: transData[i].phone,
                 amount: transData[i].amount,
@@ -149,21 +154,21 @@ class _ShowProofOfSaleScreenState extends State<ShowProofOfSaleScreen> {
                   showDialog(context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: const Text("Are you sure you want to delete this item Permanently",
-                          style: TextStyle(
+                        title:  Text("Are you sure you want to delete this item Permanently".tr,
+                          style: const TextStyle(
                             fontSize: 13,
                           ),),
                         actions: [
                           TextButton.icon(
                             icon: const Icon(Icons.cancel_outlined),
-                            label: const Text("No"),
+                            label:  Text("No".tr),
                             onPressed: () {
                               Navigator.of(context).pop(true);
                             },
                           ),
                           TextButton.icon(
                             icon: const Icon(Icons.check),
-                            label: const Text("Yes"),
+                            label:  Text("Yes".tr),
                             onPressed: () {
                               deletePhoto(transData[i].id, transData[i].image_name);
                               Navigator.of(context).pop(true);

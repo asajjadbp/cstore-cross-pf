@@ -4,12 +4,14 @@ import 'package:cstore/Model/database_model/trans_add_proof_of_sale_model.dart';
 import 'package:cstore/screens/proof_of_sale/show_proof_of_sale.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Database/db_helper.dart';
 import '../../Model/database_model/category_model.dart';
 import '../../Model/database_model/client_model.dart';
 import '../../Model/database_model/sys_photo_type.dart';
+import '../Language/localization_controller.dart';
 import '../utils/app_constants.dart';
 import '../utils/appcolor.dart';
 import '../utils/services/image_picker.dart';
@@ -33,7 +35,9 @@ class ProofOfSale extends StatefulWidget {
 }
 
 class _ProofOfSaleState extends State<ProofOfSale> {
-  String storeName = "";
+  final languageController = Get.put(LocalizationController());
+  String storeEnName = "";
+  String storeArName = "";
   String workingId = "";
   TextEditingController valueControllerName = TextEditingController();
   TextEditingController valueControllerEmail = TextEditingController();
@@ -67,7 +71,8 @@ class _ProofOfSaleState extends State<ProofOfSale> {
   }
   getUserData() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeEnName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeArName = sharedPreferences.getString(AppConstants.storeArNAme)!;
     userName = sharedPreferences.getString(AppConstants.userName)!;
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
     clientId = sharedPreferences.getString(AppConstants.clientId)!;
@@ -138,7 +143,7 @@ class _ProofOfSaleState extends State<ProofOfSale> {
         valueControllerQuantity.text == "" ||
         valueControllerAmount.text == "" ||
         imageFile == null) {
-      ToastMessage.errorMessage(context, "Please fill the form and take image");
+      showAnimatedToastMessage("Error!".tr,"Please fill the form and take image".tr, false);
       return;
     }
     setState(() {
@@ -164,8 +169,7 @@ class _ProofOfSaleState extends State<ProofOfSale> {
                 date_time: now.toString(),
                 working_id: int.parse(workingId)))
             .then((_) {
-          ToastMessage.succesMessage(context, "Data store successfully");
-
+          showAnimatedToastMessage("Success".tr,"Data Saved Successfully".tr, true);
           imageFile = null;
         });
       });
@@ -176,7 +180,7 @@ class _ProofOfSaleState extends State<ProofOfSale> {
       setState(() {
         isBtnLoading = false;
       });
-      ToastMessage.errorMessage(context, error.toString());
+      showAnimatedToastMessage("Error!".tr,error.toString().tr, false);
     }
   }
 
@@ -185,7 +189,7 @@ class _ProofOfSaleState extends State<ProofOfSale> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: generalAppBar(context, storeName, "Add POS", () {
+      appBar: generalAppBar(context,languageController.isEnglish.value ? storeEnName :storeArName, "Add POS", () {
         Navigator.of(context).pop();
       }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
 
@@ -220,18 +224,18 @@ class _ProofOfSaleState extends State<ProofOfSale> {
                                 onChanged: (value) {},
                                 controller: valueControllerName,
                                 keyboardType: TextInputType.text,
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                     prefixIconColor: MyColors.appMainColor,
                                     focusColor: MyColors.appMainColor,
                                     fillColor: MyColors.dropBorderColor,
                                     labelStyle:
-                                        TextStyle(color: MyColors.appMainColor),
-                                    focusedBorder: OutlineInputBorder(
+                                        const TextStyle(color: MyColors.appMainColor),
+                                    focusedBorder: const OutlineInputBorder(
                                         borderSide: BorderSide(
                                             width: 1,
                                             color: MyColors.appMainColor)),
-                                    border: OutlineInputBorder(),
-                                    hintText: 'Enter name'),
+                                    border: const OutlineInputBorder(),
+                                    hintText: 'Enter name'.tr),
                               ),
                             ),
                           ],
@@ -243,9 +247,9 @@ class _ProofOfSaleState extends State<ProofOfSale> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              "Email",
-                              style: TextStyle(
+                             Text(
+                              "Email".tr,
+                              style: const TextStyle(
                                   color: MyColors.appMainColor,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -258,18 +262,18 @@ class _ProofOfSaleState extends State<ProofOfSale> {
                                 onChanged: (value) {},
                                 controller: valueControllerEmail,
                                 keyboardType: TextInputType.emailAddress,
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                     prefixIconColor: MyColors.appMainColor,
                                     focusColor: MyColors.appMainColor,
                                     fillColor: MyColors.dropBorderColor,
                                     labelStyle:
-                                        TextStyle(color: MyColors.appMainColor),
-                                    focusedBorder: OutlineInputBorder(
+                                        const TextStyle(color: MyColors.appMainColor),
+                                    focusedBorder: const OutlineInputBorder(
                                         borderSide: BorderSide(
                                             width: 1,
                                             color: MyColors.appMainColor)),
-                                    border: OutlineInputBorder(),
-                                    hintText: 'Enter email'),
+                                    border: const OutlineInputBorder(),
+                                    hintText: 'Enter email'.tr),
                               ),
                             ),
                           ],
@@ -282,9 +286,9 @@ class _ProofOfSaleState extends State<ProofOfSale> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            "Phone Number",
-                            style: TextStyle(
+                           Text(
+                            "Phone Number".tr,
+                            style: const TextStyle(
                                 color: MyColors.appMainColor,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -297,18 +301,18 @@ class _ProofOfSaleState extends State<ProofOfSale> {
                               onChanged: (value) {},
                               controller: valueControllerPhone,
                               keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
+                              decoration: InputDecoration(
                                   prefixIconColor: MyColors.appMainColor,
                                   focusColor: MyColors.appMainColor,
                                   fillColor: MyColors.dropBorderColor,
                                   labelStyle:
-                                      TextStyle(color: MyColors.appMainColor),
-                                  focusedBorder: OutlineInputBorder(
+                                      const TextStyle(color: MyColors.appMainColor),
+                                  focusedBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           width: 1,
                                           color: MyColors.appMainColor)),
-                                  border: OutlineInputBorder(),
-                                  hintText: 'Enter phone'),
+                                  border: const OutlineInputBorder(),
+                                  hintText: 'Enter phone number'.tr),
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(
                                     RegExp(r'^[0-9][0-9]*'))
@@ -326,15 +330,15 @@ class _ProofOfSaleState extends State<ProofOfSale> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Row(
+                               Row(
                                 children: [
                                   Text(
-                                    "Phone Amount",
-                                    style: TextStyle(
+                                    "Amount".tr,
+                                    style: const TextStyle(
                                         color: MyColors.appMainColor,
                                         fontWeight: FontWeight.bold),
                                   ),
-                                  Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
+                                  const Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
                                 ],
                               ),
                               Container(
@@ -346,18 +350,18 @@ class _ProofOfSaleState extends State<ProofOfSale> {
                                   onChanged: (value) {},
                                   controller: valueControllerAmount,
                                   keyboardType: TextInputType.number,
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                       prefixIconColor: MyColors.appMainColor,
                                       focusColor: MyColors.appMainColor,
                                       fillColor: MyColors.dropBorderColor,
                                       labelStyle:
-                                      TextStyle(color: MyColors.appMainColor),
-                                      focusedBorder: OutlineInputBorder(
+                                      const TextStyle(color: MyColors.appMainColor),
+                                      focusedBorder: const OutlineInputBorder(
                                           borderSide: BorderSide(
                                               width: 1,
                                               color: MyColors.appMainColor)),
-                                      border: OutlineInputBorder(),
-                                      hintText: 'Enter amount'),
+                                      border: const OutlineInputBorder(),
+                                      hintText: 'Enter amount'.tr),
                                   inputFormatters: [
                                     FilteringTextInputFormatter.allow(
                                         RegExp(r'^[0-9][0-9]*'))
@@ -375,15 +379,15 @@ class _ProofOfSaleState extends State<ProofOfSale> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Row(
+                               Row(
                                 children: [
                                   Text(
-                                    "Quantity",
-                                    style: TextStyle(
+                                    "Quantity".tr,
+                                    style: const TextStyle(
                                         color: MyColors.appMainColor,
                                         fontWeight: FontWeight.bold),
                                   ),
-                                  Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
+                                  const Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
                                 ],
                               ),
                               Container(
@@ -395,18 +399,18 @@ class _ProofOfSaleState extends State<ProofOfSale> {
                                   onChanged: (value) {},
                                   controller: valueControllerQuantity,
                                   keyboardType: TextInputType.number,
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                       prefixIconColor: MyColors.appMainColor,
                                       focusColor: MyColors.appMainColor,
                                       fillColor: MyColors.dropBorderColor,
                                       labelStyle:
-                                      TextStyle(color: MyColors.appMainColor),
-                                      focusedBorder: OutlineInputBorder(
+                                      const TextStyle(color: MyColors.appMainColor),
+                                      focusedBorder: const OutlineInputBorder(
                                           borderSide: BorderSide(
                                               width: 1,
                                               color: MyColors.appMainColor)),
-                                      border: OutlineInputBorder(),
-                                      hintText: 'Enter qty'),
+                                      border: const OutlineInputBorder(),
+                                      hintText: 'Enter quantity'.tr),
                                   inputFormatters: [
                                     FilteringTextInputFormatter.allow(
                                         RegExp(r'^[0-9][0-9]*'))
@@ -422,20 +426,20 @@ class _ProofOfSaleState extends State<ProofOfSale> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Row(
+                         Row(
                           children: [
                             Text(
-                              "Client",
-                              style: TextStyle(
+                              "Client".tr,
+                              style: const TextStyle(
                                   color: MyColors.appMainColor,
                                   fontWeight: FontWeight.bold),
                             ),
-                            Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
+                            const Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
                           ],
                         ),
                         ClientListDropDown(
                             clientKey: clientKey,
-                            hintText: "Client",
+                            hintText: "Client".tr,
                             clientData: clientData,
                             onChange: (value) {
                               selectedClientId = value.client_id;
@@ -451,26 +455,26 @@ class _ProofOfSaleState extends State<ProofOfSale> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Row(
+                           Row(
                             children: [
                               Text(
-                                "Category",
-                                style: TextStyle(
+                                "Category".tr,
+                                style: const TextStyle(
                                     color: MyColors.appMainColor,
                                     fontWeight: FontWeight.bold),
                               ),
 
-                              Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
+                              const Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
                             ],
                           ),
                           isCategoryLoading
-                              ? Center(
-                            child: Container(
+                              ? const Center(
+                            child: SizedBox(
                               height: 60,
-                              child: const MyLoadingCircle(),
+                              child: MyLoadingCircle(),
                             ),
                           )
-                              : CategoryDropDown(categoryKey:categoryKey,hintText: "Category", categoryData: categoryData, onChange: (value){
+                              : CategoryDropDown(categoryKey:categoryKey,hintText: "Category".tr, categoryData: categoryData, onChange: (value){
                             selectedCategoryId = value.id;
                             getSkusData(selectedCategoryId);
                             setState(() {
@@ -486,20 +490,20 @@ class _ProofOfSaleState extends State<ProofOfSale> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Row(
+                         Row(
                           children: [
                             Text(
-                              "Sku's",
-                              style: TextStyle(
+                              "Skus".tr,
+                              style: const TextStyle(
                                   color: MyColors.appMainColor,
                                   fontWeight: FontWeight.bold),
                             ),
-                            Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
+                            const Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
                           ],
                         ),
                         TypeDropDown(
                           typeKey: typeKey,
-                            hintText: "Select sku",
+                            hintText: "Select SKU".tr,
                             photoData: skuDataList,
                             onChange: (value) {
                               selectedSkuId = value.id;
@@ -519,7 +523,7 @@ class _ProofOfSaleState extends State<ProofOfSale> {
                     ),
 
                     isBtnLoading ? const SizedBox(height: 60,width: 60,child: MyLoadingCircle(),) : BigElevatedButton(
-                        buttonName: "Save",
+                        buttonName: "Save".tr,
                         submit: (){
                           saveStorePhotoData();
                         },
@@ -530,7 +534,7 @@ class _ProofOfSaleState extends State<ProofOfSale> {
               ),
             ),
             BigElevatedButton(
-                buttonName: "View POS",
+                buttonName: "View POS".tr,
                 submit: (){
                   Navigator.of(context).pushNamed(ShowProofOfSaleScreen.routename);
                 },

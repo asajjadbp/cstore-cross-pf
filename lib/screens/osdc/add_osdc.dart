@@ -144,7 +144,7 @@ class _AddOSDCState extends State<AddOSDC> {
         selectedTypeId == -1 ||
         selectedReasonId == -1 ||
         imagesList.isEmpty) {
-      ToastMessage.errorMessage(context, "Please fill the form and take image".tr);
+      showAnimatedToastMessage("Error!".tr,"Please fill the form and take image".tr, false);
       return;
     }
     setState(() {
@@ -188,8 +188,7 @@ class _AddOSDCState extends State<AddOSDC> {
        });
 
      }
-
-     ToastMessage.succesMessage(context, "Data Saved Successfully".tr);
+      showAnimatedToastMessage("Success".tr,"Data Saved Successfully".tr, true);
      imagesList.clear();
      imagesNameList.clear();
      valueControllerQty.clear();
@@ -202,7 +201,7 @@ class _AddOSDCState extends State<AddOSDC> {
         isBtnLoading = false;
       });
       print(error);
-      ToastMessage.errorMessage(context, error.toString());
+      showAnimatedToastMessage("Error!".tr,error.toString().tr, false);
     }
   }
 

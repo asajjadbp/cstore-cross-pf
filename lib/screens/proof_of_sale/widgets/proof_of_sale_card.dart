@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../promoplane/widgets/promo_plan_card_row_item.dart';
@@ -123,20 +124,20 @@ class ProofOfSaleCard extends StatelessWidget {
                 height: 00,
                 thickness: 1,
                 color: Color.fromRGBO(26, 91, 140, 1)),
-            PromoPlanCardRowItems(title: "Name",value: name.isEmpty? "----" : name,isWhiteBackGround: false,),
+            PromoPlanCardRowItems(title: "Name".tr,value: name.isEmpty? "----" : name,isWhiteBackGround: false,),
             const Divider(
                 height: 00,
                 thickness: 1,
                 color: Color.fromRGBO(26, 91, 140, 1)),
-            PromoPlanCardRowItems(title: "Quantity",value: Qty.toString(),isWhiteBackGround: true,),
+            PromoPlanCardRowItems(title: "Quantity".tr,value: Qty.toString(),isWhiteBackGround: true,),
             const Divider(
                 height: 00,
                 thickness: 1,
                 color: Color.fromRGBO(26, 91, 140, 1)),
-            PromoPlanCardRowItems(title: "Amount",value: amount.toString(),isWhiteBackGround: false,),
+            PromoPlanCardRowItems(title: "Amount".tr,value: amount.toString(),isWhiteBackGround: false,),
             const Divider(
                 height: 00, thickness: 1, color: MyColors.appMainColor),
-            PromoPlanCardRowItems(title: "Category",value: catName,isWhiteBackGround: true,),
+            PromoPlanCardRowItems(title: "Category".tr,value: catName,isWhiteBackGround: true,),
 
           ],
         ),

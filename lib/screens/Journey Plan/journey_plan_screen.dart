@@ -17,10 +17,13 @@ import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Database/table_name.dart';
 import '../../Model/database_model/drop_reason_model.dart';
+import '../../Network/app_exceptions.dart';
 import '../grid_dashboard/grid_dashboard.dart';
+import '../important_service/genral_checks_status.dart';
 import '../utils/app_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../utils/services/general_checks_controller_call_function.dart';
 import '../widget/app_bar_widgets.dart';
 
 class JourneyPlanScreen extends StatefulWidget {
@@ -211,11 +214,45 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
                     },
                     imageBaseUrl: bucketName,
                     jp: jpData[i],
-                    onStartClick: () {
-                      if (jpData[i].visitStatus == "1") {
-                        setVisitSession(jpData[i]);
+                    onStartClick: () async {
+
+                      List<String> latLong = jpData[i].gcode.split('=')[1].split(',');
+                      String storeLat = latLong[0];
+                      String storeLong = latLong[1];
+
+                      GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+                      if(generalStatusController.isLocationStatus.value) {
+
+                        await generalStatusController.getGeoLocationDistance(
+                            double.parse(generalStatusController.isLat.value), double.parse(generalStatusController.isLong.value), double.parse(storeLat), double.parse(storeLong));
+
+                        print("Store Lat Long");
+                        print(storeLong);
+                        print(storeLat);
+                        print("User Lat Long");
+                        print(generalStatusController.isLat);
+                        print(generalStatusController.isLong);
+                        print("Distance From Store");
+                        print(generalStatusController.isGeoFenceDistance.value);
+                      }
+                      if(generalStatusController.isVpnStatus.value) {
+                        showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false);
+                      } else if(generalStatusController.isMockLocation.value) {
+                        showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false);
+                      } else if(!generalStatusController.isAutoTimeStatus.value) {
+                        showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false);
+                      } else if(!generalStatusController.isLocationStatus.value) {
+                        showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false);
+                      } else if(generalStatusController.isGeoFenceDistance.value > 0.7) {
+                        showAnimatedToastMessage("Error!".tr, "You are outside of this store".tr, false);
                       } else {
-                        getImage(jpData[i]);
+                        Get.delete<GeneralChecksStatusController>();
+                        if (jpData[i].visitStatus == "1") {
+                          setVisitSession(jpData[i]);
+                        } else {
+                          getImage(jpData[i]);
+                        }
                       }
                     },
                     onDropClick: () {

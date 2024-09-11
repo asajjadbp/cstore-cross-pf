@@ -11,7 +11,8 @@ class ShowTransSOSModel {
   late String brand_ar_name;
   late String total_cat_space;
   late String actual_space;
-  late String unit;
+  late String unitEnName;
+  late String unitArName;
 
   ShowTransSOSModel({
     required this.id,
@@ -22,7 +23,9 @@ class ShowTransSOSModel {
     required this.brand_ar_name,
     required this.total_cat_space,
     required this.actual_space,
-    required this.unit});
+    required this.unitEnName,
+    required this.unitArName,
+  });
 
   Map<String, Object?> toMap() {
     return {
@@ -34,7 +37,8 @@ class ShowTransSOSModel {
       "total_cat_space": total_cat_space.toString(),
       "actual_space": actual_space.toString(),
       TableName.arName: brand_ar_name,
-     "unit": unit,
+     "unit_en_name": unitEnName,
+     "unit_ar_name": unitArName,
     };
   }
 
@@ -50,6 +54,7 @@ class ShowTransSOSModel {
     brand_ar_name = json[TableName.arName];
     total_cat_space = json["total_cat_space"].toString();
     actual_space = json["actual_space"].toString();
-    unit = json["unit"];
+    unitEnName = json["unit_en_name"];
+    unitArName = json["unit_ar_name"];
   }
 }

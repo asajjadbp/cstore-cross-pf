@@ -32,11 +32,11 @@ Future<void> takePicture(BuildContext context, File? imageFile,
       final mb = kb / 1024;
 
       if(mb >= 6) {
-        compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,60);
+        compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,50);
       } else if(mb < 6 && mb > 4) {
-        compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,75);
+        compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,65);
       } else if(mb < 4 && mb > 2) {
-        compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,90);
+        compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,80);
       } else {
         compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,100);
       }

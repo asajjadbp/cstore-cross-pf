@@ -1,80 +1,83 @@
 class Api {
+
+  static const apiVersion = "macroapis/BpIntel_1_1/";
+
   static const licenseApi =
-      // "https://cstore.catalist-me.com/macroapis/BpIntel/getAgencyLicense"
+      // "https://cstore.catalist-me.com/${apiVersion}getAgencyLicense"
       "https://cstore.catalist-me.com/macroapis/BpIntel/getAgencyLicense";
 
   // static const LOGIN_API =
-  // "https://binzagrdev.catalist-me.com/macroapis/BpIntel/loginUser";
+  // "https://binzagrdev.catalist-me.com/${apiVersion}loginUser";
 
-  static const LOGIN_API = "macroapis/BpIntel/loginUser";
+  static const LOGIN_API = "${apiVersion}loginUser";
 
   ///Dashboard Api End Point
-  static const USER_DASHBOARD_API = "macroapis/BpIntel/getUserDashbaord";
+  static const USER_DASHBOARD_API = "${apiVersion}getUserDashbaord";
 
   // static const GETJOURNEYPLAN =
-  //     "https://binzagrdev.catalist-me.com/macroapis/BpIntel/getJourneyPlan";
+  //     "https://binzagrdev.catalist-me.com/${apiVersion}getJourneyPlan";
 
-  static const GETJOURNEYPLAN = "macroapis/BpIntel/getJourneyPlan";
+  static const GETJOURNEYPLAN = "${apiVersion}getJourneyPlan";
 
   // static const DROPVISIT =
-  //     "https://binzagrdev.catalist-me.com/macroapis/BpIntel/dropVisit";
+  //     "https://binzagrdev.catalist-me.com/${apiVersion}dropVisit";
 
-  static const DROPVISIT = "macroapis/BpIntel/dropVisit";
+  static const DROPVISIT = "${apiVersion}dropVisit";
 
-  static const UNDROPVISIT = "macroapis/BpIntel/unDropVisit";
+  static const UNDROPVISIT = "${apiVersion}unDropVisit";
 
   // static const STARTVISIT =
-  //     "https://binzagrdev.catalist-me.com/macroapis/BpIntel/startVisit";
+  //     "https://binzagrdev.catalist-me.com/${apiVersion}startVisit";
 
-  static const STARTVISIT = "macroapis/BpIntel/startVisit";
+  static const STARTVISIT = "${apiVersion}startVisit";
 
-  static const finishVisit = "macroapis/BpIntel/finishVisit";
+  static const finishVisit = "${apiVersion}finishVisit";
 
   // static const SYNCRONISEVISIT =
-  //     "https://binzagrdev.catalist-me.com/macroapis/BpIntel/syncronise";
+  //     "https://binzagrdev.catalist-me.com/${apiVersion}syncronise";
 
-  static const SYNCRONISEVISIT = "macroapis/BpIntel/synchronize";
+  static const SYNCRONISEVISIT = "${apiVersion}synchronize";
 
-  static const sqlOtherPhotoTableSaving = "macroapis/BpIntel/saveCapturePhotos";
+  static const sqlOtherPhotoTableSaving = "${apiVersion}saveCapturePhotos";
 
-  static const sqlPlanogramTableSaving = "macroapis/BpIntel/savePlanogram";
+  static const sqlPlanogramTableSaving = "${apiVersion}savePlanogram";
 
-  static const sqlSosTableSaving = "macroapis/BpIntel/saveSos";
+  static const sqlSosTableSaving = "${apiVersion}saveSos";
 
-  static const sqlOsdcTableSaving = "macroapis/BpIntel/saveOSD";
+  static const sqlOsdcTableSaving = "${apiVersion}saveOSD";
 
-  static const sqlAvailabilityTableSaving = "macroapis/BpIntel/saveAvailability";
+  static const sqlAvailabilityTableSaving = "${apiVersion}saveAvailability";
 
-  static const sqlPickListTableSaving = "macroapis/BpIntel/savePicklist";
+  static const sqlPickListTableSaving = "${apiVersion}savePicklist";
 
-  static const sqlPlanoguideSaving = "macroapis/BpIntel/savePlanoguide";
+  static const sqlPlanoguideSaving = "${apiVersion}savePlanoguide";
 
-  static const sqlBrandShareSaving = "macroapis/BpIntel/savebrandShares";
+  static const sqlBrandShareSaving = "${apiVersion}savebrandShares";
 
-  static const getStockerPickList = "macroapis/BpIntel/getStockerPickList";
+  static const getStockerPickList = "${apiVersion}getStockerPickList";
 
-  static const getTmrActualPickList = "macroapis/BpIntel/getTmrActualPickList";
+  static const getTmrActualPickList = "${apiVersion}getTmrActualPickList";
 
-  static const makePickListReady = "macroapis/BpIntel/makePickListReady";
+  static const makePickListReady = "${apiVersion}makePickListReady";
 
-  static const uploadRtvData = "macroapis/BpIntel/saveRTV";
+  static const uploadRtvData = "${apiVersion}saveRTV";
 
-  static const uploadPricingData = "macroapis/BpIntel/savePricing";
+  static const uploadPricingData = "${apiVersion}savePricing";
 
-  static const getPromoPlanData = "macroapis/BpIntel/getPromoPlan";
+  static const getPromoPlanData = "${apiVersion}getPromoPlan";
 
-  static const postPromoPlanData = "macroapis/BpIntel/savePromoPlan";
+  static const postPromoPlanData = "${apiVersion}savePromoPlan";
 
-  static const postFreshnessData = "macroapis/BpIntel/saveFreshness";
+  static const postFreshnessData = "${apiVersion}saveFreshness";
 
-  static const postStockData = "macroapis/BpIntel/saveStock";
+  static const postStockData = "${apiVersion}saveStock";
 
-  static const postOSDData = "macroapis/BpIntel/saveOSD";
+  static const postOSDData = "${apiVersion}saveOSD";
 
-  static const postOnePlusOneData = "macroapis/BpIntel/saveOnePlusOne";
+  static const postOnePlusOneData = "${apiVersion}saveOnePlusOne";
 
-  static const postPosData = "macroapis/BpIntel/saveProofOfSales";
+  static const postPosData = "${apiVersion}saveProofOfSales";
 
-  static const postMarketIssueData = "macroapis/BpIntel/saveMarketIssues";
+  static const postMarketIssueData = "${apiVersion}saveMarketIssues";
 
 }

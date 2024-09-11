@@ -107,31 +107,40 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
         setState(() {});
     });
   }
-  void InsertTransPromoPrice(String regularPrice,String promoPrice,skuId) async{
-    if (regularPrice == "0" || regularPrice == "0.0" || regularPrice.isEmpty) {
-      ToastMessage.errorMessage(context, "Please add proper regular price".tr);
-    } else if(promoPrice.isNotEmpty && (double.parse(promoPrice) >= double.parse(regularPrice))) {
-      ToastMessage.errorMessage(context, "Promo price can't be greater than or equal to regular price".tr);
-    }else {
-      setState(() {
-        isBtnLoading = false;
-      });
-      await DatabaseHelper.insertTransPromoPrice(skuId,regularPrice.toString(),promoPrice.toString(),workingId)
-          .then((_) {
-        ToastMessage.succesMessage(context, "Data Saved Successfully".tr);
-        promoPrice="";
-        regularPrice="";
-        Navigator.of(context).pop();
-        getTransPricingOne();
-        getPricingCount();
-      });
+  void InsertTransPromoPrice(String regularPrice,String promoPrice,skuId) async {
+    try {
+      if (regularPrice == "0" || regularPrice == "0.0" ||
+          regularPrice.isEmpty) {
+        showAnimatedToastMessage("Error!".tr,"Please add proper regular price".tr, false);
+      } else if (promoPrice.isNotEmpty &&
+          (double.parse(promoPrice) >= double.parse(regularPrice))) {
+        showAnimatedToastMessage("Error!".tr,"Promo price can't be greater than or equal to regular price".tr, false);
+      } else {
+        setState(() {
+          isBtnLoading = false;
+        });
+        await DatabaseHelper.insertTransPromoPrice(
+            skuId, regularPrice.toString(), promoPrice.toString(), workingId)
+            .then((_) {
+          showAnimatedToastMessage("Success".tr, "Data Saved Successfully".tr, true);
+          promoPrice = "";
+          regularPrice = "";
+          Navigator.of(context).pop();
+          getTransPricingOne();
+          getPricingCount();
+        });
+      }
+    } catch (e) {
+      showAnimatedToastMessage("Error!".tr,e.toString(), false);
     }
   }
   void UpdateTransPromoPrice(regularPrice,promoPrice,skuId) async {
     if (regularPrice == "0" || regularPrice.isEmpty) {
-      ToastMessage.errorMessage(context, "Please add proper regular price".tr);
+      showAnimatedToastMessage("Error!".tr,"Please add proper regular price".tr, false);
+
     } else if(promoPrice.isNotEmpty && (double.parse(promoPrice) >= double.parse(regularPrice))) {
-        ToastMessage.errorMessage(context, "Promo price can't be greater than or equal to regular price".tr);
+      showAnimatedToastMessage("Error!".tr,"Promo price can't be greater than or equal to regular price".tr, false);
+
     } else {
     setState(() {
       isBtnLoading = false;
@@ -139,7 +148,8 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
     await DatabaseHelper.updateTransPromoPricing(
         skuId, regularPrice.toString(), promoPrice.toString(), workingId)
         .then((_) {
-      ToastMessage.succesMessage(context, "Data update successfully".tr);
+      showAnimatedToastMessage("Success".tr,"Data update successfully".tr, true);
+
       promoPrice = 0;
       regularPrice = 0;
       getTransPricingOne();

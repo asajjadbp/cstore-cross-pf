@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Database/db_helper.dart';
@@ -9,9 +8,7 @@ import '../../Model/database_model/sys_brand_model.dart';
 import '../../Model/database_model/trans_freshness_model.dart';
 import '../Language/localization_controller.dart';
 import '../utils/app_constants.dart';
-import '../utils/appcolor.dart';
 import '../widget/app_bar_widgets.dart';
-import '../widget/drop_downs.dart';
 import '../widget/loading.dart';
 import 'widgets/ViewFreshnesscard.dart';
 
@@ -171,8 +168,7 @@ class _ViewFreshness_ScreenState extends State<ViewFreshness_Screen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: generalAppBar(context, languageController.isEnglish.value ? storeEnName : storeArName, userName, () {
         Navigator.of(context).pop();

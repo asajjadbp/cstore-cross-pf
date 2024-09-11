@@ -404,14 +404,12 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
 
       if (transPlanoGuideModel.isAdherence == "-1") {
         if (isMessageShow) {
-          ToastMessage.errorMessage(
-              context, "Please fill the form".tr);
+          showAnimatedToastMessage("Error!".tr, "Please fill the form".tr, false);
         }
         return;
       } else if( transPlanoGuideModel.imageFile == null) {
         if (isMessageShow) {
-          ToastMessage.errorMessage(
-              context, "Please take an image".tr);
+          showAnimatedToastMessage("Error!".tr, "Please take an image".tr, false);
         }
         return;
       }
@@ -436,7 +434,7 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
               transPlanoGuideModel.isAdherence)
               .then((_) {
             if (isMessageShow) {
-              ToastMessage.succesMessage(context, "Data Saved Successfully".tr);
+              showAnimatedToastMessage("Success".tr, "Data Saved Successfully".tr, true);
               print("Update data planoguide successfully");
               transData[index].activity_status = 1;
             }
@@ -460,7 +458,7 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
           });
         });
       } catch (error) {
-        ToastMessage.errorMessage(context, error.toString());
+        showAnimatedToastMessage("Error!".tr, error.toString(), false);
         setState(() {
           isBtnLoading = false;
         });

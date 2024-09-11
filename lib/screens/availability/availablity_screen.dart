@@ -23,10 +23,11 @@ import '../../Model/response_model.dart/adherence_response_model.dart';
 import '../../Model/response_model.dart/tmr_pick_list_response_model.dart';
 import '../../Network/sql_data_http_manager.dart';
 import '../ImageScreen/image_screen.dart';
+import '../important_service/genral_checks_status.dart';
 import '../utils/app_constants.dart';
+import '../utils/services/general_checks_controller_call_function.dart';
 import '../utils/toast/toast.dart';
 import '../widget/app_bar_widgets.dart';
-import '../widget/drop_downs.dart';
 import 'package:badges/badges.dart' as badges;
 import '../widget/percent_indicator.dart';
 import 'package:intl/intl.dart';
@@ -356,41 +357,43 @@ class _AvailabilityState extends State<Availability> {
   }
 
   updatePickListAfterSave(int index,bool isNotAvl,String requiredPickList,String skuId) async {
-    if(requiredPickList!= "0") {
-      await DatabaseHelper.updateSavePickList(
-          workingId, requiredPickList, skuId).then((value) {
-        ToastMessage.succesMessage(context, "Data Saved Successfully".tr);
-        Navigator.of(context).pop();
+    try {
+      if (requiredPickList != "0") {
+        await DatabaseHelper.updateSavePickList(
+            workingId, requiredPickList, skuId).then((value) {
+          ToastMessage.succesMessage(context, "Data Saved Successfully".tr);
+          Navigator.of(context).pop();
 
-        if(isNotAvl){
-
-          if (isFilter) {
-            filteredList[index].avl_status = 0;
-            filteredList[index].activity_status = 1;
-            int ind = availableData.indexWhere(
-                (element) => element.pro_id == filteredList[index].pro_id);
-            availableData[ind].avl_status = 0;
-            availableData[ind].activity_status = 1;
-            updateAvailableItem(false, filteredList[index].pro_id,
-                filteredList[index].avl_status);
-            isEdit = true;
-          } else {
-            availableData[index].avl_status = 0;
-            availableData[index].activity_status = 1;
-            updateAvailableItem(false, availableData[index].pro_id,
-                availableData[index].avl_status);
-            isEdit = true;
+          if (isNotAvl) {
+            if (isFilter) {
+              filteredList[index].avl_status = 0;
+              filteredList[index].activity_status = 1;
+              int ind = availableData.indexWhere(
+                      (element) =>
+                  element.pro_id == filteredList[index].pro_id);
+              availableData[ind].avl_status = 0;
+              availableData[ind].activity_status = 1;
+              updateAvailableItem(false, filteredList[index].pro_id,
+                  filteredList[index].avl_status);
+              isEdit = true;
+            } else {
+              availableData[index].avl_status = 0;
+              availableData[index].activity_status = 1;
+              updateAvailableItem(false, availableData[index].pro_id,
+                  availableData[index].avl_status);
+              isEdit = true;
+            }
           }
 
-        }
-
-        setState(() {
-
-        });
+          setState(() {
 
           });
-    } else {
-      ToastMessage.errorMessage(context, "Please enter a valid number".tr);
+        });
+      } else {
+        ToastMessage.errorMessage(context, "Please enter a valid number".tr);
+      }
+    } catch (e) {
+      showAnimatedToastMessage("Error!".tr, e.toString(), false);
     }
   }
 
@@ -774,93 +777,167 @@ class _AvailabilityState extends State<Availability> {
                                 brandName: languageController.isEnglish.value ? filteredList[index].pro_en_name : filteredList[index].pro_ar_name,
                                 categoryName: languageController.isEnglish.value ? filteredList[index].cat_en_name : filteredList[index].cat_ar_name,
                                 pickListText: filteredList[index].requried_picklist.toString(),
-                                onTapPickList: (){
-                                  if(filteredList[index].avl_status != -1) {
-                                    textEditingController.text =
-                                        filteredList[index].requried_picklist
-                                            .toString();
-                                    showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return CustomDialog(
-                                            isButtonActive: filteredList[index]
-                                                .requried_picklist == 0,
-                                            badgeNumber: 0,
-                                            textEditingController: textEditingController,
-                                            title: languageController.isEnglish.value ? filteredList[index]
-                                                .pro_en_name : filteredList[index]
-                                                .pro_ar_name,
-                                            pickListValue: (value) {
-                                              setState(() {
-                                                filteredList[index]
-                                                    .requried_picklist =
-                                                    int.parse(value);
-                                                filteredList[index]
-                                                    .pick_upload_status = 0;
-                                                int ind = availableData
-                                                    .indexWhere((element) =>
-                                                element.pro_id ==
-                                                    filteredList[index].pro_id);
-                                                availableData[ind]
-                                                    .requried_picklist =
-                                                    int.parse(value);
-                                                availableData[ind]
-                                                    .pick_upload_status = 0;
-                                                updatePickListAfterSave(
-                                                    index, false,
-                                                    filteredList[index]
-                                                        .requried_picklist
-                                                        .toString(),
-                                                    filteredList[index].pro_id
-                                                        .toString());
-                                              });
-                                            },
-                                          );
-                                        }
-                                    );
+                                onTapPickList: () async {
+                                  GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+                                  if(generalStatusController.isVpnStatus.value) {
+                                    showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false);
+                                  } else if(generalStatusController.isMockLocation.value) {
+                                    showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false);
+                                  } else if(!generalStatusController.isAutoTimeStatus.value) {
+                                    showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false);
+                                  } else if(!generalStatusController.isLocationStatus.value) {
+                                    showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false);
                                   } else {
-                                    ToastMessage.errorMessage(context, "Please mark item status first".tr);
+                                    Get.delete<GeneralChecksStatusController>();
+
+                                    if (filteredList[index].avl_status != -1) {
+                                      textEditingController.text =
+                                          filteredList[index].requried_picklist
+                                              .toString();
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return CustomDialog(
+                                              isButtonActive: filteredList[index]
+                                                  .requried_picklist == 0,
+                                              badgeNumber: 0,
+                                              textEditingController: textEditingController,
+                                              title: languageController
+                                                  .isEnglish.value
+                                                  ? filteredList[index]
+                                                  .pro_en_name
+                                                  : filteredList[index]
+                                                  .pro_ar_name,
+                                              pickListValue: (value) {
+                                                setState(() {
+                                                  filteredList[index]
+                                                      .requried_picklist =
+                                                      int.parse(value);
+                                                  filteredList[index]
+                                                      .pick_upload_status = 0;
+                                                  int ind = availableData
+                                                      .indexWhere((element) =>
+                                                  element.pro_id ==
+                                                      filteredList[index]
+                                                          .pro_id);
+                                                  availableData[ind]
+                                                      .requried_picklist =
+                                                      int.parse(value);
+                                                  availableData[ind]
+                                                      .pick_upload_status = 0;
+                                                  updatePickListAfterSave(
+                                                      index, false,
+                                                      filteredList[index]
+                                                          .requried_picklist
+                                                          .toString(),
+                                                      filteredList[index].pro_id
+                                                          .toString());
+                                                });
+                                              },
+                                            );
+                                          }
+                                      );
+                                    } else {
+                                      ToastMessage.errorMessage(context,
+                                          "Please mark item status first".tr);
+                                    }
                                   }
                                 },
-                                onAvailable: (){
-                                  setState(() {
-                                    filteredList[index].avl_status = 1;
-                                    filteredList[index].activity_status = 1;
-                                    int ind = availableData.indexWhere((element) => element.pro_id == filteredList[index].pro_id);
-                                    availableData[ind].avl_status = 1;
-                                    availableData[ind].activity_status = 1;
-                                    // checkId(index);
-                                    updateAvailableItem(false, filteredList[index].pro_id,filteredList[index].avl_status);
-                                    isEdit = true;
-                                  });
+                                onAvailable: () async {
+                                  GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+                                  if(generalStatusController.isVpnStatus.value) {
+                                    showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false);
+                                  } else if(generalStatusController.isMockLocation.value) {
+                                    showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false);
+                                  } else if(!generalStatusController.isAutoTimeStatus.value) {
+                                    showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false);
+                                  } else if(!generalStatusController.isLocationStatus.value) {
+                                    showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false);
+                                  } else {
+                                    Get.delete<GeneralChecksStatusController>();
+                                    setState(() {
+                                      filteredList[index].avl_status = 1;
+                                      filteredList[index].activity_status = 1;
+                                      int ind = availableData.indexWhere((
+                                          element) =>
+                                      element.pro_id ==
+                                          filteredList[index].pro_id);
+                                      availableData[ind].avl_status = 1;
+                                      availableData[ind].activity_status = 1;
+                                      // checkId(index);
+                                      updateAvailableItem(
+                                          false, filteredList[index].pro_id,
+                                          filteredList[index].avl_status);
+                                      isEdit = true;
+                                    });
+                                  }
                                   // updateAvailableItem(index, 1, "reason");
                                 },
-                                onNotAvailable: (){
-                                  setState(() {
-                                    textEditingController.text = filteredList[index].requried_picklist.toString();
-                                    showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return CustomDialog(
-                                            isButtonActive: filteredList[index].requried_picklist == 0,
-                                            badgeNumber: 0,
-                                            textEditingController: textEditingController,
-                                            title: languageController.isEnglish.value ? filteredList[index].pro_en_name : filteredList[index].pro_ar_name,
-                                            pickListValue: (value) {
-                                              setState(() {
-                                                filteredList[index].requried_picklist = int.parse(value);
-                                                filteredList[index].pick_upload_status=0;
-                                                int ind = availableData.indexWhere((element) => element.pro_id == filteredList[index].pro_id);
-                                                availableData[ind].requried_picklist = int.parse(value);
-                                                availableData[ind].pick_upload_status=0;
+                                onNotAvailable: () async {
+                                  GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-                                                updatePickListAfterSave(index,true,filteredList[index].requried_picklist.toString(),filteredList[index].pro_id.toString());
-                                              });
-                                            },
-                                          );
-                                        }
-                                    );
-                                  });
+                                  if(generalStatusController.isVpnStatus.value) {
+                                    showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false);
+                                  } else if(generalStatusController.isMockLocation.value) {
+                                    showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false);
+                                  } else if(!generalStatusController.isAutoTimeStatus.value) {
+                                    showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false);
+                                  } else if(!generalStatusController.isLocationStatus.value) {
+                                    showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false);
+                                  } else {
+                                    Get.delete<GeneralChecksStatusController>();
+                                    setState(() {
+                                      textEditingController.text =
+                                          filteredList[index].requried_picklist
+                                              .toString();
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return CustomDialog(
+                                              isButtonActive: filteredList[index]
+                                                  .requried_picklist == 0,
+                                              badgeNumber: 0,
+                                              textEditingController: textEditingController,
+                                              title: languageController
+                                                  .isEnglish.value
+                                                  ? filteredList[index]
+                                                  .pro_en_name
+                                                  : filteredList[index]
+                                                  .pro_ar_name,
+                                              pickListValue: (value) {
+                                                setState(() {
+                                                  filteredList[index]
+                                                      .requried_picklist =
+                                                      int.parse(value);
+                                                  filteredList[index]
+                                                      .pick_upload_status = 0;
+                                                  int ind = availableData
+                                                      .indexWhere((element) =>
+                                                  element.pro_id ==
+                                                      filteredList[index]
+                                                          .pro_id);
+                                                  availableData[ind]
+                                                      .requried_picklist =
+                                                      int.parse(value);
+                                                  availableData[ind]
+                                                      .pick_upload_status = 0;
+
+                                                  updatePickListAfterSave(
+                                                      index, true,
+                                                      filteredList[index]
+                                                          .requried_picklist
+                                                          .toString(),
+                                                      filteredList[index].pro_id
+                                                          .toString());
+                                                });
+                                              },
+                                            );
+                                          }
+                                      );
+                                    });
+                                  }
                                   // updateAvailableItem(index, 0, "reason");
                                 });
 
@@ -878,84 +955,147 @@ class _AvailabilityState extends State<Availability> {
                                 brandName: languageController.isEnglish.value ? availableData[index].pro_en_name : availableData[index].pro_ar_name,
                                 categoryName:languageController.isEnglish.value ? availableData[index].cat_en_name : availableData[index].cat_ar_name,
                                 pickListText: availableData[index].requried_picklist.toString(),
-                                onTapPickList: (){
-                                if(availableData[index].avl_status != -1) {
-                                  textEditingController.text =
-                                      availableData[index].requried_picklist
-                                          .toString();
-                                  showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return CustomDialog(
-                                          badgeNumber: 0,
-                                          isButtonActive: availableData[index]
-                                              .requried_picklist == 0,
-                                          textEditingController: textEditingController,
-                                          title: languageController.isEnglish.value ? availableData[index]
-                                              .pro_en_name : availableData[index]
-                                              .pro_ar_name,
-                                          pickListValue: (value) {
-                                            setState(() {
-                                              availableData[index]
-                                                  .requried_picklist =
-                                                  int.parse(value);
-                                              availableData[index]
-                                                  .activity_status = 1;
-                                              updatePickListAfterSave(
-                                                  index, false,
+                                onTapPickList: () async {
+                                  GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+                                  if(generalStatusController.isVpnStatus.value) {
+                                    showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false);
+                                  } else if(generalStatusController.isMockLocation.value) {
+                                    showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false);
+                                  } else if(!generalStatusController.isAutoTimeStatus.value) {
+                                    showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false);
+                                  } else if(!generalStatusController.isLocationStatus.value) {
+                                    showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false);
+                                  } else {
+                                    Get.delete<GeneralChecksStatusController>();
+                                    if (availableData[index].avl_status != -1) {
+                                      textEditingController.text =
+                                          availableData[index].requried_picklist
+                                              .toString();
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return CustomDialog(
+                                              badgeNumber: 0,
+                                              isButtonActive: availableData[index]
+                                                  .requried_picklist == 0,
+                                              textEditingController: textEditingController,
+                                              title: languageController
+                                                  .isEnglish.value
+                                                  ? availableData[index]
+                                                  .pro_en_name
+                                                  : availableData[index]
+                                                  .pro_ar_name,
+                                              pickListValue: (value) {
+                                                setState(() {
                                                   availableData[index]
-                                                      .requried_picklist
-                                                      .toString(),
-                                                  availableData[index].pro_id
-                                                      .toString());
-                                            });
-                                          },
-                                        );
-                                      }
-                                  );
-                                } else {
-                                  ToastMessage.errorMessage(context, "Please mark item status first".tr);
-                                }
+                                                      .requried_picklist =
+                                                      int.parse(value);
+                                                  availableData[index]
+                                                      .activity_status = 1;
+                                                  updatePickListAfterSave(
+                                                      index, false,
+                                                      availableData[index]
+                                                          .requried_picklist
+                                                          .toString(),
+                                                      availableData[index]
+                                                          .pro_id
+                                                          .toString());
+                                                });
+                                              },
+                                            );
+                                          }
+                                      );
+                                    } else {
+                                      ToastMessage.errorMessage(context,
+                                          "Please mark item status first".tr);
+                                    }
+                                  }
                                 },
-                                onAvailable: (){
-                                  setState(() {
-                                    availableData[index].avl_status = 1;
-                                    availableData[index].activity_status = 1;
-                                    // checkId(index);
-                                    updateAvailableItem(false, availableData[index].pro_id,availableData[index].avl_status);
-                                    isEdit = true;
-                                  });
+                                onAvailable: ()async {
+                                  GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+                                  if(generalStatusController.isVpnStatus.value) {
+                                    showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false);
+                                  } else if(generalStatusController.isMockLocation.value) {
+                                    showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false);
+                                  } else if(!generalStatusController.isAutoTimeStatus.value) {
+                                    showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false);
+                                  } else if(!generalStatusController.isLocationStatus.value) {
+                                    showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false);
+                                  } else {
+                                    Get.delete<GeneralChecksStatusController>();
+                                    setState(() {
+                                      availableData[index].avl_status = 1;
+                                      availableData[index].activity_status = 1;
+                                      // checkId(index);
+                                      updateAvailableItem(
+                                          false, availableData[index].pro_id,
+                                          availableData[index].avl_status);
+                                      isEdit = true;
+                                    });
+                                  }
                                   // updateAvailableItem(index, 1, "reason");
                                 },
-                                onNotAvailable: (){
-                                  setState(() {
+                                onNotAvailable: ()async {
+                                  GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
+                                  if(generalStatusController.isVpnStatus.value) {
+                                    showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false);
+                                  } else if(generalStatusController.isMockLocation.value) {
+                                    showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false);
+                                  } else if(!generalStatusController.isAutoTimeStatus.value) {
+                                    showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false);
+                                  } else if(!generalStatusController.isLocationStatus.value) {
+                                    showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false);
+                                  } else {
+                                    Get.delete<GeneralChecksStatusController>();
+                                    setState(() {
+                                      textEditingController.text =
+                                          availableData[index].requried_picklist
+                                              .toString();
 
-                                    textEditingController.text = availableData[index].requried_picklist.toString();
+                                      print(
+                                          availableData[index].requried_picklist
+                                              .toString());
+                                      print(textEditingController.text);
+                                      print("Required PickList Value");
 
-                                    print(availableData[index].requried_picklist.toString());
-                                    print(textEditingController.text);
-                                    print("Required PickList Value");
-
-                                    showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return CustomDialog(
-                                            badgeNumber: 0,
-                                            isButtonActive: availableData[index].requried_picklist == 0,
-                                            textEditingController: textEditingController,
-                                            title: languageController.isEnglish.value ? availableData[index].pro_en_name : availableData[index].pro_ar_name,
-                                            pickListValue: (value) {
-                                              setState(() {
-                                                availableData[index].requried_picklist = int.parse(value);
-                                                availableData[index].activity_status = 1;
-                                                updatePickListAfterSave(index,true,availableData[index].requried_picklist.toString(),availableData[index].pro_id.toString());
-                                              });
-                                            },
-                                          );
-                                        }
-                                    );
-                                  });
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return CustomDialog(
+                                              badgeNumber: 0,
+                                              isButtonActive: availableData[index]
+                                                  .requried_picklist == 0,
+                                              textEditingController: textEditingController,
+                                              title: languageController
+                                                  .isEnglish.value
+                                                  ? availableData[index]
+                                                  .pro_en_name
+                                                  : availableData[index]
+                                                  .pro_ar_name,
+                                              pickListValue: (value) {
+                                                setState(() {
+                                                  availableData[index]
+                                                      .requried_picklist =
+                                                      int.parse(value);
+                                                  availableData[index]
+                                                      .activity_status = 1;
+                                                  updatePickListAfterSave(
+                                                      index, true,
+                                                      availableData[index]
+                                                          .requried_picklist
+                                                          .toString(),
+                                                      availableData[index]
+                                                          .pro_id.toString());
+                                                });
+                                              },
+                                            );
+                                          }
+                                      );
+                                    });
+                                  }
                                   // updateAvailableItem(index, 0, "reason");
                                 });
 

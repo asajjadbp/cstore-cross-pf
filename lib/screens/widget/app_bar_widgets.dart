@@ -69,7 +69,7 @@ generalAppBar(BuildContext context,String userName,String storeName, Function on
                     await SharedPreferences.getInstance();
                     sharedPreferences.setBool(AppConstants.userLoggedIn, false);
                     Navigator.of(context).pushReplacementNamed(Login.routeName);
-                    ToastMessage.succesMessage(context, "Logged Out Successfully".tr);
+                    showAnimatedToastMessage("Success".tr, "Logged Out Successfully".tr, true);
                   },
                   child: Text('Logout'.tr),
                 ),

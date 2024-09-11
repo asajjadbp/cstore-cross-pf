@@ -101,7 +101,7 @@ class _ViewShareOfShelfState extends State<ViewShareOfShelf> {
               catName:languageController.isEnglish.value ?  transData[i].cat_en_name: transData[i].cat_ar_name,
               total: transData[i].total_cat_space,
               actual: transData[i].actual_space,
-              unit: transData[i].unit,
+              unit: languageController.isEnglish.value ? transData[i].unitEnName :transData[i].unitArName ,
               brandName: languageController.isEnglish.value ? transData[i].brand_en_name: transData[i].brand_ar_name,
             );
           }),

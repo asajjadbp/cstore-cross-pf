@@ -96,9 +96,14 @@ class _addnewrtvscreenState extends State<addnewrtvscreen> {
 
   void saveStorePhotoData() async {
     if (imageFile == null || selectedReasonId==-1) {
-      ToastMessage.errorMessage(context, "Please fill the form and take image".tr);
+      showAnimatedToastMessage("Error!", "Please fill the form and take image".tr, false);
       return;
     }
+    if(totalPieces.text == "0") {
+      showAnimatedToastMessage("Error!", "Please add correct value in field".tr, false);
+      return;
+    }
+
     setState(() {
       isBtnLoading = true;
     });

@@ -156,6 +156,10 @@ class TableName {
   static const String sys_app_settingBgServiceMinute="bg_service_minutes";
   static const String sys_app_settingPicklisService="is_picklist_service";
   static const String sys_app_settingPicklisTime="picklist_time";
+  static const String sys_app_auto_time = "is_autotime_enabled";
+  static const String sys_app_location = "is_location_enabled";
+  static const String sys_app_fake_location_check = "is_fake_gps_check_enabled";
+  static const String sys_app_vpn_check = "is_vpn_checked";
 
   static const String picklist_id = "picklist_id";
   static const String picklist_tmr_id = "tmr_id";

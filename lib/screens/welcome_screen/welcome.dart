@@ -141,7 +141,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
         print("Product Placement List");
         print(syncroniseData[0].sysProductPlacement.length);
 
-        ToastMessage.succesMessage(context, "Data synchronization started now".tr);
+        showAnimatedToastMessage("Success".tr, "Data synchronization started now".tr, true);
 
        ///Table Deletion
        DatabaseHelper.delete_table(TableName.tblSysAgencyDashboard);
@@ -198,7 +198,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
           isLoading = isJourneyPlan && isDashboardPlan && isAgencyDash && isCategory && isSubCategory
               && isClinet && isPlanoReason && isRtvReason && isProduct && isPhotoType
               && isOSDCType && isOsdcReason && isStorePog && isProductPlacement && isBrandFace && isPromoPlan;
-
+          _controller.dispose();
           isSyncronize = "1";
           prefs.setString(AppConstants.isSyncronize, "1");
 
@@ -211,18 +211,18 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
       setState(() {
         isLoading = false;
       });
-      ToastMessage.errorMessage(context, onError.toString());
+      showAnimatedToastMessage("Error!".tr, errorText.tr, false);
     });
     // } catch (error) {
 
     // }
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _controller.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {

@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Database/db_helper.dart';
 import '../../Model/database_model/client_model.dart';
 import '../../Model/database_model/sys_market_issue_model.dart';
 import '../../Model/database_model/trans_market_issue_model.dart';
+import '../Language/localization_controller.dart';
 import '../utils/app_constants.dart';
 import '../utils/appcolor.dart';
 import '../utils/services/image_picker.dart';
@@ -29,7 +31,9 @@ class AddMarketIssue extends StatefulWidget {
 }
 
 class _AddMarketIssueState extends State<AddMarketIssue> {
-  String storeName = "";
+  final languageController = Get.put(LocalizationController());
+  String storeEnName = "";
+  String storeArName = "";
   String workingId = "";
   TextEditingController valueControllerComment = TextEditingController();
   final GlobalKey<FormFieldState> clientKey = GlobalKey<FormFieldState>();
@@ -53,7 +57,8 @@ class _AddMarketIssueState extends State<AddMarketIssue> {
 
   getUserData() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    storeName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeEnName = sharedPreferences.getString(AppConstants.storeEnNAme)!;
+    storeArName = sharedPreferences.getString(AppConstants.storeArNAme)!;
     workingId = sharedPreferences.getString(AppConstants.workingId)!;
     clientId = sharedPreferences.getString(AppConstants.clientId)!;
     setState(() {});
@@ -104,7 +109,7 @@ class _AddMarketIssueState extends State<AddMarketIssue> {
     if (selectedClientId == -1 ||
         selectedIssueId == -1 ||
         imageFile == null) {
-      ToastMessage.errorMessage(context, "Please fill the form and take image");
+      showAnimatedToastMessage("Error!".tr,"Please fill the form and take image".tr, false);
       return;
     }
     setState(() {
@@ -125,7 +130,7 @@ class _AddMarketIssueState extends State<AddMarketIssue> {
                 working_id: int.parse(workingId),
             imageName: imageName))
             .then((_) {
-          ToastMessage.succesMessage(context, "Data store successfully");
+          showAnimatedToastMessage("Success".tr,"Data Saved Successfully".tr, true);
            valueControllerComment.text="";
           imageFile = null;
         });
@@ -137,7 +142,7 @@ class _AddMarketIssueState extends State<AddMarketIssue> {
       setState(() {
         isBtnLoading = false;
       });
-      ToastMessage.errorMessage(context, error.toString());
+      showAnimatedToastMessage("Error!".tr,error.toString().tr, false);
     }
   }
 
@@ -145,7 +150,7 @@ class _AddMarketIssueState extends State<AddMarketIssue> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: generalAppBar(context, storeName, "Add Market Issue", () {
+      appBar: generalAppBar(context,  languageController.isEnglish.value ? storeEnName :storeArName, "Add Market Issue", () {
         Navigator.of(context).pop();
       }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
 
@@ -162,15 +167,15 @@ class _AddMarketIssueState extends State<AddMarketIssue> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Row(
+                         Row(
                           children: [
                             Text(
-                              "Client",
-                              style: TextStyle(
+                              "Client".tr,
+                              style: const TextStyle(
                                   color: MyColors.appMainColor,
                                   fontWeight: FontWeight.bold),
                             ),
-                            Text(
+                            const Text(
                               " *",
                               style: TextStyle(
                                   color: MyColors.backbtnColor,
@@ -180,7 +185,7 @@ class _AddMarketIssueState extends State<AddMarketIssue> {
                         ),
                         ClientListDropDown(
                             clientKey: clientKey,
-                            hintText: "Client",
+                            hintText: "Client".tr,
                             clientData: clientData,
                             onChange: (value) {
                               selectedClientId = value.client_id;
@@ -194,15 +199,15 @@ class _AddMarketIssueState extends State<AddMarketIssue> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Row(
+                           Row(
                             children: [
                               Text(
-                                "Market Issue",
-                                style: TextStyle(
+                                "Market Issue".tr,
+                                style: const TextStyle(
                                     color: MyColors.appMainColor,
                                     fontWeight: FontWeight.bold),
                               ),
-                              Text(
+                              const Text(
                                 " *",
                                 style: TextStyle(
                                     color: MyColors.backbtnColor,
@@ -210,7 +215,7 @@ class _AddMarketIssueState extends State<AddMarketIssue> {
                               ),
                             ],
                           ),
-                          MarketIssueDropDown(hintText: "Select issue",
+                          MarketIssueDropDown(hintText: "Select issue".tr,
                               reasonData: marketIssueModel,
                               onChange:  (value) {
                                 selectedIssueId = value.id;
@@ -223,9 +228,9 @@ class _AddMarketIssueState extends State<AddMarketIssue> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Comment",
-                          style: TextStyle(
+                         Text(
+                          "Comment".tr,
+                          style: const TextStyle(
                               color: MyColors.appMainColor,
                               fontWeight: FontWeight.bold),
                         ),
@@ -238,16 +243,16 @@ class _AddMarketIssueState extends State<AddMarketIssue> {
                               onChanged: (value) {},
                               controller: valueControllerComment,
                               keyboardType: TextInputType.text,
-                              decoration: const InputDecoration(
+                              decoration:  InputDecoration(
                                   prefixIconColor: MyColors.appMainColor,
                                   focusColor: MyColors.appMainColor,
                                   fillColor: MyColors.dropBorderColor,
-                                  labelStyle: TextStyle(color: MyColors.appMainColor),
-                                  focusedBorder: OutlineInputBorder(
+                                  labelStyle: const TextStyle(color: MyColors.appMainColor),
+                                  focusedBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           width: 1, color: MyColors.appMainColor)),
-                                  border: OutlineInputBorder(),
-                                  hintText: 'Enter comment')),
+                                  border: const OutlineInputBorder(),
+                                  hintText: 'Enter comment'.tr)),
                         ),
                       ],
                     ),
@@ -261,7 +266,7 @@ class _AddMarketIssueState extends State<AddMarketIssue> {
                           }),
                     ),
                     isBtnLoading ? const SizedBox(height: 60,width: 60,child: MyLoadingCircle(),) : BigElevatedButton(
-                        buttonName: "Save",
+                        buttonName: "Save".tr,
                         submit: (){
                           saveStorePhotoData();
                         },
@@ -275,7 +280,7 @@ class _AddMarketIssueState extends State<AddMarketIssue> {
             Container(
               margin: const EdgeInsets.only(bottom: 10),
               child: BigElevatedButton(
-                  buttonName: "View Market Issue",
+                  buttonName: "View Market Issue".tr,
                   submit: (){
                     Navigator.of(context)
                         .pushNamed(ViewMarketIssueScreen.routename);

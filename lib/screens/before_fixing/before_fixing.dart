@@ -148,7 +148,7 @@ class _BeforeFixingState extends State<BeforeFixing> {
     if (selectedClientId == -1 ||
         selectedCategoryId == -1 ||
         imageFile == null) {
-      ToastMessage.errorMessage(context, "Please fill the form and take image".tr);
+      showAnimatedToastMessage("Error!".tr, "Please fill the form and take image".tr, false);
       return;
     }
     // print(selectedCategoryId);

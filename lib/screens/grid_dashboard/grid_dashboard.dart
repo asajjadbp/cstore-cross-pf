@@ -20,9 +20,11 @@ import 'package:flutter_internet_speed_test/flutter_internet_speed_test.dart';
 import '../../Model/database_model/dashboard_model.dart';
 import '../../Model/database_model/picklist_model.dart';
 import '../../Model/request_model.dart/jp_request_model.dart';
+import '../../Network/app_exceptions.dart';
 import '../Language/localization_controller.dart';
 import '../before_fixing/before_fixing.dart';
 import '../brand_share/AddBrandShares.dart';
+import '../important_service/genral_checks_status.dart';
 import '../knowledge_share/knowledge_share_screen.dart';
 import '../market_issues_show/add_market_issue_screen.dart';
 import '../osdc/add_osdc.dart';
@@ -32,13 +34,13 @@ import '../plano_guide/Planoguides.dart';
 import '../price_check/Pricecheck.dart';
 import '../promoplane/PromoPlan.dart';
 import '../rtv_1+1/add_new_rtv_1+1.dart';
-import '../rtv_1+1/rtv_one_plus_one_list.dart';
 import '../rtv_screen/rtv_list_screen.dart';
 import '../share_of_shelf/add_share_of_shelf.dart';
 import '../stock/stock_list_screen.dart';
 import '../utils/toast/toast.dart';
 import '../widget/elevated_buttons.dart';
 import 'widgets/card_widget.dart';
+import '../utils/services/general_checks_controller_call_function.dart';
 
 class GridDashBoard extends StatefulWidget {
   static const routeName = "/GridDashboard";
@@ -225,134 +227,14 @@ class _GridDashBoardState extends State<GridDashBoard> {
     }
   }
 
-  // void testSpeed() async {
-  //   try {
-  //     await _internetSpeedTest.startTesting(
-  //       onCompleted: (download, upload) {
-  //         print('Download: $download, Upload: $upload');
-  //         setState(() {
-  //           _uploadSpeed = upload.transferRate * 1000;
-  //         });
+  // Future <GeneralChecksStatusController> generalControllerInitialization () async {
+  //   GeneralChecksStatusController generalStatusController;
+  //   generalStatusController = Get.put(GeneralChecksStatusController());
   //
-  //         if(_uploadSpeed > 200){
-  //           setState(() {
-  //             isUplaodStatus = false;
-  //           });
-  //           getTransData(AppConstants.availability,false);
-  //         }
-  //       },
-  //       onProgress: (percentage, speed) {
-  //         print('Progress: $percentage%, Speed: $speed');
-  //         setState(() {
-  //           _uploadSpeed  = speed.transferRate * 1000;
-  //         });
-  //         // if(_uploadSpeed > 200){
-  //         //   _getImages();
-  //         // }
-  //       },
-  //     );
-  //   } catch (e) {
-  //     print('Error: $e');
-  //     rethrow; // Rethrow for handling in UI
-  //   }
+  //   await generalStatusController.getAppSetting();
+  //
+  //   return generalStatusController;
   // }
-  //
-  // getTransData(String module, bool isUpload) async {
-  //   print("=============Module Name=============");
-  //   print(module);
-  //   setState(() {
-  //     isDataUploading  = isUpload;
-  //   });
-  //   if(module == AppConstants.beforeFixing) {
-  //     await DatabaseHelper.getTransBeforeFixing(workingId).then((value) async {
-  //       beforeFixingTransData = value.cast<GetTransBeforeFixing>();
-  //       await _getImages(AppConstants.beforeFixing).then((value) {
-  //         setTransPhoto(AppConstants.beforeFixing);
-  //       });
-  //     });
-  //   }
-  //   else if(module == AppConstants.otherPhoto) {
-  //     await DatabaseHelper.getTransPhoto(workingId).then((value) async {
-  //       otherPhotoTransData = value;
-  //       await _getImages(module).then((value) {
-  //         setTransPhoto(module);
-  //       });
-  //     });
-  //
-  //   }
-  //   else if(module == AppConstants.planogram) {
-  //     await DatabaseHelper.getTransPlanogram(workingId).then((value) async {
-  //       planogramTransData = value;
-  //       await _getImages(module).then((value) {
-  //         setTransPhoto(module);
-  //       });
-  //     });
-  //   }
-  //   else if(module == AppConstants.availability) {
-  //     await DatabaseHelper.getAvlDataList(workingId,"-1","-1","-1","-1").then((value) {
-  //       print(jsonEncode(value));
-  //       availableData = value;
-  //       print(availableData.length);
-  //       print("_______________");
-  //       setTransPhoto(module);
-  //     });
-  //   } else if(module == AppConstants.planoguide) {
-  //     await DatabaseHelper.getPlanoGuideDataList(workingId).then((value) async {
-  //       planoguidData = value.cast<TransPlanoGuideModel>();
-  //       print("___  Planoguide Data List Screen_______");
-  //       print(planoguidData);
-  //       await _getImages(module).then((value) {
-  //         setTransPhoto(module);
-  //       });
-  //       setState((){});
-  //     });
-  //   } else if(module == AppConstants.shelfShare) {
-  //
-  //     await DatabaseHelper.getBransSharesDataList(workingId).then((value) async {
-  //       brandShareData = value.cast<TransBransShareModel>();
-  //       setState(() {});
-  //       print("___  BrandShare Data List Screen_______");
-  //       print(brandShareData);
-  //       setTransPhoto(module);
-  //     });
-  //
-  //   }
-  //   else if(module == AppConstants.osdc) {
-  //     setTransPhoto(AppConstants.osdc);
-  //     // await DatabaseHelper.getTransOSDC(workingId).then((value) async {
-  //     //   osdcTransData = value;
-  //     //
-  //     //   await _getImages(AppConstants.osdc).then((value) {
-  //     //     setTransPhoto(AppConstants.osdc);
-  //     //   });
-  //     // });
-  //
-  //   }
-  // }
-  //
-  // Future<void> _getImages(String module) async {
-  //   // setState(() {
-  //   //   isLoading = true;
-  //   // });
-  //   try {
-  //     final String dirPath = (await getExternalStorageDirectory())!.path;
-  //     final String folderPath = '$dirPath/cstore/$workingId/$module';
-  //     final Directory folder = Directory(folderPath);
-  //     // print(folderPath);
-  //     if (await folder.exists()) {
-  //       final List<FileSystemEntity> files = folder.listSync();
-  //       _imageFiles = files.whereType<File>().toList();
-  //       // print("****************** $module");
-  //       // print(_imageFiles);
-  //     } else {
-  //       print("Folder does not exist");
-  //     }
-  //   } catch (e) {
-  //     print('Error reading images: $e');
-  //   }
-  //
-  // }
-
 
   @override
   Widget build(BuildContext context) {
@@ -443,99 +325,138 @@ class _GridDashBoardState extends State<GridDashBoard> {
                                   margin: const EdgeInsets.only(left: 4, right: 4),
                                   child: CardWidget(
                                       onTap: () async {
-                                       print(agencyData[i].en_name);
-                                       if(agencyData[i].id == 1) {
-                                        Navigator.of(context).pushNamed(BeforeFixing.routeName);
-                                        //  Navigator.of(context).pushNamed(ViewKnowledgeShare.routename);
-                                       }else if(agencyData[i].id == 5) {
-                                         Navigator.of(context).pushNamed(PlanogramScreen.routeName);
-                                       }else if(agencyData[i].id == 10) {
-                                         Navigator.of(context).pushNamed(ViewKnowledgeShare.routename);
-                                       } else if(agencyData[i].id == 3) {
 
-                                           var now = DateTime.now();
+                                        GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-                                           await DatabaseHelper.insertTransAvailability(workingId,clientId,now.toString()).then((value) {
+                                        if(generalStatusController.isVpnStatus.value) {
+                                          showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false);
+                                        } else if(generalStatusController.isMockLocation.value) {
+                                          showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false);
+                                        } else if(!generalStatusController.isAutoTimeStatus.value) {
+                                          showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false);
+                                        } else if(!generalStatusController.isLocationStatus.value) {
+                                          showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false);
+                                        } else {
+                                          Get.delete<GeneralChecksStatusController>();
 
-                                             Navigator.of(context).pushNamed(Availability.routename);
+                                          print(agencyData[i].en_name);
+                                          if (agencyData[i].id == 1) {
+                                            Navigator.of(context).pushNamed(
+                                                BeforeFixing.routeName);
+                                          } else if (agencyData[i].id == 5) {
+                                            Navigator.of(context).pushNamed(
+                                                PlanogramScreen.routeName);
+                                          } else if (agencyData[i].id == 10) {
+                                            Navigator.of(context).pushNamed(
+                                                ViewKnowledgeShare.routename);
+                                          } else if (agencyData[i].id == 3) {
+                                            var now = DateTime.now();
+                                            await DatabaseHelper
+                                                .insertTransAvailability(
+                                                workingId, clientId,
+                                                now.toString()).then((value) {
+                                              Navigator.of(context).pushNamed(
+                                                  Availability.routename);
+                                            }).catchError((e) {
+                                              print(e.toString());
+                                              ToastMessage.errorMessage(
+                                                  context, e.toString());
+                                              setState(() {});
+                                            });
+                                          }
+                                          else if (agencyData[i].id == 11) {
+                                            Navigator.of(context).pushNamed(
+                                                AddOtherPhoto.routeName);
+                                          } else if (agencyData[i].id == 2) {
+                                            Navigator.of(context).pushNamed(
+                                                Rtv_List_Screen.routeName);
+                                          } else if (agencyData[i].id == 6) {
+                                            Navigator.of(context).pushNamed(
+                                                ShareOfShelf.routeName);
+                                          }
+                                          else if (agencyData[i].id == 12) {
+                                            Navigator.of(context).pushNamed(
+                                                AddOSDC.routeName);
+                                          }
+                                          else if (agencyData[i].id == 9) {
+                                            Navigator.of(context).pushNamed(
+                                                StockListScreen.routeName);
+                                          }
+                                          else if (agencyData[i].id == 7) {
+                                            Navigator.of(context).pushNamed(
+                                                PriceCheck_Screen.routeName);
+                                          } else if (agencyData[i].id == 15) {
+                                            //Navigator.of(context).pushNamed(Planoguides_Screen.routename);
+                                            await DatabaseHelper
+                                                .insertTransPlanoguide(
+                                                workingId).then((value) {
+                                              Navigator.of(context).pushNamed(
+                                                  Planoguides_Screen.routename);
+                                            }).catchError((e) {
+                                              print(e.toString());
+                                              ToastMessage.errorMessage(
+                                                  context, e.toString());
+                                              setState(() {});
+                                            });
+                                          } else if (agencyData[i].id == 16) {
+                                            await DatabaseHelper
+                                                .insertTransBrandShares(
+                                                workingId).then((value) {
+                                              Navigator.of(context).pushNamed(
+                                                  BrandShares_Screen.routename);
+                                            }).catchError((e) {
+                                              print(e.toString());
+                                              ToastMessage.errorMessage(
+                                                  context, e.toString());
+                                              setState(() {});
+                                            });
+                                          } else if (agencyData[i].id == 4) {
+                                            Navigator.of(context).pushNamed(
+                                                PickListScreen.routename);
+                                          } else if (agencyData[i].id == 13) {
+                                            await DatabaseHelper
+                                                .insertTransPromoPlan(
+                                                workingId, int.parse(storeId))
+                                                .then((value) {
+                                              Navigator.of(context).pushNamed(
+                                                  PromoPlan_scrren.routeName);
+                                            }).catchError((e) {
+                                              print(e.toString());
+                                              ToastMessage.errorMessage(
+                                                  context, e.toString());
+                                              setState(() {});
+                                            });
+                                          } else if (agencyData[i].id == 8) {
+                                            Navigator.of(context).pushNamed(
+                                                Freshness_Screen.routeName);
+                                          } else if (agencyData[i].id == 14) {
+                                            Navigator.of(context).pushNamed(
+                                                AddRtvOnePlusOne.routeName);
+                                          } else if (agencyData[i].id == 19) {
+                                            Navigator.of(context).pushNamed(
+                                                ProofOfSale.routeName);
+                                          } else if (agencyData[i].id == 18) {
+                                            Navigator.of(context).pushNamed(
+                                                AddMarketIssue.routeName);
+                                          } else if (agencyData[i].id == 17) {
+                                            print(workingId);
+                                            print(clientId);
+                                            var now = DateTime.now();
 
-                                           }).catchError((e) {
-
-                                             print(e.toString());
-                                             ToastMessage.errorMessage(context, e.toString());
-                                             setState(() {});
-
-                                           });
-                                       }
-                                       else if(agencyData[i].id == 11){
-                                         Navigator.of(context).pushNamed(AddOtherPhoto.routeName);
-                                       }  else if(agencyData[i].id == 2){
-                                         Navigator.of(context).pushNamed(Rtv_List_Screen.routeName);
-                                       } else if(agencyData[i].id == 6){
-                                         Navigator.of(context).pushNamed(ShareOfShelf.routeName);
-                                       }
-                                       else if(agencyData[i].id == 12){
-                                         Navigator.of(context).pushNamed(AddOSDC.routeName);
-                                       }
-                                       else if(agencyData[i].id == 9){
-                                         Navigator.of(context).pushNamed(StockListScreen.routeName);
-                                       }
-                                       else if(agencyData[i].id == 7){
-                                         Navigator.of(context).pushNamed(PriceCheck_Screen.routeName);
-                                       }else if(agencyData[i].id == 15){
-                                         //Navigator.of(context).pushNamed(Planoguides_Screen.routename);
-                                         await DatabaseHelper.insertTransPlanoguide(workingId).then((value) {
-
-                                           Navigator.of(context).pushNamed(Planoguides_Screen.routename);
-                                         }).catchError((e) {
-                                           print(e.toString());
-                                           ToastMessage.errorMessage(context, e.toString());
-                                           setState(() {});
-                                         });
-                                       } else if(agencyData[i].id == 16){
-                                         await DatabaseHelper.insertTransBrandShares(workingId).then((value) {
-                                           Navigator.of(context).pushNamed(BrandShares_Screen.routename);
-                                         }).catchError((e) {
-                                           print(e.toString());
-                                           ToastMessage.errorMessage(context, e.toString());
-                                           setState(() {});
-                                         });
-                                       } else if(agencyData[i].id == 4) {
-                                         Navigator.of(context).pushNamed(PickListScreen.routename);
-                                       } else if(agencyData[i].id == 13) {
-                                         await DatabaseHelper.insertTransPromoPlan(workingId,int.parse(storeId)).then((value) {
-                                           Navigator.of(context).pushNamed(PromoPlan_scrren.routeName);
-                                         }).catchError((e) {
-                                           print(e.toString());
-                                           ToastMessage.errorMessage(context, e.toString());
-                                           setState(() {});
-                                         });
-                                       } else if(agencyData[i].id == 8) {
-                                         Navigator.of(context).pushNamed(Freshness_Screen.routeName);
-                                       } else if(agencyData[i].id == 14) {
-                                         Navigator.of(context).pushNamed(AddRtvOnePlusOne.routeName);
-                                       } else if(agencyData[i].id == 19) {
-                                         Navigator.of(context).pushNamed(ProofOfSale.routeName);
-                                       } else if(agencyData[i].id == 18) {
-                                         Navigator.of(context).pushNamed(AddMarketIssue.routeName);
-                                       }  else if(agencyData[i].id == 17) {
-
-                                         print(workingId);
-                                         print(clientId);
-                                         var now = DateTime.now();
-
-                                         await DatabaseHelper.insertTransAvailability(workingId,clientId,now.toString()).then((value) {
-
-                                           Navigator.of(context).pushNamed(SidcoAvailability.routename);
-
-                                         }).catchError((e) {
-
-                                           print(e.toString());
-                                           ToastMessage.errorMessage(context, e.toString());
-                                           setState(() {});
-
-                                         });
-                                       }
+                                            await DatabaseHelper
+                                                .insertTransAvailability(
+                                                workingId, clientId,
+                                                now.toString()).then((value) {
+                                              Navigator.of(context).pushNamed(
+                                                  SidcoAvailability.routename);
+                                            }).catchError((e) {
+                                              print(e.toString());
+                                              ToastMessage.errorMessage(
+                                                  context, e.toString());
+                                              setState(() {});
+                                            });
+                                          }
+                                        }
                                         // Navigator.of(context).pushNamed(BeforeFixing.routeName);
                                       },
                                       imageUrl: agencyData[i].id.toString(),
