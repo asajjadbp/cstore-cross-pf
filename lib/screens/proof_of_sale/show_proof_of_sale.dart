@@ -111,11 +111,14 @@ class _ShowProofOfSaleScreenState extends State<ShowProofOfSaleScreen> {
     }
   }
   void deletePhoto(int recordId, String imgName) async {
-    await DatabaseHelper.deleteOneRecord(TableName.tblTransPOS, recordId)
+    await DatabaseHelper.deletePos(workingId,recordId)
         .then((_) async {
       await deleteImageFromLocal(imgName).then((_) {
         _loadImages();
         getTransPosOne();
+        setState(() {
+
+        });
       });
     });
   }
@@ -170,7 +173,7 @@ class _ShowProofOfSaleScreenState extends State<ShowProofOfSaleScreen> {
                             icon: const Icon(Icons.check),
                             label:  Text("Yes".tr),
                             onPressed: () {
-                              deletePhoto(transData[i].id, transData[i].image_name);
+                              deletePhoto(transData[i].sku_id, transData[i].image_name);
                               Navigator.of(context).pop(true);
                             },
                           ),

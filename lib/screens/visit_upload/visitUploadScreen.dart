@@ -568,8 +568,15 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
                 if(generalStatusController.isLocationStatus.value) {
 
-                  await generalStatusController.getGeoLocationDistance(
-                      double.parse(generalStatusController.isLat.value), double.parse(generalStatusController.isLong.value), double.parse(storeLat), double.parse(storeLong));
+                  if(generalStatusController.sysAppSettingModel.isGeoLocationEnabled == "0") {
+                    generalStatusController.isGeoFenceDistance.value = 0.5;
+                  } else {
+                    await generalStatusController.getGeoLocationDistance(
+                        double.parse(generalStatusController.isLat.value),
+                        double.parse(generalStatusController.isLong
+                            .value), double.parse(storeLat.trim()),
+                        double.parse(storeLong.trim()));
+                  }
 
                   print("Store Lat Long");
                   print(storeLong);
@@ -589,7 +596,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                 } else if(!generalStatusController.isLocationStatus.value) {
                   showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false);
                 } else if(generalStatusController.isGeoFenceDistance.value > 0.7) {
-                  showAnimatedToastMessage("Error!".tr, "You are outside of this store".tr, false);
+                  showAnimatedToastMessage("Error!".tr, "You’re just 0.7 km away from the store. Please contact your supervisor for the exact location details".tr, false);
                 } else {
                   Get.delete<GeneralChecksStatusController>();
 
@@ -1285,6 +1292,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
               fileContent.length,
             ),
           );
+          print(resp.mediaLink);
           print("Image Uploaded successfully");
 
           await updatePromoPlanAfterGcs1(promoPlanGcsImagesList[j].id);

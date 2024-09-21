@@ -83,8 +83,7 @@ class _ViewShareOfShelfState extends State<ViewShareOfShelf> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF4F7FD),
       appBar: generalAppBar(context, languageController.isEnglish.value ? storeEnName : storeArName, userName, (){

@@ -20,6 +20,7 @@ class GeneralChecksStatusController extends GetxController {
   RxBool isAutoTimeStatus = true.obs;
   RxDouble isGeoFenceDistance = 0.0.obs;
   RxBool isLocationStatus = true.obs;
+  RxBool isGeoLocation = true.obs;
   RxString isLat = "".obs;
   RxString isLong = "".obs;
   RxString isLatLong = "".obs;
@@ -72,11 +73,18 @@ class GeneralChecksStatusController extends GetxController {
         await checkFakeLocation();
     }
 
+    if(sysAppSettingModel.isGeoLocationEnabled == "0") {
+      isGeoLocation.value = true;
+    } else {
+      isGeoLocation.value = false;
+    }
+
     if(sysAppSettingModel.isLocationEnabled == "0") {
       isLocationStatus.value = true;
     } else {
       await getLocationEnableStatus();
     }
+
 
     print("AUTO TIME STATUS");
     print(isAutoTimeStatus.value);
@@ -103,6 +111,7 @@ class GeneralChecksStatusController extends GetxController {
       isLat.value = value['lat'],
       isLong.value = value['long'],
       isLatLong.value = value['lat'] +","+ value['long'],
+
     }
     });
 
@@ -110,6 +119,7 @@ class GeneralChecksStatusController extends GetxController {
   }
 
   getGeoLocationDistance(double startLat,double startLong,double storeLat,double storeLong) async {
+
     isGeoFenceDistance.value = calculateDistance(startLat, startLong, storeLat, storeLong);
   }
 

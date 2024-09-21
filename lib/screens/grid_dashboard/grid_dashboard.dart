@@ -307,205 +307,225 @@ class _GridDashBoardState extends State<GridDashBoard> {
                     height: 60,
                     child: MyLoadingCircle(),
                   )
-                : Stack(
-                  children: [
-                    Column(
-                      children: [
-                        Expanded(
-                          child: GridView.builder(
+                : IgnorePointer(
+                ignoring: isDataUploading,
+                child: Stack(
+                    children: [
+                      Column(
+                        children: [
+                          Expanded(
+                            child: GridView.builder(
 
-                              itemCount: agencyData.length,
-                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  crossAxisSpacing: 5,
-                                  mainAxisSpacing: 15.0),
-                              itemBuilder: (context, i) {
+                                itemCount: agencyData.length,
+                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    crossAxisSpacing: 5,
+                                    mainAxisSpacing: 15.0),
+                                itemBuilder: (context, i) {
 
-                                return Container(
-                                  margin: const EdgeInsets.only(left: 4, right: 4),
-                                  child: CardWidget(
-                                      onTap: () async {
+                                  return Container(
+                                    margin: const EdgeInsets.only(left: 4, right: 4),
+                                    child: CardWidget(
+                                        onTap: () async {
+                                          // setState(() {
+                                          //   isDataUploading = true;
+                                          // });
+                                          // GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+                                          //
+                                          // if(generalStatusController.isVpnStatus.value) {
+                                          //   setState(() {
+                                          //     isDataUploading = false;
+                                          //   });
+                                          //   showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false);
+                                          // } else if(generalStatusController.isMockLocation.value) {
+                                          //   setState(() {
+                                          //     isDataUploading = false;
+                                          //   });
+                                          //   showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false);
+                                          // } else if(!generalStatusController.isAutoTimeStatus.value) {
+                                          //   setState(() {
+                                          //     isDataUploading = false;
+                                          //   });
+                                          //   showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false);
+                                          // } else if(!generalStatusController.isLocationStatus.value) {
+                                          //   setState(() {
+                                          //     isDataUploading = false;
+                                          //   });
+                                          //   showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false);
+                                          // } else {
+                                          //   setState(() {
+                                          //     isDataUploading = false;
+                                          //   });
+                                          //   Get.delete<GeneralChecksStatusController>();
 
-                                        GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
-
-                                        if(generalStatusController.isVpnStatus.value) {
-                                          showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false);
-                                        } else if(generalStatusController.isMockLocation.value) {
-                                          showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false);
-                                        } else if(!generalStatusController.isAutoTimeStatus.value) {
-                                          showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false);
-                                        } else if(!generalStatusController.isLocationStatus.value) {
-                                          showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false);
-                                        } else {
-                                          Get.delete<GeneralChecksStatusController>();
-
-                                          print(agencyData[i].en_name);
-                                          if (agencyData[i].id == 1) {
-                                            Navigator.of(context).pushNamed(
-                                                BeforeFixing.routeName);
-                                          } else if (agencyData[i].id == 5) {
-                                            Navigator.of(context).pushNamed(
-                                                PlanogramScreen.routeName);
-                                          } else if (agencyData[i].id == 10) {
-                                            Navigator.of(context).pushNamed(
-                                                ViewKnowledgeShare.routename);
-                                          } else if (agencyData[i].id == 3) {
-                                            var now = DateTime.now();
-                                            await DatabaseHelper
-                                                .insertTransAvailability(
-                                                workingId, clientId,
-                                                now.toString()).then((value) {
+                                            print(agencyData[i].en_name);
+                                            if (agencyData[i].id == 1) {
                                               Navigator.of(context).pushNamed(
-                                                  Availability.routename);
-                                            }).catchError((e) {
-                                              print(e.toString());
-                                              ToastMessage.errorMessage(
-                                                  context, e.toString());
-                                              setState(() {});
-                                            });
-                                          }
-                                          else if (agencyData[i].id == 11) {
-                                            Navigator.of(context).pushNamed(
-                                                AddOtherPhoto.routeName);
-                                          } else if (agencyData[i].id == 2) {
-                                            Navigator.of(context).pushNamed(
-                                                Rtv_List_Screen.routeName);
-                                          } else if (agencyData[i].id == 6) {
-                                            Navigator.of(context).pushNamed(
-                                                ShareOfShelf.routeName);
-                                          }
-                                          else if (agencyData[i].id == 12) {
-                                            Navigator.of(context).pushNamed(
-                                                AddOSDC.routeName);
-                                          }
-                                          else if (agencyData[i].id == 9) {
-                                            Navigator.of(context).pushNamed(
-                                                StockListScreen.routeName);
-                                          }
-                                          else if (agencyData[i].id == 7) {
-                                            Navigator.of(context).pushNamed(
-                                                PriceCheck_Screen.routeName);
-                                          } else if (agencyData[i].id == 15) {
-                                            //Navigator.of(context).pushNamed(Planoguides_Screen.routename);
-                                            await DatabaseHelper
-                                                .insertTransPlanoguide(
-                                                workingId).then((value) {
+                                                  BeforeFixing.routeName);
+                                            } else if (agencyData[i].id == 5) {
                                               Navigator.of(context).pushNamed(
-                                                  Planoguides_Screen.routename);
-                                            }).catchError((e) {
-                                              print(e.toString());
-                                              ToastMessage.errorMessage(
-                                                  context, e.toString());
-                                              setState(() {});
-                                            });
-                                          } else if (agencyData[i].id == 16) {
-                                            await DatabaseHelper
-                                                .insertTransBrandShares(
-                                                workingId).then((value) {
+                                                  PlanogramScreen.routeName);
+                                            } else if (agencyData[i].id == 10) {
                                               Navigator.of(context).pushNamed(
-                                                  BrandShares_Screen.routename);
-                                            }).catchError((e) {
-                                              print(e.toString());
-                                              ToastMessage.errorMessage(
-                                                  context, e.toString());
-                                              setState(() {});
-                                            });
-                                          } else if (agencyData[i].id == 4) {
-                                            Navigator.of(context).pushNamed(
-                                                PickListScreen.routename);
-                                          } else if (agencyData[i].id == 13) {
-                                            await DatabaseHelper
-                                                .insertTransPromoPlan(
-                                                workingId, int.parse(storeId))
-                                                .then((value) {
+                                                  ViewKnowledgeShare.routename);
+                                            } else if (agencyData[i].id == 3) {
+                                              var now = DateTime.now();
+                                              await DatabaseHelper
+                                                  .insertTransAvailability(
+                                                  workingId, clientId,
+                                                  now.toString()).then((value) {
+                                                Navigator.of(context).pushNamed(
+                                                    Availability.routename);
+                                              }).catchError((e) {
+                                                print(e.toString());
+                                                ToastMessage.errorMessage(
+                                                    context, e.toString());
+                                                setState(() {});
+                                              });
+                                            }
+                                            else if (agencyData[i].id == 11) {
                                               Navigator.of(context).pushNamed(
-                                                  PromoPlan_scrren.routeName);
-                                            }).catchError((e) {
-                                              print(e.toString());
-                                              ToastMessage.errorMessage(
-                                                  context, e.toString());
-                                              setState(() {});
-                                            });
-                                          } else if (agencyData[i].id == 8) {
-                                            Navigator.of(context).pushNamed(
-                                                Freshness_Screen.routeName);
-                                          } else if (agencyData[i].id == 14) {
-                                            Navigator.of(context).pushNamed(
-                                                AddRtvOnePlusOne.routeName);
-                                          } else if (agencyData[i].id == 19) {
-                                            Navigator.of(context).pushNamed(
-                                                ProofOfSale.routeName);
-                                          } else if (agencyData[i].id == 18) {
-                                            Navigator.of(context).pushNamed(
-                                                AddMarketIssue.routeName);
-                                          } else if (agencyData[i].id == 17) {
-                                            print(workingId);
-                                            print(clientId);
-                                            var now = DateTime.now();
+                                                  AddOtherPhoto.routeName);
+                                            } else if (agencyData[i].id == 2) {
+                                              Navigator.of(context).pushNamed(
+                                                  Rtv_List_Screen.routeName);
+                                            } else if (agencyData[i].id == 6) {
+                                              Navigator.of(context).pushNamed(
+                                                  ShareOfShelf.routeName);
+                                            }
+                                            else if (agencyData[i].id == 12) {
+                                              Navigator.of(context).pushNamed(
+                                                  AddOSDC.routeName);
+                                            }
+                                            else if (agencyData[i].id == 9) {
+                                              Navigator.of(context).pushNamed(
+                                                  StockListScreen.routeName);
+                                            }
+                                            else if (agencyData[i].id == 7) {
+                                              Navigator.of(context).pushNamed(
+                                                  PriceCheck_Screen.routeName);
+                                            } else if (agencyData[i].id == 15) {
+                                              //Navigator.of(context).pushNamed(Planoguides_Screen.routename);
+                                              await DatabaseHelper
+                                                  .insertTransPlanoguide(
+                                                  workingId).then((value) {
+                                                Navigator.of(context).pushNamed(
+                                                    Planoguides_Screen.routename);
+                                              }).catchError((e) {
+                                                print(e.toString());
+                                                ToastMessage.errorMessage(
+                                                    context, e.toString());
+                                                setState(() {});
+                                              });
+                                            } else if (agencyData[i].id == 16) {
+                                              await DatabaseHelper
+                                                  .insertTransBrandShares(
+                                                  workingId).then((value) {
+                                                Navigator.of(context).pushNamed(
+                                                    BrandShares_Screen.routename);
+                                              }).catchError((e) {
+                                                print(e.toString());
+                                                ToastMessage.errorMessage(
+                                                    context, e.toString());
+                                                setState(() {});
+                                              });
+                                            } else if (agencyData[i].id == 4) {
+                                              Navigator.of(context).pushNamed(
+                                                  PickListScreen.routename);
+                                            } else if (agencyData[i].id == 13) {
+                                              await DatabaseHelper
+                                                  .insertTransPromoPlan(
+                                                  workingId,clientId ,int.parse(storeId))
+                                                  .then((value) {
+                                                Navigator.of(context).pushNamed(
+                                                    PromoPlan_scrren.routeName);
+                                              }).catchError((e) {
+                                                print(e.toString());
+                                                ToastMessage.errorMessage(
+                                                    context, e.toString());
+                                                setState(() {});
+                                              });
+                                            } else if (agencyData[i].id == 8) {
+                                              Navigator.of(context).pushNamed(
+                                                  Freshness_Screen.routeName);
+                                            } else if (agencyData[i].id == 14) {
+                                              Navigator.of(context).pushNamed(
+                                                  AddRtvOnePlusOne.routeName);
+                                            } else if (agencyData[i].id == 19) {
+                                              Navigator.of(context).pushNamed(
+                                                  ProofOfSale.routeName);
+                                            } else if (agencyData[i].id == 18) {
+                                              Navigator.of(context).pushNamed(
+                                                  AddMarketIssue.routeName);
+                                            } else if (agencyData[i].id == 17) {
+                                              print(workingId);
+                                              print(clientId);
+                                              var now = DateTime.now();
 
-                                            await DatabaseHelper
-                                                .insertTransAvailability(
-                                                workingId, clientId,
-                                                now.toString()).then((value) {
-                                              Navigator.of(context).pushNamed(
-                                                  SidcoAvailability.routename);
-                                            }).catchError((e) {
-                                              print(e.toString());
-                                              ToastMessage.errorMessage(
-                                                  context, e.toString());
-                                              setState(() {});
-                                            });
-                                          }
-                                        }
-                                        // Navigator.of(context).pushNamed(BeforeFixing.routeName);
-                                      },
-                                      imageUrl: agencyData[i].id.toString(),
-                                      // "assets/images/camera.png",
-                                      cardName: languageController.isEnglish.value ? agencyData[i].en_name : agencyData[i].ar_name),
-                                );
-                              }),
-                        ),
+                                              await DatabaseHelper
+                                                  .insertTransAvailability(
+                                                  workingId, clientId,
+                                                  now.toString()).then((value) {
+                                                Navigator.of(context).pushNamed(
+                                                    SidcoAvailability.routename);
+                                              }).catchError((e) {
+                                                print(e.toString());
+                                                ToastMessage.errorMessage(
+                                                    context, e.toString());
+                                                setState(() {});
+                                              });
+                                            }
+                                          // }
+                                          // Navigator.of(context).pushNamed(BeforeFixing.routeName);
+                                        },
+                                        imageUrl: agencyData[i].id.toString(),
+                                        // "assets/images/camera.png",
+                                        cardName: languageController.isEnglish.value ? agencyData[i].en_name : agencyData[i].ar_name),
+                                  );
+                                }),
+                          ),
 
-                        Container(
-                          margin:const EdgeInsets.symmetric(vertical: 5),
-                          child: BigElevatedButton(
-                              buttonName: "View Visit Summary".tr,
-                              submit: (){
-                                Navigator.of(context).pushNamed(VisitUploadScreen.routeName);
-                              },
-                              isBlueColor: true),
-                        )
-                        // ElevatedButton(
-                        //   style: ElevatedButton.styleFrom(
-                        //     backgroundColor: const Color.fromRGBO(0, 77, 145, 1),
-                        //     minimumSize: Size(MediaQuery.of(context).size.width/1.1, 45),
-                        //     shape: RoundedRectangleBorder(
-                        //         borderRadius: BorderRadius.circular(10)),
-                        //   ),
-                        //   onPressed: () async {
-                        //     // setState(() {
-                        //     //   isUplaodStatus = true;
-                        //     // });
-                        //     // getTransData(AppConstants.availability,true);
-                        //     // getAllModuleData();
-                        //
-                        //
-                        //
-                        //   },
-                        //   child: const Text(
-                        //     ,style: TextStyle(color: MyColors.whiteColor),
-                        //   ),
-                        // )
-                      ],
-                    ),
-                    isDataUploading ? const Center(
-                      child: SizedBox(
-                        height: 60,
-                        width: 60,
-                        child: MyLoadingCircle(),
+                          Container(
+                            margin:const EdgeInsets.symmetric(vertical: 5),
+                            child: BigElevatedButton(
+                                buttonName: "View Visit Summary".tr,
+                                submit: (){
+                                  Navigator.of(context).pushNamed(VisitUploadScreen.routeName);
+                                },
+                                isBlueColor: true),
+                          )
+                          // ElevatedButton(
+                          //   style: ElevatedButton.styleFrom(
+                          //     backgroundColor: const Color.fromRGBO(0, 77, 145, 1),
+                          //     minimumSize: Size(MediaQuery.of(context).size.width/1.1, 45),
+                          //     shape: RoundedRectangleBorder(
+                          //         borderRadius: BorderRadius.circular(10)),
+                          //   ),
+                          //   onPressed: () async {
+                          //     // setState(() {
+                          //     //   isUplaodStatus = true;
+                          //     // });
+                          //     // getTransData(AppConstants.availability,true);
+                          //     // getAllModuleData();
+                          //
+                          //
+                          //
+                          //   },
+                          //   child: const Text(
+                          //     ,style: TextStyle(color: MyColors.whiteColor),
+                          //   ),
+                          // )
+                        ],
                       ),
-                    ) : Container()
-                  ],
+                      isDataUploading ? const Center(
+                        child: SizedBox(
+                          height: 60,
+                          width: 60,
+                          child: MyLoadingCircle(),
+                        ),
+                      ) : Container()
+                    ],
+                  ),
                 ),
           ),
         ),

@@ -6,6 +6,7 @@ import 'dart:convert';
 
 import 'package:cstore/Model/response_model.dart/jp_response_model.dart';
 import 'package:cstore/Model/response_model.dart/user_dashboard_model.dart';
+import 'package:cstore/screens/widget/drop_downs.dart';
 
 import '../database_model/PlanogramReasonModel.dart';
 import '../database_model/app_setting_model.dart';
@@ -80,6 +81,7 @@ class SyncroniseDetail {
   List<UserDashboardModel> sysDashboard;
   List<KnowledgeShareModel> knowledgeShareModel;
   List<sysMarketIssueModel> sysMarketIssue;
+  List<Sys_OSDCReasonModel> sysPromoPlanReason;
 
   SyncroniseDetail({
     required this.sysDropReason,
@@ -106,6 +108,7 @@ class SyncroniseDetail {
     required this.sysDashboard,
     required this.knowledgeShareModel,
     required this.sysMarketIssue,
+    required this.sysPromoPlanReason,
   });
 
   factory SyncroniseDetail.fromJson(Map<String, dynamic> json) =>
@@ -161,6 +164,8 @@ class SyncroniseDetail {
             json["sys_knowledge_share"].map((x) => KnowledgeShareModel.fromJson(x))),
         sysMarketIssue: List<sysMarketIssueModel>.from(
             json["sys_market_issues"].map((x) => sysMarketIssueModel.fromJson(x))),
+        sysPromoPlanReason: List<Sys_OSDCReasonModel>.from(
+            json["sys_promo_plan_reasons"].map((x) => Sys_OSDCReasonModel.fromJson(x))),
 
       );
 
@@ -188,6 +193,7 @@ class SyncroniseDetail {
       "sys_dashboard":  List<dynamic>.from(sysDashboard.map((x) => x.toJson())),
       "sys_knowledge_share":  List<dynamic>.from(knowledgeShareModel.map((x) => x.toJson())),
       "sys_market_issues":  List<dynamic>.from(sysMarketIssue.map((x) => x.toJson())),
+      "sys_promo_plan_reasons":  List<dynamic>.from(sysPromoPlanReason.map((x) => x.toJson())),
   };
 }
 

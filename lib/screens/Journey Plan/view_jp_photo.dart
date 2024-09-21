@@ -71,7 +71,7 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
         isLoading = false;
       });
           callJp();
-        ToastMessage.succesMessage(context, "Visit Started Successfully".tr);
+          showAnimatedToastMessage("Success".tr, "Visit Started Successfully".tr, true);
 
         Navigator.of(context).pushNamed(GridDashBoard.routeName).then((value) => {
           Navigator.of(context).pop(),
@@ -81,7 +81,7 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
         isLoading = false;
       });
       print(error.toString());
-      ToastMessage.errorMessage(context, error.toString());
+      showAnimatedToastMessage("Error!".tr, error.toString().tr, false);
     });
 
     // print(commentText.text);
@@ -189,7 +189,7 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
           setState(() {
             isLoading = false;
           });
-          ToastMessage.errorMessage(context, value["msg"]);
+          showAnimatedToastMessage("Error!".tr, value["msg"].tr, false);
         }
       });
     } catch (e) {
@@ -198,7 +198,7 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
       });
       // Handle any errors that occur during the upload
       print("Upload GCS Error $e");
-      ToastMessage.errorMessage(context, "Uploading images error please try again!".tr);
+      showAnimatedToastMessage("Error!".tr, "Uploading images error please try again!".tr, false);
     }
   }
 
@@ -216,7 +216,7 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
       }
     }).catchError((onError) {
       print(onError.toString());
-      ToastMessage.errorMessage(context, onError.toString());
+      showAnimatedToastMessage("Error!".tr,onError.toString().tr, false);
     });
     // } catch (error) {
 

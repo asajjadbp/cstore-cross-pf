@@ -381,6 +381,8 @@ class DatabaseHelper {
           " TEXT, " +
           TableName.sys_app_location +
           " TEXT, " +
+          TableName.sys_app_geo_location +
+          " TEXT, " +
           TableName.sys_app_fake_location_check +
           " TEXT, " +
           TableName.sys_app_vpn_check +
@@ -393,8 +395,6 @@ class DatabaseHelper {
       await db.execute('CREATE TABLE ' +
           TableName.tblSysPromoPlan+
           "(" +
-          TableName.promoId +
-          " INTEGER ," +
           TableName.skuId +
           " INTEGER, " +
           TableName.storeId +
@@ -403,21 +403,25 @@ class DatabaseHelper {
           " TEXT, " +
           TableName.to +
           " TEXT, " +
-          TableName.osdType +
+          TableName.weekTitle +
           " TEXT, " +
-          TableName.quantity +
-          " INTEGER, " +
           TableName.promoScope +
           " TEXT, " +
+          TableName.promoScopeOther +
+          " TEXT, " +
           TableName.promoPrice +
-          " INTEGER, " +
-          TableName.modalImage +
+          " TEXT, " +
+          TableName.osdType +
           " TEXT, " +
           TableName.leftOverAction +
           " TEXT, " +
+          TableName.modalImage +
+          " TEXT, " +
+          TableName.companyId +
+          " TEXT, " +
           'CONSTRAINT unique_key UNIQUE (' +
           TableName.skuId + ', ' +
-          TableName.storeId +
+          TableName.companyId +
           ')' +
           ")");
 
@@ -613,11 +617,11 @@ class DatabaseHelper {
       await db.execute('CREATE TABLE ' +
           TableName.tbTransPromoPlan +
           "(" +
-          TableName.promoId +
-          " INTEGER, " +
           TableName.skuId +
           " INTEGER, " +
           TableName.imageName +
+          " TEXT, " +
+          TableName.modalImage +
           " TEXT, " +
           TableName.promoReason +
           " TEXT, " +
@@ -993,6 +997,8 @@ class DatabaseHelper {
           'CREATE TABLE ' +
               TableName.tblTransPOS +
               ' (' +
+              TableName.sysId +
+              " INTEGER PRIMARY KEY AUTOINCREMENT," +
               TableName.skuId + ' INTEGER, ' +
               TableName.clientIds + ' INTEGER, ' +
               TableName.sysCategoryId + ' INTEGER, ' +
@@ -1005,11 +1011,7 @@ class DatabaseHelper {
               TableName.uploadStatus + ' INTEGER, ' +
               TableName.gcsStatus + ' INTEGER, ' +
               TableName.workingId + ' INTEGER, ' +
-              TableName.dateTime + ' INTEGER, ' +
-              'CONSTRAINT unique_key UNIQUE (' +
-              TableName.workingId + ', ' +
-              TableName.skuId +
-              ')' +
+              TableName.dateTime + ' INTEGER ' +
               ')');
 
       await db.execute(
@@ -1163,6 +1165,7 @@ class DatabaseHelper {
         TableName.sys_app_settingPicklisTime: data.isPicklistTime.toString(),
         TableName.sys_app_auto_time: data.isAutoTimeEnabled.toString(),
         TableName.sys_app_location: data.isLocationEnabled.toString(),
+        TableName.sys_app_geo_location: data.isGeoLocationEnabled.toString(),
         TableName.sys_app_fake_location_check: data.isFakeLocationEnabled.toString(),
         TableName.sys_app_vpn_check: data.isVpnEnabled.toString(),
       };
@@ -1182,6 +1185,7 @@ class DatabaseHelper {
             TableName.sys_app_settingPicklisTime: data.isPicklistTime.toString(),
             TableName.sys_app_auto_time: data.isAutoTimeEnabled.toString(),
             TableName.sys_app_location: data.isLocationEnabled.toString(),
+            TableName.sys_app_geo_location: data.isGeoLocationEnabled.toString(),
             TableName.sys_app_fake_location_check: data.isFakeLocationEnabled.toString(),
             TableName.sys_app_vpn_check: data.isVpnEnabled.toString(),
           },
@@ -1229,15 +1233,19 @@ class DatabaseHelper {
 
     for (PromoPlanModel data in modelList) {
       Map<String, dynamic> fields = {
-        TableName.promoId: data.promoId,
+
         TableName.skuId: data.skuId,
+        TableName.modalImage:data.modalImage,
         TableName.from: data.from,
         TableName.to: data.to,
-        TableName.osdType: data.osdType,
-        TableName.quantity: data.quantity,
         TableName.promoScope: data.promoScope,
-        TableName.promoPrice: data.promoPrice,
-        TableName.leftOverAction: data.leftOverAction,
+        TableName.promoScopeOther: data.promoScopeOther,
+        TableName.weekTitle: data.weekTitle,
+        TableName.storeId: data.storeId,
+        TableName.companyId: data.companyId,
+        TableName.osdType:data.osdType,
+        TableName.leftOverAction:data.leftOverAction,
+        TableName.promoPrice: data.promoPrice
       };
 
       bool isDuplicate = await hasDuplicateEntry(
@@ -1250,17 +1258,18 @@ class DatabaseHelper {
         await db.insert(
           TableName.tblSysPromoPlan,
           {
-            TableName.modalImage: data.modalImage,
-            TableName.promoId: data.promoId,
-            TableName.storeId: data.storeId,
             TableName.skuId: data.skuId,
+            TableName.modalImage:data.modalImage,
             TableName.from: data.from,
             TableName.to: data.to,
-            TableName.osdType: data.osdType,
-            TableName.quantity: data.quantity,
             TableName.promoScope: data.promoScope,
-            TableName.promoPrice: data.promoPrice,
-            TableName.leftOverAction: data.leftOverAction,
+            TableName.promoScopeOther: data.promoScopeOther,
+            TableName.weekTitle: data.weekTitle,
+            TableName.storeId: data.storeId,
+            TableName.companyId: data.companyId,
+            TableName.osdType:data.osdType,
+            TableName.leftOverAction:data.leftOverAction,
+            TableName.promoPrice: data.promoPrice
           },
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
@@ -2022,6 +2031,7 @@ class DatabaseHelper {
     print("--------------SYS APP SETTING -----------");
 
       return SysAppSettingModel(
+          isGeoLocationEnabled: transSysAppSetting[0]['is_geo_location_enabled'] ?? "",
            isBgServices : transSysAppSetting[0]['bg_service'] ?? "",
            isBgMinute : transSysAppSetting[0]['bg_service_minutes'] ?? "",
            isPicklistService: transSysAppSetting[0]['is_picklist_service'] ?? "",
@@ -4991,10 +5001,10 @@ class DatabaseHelper {
   }
 
   ///Promo Plan Database Queries
-  static Future<int>  insertTransPromoPlan(String workingID,int storeId) async {
-    String insertQuery = "INSERT OR IGNORE INTO trans_promoplan (promo_id,sku_id, image_name, promo_reason, promo_status,date_time,act_status,gcs_status,upload_status, working_id) "
-        " SELECT promo_id,sku_id,'','','', CURRENT_TIMESTAMP,0,0, 0,$workingID"
-        " FROM sys_promoplan WHERE store_id=$storeId";
+  static Future<int>  insertTransPromoPlan(String workingID,String clientId,int storeId) async {
+    String insertQuery = "INSERT OR IGNORE INTO trans_promoplan (sku_id,modal_image, image_name, promo_reason, promo_status,date_time,act_status,gcs_status,upload_status, working_id) "
+        " SELECT sku_id,modal_image,'','','', CURRENT_TIMESTAMP,0,0, 0,$workingID"
+        " FROM sys_promoplan WHERE  company_id in($clientId) AND (store_id=$storeId or store_id is 0)";
     var db = await initDataBase();
     print("_______________INSERT TransPromoPlan________________");
     print(insertQuery);
@@ -5003,6 +5013,8 @@ class DatabaseHelper {
 
   static Future<List<TransPromoPlanListModel>> getTransPromoPlanList(String workingId,String promoReason) async {
     final db = await initDataBase();
+
+    print(promoReason);
 
     String searchWhere = "";
 
@@ -5014,17 +5026,16 @@ class DatabaseHelper {
       searchWhere = "$searchWhere And act_status = 0";
     }
 
-
     String query = "Select sys_product.en_name as pro_en_name, sys_product.ar_name as pro_ar_name, "
-        " sys_category.en_name as cat_en_name, sys_category.ar_name as cat_ar_name, "
-        " sys_brand.en_name as brand_en_name,sys_brand.ar_name as brand_ar_name, sys_product.image as pro_image_name,"
-        " trans_promoplan.*, "
-        " promo_from, promo_to, osd_type, qty, promo_price, promo_scope, modal_image,left_over_action "
+        " sys_category.en_name as cat_en_name, sys_category.ar_name as cat_ar_name, sys_promoplan.promo_to, sys_promoplan.promo_from, sys_promoplan.promo_Scope, sys_promoplan.promo_price, sys_promoplan.osd_type,sys_promoplan.left_over_action, "
+        " sys_brand.en_name as brand_en_name,sys_brand.ar_name as brand_ar_name, sys_product.image as pro_image_name, "
+        " trans_promoplan.promo_reason, "
+        " trans_promoplan.* "
         " From trans_promoplan "
         " JOIN sys_product on sys_product.id = trans_promoplan.sku_id "
         " JOIN sys_category on sys_category.id = sys_product.category_id "
         " JOIN sys_brand on sys_brand.id = sys_product.brand_id "
-        " JOIN sys_promoplan on sys_promoplan.promo_id = trans_promoplan.promo_id AND  sys_promoplan.sku_id = trans_promoplan.sku_id "
+        " JOIN sys_promoplan on sys_promoplan.sku_id = trans_promoplan.sku_id "
         " WHERE working_id=$workingId $searchWhere";
 
     final List<Map<String, dynamic>> transPromoPlanMap = await db.rawQuery(query);
@@ -5035,7 +5046,7 @@ class DatabaseHelper {
     return List.generate(transPromoPlanMap.length, (index) {
 
       return TransPromoPlanListModel(
-          promoId : transPromoPlanMap[index]['promo_id'],
+          promoId : transPromoPlanMap[index]['sku_id'],
           skuEnName : transPromoPlanMap[index]['pro_en_name'] ?? "",
           skuArName : transPromoPlanMap[index]['pro_ar_name'] ?? "",
           skuImageName : transPromoPlanMap[index]['pro_image_name'] ?? "",
@@ -5043,17 +5054,18 @@ class DatabaseHelper {
           catArName : transPromoPlanMap[index]['car_ar_name'] ?? "",
           brandEnName : transPromoPlanMap[index]['brand_en_name'] ?? "",
           brandArName : transPromoPlanMap[index]['brand_ar_name'] ?? "",
+          osdType: transPromoPlanMap[index]['osd_type'] ?? "",
           skuId : transPromoPlanMap[index]['sku_id'] ?? 0,
           promoFrom : transPromoPlanMap[index]['promo_from'] ?? "",
           promoTo : transPromoPlanMap[index]['promo_to'] ?? "",
-          osdType : transPromoPlanMap[index]['osd_type'] ?? "",
-          quantity : transPromoPlanMap[index]['qty'] ?? "",
-          promoPrice : transPromoPlanMap[index]['promo_price'] ?? 0,
+          weekTitle : transPromoPlanMap[index]['week_title'] ?? "",
+          promoPrice : transPromoPlanMap[index]['promo_price'] ?? "0",
           promoScope : transPromoPlanMap[index]['promo_Scope'] ?? "",
           imageName : transPromoPlanMap[index]['image_name'] ?? "",
           modalImage: transPromoPlanMap[index]['modal_image'] ?? "",
           leftOverAction : transPromoPlanMap[index]['left_over_action'] ?? "",
-          promoReason : transPromoPlanMap[index]['promo_reason'] ?? "",
+          initialOsdcItem: Sys_OSDCReasonModel(id: -1, en_name: "", ar_name: ""),
+          promoReasonId : transPromoPlanMap[index]['promo_reason'].toString().isEmpty ? -1 : int.parse(transPromoPlanMap[index]['promo_reason'].toString()),
           promoStatus : transPromoPlanMap[index]['promo_status'] ?? "",
           actStatus : transPromoPlanMap[index]['act_status'] ?? 0,
           uploadStatus : transPromoPlanMap[index]['upload_status'] ?? 0,
@@ -5065,7 +5077,7 @@ class DatabaseHelper {
 
   static Future<int> updateTransPromoPlan(int gcsStatus,int promoId,String workingId,String imageName,String promoStatus,String promoReason) async {
 
-    String writeQuery = "UPDATE trans_promoplan SET act_status=1,gcs_status=$gcsStatus, image_name=${wrapIfString(imageName)},promo_reason=${wrapIfString(promoReason)},promo_status=${wrapIfString(promoStatus)},upload_status=0 WHERE promo_id=$promoId and working_id=$workingId";
+    String writeQuery = "UPDATE trans_promoplan SET act_status=1,gcs_status=$gcsStatus, image_name=${wrapIfString(imageName)},promo_reason=${wrapIfString(promoReason)},promo_status=${wrapIfString(promoStatus)},upload_status=0 WHERE sku_id=$promoId and working_id=$workingId";
     var db = await initDataBase();
     print("_______________UpdATE Promo Plan________________");
     print(writeQuery);
@@ -5131,9 +5143,9 @@ class DatabaseHelper {
       return SavePromoPlanDataListData(
           skuId: freshnessMap[index]['sku_id'],
           clientId: freshnessMap[index]['api_client_id'],
-          promoId: freshnessMap[index]['promo_id'],
+          promoId: freshnessMap[index]['sku_id'],
           deployed: freshnessMap[index]['promo_status'],
-          reason: freshnessMap[index]['promo_reason'],
+          reason: freshnessMap[index]['promo_reason'] == "-1" ? "" : freshnessMap[index]['promo_reason'],
           imageName: freshnessMap[index]['image_name'],
 
       );
@@ -5141,10 +5153,10 @@ class DatabaseHelper {
   }
 
   static Future<int> updatePromoPlanAfterGcsImageUpload(String workingId,String promoId) async {
-    String writeQuery = "UPDATE trans_promoplan SET gcs_status=1 WHERE working_id=$workingId AND promo_id = $promoId";
+    String writeQuery = "UPDATE trans_promoplan SET gcs_status=1 WHERE working_id=$workingId AND sku_id = $promoId";
 
     var db = await initDataBase();
-    print("_______________UpdATE GCS Planoguide________________");
+    print("_______________UpdATE GCS Promoplan________________");
     print(writeQuery);
 
     return await db.rawUpdate(writeQuery);
@@ -5336,7 +5348,7 @@ class DatabaseHelper {
   }
 
   static Future<int> updatePromoPlanAfterApi(String workingId,String ids) async {
-    String writeQuery = "UPDATE trans_promoplan SET upload_status = 1 WHERE working_id=$workingId AND promo_id in ($ids)";
+    String writeQuery = "UPDATE trans_promoplan SET upload_status = 1 WHERE working_id=$workingId AND sku_id in ($ids)";
 
     var db = await initDataBase();
     print("_______________UpdATE API Planoguide________________");
@@ -5347,7 +5359,7 @@ class DatabaseHelper {
 
   static Future<List<TransPlanoGuideGcsImagesListModel>> getPromoPlanGcsImagesList(String workingId) async {
     final db = await initDataBase();
-    String rawQuery = "SELECT promo_id, image_name"
+    String rawQuery = "SELECT sku_id, image_name"
         " FROM trans_promoplan WHERE working_id=$workingId AND gcs_status=0";
 
     print("Promo Plan QUERY");
@@ -5358,7 +5370,7 @@ class DatabaseHelper {
     print("Promo Plan Images List");
     return List.generate(rtvMap.length, (index) {
       return TransPlanoGuideGcsImagesListModel(
-          id: rtvMap[index]['promo_id'],
+          id: rtvMap[index]['sku_id'],
           imageName: rtvMap[index]['image_name'],
           imageFile: null
       );
@@ -5566,6 +5578,17 @@ class DatabaseHelper {
   ///Update GCS status after images upload
   static Future<int> updatePosAfterGcsImageUpload(String workingId,String promoId) async {
     String writeQuery = "UPDATE trans_proof_of_sale SET gcs_status=1 WHERE working_id=$workingId AND sku_id = $promoId";
+
+    var db = await initDataBase();
+    print("_______________UpdATE GCS POS________________");
+    print(writeQuery);
+
+    return await db.rawUpdate(writeQuery);
+  }
+
+  ///Delete POS
+  static Future<dynamic> deletePos(String workingId,int promoId) async {
+    String writeQuery = "DELETE FROM trans_proof_of_sale WHERE working_id=$workingId AND sku_id = $promoId";
 
     var db = await initDataBase();
     print("_______________UpdATE GCS POS________________");
@@ -6123,8 +6146,9 @@ class DatabaseHelper {
           db, TableName.tblSysPromoPlaneReason, fields);
 
       if (isDuplicate) {
-        print("Error: Duplicate entry osdc");
+        print("Error: Duplicate entry promo plan Reason");
       } else {
+        print("Promo plan reason list");
         await db.insert(
           TableName.tblSysPromoPlaneReason,
           {

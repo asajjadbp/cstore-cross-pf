@@ -2,9 +2,11 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cstore/screens/ImageScreen/image_screen.dart';
 import 'package:cstore/screens/promoplane/widgets/promo_plan_card_row_item.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:cstore/screens/widget/drop_downs.dart';
+import 'package:cstore/screens/widget/image_selection_row_button.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -17,10 +19,10 @@ class PromoPlanCard extends StatelessWidget {
     required this.promoReasonModel,required this.promoStatus,required this.actStatus,required this.modalImage,
    required this.isBtnLoading,required this.skuName,required this.skuImage,required this.categoryName,
   required this.brandName,required this.fromDate,required this.toDate,
-    required this.osdType,required this.pieces,required this.promoScope,
+    required this.osdType,required this.promoScope,
     required this.promoPrice,required this.leftOverPieces,required this.imageFile,
     required this.promoReasonValue,
-    required this.onSelectImage,required this.statusValue,required this.onSaveClick,
+    required this.onSelectImage,required this.statusValue,required this.onSaveClick,required this.initialItem,
   });
 
   bool isBtnLoading;
@@ -33,7 +35,6 @@ class PromoPlanCard extends StatelessWidget {
   String fromDate;
   String toDate;
   String osdType;
-  String pieces;
   String promoScope;
   String promoPrice;
   String leftOverPieces;
@@ -43,8 +44,8 @@ class PromoPlanCard extends StatelessWidget {
   Function (String value) statusValue;
   final Function onSaveClick;
   List<Sys_OSDCReasonModel> promoReasonModel=[];
-  int selectedReasonId=-1;
-  Function (int value) promoReasonValue;
+  Function (Sys_OSDCReasonModel value) promoReasonValue;
+  final Sys_OSDCReasonModel initialItem;
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +103,7 @@ class PromoPlanCard extends StatelessWidget {
                   PromoPlanCardRowItems(title: "From".tr,value: fromDate,isWhiteBackGround: false,),
                   PromoPlanCardRowItems(title: "To".tr,value: toDate,isWhiteBackGround: true,),
                   PromoPlanCardRowItems(title: "OSD Type".tr,value: osdType,isWhiteBackGround: false,),
-                  PromoPlanCardRowItems(title: "Pieces".tr,value: pieces,isWhiteBackGround: true,),
+                  // PromoPlanCardRowItems(title: "Pieces".tr,value: pieces,isWhiteBackGround: true,),
                   PromoPlanCardRowItems(title: "Promo Scope".tr,value: promoScope,isWhiteBackGround: false,),
                   PromoPlanCardRowItems(title: "Promo Price".tr,value: "$promoPrice SAR",isWhiteBackGround: true,),
                   PromoPlanCardRowItems(title: "Left Over Action".tr,value: leftOverPieces,isWhiteBackGround: false,),
@@ -111,7 +112,7 @@ class PromoPlanCard extends StatelessWidget {
            ),
 
             Container(
-                margin: const EdgeInsets.symmetric(vertical: 10),
+                margin: const EdgeInsets.symmetric(vertical: 10,horizontal: 5,),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -121,7 +122,7 @@ class PromoPlanCard extends StatelessWidget {
                     AdherenceDropDown(hintText: "Select Status",initialValue: promoStatus, unitData: const ['Yes','No'], onChange: (value){statusValue(value);}),
                   ],
                 )),
-
+            if(promoStatus == "No")
             Container(
                 margin: const EdgeInsets.symmetric(vertical: 10),
                 child: Column(
@@ -129,16 +130,19 @@ class PromoPlanCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text("Reason"),
-                    OsdcReasonDropDown(hintText: "Select Reason",
+                    PromReasonDropDown(hintText: "Select Reason",
+                        initialItem: initialItem,
                         osdcReasonData: promoReasonModel, onChange: (value) {
-                          selectedReasonId = value.id;
-                          promoReasonValue(selectedReasonId);
+                          promoReasonValue(value);
                         }),
                   ],
                 )),
             Container(
               margin: const EdgeInsets.symmetric(vertical: 5),
-              child: Row(
+              child:
+              // ImageRowButton(imageFile: imageFile, onSelectImage: onSelectImage, isRequired: false)
+
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
@@ -157,17 +161,22 @@ class PromoPlanCard extends StatelessWidget {
                             alignment: Alignment.center,
                             width: MediaQuery.of(context).size.width/2.2,
                             height: 155,
-                            child: CachedNetworkImage(
-                              imageUrl: modalImage,
-                              imageBuilder: (context, imageProvider) => Container(
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: imageProvider,
-                                    fit: BoxFit.fill,),
+                            child: InkWell(
+                              onTap: (){
+                                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PdfScreen(pdfUrl: modalImage, type: "IMAGE")));
+                              },
+                              child: CachedNetworkImage(
+                                imageUrl: modalImage,
+                                imageBuilder: (context, imageProvider) => Container(
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: imageProvider,
+                                      fit: BoxFit.fill,),
+                                  ),
                                 ),
+                                placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                                errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
                               ),
-                              placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
-                              errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
                             ),
                           ),
                         ),

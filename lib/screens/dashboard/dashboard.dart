@@ -20,6 +20,8 @@ import '../Language/localization_controller.dart';
 import '../auth/login.dart';
 import '../important_service/genral_checks_status.dart';
 import '../utils/appcolor.dart';
+import '../utils/services/general_checks_controller_call_function.dart';
+import '../utils/services/getting_gps.dart';
 import '../utils/services/take_image_and_save_to_folder.dart';
 import '../widget/app_bar_widgets.dart';
 import '../widget/loading.dart';
@@ -82,6 +84,7 @@ class _DashBoardState extends State<DashBoard> {
     baseUrl = sharedPreferences.getString(AppConstants.baseUrl)!;
     token = sharedPreferences.getString(AppConstants.tokenId)!;
    // workingId = sharedPreferences.getString(AppConstants.workingId)!;
+
     getSqlUserDashboard();
     getCheckListData();
   }
@@ -281,8 +284,13 @@ class _DashBoardState extends State<DashBoard> {
       return Expanded(
         child: InkWell(
           onTap: () {
+            LocationService.getLocation().then((value) => {
+              if (value["locationIsPicked"]) {
             Navigator.of(context).pushNamed(JourneyPlanScreen.routename).then((value) {
-              getApiUserDashboard();
+            getApiUserDashboard();
+              }), } else {
+                showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false)
+              }
             });
           },
           child: Card(

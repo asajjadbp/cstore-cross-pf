@@ -1116,5 +1116,70 @@ class MarketIssueDropDown extends StatelessWidget {
   }
 }
 
+class PromReasonDropDown extends StatelessWidget {
+  PromReasonDropDown({super.key,required this.hintText,required this.osdcReasonData,required this.onChange,required this.initialItem});
+  final String hintText;
+  final List<Sys_OSDCReasonModel> osdcReasonData;
+  Sys_OSDCReasonModel initialItem;
+  final Function (Sys_OSDCReasonModel typeModel) onChange;
+  final languageController = Get.put(LocalizationController());
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField2<Sys_OSDCReasonModel>(
+      decoration: InputDecoration(
+        isDense: true,
+        filled: true,
+        fillColor:MyColors.dropBorderColor,
+        contentPadding: EdgeInsets.zero,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+      ),
+      isExpanded: true,
+      value: initialItem.id == -1 || initialItem.id == 0 ? null : initialItem,
+      hint: Text(
+        hintText,
+        style: const TextStyle(fontSize: 14),
+      ),
+      items: osdcReasonData
+          .map((item) => DropdownMenuItem<Sys_OSDCReasonModel>(
+        value: item,
+        child: Text(
+          languageController.isEnglish.value ? item.en_name : item.ar_name,
+          style: const TextStyle(
+            fontSize: 14,
+          ),
+        ),
+      ))
+          .toList(),
+      validator: (value) {
+        if (value == null) {
+          return 'Please select driver name';
+        }
+        return null;
+      },
+      onChanged: (value) {
+        onChange(value!);
+      },
+      onSaved: (value) {},
+      buttonStyleData: const ButtonStyleData(
+        height: 50,
+        padding: EdgeInsets.only(left: 20, right: 10),
+      ),
+      iconStyleData: const IconStyleData(
+        icon: Icon(
+          Icons.arrow_drop_down,
+          color: Colors.black45,
+        ),
+        iconSize: 30,
+      ),
+      dropdownStyleData: DropdownStyleData(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+        ),
+      ),
+    );
+  }
+}
+
 
 

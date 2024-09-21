@@ -9,6 +9,7 @@ class JourneyPlan extends StatelessWidget {
   final JourneyPlanDetail jp;
   String imageBaseUrl;
   Function onStartClick;
+  bool isCheckLoading;
   Function onDropClick;
   bool isDropLoading;
   String workingId;
@@ -18,6 +19,7 @@ class JourneyPlan extends StatelessWidget {
     super.key,
     required this.imageBaseUrl,
     required this.jp,
+    required this.isCheckLoading,
     required this.onStartClick,
     required this.onDropClick,
     required this.isDropLoading,
@@ -130,10 +132,10 @@ class JourneyPlan extends StatelessWidget {
                                     backgroundColor: jp.visitStatus == "1" ? MyColors.resumeColor : jp.visitStatus == "2" ? MyColors.greenColor : MyColors.appMainColor,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(5.0),)),
-                                    onPressed: jp.isDrop == 1 ? null : jp.visitStatus == "2" ? null : () {
+                                    onPressed:isCheckLoading ? null : jp.isDrop == 1 ? null : jp.visitStatus == "2" ? null : () {
                                            onStartClick();
                                           },
-                                    child:jp.visitStatus == "1"?  Text("Resume".tr,style:const TextStyle(color: MyColors.whiteColor,fontSize: 11),) : jp.visitStatus == "2" ?
+                                    child:isCheckLoading ? const CircularProgressIndicator() : jp.visitStatus == "1"?  Text("Resume".tr,style:const TextStyle(color: MyColors.whiteColor,fontSize: 11),) : jp.visitStatus == "2" ?
                                      Text("Completed".tr,style:const TextStyle(color: MyColors.whiteColor,fontSize: 11),) :  Text("Start Visit".tr,style:const TextStyle(color: MyColors.whiteColor,fontSize: 11),)),
                               ),
                               const SizedBox(

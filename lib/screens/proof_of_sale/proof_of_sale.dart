@@ -146,6 +146,10 @@ class _ProofOfSaleState extends State<ProofOfSale> {
       showAnimatedToastMessage("Error!".tr,"Please fill the form and take image".tr, false);
       return;
     }
+    if(valueControllerAmount.text == "0" || valueControllerAmount.text ==" 0.0" || valueControllerQuantity.text == "0" || valueControllerQuantity.text == "0.0" ) {
+      showAnimatedToastMessage("Error!".tr,"Please add proper regular price".tr, false);
+      return;
+    }
     setState(() {
       isBtnLoading = true;
     });

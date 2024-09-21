@@ -162,7 +162,7 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
         return;
       }
       setState(() {
-        isBtnLoading = false;
+        isBtnLoading = true;
       });
       var now = DateTime.now();
       await DatabaseHelper.insertTransSOS(TransSOSModel(
@@ -180,9 +180,17 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
         valueControllerActual.clear();
         valueControllerCatSpace.clear();
         isBtnLoading = false;
+
+        setState(() {
+
+        });
       });
     } catch (e) {
+      isBtnLoading = false;
       showAnimatedToastMessage("Error!".tr, e.toString(), false);
+      setState(() {
+
+      });
     }
   }
   @override

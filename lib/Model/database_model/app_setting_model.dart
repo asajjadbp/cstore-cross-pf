@@ -8,6 +8,7 @@ class SysAppSettingModel {
   late String isPicklistTime;
   late String isAutoTimeEnabled;
   late String isLocationEnabled;
+  late String isGeoLocationEnabled;
   late String isFakeLocationEnabled;
   late String isVpnEnabled;
 
@@ -18,6 +19,7 @@ class SysAppSettingModel {
     required this.isPicklistTime,
     required this.isAutoTimeEnabled,
     required this.isLocationEnabled,
+    required this.isGeoLocationEnabled,
     required this.isFakeLocationEnabled,
     required this.isVpnEnabled,
   });
@@ -30,6 +32,7 @@ class SysAppSettingModel {
       TableName.sys_app_settingPicklisTime: isPicklistTime.toString(),
       TableName.sys_app_auto_time: isAutoTimeEnabled.toString(),
       TableName.sys_app_location: isLocationEnabled.toString(),
+      "is_geo_fence": isGeoLocationEnabled.toString(),
       TableName.sys_app_fake_location_check: isFakeLocationEnabled.toString(),
       TableName.sys_app_vpn_check: isVpnEnabled.toString(),
     };
@@ -42,6 +45,7 @@ class SysAppSettingModel {
     isPicklistTime = json[TableName.sys_app_settingPicklisTime].toString();
     isAutoTimeEnabled = json[TableName.sys_app_auto_time].toString();
     isLocationEnabled = json[TableName.sys_app_location].toString();
+    isGeoLocationEnabled = json["is_geo_fence"].toString();
     isFakeLocationEnabled = json[TableName.sys_app_fake_location_check].toString();
     isVpnEnabled = json[TableName.sys_app_vpn_check].toString();
   }
@@ -52,6 +56,7 @@ class SysAppSettingModel {
     TableName.sys_app_settingPicklisTime: isPicklistTime.toString(),
     TableName.sys_app_auto_time: isAutoTimeEnabled.toString(),
     TableName.sys_app_location: isLocationEnabled.toString(),
+    "is_geo_fence": isGeoLocationEnabled.toString(),
     TableName.sys_app_fake_location_check: isFakeLocationEnabled.toString(),
     TableName.sys_app_vpn_check: isVpnEnabled.toString(),
   };

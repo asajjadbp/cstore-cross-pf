@@ -7,6 +7,7 @@ import 'package:cstore/screens/utils/app_constants.dart';
 import 'package:cstore/screens/utils/toast/toast.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../utils/appcolor.dart';
@@ -57,13 +58,13 @@ class _LicenseKeyState extends State<LicenseKey> {
       if (value.status) {
         Navigator.of(context).pushReplacementNamed(Login.routeName);
       } else {
-        ToastMessage.errorMessage(context, value.msg);
+        showAnimatedToastMessage("Error!".tr, value.msg.tr, false);
       }
     }).catchError((onError) {
       setState(() {
         isLoading = false;
       });
-      ToastMessage.errorMessage(context, onError.toString());
+      showAnimatedToastMessage("Error!".tr,  onError.toString().tr, false);
     });
 
   }

@@ -1,4 +1,6 @@
 import 'dart:io';
+
+import 'package:cstore/Model/database_model/sys_osdc_reason_model.dart';
 class TransPromoPlanListModel {
   late String skuEnName;
   late String skuArName;
@@ -11,19 +13,20 @@ class TransPromoPlanListModel {
   late int skuId;
   late String promoFrom;
   late String promoTo;
-  late String osdType;
-  late int quantity;
+  late String weekTitle;
   late String promoScope;
-  late int promoPrice;
+  late String promoPrice;
   late String imageName;
   File? imageFile;
   late String modalImage;
   late String leftOverAction;
-  late String promoReason;
+  late int promoReasonId;
   late String promoStatus;
+  late String osdType;
   late int actStatus;
   late int gcsStatus;
   late int uploadStatus;
+  late Sys_OSDCReasonModel initialOsdcItem;
 
   TransPromoPlanListModel({
     required this.promoId,
@@ -38,18 +41,19 @@ class TransPromoPlanListModel {
     required this.promoFrom,
     required this.promoTo,
     required this.osdType,
-    required this.quantity,
+    required this.weekTitle,
     required this.promoPrice,
     required this.promoScope,
     required this.imageFile,
     required this.imageName,
     required this.modalImage,
     required this.leftOverAction,
-    required this.promoReason,
+    required this.promoReasonId,
     required this.promoStatus,
     required this.actStatus,
     required this.uploadStatus,
     required this.gcsStatus,
+    required this.initialOsdcItem,
   });
   Map<String, Object?> toMap() {
     return {
@@ -61,21 +65,22 @@ class TransPromoPlanListModel {
       'cat_ar_name' : catArName.toString(),
       'brand_en_name' : brandEnName.toString(),
       'brand_ar_name' : brandArName.toString(),
+      'osd_type' :osdType.toString(),
       'sku_id': skuId,
       'promo_from': promoFrom.toString(),
       'promo_to': promoTo.toString(),
-      'osd_type': osdType.toString(),
-      'qty': quantity,
-      'promo_price': promoPrice,
+      'week_title': weekTitle.toString(),
+      'promo_price': promoPrice.toString(),
       'promo_scope': promoScope.toString(),
       'image_name': imageName.toString(),
       'left_over_action': leftOverAction.toString(),
       'modal_image': modalImage.toString(),
-      'promo_reason': promoReason.toString(),
+      'promo_reason_id': promoReasonId.toString(),
       'promo_status': promoStatus.toString(),
       'act_status': actStatus,
       'upload_status': uploadStatus,
       'gcs_status': gcsStatus,
+      'initial_osdc_item':initialOsdcItem,
     };
   }
   TransPromoPlanListModel.fromJson(Map<String, dynamic> json) {
@@ -90,18 +95,19 @@ class TransPromoPlanListModel {
     skuId = json['sku_id'] ?? 0;
     promoFrom = json['promo_from'] ?? "";
     promoTo = json['promo_to'] ?? "";
+    weekTitle = json['week_title'] ?? "";
     osdType = json['osd_type'] ?? "";
-    quantity = json['qty'] ?? "";
-    promoPrice = json['promo_price'] ?? 0;
+    promoPrice = json['promo_price'] ?? "0";
     promoScope = json['promo_scope'] ?? "";
     imageName = json['image_name'] ?? "";
     leftOverAction = json['left_over_action'] ?? "";
     modalImage = json['modal_image'] ?? "";
-    promoReason = json['promo_reason'] ?? "";
+    promoReasonId = json['promo_reason_id'] ?? "";
     promoStatus = json['promo_status'] ?? "";
     actStatus = json['act_status'] ?? 0;
     uploadStatus = json['upload_status'] ?? 0;
     gcsStatus = json['gcs_status'] ?? 0;
+    initialOsdcItem = json['initial_osdc_item'];
   }
   Map<String, dynamic> toJson() => {
     'promo_id': promoId.toString(),
@@ -112,20 +118,21 @@ class TransPromoPlanListModel {
     'cat_ar_name' : catArName.toString(),
     'brand_en_name' : brandEnName.toString(),
     'brand_ar_name' : brandArName.toString(),
+    'osd_type': osdType.toString(),
     'sku_id': skuId,
     'promo_from': promoFrom.toString(),
     'promo_to': promoTo.toString(),
-    'osd_type': osdType.toString(),
-    'qty':  quantity,
-    'promo_price': promoPrice,
+    'week_title': weekTitle.toString(),
+    'promo_price': promoPrice.toString(),
     'promo_scope' : promoScope.toString(),
     'image_name' : imageName.toString(),
     'left_over_action' : leftOverAction.toString(),
     'modal_image' : modalImage.toString(),
-    'promo_reason' : promoReason.toString(),
+    'promo_reason_id' : promoReasonId.toString(),
     'promo_status' : promoStatus.toString(),
     'act_status':  actStatus,
     'upload_status': uploadStatus,
     'gcs_status':  gcsStatus,
+    'initial_osdc_item':  initialOsdcItem,
   };
 }

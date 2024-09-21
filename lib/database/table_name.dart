@@ -158,6 +158,7 @@ class TableName {
   static const String sys_app_settingPicklisTime="picklist_time";
   static const String sys_app_auto_time = "is_autotime_enabled";
   static const String sys_app_location = "is_location_enabled";
+  static const String sys_app_geo_location = "is_geo_location_enabled";
   static const String sys_app_fake_location_check = "is_fake_gps_check_enabled";
   static const String sys_app_vpn_check = "is_vpn_checked";
 
@@ -194,17 +195,30 @@ class TableName {
   static const String sysId = "id";
   static const String enName = "en_name";
   static const String arName = "ar_name";
+
+  ///Promo Plan Table
   static const String promoId = "promo_id";
-  static const String brandId = "brand_id";
-  static const String storeId = "store_id";
   static const String skuId = "sku_id";
+  static const String storeId = "store_id";
   static const String from = "promo_from";
   static const String to = "promo_to";
-  static const String osdType = "osd_type";
-  static const String quantity = "qty";
+  static const String weekTitle = "week_title";
+  static const String modalImage = "modal_image";
+  static const String enSkuName = "en_sku_name";
+  static const String arSkuName = "ar_sku_name";
+  static const String enCategoryName = "en_category_name";
+  static const String arCategoryName = "ar_category_name";
   static const String promoScope = "promo_Scope";
+  static const String promoScopeOther = "promo_scope_other";
+  static const String companyId = "company_id";
   static const String promoPrice = "promo_price";
   static const String leftOverAction = "left_over_action";
+  static const String osdType = "osd_type";
+  ///
+  static const String enStoreName = "en_store_name";
+  static const String arStoreName = "ar_store_name";
+  static const String brandId = "brand_id";
+  static const String quantity = "qty";
   static const String dateTime = "date_time";
   static const String status="status";
   static const String workingId = "working_id";
@@ -214,10 +228,7 @@ class TableName {
   static const String imageName = "image_name";
   static const String promoReason = "promo_reason";
   static const String promoStatus = "promo_status";
-  static const String modalImage = "modal_image";
   static const String workingDate = "working_date";
-  static const String enStoreName = "en_store_name";
-  static const String arStoreName = "ar_store_name";
   static const String storeGCode = "gcode";
   static const String clientIds = "client_id";
   static const String userId = "user_id";

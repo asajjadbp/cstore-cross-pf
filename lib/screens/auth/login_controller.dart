@@ -113,18 +113,18 @@ class LoginController extends GetxController {
 
         isLoading.value = false;
       if (value.status) {
-        showAnimatedToastMessage("Success", "Logged In Successfully".tr, true);
+        showAnimatedToastMessage("Success".tr, "Logged In Successfully".tr, true);
         // ToastMessage.succesMessage(context, "Logged In Successfully".tr);
         Get.offNamed(WelcomeScreen.routename);
         // Navigator.of(context).pushReplacementNamed();
       } else {
-        showAnimatedToastMessage("Error!", value.msg.toString(), false);
+        showAnimatedToastMessage("Error!".tr, value.msg.toString(), false);
       }
     }).catchError((onError) {
 
         isLoading.value = false;
       print(onError.toString());
-        showAnimatedToastMessage("Error!", onError.toString(), false);
+        showAnimatedToastMessage("Error!".tr, onError.toString(), false);
     });
   }
 

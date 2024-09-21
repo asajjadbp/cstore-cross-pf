@@ -166,6 +166,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
        DatabaseHelper.delete_table(TableName.tblSysPromoPlan);
        DatabaseHelper.delete_table(TableName.tblSysJourneyPlan);
        DatabaseHelper.delete_table(TableName.tblSysDashboard);
+       DatabaseHelper.delete_table(TableName.tblSysPromoPlaneReason);
 
 
        ///Table Insertion
@@ -193,12 +194,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
         var isPromoPlan = await DatabaseHelper.insertSysPromoPlanArray(syncroniseData[0].sysPromoPlan);
         await DatabaseHelper.insertSysKnowledgeShareArray(syncroniseData[0].knowledgeShareModel);
         await DatabaseHelper.insertMarketIssueArray(syncroniseData[0].sysMarketIssue);
+        await DatabaseHelper.insertPromoPlaneReasonArray(syncroniseData[0].sysPromoPlanReason);
 
         setState(() {
           isLoading = isJourneyPlan && isDashboardPlan && isAgencyDash && isCategory && isSubCategory
               && isClinet && isPlanoReason && isRtvReason && isProduct && isPhotoType
               && isOSDCType && isOsdcReason && isStorePog && isProductPlacement && isBrandFace && isPromoPlan;
-          _controller.dispose();
           isSyncronize = "1";
           prefs.setString(AppConstants.isSyncronize, "1");
 
@@ -218,11 +219,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
     // }
   }
 
-  // @override
-  // void dispose() {
-  //   _controller.dispose();
-  //   super.dispose();
-  // }
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

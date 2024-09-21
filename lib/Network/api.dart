@@ -1,6 +1,6 @@
 class Api {
 
-  static const apiVersion = "macroapis/BpIntel_1_1/";
+  static const apiVersion = "macroapis/BpIntel_1_2/";
 
   static const licenseApi =
       // "https://cstore.catalist-me.com/${apiVersion}getAgencyLicense"

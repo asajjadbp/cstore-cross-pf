@@ -1,4 +1,5 @@
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cstore/Database/db_helper.dart';
@@ -47,7 +48,6 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
   String currentSelectedValue = "";
   int selectedReasonId=-1;
   List<Sys_OSDCReasonModel> promoReason=[Sys_OSDCReasonModel(id: -1, en_name: "", ar_name: "")];
-
   List<TransPromoPlanListModel> promoTransData = <TransPromoPlanListModel>[];
   List<TransPromoPlanListModel> filterTransData = <TransPromoPlanListModel>[];
   List<File> imageFilesList = [];
@@ -93,13 +93,24 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
     });
   }
 
-  getPromoPlanTransData(String promoReason) async {
+  getPromoPlanTransData(String promoReason12) async {
     setState(() {
       isLoading = true;
     });
-    await DatabaseHelper.getTransPromoPlanList(workingId,promoReason).then((value) async {
+    print(promoReason12);
+    await DatabaseHelper.getTransPromoPlanList(workingId,promoReason12).then((value) async {
       promoTransData = value;
 
+      for(int i = 0; i < promoTransData.length; i++ ) {
+        for( int j = 0; j < promoReason.length; j++ ) {
+          if(promoTransData[i].promoReasonId == promoReason[j].id ) {
+            promoTransData[i].initialOsdcItem = promoReason[j];
+          }
+        }
+      }
+setState(() {
+
+});
       await _loadImages().then((value) {
         setTransPhoto();
       });
@@ -176,7 +187,7 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
       promoTransData[index].imageName = "${userName}_${DateTime.now().millisecondsSinceEpoch}$extension";
       if(promoTransData[index].actStatus == 1) {
         promoTransData[index].gcsStatus = 0;
-        savePromoPlanImage(false, index,selectedReasonId);
+        savePromoPlanImage(false, index);
       }
       setState(() {
 
@@ -185,9 +196,9 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
     });
   }
 
-  void savePromoPlanImage(bool isMessageShow,int index,int reasonValue) async {
+  void savePromoPlanImage(bool isMessageShow,int index) async {
 
-    if (promoTransData[index].promoStatus.isEmpty ||reasonValue==-1) {
+    if (promoTransData[index].promoStatus.isEmpty) {
       if (isMessageShow) {
         showAnimatedToastMessage("Error!".tr, "Please fill the form".tr, false);
       }
@@ -197,6 +208,13 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
         showAnimatedToastMessage("Error!".tr, "Please take an image".tr, false);
       }
       return;
+    } else if(promoTransData[index].promoStatus == "No") {
+      if(selectedReasonId == -1 ) {
+        if (isMessageShow) {
+          showAnimatedToastMessage("Error!".tr, "Please fill the form".tr, false);
+        }
+        return;
+      }
     }
     try {
       setState(() {
@@ -208,11 +226,11 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
 
             await DatabaseHelper.updateTransPromoPlan(
                 promoTransData[index].gcsStatus,
-                promoTransData[index].promoId,
+                promoTransData[index].skuId,
                 workingId,
                 promoTransData[index].imageName,
                 promoTransData[index].promoStatus,
-                reasonValue.toString()
+                selectedReasonId.toString(),
             ).then((_) {
 
               if (isMessageShow) {
@@ -235,7 +253,7 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
 
   searchFilter() {
 
-    if(currentSelectedValue == "Yes".tr) {
+    if(currentSelectedValue == "Yes") {
       if(isYesFilter) {
         currentSelectedValue = "";
         isYesFilter = false;
@@ -244,9 +262,9 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
         isYesFilter = true;
         isNoFilter = false;
         isPendingFilter = false;
-        getPromoPlanTransData("Yes".tr);
+        getPromoPlanTransData("Yes");
       }
-    } else if(currentSelectedValue == "No".tr) {
+    } else if(currentSelectedValue == "No") {
       if(isNoFilter) {
         currentSelectedValue = "";
         isNoFilter = false;
@@ -255,7 +273,7 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
         isYesFilter = false;
         isNoFilter = true;
         isPendingFilter = false;
-        getPromoPlanTransData("No".tr);
+        getPromoPlanTransData("No");
       }
     } else {
       if(isPendingFilter) {
@@ -266,7 +284,7 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
         isYesFilter = false;
         isNoFilter = false;
         isPendingFilter = true;
-        getPromoPlanTransData("Pending".tr);
+        getPromoPlanTransData("Pending");
       }
     }
     setState(() {
@@ -297,13 +315,13 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
                       child: InkWell(
                         onTap: (){
                           setState(() {
-                            currentSelectedValue = "Yes".tr;
+                            currentSelectedValue = "Yes";
                             searchFilter();
 
                           });
                         },
                         child: PercentIndicator(
-                            isSelected: currentSelectedValue == "Yes".tr,
+                            isSelected: currentSelectedValue == "Yes",
                             titleText: "Yes".tr,
                             isIcon: true,
                             percentColor: MyColors.greenColor,
@@ -316,12 +334,12 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
                       child: InkWell(
                         onTap: (){
                           setState(() {
-                            currentSelectedValue = "No".tr;
+                            currentSelectedValue = "No";
                             searchFilter();
                           });
                         },
                         child: PercentIndicator(
-                            isSelected: currentSelectedValue == "No".tr,
+                            isSelected: currentSelectedValue == "No",
                             titleText: "No".tr,
                             percentColor: MyColors.backbtnColor,
                             isIcon: true,
@@ -334,12 +352,12 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
                       child: InkWell(
                         onTap: (){
                           setState(() {
-                            currentSelectedValue = "Pending".tr;
+                            currentSelectedValue = "Pending";
                             searchFilter();
                           });
                         },
                         child: PercentIndicator(
-                            isSelected: currentSelectedValue == "Pending".tr,
+                            isSelected: currentSelectedValue == "Pending",
                             titleText: "Pending".tr,
                             percentColor: MyColors.warningColor,
                             isIcon: true,
@@ -361,10 +379,12 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
                   itemCount: promoTransData.length,
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
+                  print(jsonEncode(promoTransData[index].initialOsdcItem));
+                  print("${imageBaseUrl}sku_pictures/${promoTransData[index].modalImage}");
                 return PromoPlanCard(
-                  // "${imageBaseUrl}modal_pictures/${promoTransData[index].modalImage}"
-                  modalImage: promoTransData[index].modalImage,
+                  modalImage: "${imageBaseUrl}sku_pictures/${promoTransData[index].modalImage}",
                   isBtnLoading:isBtnLoading,
+                  initialItem: promoTransData[index].initialOsdcItem,
                   actStatus: promoTransData[index].actStatus,
                   promoStatus: promoTransData[index].promoStatus,
                   skuName:languageController.isEnglish.value?  promoTransData[index].skuEnName:  promoTransData[index].skuArName,
@@ -373,8 +393,7 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
                   brandName:languageController.isEnglish.value?  promoTransData[index].brandEnName:  promoTransData[index].brandArName,
                   fromDate: promoTransData[index].promoFrom,
                   toDate: promoTransData[index].promoTo,
-                  osdType: promoTransData[index].osdType,
-                  pieces: promoTransData[index].quantity.toString(),
+                  osdType:  promoTransData[index].osdType,
                   promoScope: promoTransData[index].promoScope,
                   promoPrice: promoTransData[index].promoPrice.toString(),
                   leftOverPieces: promoTransData[index].leftOverAction,
@@ -384,27 +403,36 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
                     if(promoTransData[index].actStatus == 1 && promoTransData[index].promoStatus != value) {
                       promoTransData[index].promoStatus = value;
                       promoTransData[index].gcsStatus = 0;
-                      savePromoPlanImage(false, index,selectedReasonId);
+                      savePromoPlanImage(false, index);
                     } else {
                       promoTransData[index].promoStatus = value;
                     }
+                    print("Status Promo");
                     print(promoTransData[index].promoStatus);
                     setState(() {});
                   },
                   promoReasonValue: (value) {
-                    if(promoTransData[index].actStatus == 1 && promoTransData[index].promoReason != value) {
+                    selectedReasonId=value.id;
+                    setState(() {
+
+                    });
+                    // promoTransData[index].promoReason = selectedReasonId.toString();
+                    print(selectedReasonId);
+                    // print(promoTransData[index].promoReason );
+                    if(promoTransData[index].actStatus == 1 ) {
                       promoTransData[index].gcsStatus = 0;
-                      selectedReasonId=value;
-                      savePromoPlanImage(false, index,selectedReasonId);
+
+
+                      savePromoPlanImage(false, index);
                     }
-                    print(promoTransData[index].promoReason);
+
                     setState(() {});
                   },
                   onSelectImage: (){
                     getImage(index);
                   },
                   onSaveClick: (){
-                    savePromoPlanImage(true, index,selectedReasonId);
+                    savePromoPlanImage(true, index);
                   },
                   promoReasonModel:promoReason,
                 );

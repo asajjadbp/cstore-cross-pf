@@ -865,36 +865,29 @@ class VisitRtvUploadScreenCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(
-                            width: screenWidth /5,
-                            child: Padding(
-                              padding:const EdgeInsets.only(left: 7, top: 8),
-                              child: Center(
-                                child: Text(
-                                  moduleName,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w600,
-                                      color: MyColors.darkGreyColor),
-                                ),
+                          Expanded(
+                            child: Container(
+                              alignment: Alignment.center,
+                              margin: const EdgeInsets.symmetric(horizontal: 5,vertical: 5),
+                              child: Text(
+                                moduleName,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    color: MyColors.darkGreyColor),
                               ),
                             ),
                           ),
-                          const SizedBox(
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 12, top: 3),
-                              child: FaIcon(FontAwesomeIcons.cubesStacked,color: MyColors.savebtnColor,),
-                            ),
-                          ),
-                          SizedBox(
-                            width: screenWidth /8,
-                            child: const Padding(
-                              padding: EdgeInsets.only(left: 12, top: 3),
-                              child: FaIcon(FontAwesomeIcons.circleDollarToSlot,color: MyColors.savebtnColor,),
-                            ),
-                          ),
+                          Expanded(child: Container(
+                              alignment: Alignment.center,
+                              margin: const EdgeInsets.symmetric(horizontal: 5,vertical: 5),
+                              child: FaIcon(FontAwesomeIcons.cubesStacked,color: MyColors.savebtnColor,))),
+                          Expanded(child: Container(
+                              alignment: Alignment.center,
+                              margin: const EdgeInsets.symmetric(horizontal: 5,vertical: 5),
+                              child: FaIcon(FontAwesomeIcons.circleDollarToSlot,color: MyColors.savebtnColor,))),
                         ],
                       ),
                     ),
@@ -906,24 +899,23 @@ class VisitRtvUploadScreenCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(
-                            width: screenWidth /5,
-                            child:  Padding(
-                              padding: const EdgeInsets.only(left: 7, top: 8),
-                              child: Center(
-                                child: Text(
-                                  totalRtv.toString(),
-                                  style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: MyColors.darkGreyColor),
-                                ),
+                          Expanded(
+                            child: Container(
+                              alignment: Alignment.center,
+                              margin: const EdgeInsets.symmetric(horizontal: 5,vertical: 5),
+                              child: Text(
+                                totalRtv.toString(),
+                                style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: MyColors.darkGreyColor),
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 7, top: 8),
-                            child: Center(
+                          Expanded(
+                            child: Container(
+                              alignment: Alignment.center,
+                              margin: const EdgeInsets.symmetric(horizontal: 5,vertical: 5),
                               child: Text(
                                 uploadedData.toString(),
                                 style: const TextStyle(
@@ -933,25 +925,23 @@ class VisitRtvUploadScreenCard extends StatelessWidget {
                               ),
                             ),
                           ),
-                          SizedBox(
-                            width: screenWidth /8,
-                            child:  Padding(
-                              padding: const EdgeInsets.only(left: 7, top: 8),
-                              child: Center(
-                                child: Text(
-                                  notUploadedData.toString(),
-                                  style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: MyColors.darkGreyColor),
-                                ),
+                          Expanded(
+                            child: Container(
+                              alignment: Alignment.center,
+                              margin: const EdgeInsets.symmetric(horizontal: 5,vertical: 5),
+                              child: Text(
+                                notUploadedData.toString(),
+                                style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: MyColors.darkGreyColor),
                               ),
                             ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 4,)
+
                   ],
                 ),
               ),

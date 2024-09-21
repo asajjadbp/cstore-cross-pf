@@ -418,6 +418,7 @@ class Translation extends Translations {
       "You can not enter data for current or previous month" : "You can not enter data for current or previous month",
       "Permissing denied" : "Permissing denied",
       "View Planogram" : "View Planogram",
+      "Plan" : "Plan",
       "Enter document" : "Enter document",
       "Enter comment" : "Enter comment",
       "Document Photo" : "Document Photo",
@@ -442,7 +443,7 @@ class Translation extends Translations {
       "Please Disable Your Fake Locator" : "Please Disable Your Fake Locator",
       "Please Enable Your Auto time Option From Setting" : "Please Enable Your Auto time Option From Setting",
       "Please Enable Your Location" :  "Please Enable Your Location",
-      "You are outside of this store" : "You are outside of this store",
+      "You’re just 0.7 km away from the store. Please contact your supervisor for the exact location details" : "You’re just 0.7 km away from the store. Please contact your supervisor for the exact location details",
     },
     'ar_AE': {
       "lang": "Eng",
@@ -536,6 +537,7 @@ class Translation extends Translations {
       "Availabity" : "التوافر",
       "Picklist" : "قائمة طلبات",
       "Planogram" : "بلانوجرام",
+      "Plan" : "يخطط",
       "Share Of Shelf" : "المساحات",
       "Price Check" : "اسعار",
       "Freshness" : "جرد التواريخ",
@@ -916,7 +918,7 @@ class Translation extends Translations {
       "Please Disable Your Fake Locator" : "يرجى تعطيل محدد المواقع المزيف الخاص بك",
       "Please Enable Your Auto time Option From Setting" : "يرجى تمكين خيار الوقت التلقائي من الإعداد",
       "Please Enable Your Location" :  "الرجاء تمكين موقعك",
-      "You are outside of this store" : "أنت خارج هذا المتجر",
+      "You’re just 0.7 km away from the store. Please contact your supervisor for the exact location details" : "أنت على بعد 0.7 كم من المتجر. يرجى الاتصال بالمدير للحصول على تفاصيل الموقع بالضبط",
     },
   };
 }

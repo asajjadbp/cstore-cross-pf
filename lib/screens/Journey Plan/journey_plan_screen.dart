@@ -1,4 +1,5 @@
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cstore/Database/db_helper.dart';
@@ -41,6 +42,7 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
   var baseUrl = "";
   String imageBaseUrl = "";
   bool isLoading = false;
+  bool isCheckLoading = false;
   bool isDropLoading = false;
   bool isError = false;
   String errorText = "";
@@ -114,6 +116,7 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
       jpData = value;
       setState(() {
         isLoading = false;
+        isCheckLoading = false;
       });
     });
   }
@@ -202,7 +205,7 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
             ?  Center(
           child: Text("No journey plan found".tr),
         )
-            : ListView.builder(
+            :  ListView.builder(
                 itemCount: jpData.length,
                 itemBuilder: (ctx, i) {
                   // print(
@@ -212,41 +215,75 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
                     onLocationTap: () {
                       launchStoreUrl(jpData[i].gcode);
                     },
+                    isCheckLoading: isCheckLoading,
                     imageBaseUrl: bucketName,
                     jp: jpData[i],
                     onStartClick: () async {
-
-                      List<String> latLong = jpData[i].gcode.split('=')[1].split(',');
-                      String storeLat = latLong[0];
-                      String storeLong = latLong[1];
+                      print(jsonEncode(jpData[i]));
+                      setState(() {
+                        isCheckLoading = true;
+                      });
 
                       GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
                       if(generalStatusController.isLocationStatus.value) {
 
-                        await generalStatusController.getGeoLocationDistance(
-                            double.parse(generalStatusController.isLat.value), double.parse(generalStatusController.isLong.value), double.parse(storeLat), double.parse(storeLong));
+                        if(generalStatusController.isGeoLocation.value) {
+                          generalStatusController.isGeoFenceDistance.value = 0.5;
+                        } else {
+                          List<String> latLong = jpData[i].gcode.split('=')[1].split(',');
+                          String storeLat = latLong[0];
+                          String storeLong = latLong[1];
 
-                        print("Store Lat Long");
-                        print(storeLong);
-                        print(storeLat);
-                        print("User Lat Long");
-                        print(generalStatusController.isLat);
-                        print(generalStatusController.isLong);
+                          print("Store Lat Long");
+                          print(latLong);
+                          print(storeLong);
+                          print(storeLat);
+                          print("User Lat Long");
+                          print(generalStatusController.isLat);
+                          print(generalStatusController.isLong);
+                          print(generalStatusController.isLatLong);
+
+                          await generalStatusController.getGeoLocationDistance(
+                              double.parse(generalStatusController.isLat.value),
+                              double.parse(generalStatusController.isLong
+                                  .value), double.parse(storeLat.trim()),
+                              double.parse(storeLong.trim()));
+                        }
                         print("Distance From Store");
                         print(generalStatusController.isGeoFenceDistance.value);
                       }
                       if(generalStatusController.isVpnStatus.value) {
+                        setState(() {
+                          isCheckLoading = false;
+                        });
                         showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false);
                       } else if(generalStatusController.isMockLocation.value) {
+                        setState(() {
+                          isCheckLoading = false;
+                        });
                         showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false);
                       } else if(!generalStatusController.isAutoTimeStatus.value) {
+                        setState(() {
+                          isCheckLoading = false;
+                        });
                         showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false);
                       } else if(!generalStatusController.isLocationStatus.value) {
+                        setState(() {
+                          isCheckLoading = false;
+                        });
                         showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false);
-                      } else if(generalStatusController.isGeoFenceDistance.value > 0.7) {
-                        showAnimatedToastMessage("Error!".tr, "You are outside of this store".tr, false);
-                      } else {
+                      }
+                      else if(generalStatusController.isGeoFenceDistance.value > 0.7) {
+                        setState(() {
+                          isCheckLoading = false;
+                        });
+                        showAnimatedToastMessage("Error!".tr, "You’re just 0.7 km away from the store. Please contact your supervisor for the exact location details".tr, false);
+                      }
+                      else {
+                        setState(() {
+                          isCheckLoading = false;
+                        });
                         Get.delete<GeneralChecksStatusController>();
                         if (jpData[i].visitStatus == "1") {
                           setVisitSession(jpData[i]);
@@ -356,7 +393,7 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
   Future<void> getImage(JourneyPlanDetail journeyPlanDetail) async {
     await ImageTakingService.imageSelect().then((value) {
       if (value == null) {
-        ToastMessage.errorMessage(context, "No Image Picked".tr);
+        showAnimatedToastMessage("Error!".tr, "No Image Picked".tr, false);
         return;
       }
       print("working id is ");
@@ -375,7 +412,7 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
 
   Future<void> dropVisit(String workingId) async {
     if (selectedReasonId == -1) {
-      ToastMessage.errorMessage(context, "Please Select Reason first".tr);
+      showAnimatedToastMessage("Error!".tr, "Please Select Reason first".tr, false);
       return;
     }
     setState(() {
@@ -391,15 +428,15 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
         dropWorkingId = workingId;
       });
       if (value.status) {
-        ToastMessage.succesMessage(context, "Visit Drop Successfully".tr);
+        showAnimatedToastMessage("Error!".tr, "Visit Drop Successfully".tr, false);
       } else {
-        ToastMessage.errorMessage(context, value.msg);
+        showAnimatedToastMessage("Error!".tr, value.msg.tr, false);
       }
     }).catchError((onError) {
       setState(() {
         isLoading = false;
       });
-      ToastMessage.errorMessage(context, onError.toString());
+      showAnimatedToastMessage("Error!".tr, onError.toString().tr, false);
     });
   }
 
@@ -417,15 +454,15 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
         isDropLoading = false;
       });
       if (value.status) {
-        ToastMessage.succesMessage(context, "Visit Activate Successfully".tr);
+        showAnimatedToastMessage("Success".tr, "Visit Activate Successfully".tr, true);
       } else {
-        ToastMessage.errorMessage(context, value.msg);
+        showAnimatedToastMessage("Error!".tr, value.msg.tr, false);
       }
     }).catchError((onError) {
       setState(() {
         isDropLoading = false;
       });
-      ToastMessage.errorMessage(context, onError.toString());
+      showAnimatedToastMessage("Error!".tr, onError.toString().tr, false);
     });
   }
 
