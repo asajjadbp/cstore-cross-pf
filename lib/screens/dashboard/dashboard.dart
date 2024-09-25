@@ -17,10 +17,7 @@ import '../../Model/database_model/sys_osdc_type_model.dart';
 import '../../Model/response_model.dart/user_dashboard_model.dart';
 import '../../Network/jp_http.dart';
 import '../Language/localization_controller.dart';
-import '../auth/login.dart';
-import '../important_service/genral_checks_status.dart';
 import '../utils/appcolor.dart';
-import '../utils/services/general_checks_controller_call_function.dart';
 import '../utils/services/getting_gps.dart';
 import '../utils/services/take_image_and_save_to_folder.dart';
 import '../widget/app_bar_widgets.dart';
@@ -42,9 +39,11 @@ class _DashBoardState extends State<DashBoard> {
   bool isLoading = true;
   bool isCheckListLoading = true;
   bool isButtonLoading = true;
+  bool isServiceLoading = false;
   int totalPlanned = 0;
   int totalJP = 0;
   int totalHours = 0;
+
   List<Sys_OSDCTypeModel> checkListData = [Sys_OSDCTypeModel(id: -1,
       en_name: "", ar_name: "")];
   UserDashboardModel userDashboardModel = UserDashboardModel
@@ -284,17 +283,27 @@ class _DashBoardState extends State<DashBoard> {
       return Expanded(
         child: InkWell(
           onTap: () {
+            setState(() {
+              isServiceLoading = true;
+            });
             LocationService.getLocation().then((value) => {
               if (value["locationIsPicked"]) {
             Navigator.of(context).pushNamed(JourneyPlanScreen.routename).then((value) {
-            getApiUserDashboard();
+            // getApiUserDashboard();
+
+            setState(() {
+              isServiceLoading = false;
+            });
               }), } else {
+                setState(() {
+              isServiceLoading = false;
+              }),
                 showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false)
               }
             });
           },
-          child: Card(
-            color: MyColors.appMainColor,
+          child:  Card(
+            color:  MyColors.appMainColor,
             shape: RoundedRectangleBorder(
                 side: const BorderSide(
                     color: MyColors.appMainColor, width: 1.0),
@@ -425,196 +434,212 @@ class _DashBoardState extends State<DashBoard> {
           enablePullUp: false,
           onRefresh: _onRefresh,
           child: SingleChildScrollView(
-            child: Container(
-              margin: const EdgeInsets.only(left: 15, right: 15, top: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            child: IgnorePointer(
+              ignoring: isServiceLoading,
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                   Text(
-                    "Today".tr,
-                    style: const TextStyle(fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        fontFamily: 'lato'),
-                  ),
                   Container(
-                    margin: const EdgeInsets.symmetric(vertical: 10),
-                    child: TableWidget(
-                        jpPlanned: userDashboardModel.jp_planned,
-                        specialPlanned: userDashboardModel.out_of_planned,
-                        jpHours: userDashboardModel.working_hrs,
-                        totalPlanned: userDashboardModel.jp_planned + userDashboardModel.out_of_planned,
-                        jpFinished: userDashboardModel.jp_visited,
-                        specialFinished: userDashboardModel.out_of_planned_visited,
-                        totalFinished: userDashboardModel.jp_visited + userDashboardModel.out_of_planned_visited ,
-                        totalHours: userDashboardModel.working_hrs),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      circularProgressCard(
-                          userDashboardModel.jpc.toDouble(), "JPC".tr),
-                      circularProgressCard(
-                          userDashboardModel.pro.toDouble(),
-                          "Productivity".tr),
-                      circularProgressCard(
-                          userDashboardModel.eff.toDouble(),
-                          "Efficiency".tr),
-                    ],
-                  ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    margin: const EdgeInsets.only(left: 15, right: 15, top: 10),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                          Text(
-                          "Activity".tr,
-                          style:const TextStyle(fontWeight: FontWeight.bold,
+                          "Today".tr,
+                          style: const TextStyle(fontWeight: FontWeight.bold,
                               fontSize: 14,
                               fontFamily: 'lato'),
                         ),
+                        Container(
+                          margin: const EdgeInsets.symmetric(vertical: 10),
+                          child: TableWidget(
+                              jpPlanned: userDashboardModel.jp_planned,
+                              specialPlanned: userDashboardModel.out_of_planned,
+                              jpHours: userDashboardModel.working_hrs,
+                              totalPlanned: userDashboardModel.jp_planned + userDashboardModel.out_of_planned,
+                              jpFinished: userDashboardModel.jp_visited,
+                              specialFinished: userDashboardModel.out_of_planned_visited,
+                              totalFinished: userDashboardModel.jp_visited + userDashboardModel.out_of_planned_visited ,
+                              totalHours: userDashboardModel.working_hrs),
+                        ),
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            cardActivity("Visit Pool".tr, "assets/icons/jp_icon.svg"),
-                            cardActivity("Universe".tr, "assets/icons/universe_icon.svg")
+                            circularProgressCard(
+                                userDashboardModel.jpc.toDouble(), "JPC".tr),
+                            circularProgressCard(
+                                userDashboardModel.pro.toDouble(),
+                                "Productivity".tr),
+                            circularProgressCard(
+                                userDashboardModel.eff.toDouble(),
+                                "Efficiency".tr),
                           ],
                         ),
-                        Visibility(
-                          visible: false,
-                          child: Row(
+                        Container(
+                          margin: const EdgeInsets.symmetric(vertical: 10),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              cardActivity2(
-                                  "Check in".tr, "assets/icons/check_in_icon.svg","checkIn"),
-                              cardActivity2(
-                                  "Check out".tr, "assets/icons/check_out_icon.svg","checkOut")
+                               Text(
+                                "Activity".tr,
+                                style:const TextStyle(fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                    fontFamily: 'lato'),
+                              ),
+                              Row(
+                                children: [
+                                  cardActivity("Visit Pool".tr, "assets/icons/jp_icon.svg"),
+                                  cardActivity("Universe".tr, "assets/icons/universe_icon.svg")
+                                ],
+                              ),
+                              Visibility(
+                                visible: false,
+                                child: Row(
+                                  children: [
+                                    cardActivity2(
+                                        "Check in".tr, "assets/icons/check_in_icon.svg","checkIn"),
+                                    cardActivity2(
+                                        "Check out".tr, "assets/icons/check_out_icon.svg","checkOut")
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  Text(
-                    "MTD".tr,
-                    style: const TextStyle(fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        fontFamily: 'lato'),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(top: 5),
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(
-                            color: MyColors.formFileColor, width: 1),
-                        borderRadius:
-                        const BorderRadius.all(Radius.circular(5))),
-                    child: Column(
-                      children: [
-                        linerProgressbar(
-                            "Attendance".tr,
-                            userDashboardModel.monthly_attend
-                                .toDouble()),
-                        linerProgressbar("Productivity".tr,
-                            userDashboardModel.monthly_pro.toDouble()),
-                        const SizedBox(height: 5)
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
+                        Text(
+                          "MTD".tr,
+                          style: const TextStyle(fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              fontFamily: 'lato'),
+                        ),
+                        Container(
                           margin: const EdgeInsets.only(top: 5),
                           decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
                                   color: MyColors.formFileColor, width: 1),
                               borderRadius:
-                              const BorderRadius.all(Radius.circular(6))),
-                          child: Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Column(
-                              children: [
-                                 Text("Efficiency".tr,maxLines: 1,overflow: TextOverflow.ellipsis,
-                                    style:
-                                    const TextStyle(fontWeight: FontWeight.w600)),
-                                SvgPicture.asset(
-                                  "assets/icons/efficiency_icon.svg",),
-                                Text("${userDashboardModel.monthly_eff
-                                    .toString()} %",
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                      fontSize: 11, fontWeight: FontWeight.w600
-                                  ),)
-                              ],
-                            ),
+                              const BorderRadius.all(Radius.circular(5))),
+                          child: Column(
+                            children: [
+                              linerProgressbar(
+                                  "Attendance".tr,
+                                  userDashboardModel.monthly_attend
+                                      .toDouble()),
+                              linerProgressbar("Productivity".tr,
+                                  userDashboardModel.monthly_pro.toDouble()),
+                              const SizedBox(height: 5)
+                            ],
                           ),
                         ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          margin: const EdgeInsets.only(top: 5, left: 5),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(
-                                  color: MyColors.formFileColor, width: 1),
-                              borderRadius:
-                              const BorderRadius.all(Radius.circular(8))),
-                          child: Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Column(
-                              children: [
-                                 Text("Deduction".tr,maxLines: 1,overflow: TextOverflow.ellipsis,
-                                    style:
-                                    const TextStyle(fontWeight: FontWeight.w600)),
-                                SvgPicture.asset(
-                                    "assets/icons/deduction_icon.svg"),
-                                Text("${userDashboardModel.monthly_deduction
-                                    .toString()} SAR",
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w600,
-                                      color: MyColors.backbtnColor
-                                  ),)
-                              ],
-                            ),
-                          ),
+                        const SizedBox(
+                          height: 10,
                         ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          margin: const EdgeInsets.only(top: 5, left: 5),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(
-                                  color: MyColors.formFileColor, width: 1),
-                              borderRadius:
-                              const BorderRadius.all(Radius.circular(8))),
-                          child: Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Column(
-                              children: [
-                                 Text("Incentives".tr,maxLines: 1,overflow: TextOverflow.ellipsis,
-                                    style:
-                                    const  TextStyle(fontWeight: FontWeight.w600)),
-                                SvgPicture.asset(
-                                    "assets/icons/incentives_icon.svg"),
-                                Text("${userDashboardModel.monthly_incentives
-                                    .toString()} SAR",
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                      fontSize: 11, fontWeight: FontWeight.w600
-                                  ),)
-                              ],
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                margin: const EdgeInsets.only(top: 5),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                        color: MyColors.formFileColor, width: 1),
+                                    borderRadius:
+                                    const BorderRadius.all(Radius.circular(6))),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Column(
+                                    children: [
+                                       Text("Efficiency".tr,maxLines: 1,overflow: TextOverflow.ellipsis,
+                                          style:
+                                          const TextStyle(fontWeight: FontWeight.w600)),
+                                      SvgPicture.asset(
+                                        "assets/icons/efficiency_icon.svg",),
+                                      Text("${userDashboardModel.monthly_eff
+                                          .toString()} %",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 11, fontWeight: FontWeight.w600
+                                        ),)
+                                    ],
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
+                            Expanded(
+                              child: Container(
+                                margin: const EdgeInsets.only(top: 5, left: 5),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                        color: MyColors.formFileColor, width: 1),
+                                    borderRadius:
+                                    const BorderRadius.all(Radius.circular(8))),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Column(
+                                    children: [
+                                       Text("Deduction".tr,maxLines: 1,overflow: TextOverflow.ellipsis,
+                                          style:
+                                          const TextStyle(fontWeight: FontWeight.w600)),
+                                      SvgPicture.asset(
+                                          "assets/icons/deduction_icon.svg"),
+                                      Text("${userDashboardModel.monthly_deduction
+                                          .toString()} SAR",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w600,
+                                            color: MyColors.backbtnColor
+                                        ),)
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                margin: const EdgeInsets.only(top: 5, left: 5),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                        color: MyColors.formFileColor, width: 1),
+                                    borderRadius:
+                                    const BorderRadius.all(Radius.circular(8))),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Column(
+                                    children: [
+                                       Text("Incentives".tr,maxLines: 1,overflow: TextOverflow.ellipsis,
+                                          style:
+                                          const  TextStyle(fontWeight: FontWeight.w600)),
+                                      SvgPicture.asset(
+                                          "assets/icons/incentives_icon.svg"),
+                                      Text("${userDashboardModel.monthly_incentives
+                                          .toString()} SAR",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 11, fontWeight: FontWeight.w600
+                                        ),)
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                  if(isServiceLoading)
+                    const Align(
+                      alignment: Alignment.center,
+                      child: SizedBox(
+                        height: 60,
+                        width: 60,
+                        child: MyLoadingCircle(),),
+                    )
                 ],
               ),
             ),

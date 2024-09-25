@@ -286,11 +286,18 @@ class _AvailabilityState extends State<Availability> {
   }
 
   updatePickListDataInSql(List<TmrPickList> valueList) async {
-    for(int i=0;i<valueList.length;i++) {
-      await DatabaseHelper.updateTransAVLAPicklist(valueList[i].skuId!,valueList[i].actPicklist!,1,valueList[i].workingId!,valueList[i].pickerName!,valueList[i].pickListReadyTime!).then((value) {
-      });
+    try {
+      for (int i = 0; i < valueList.length; i++) {
+        await DatabaseHelper.updateTransAVLAPicklist(
+            valueList[i].skuId!, valueList[i].actPicklist!, 1,
+            valueList[i].workingId!, valueList[i].pickerName!,
+            valueList[i].pickListReadyTime!).then((value) {});
+      }
+      getPickListData();
+    } catch (e) {
+      print("SQL ERRor");
+      print(e.toString());
     }
-    getPickListData();
 
   }
 
@@ -329,21 +336,35 @@ class _AvailabilityState extends State<Availability> {
   }
 
   getPickListData() async {
-    await DatabaseHelper.getUpdateAvlDataList(workingId).then((value) async {
-      print(jsonEncode(value));
+    try {
+      await DatabaseHelper.getUpdateAvlDataList(workingId).then((value) async {
+        print(jsonEncode(value));
 
-      updatedAvailableData = value;
+        updatedAvailableData = value;
 
-      requestsItems = updatedAvailableData.length;
-      doneItems = updatedAvailableData.where((element) => element.picklist_ready == 1).toList().length;
-      pendingItems = updatedAvailableData.where((element) => element.picklist_ready == 0).toList().length;
+        requestsItems = updatedAvailableData.length;
+        doneItems = updatedAvailableData
+            .where((element) => element.picklist_ready == 1)
+            .toList()
+            .length;
+        pendingItems = updatedAvailableData
+            .where((element) => element.picklist_ready == 0)
+            .toList()
+            .length;
 
-      await getTmrPickListCount();
+        await getTmrPickListCount();
 
+        setState(() {
+          isLoading = false;
+        });
+      });
+    } catch (e) {
+      print("SQL ERRor11");
+      print(e.toString());
       setState(() {
         isLoading = false;
       });
-    });
+    }
   }
 
   Future<bool> getTmrPickListCount() async {

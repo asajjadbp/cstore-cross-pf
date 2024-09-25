@@ -28,7 +28,7 @@ class SyncroniseHTTP {
         SyncroniseResponseModel.fromJson(response);
 
     print("_____________JSON DATA_______________");
-    print(jsonEncode(syncResponseData.data[0].sysPromoPlan));
+    print(jsonEncode(syncResponseData.data[0].sysStorePog));
     print("_________________________________");
 
 

@@ -6,7 +6,7 @@ import 'package:cstore/screens/auth/widgets/user_name_text_field.dart';
 import 'package:cstore/screens/widget/elevated_buttons.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../Language/localization_controller.dart';

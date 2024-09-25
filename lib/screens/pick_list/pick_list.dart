@@ -122,7 +122,7 @@ class _PickListScreenState extends State<PickListScreen> {
       String valueQuery = "";
       for (int i = 0; i < valuePickList.length; i++) {
         valueQuery =
-            "$valueQuery($workingId,${wrapIfString(workingId)},${valuePickList[i].picklist_id},${valuePickList[i].store_id},${valuePickList[i].category_id},${valuePickList[i].tmr_id},${wrapIfString(valuePickList[i].tmr_name)},${valuePickList[i].stocker_id},${wrapIfString(valuePickList[i].stocker_name)},${wrapIfString(valuePickList[i].shift_time)},${wrapIfString(valuePickList[i].en_cat_name)},${wrapIfString(valuePickList[i].ar_cat_name)},${wrapIfString(valuePickList[i].sku_picture)},${wrapIfString(valuePickList[i].en_sku_name)},${wrapIfString(valuePickList[i].ar_sku_name)},${valuePickList[i].req_pickList},${valuePickList[i].act_pickList},${valuePickList[i].pickList_ready},0,'',${wrapIfString(valuePickList[i].pick_list_receive_time)},${wrapIfString(valuePickList[i].pick_list_reason)}),";
+            "$valueQuery(${wrapIfString(workingId)},${valuePickList[i].picklist_id},${valuePickList[i].store_id},${valuePickList[i].category_id},${valuePickList[i].tmr_id},${wrapIfString(valuePickList[i].tmr_name)},${valuePickList[i].stocker_id},${wrapIfString(valuePickList[i].stocker_name)},${wrapIfString(valuePickList[i].shift_time)},${wrapIfString(valuePickList[i].en_cat_name)},${wrapIfString(valuePickList[i].ar_cat_name)},${wrapIfString(valuePickList[i].sku_picture)},${wrapIfString(valuePickList[i].en_sku_name)},${wrapIfString(valuePickList[i].ar_sku_name)},${valuePickList[i].req_pickList},${valuePickList[i].act_pickList},${valuePickList[i].pickList_ready},0,'',${wrapIfString(valuePickList[i].pick_list_receive_time)},${wrapIfString(valuePickList[i].pick_list_reason)}),";
       }
       if (valueQuery.endsWith(",")) {
         valueQuery = valueQuery.substring(0, valueQuery.length - 1);
@@ -417,7 +417,7 @@ class _PickListScreenState extends State<PickListScreen> {
                   itemBuilder: (context,index) {
                     controllerList.add(TextEditingController());
                     controllerList[index].text =  pickerPickList[index].act_pickList;
-                    print("${imageBaseUrl}sku_pictures/${pickerPickList[index].sku_picture}");
+                    // print("${imageBaseUrl}sku_pictures/${pickerPickList[index].sku_picture}");
                     return PickListCardItem(
                         isButtonActive: true,
                         reasonValue: pickerPickList[index].reasonValue!,
@@ -556,7 +556,8 @@ class _PickListScreenState extends State<PickListScreen> {
   updateSqlPickTable(int index) async {
     String reason  = pickerPickList[index].reasonValue!.join(', ');
     if(int.parse(pickerPickList[index].act_pickList) < int.parse(pickerPickList[index].req_pickList) && reason.isEmpty) {
-      ToastMessage.errorMessage(context, "Please Select a reason first".tr);
+
+      showAnimatedToastMessage("Error!".tr, "Please Select a reason first".tr, false);
 
     } else {
       await DatabaseHelper.updateTransPicklist(
@@ -577,8 +578,7 @@ class _PickListScreenState extends State<PickListScreen> {
             .where((element) => element.pickList_ready == "0")
             .toList()
             .length;
-
-        ToastMessage.succesMessage(context, "Items added successfully".tr);
+        showAnimatedToastMessage("Success".tr, "Items added successfully".tr, true);
       });
     }
   }
@@ -625,12 +625,13 @@ class _PickListScreenState extends State<PickListScreen> {
       isNextButton  = false;
     isDataUploading  = false;
     }),
-      ToastMessage.succesMessage(context, "Pick List Uploaded Successfully".tr),
+    showAnimatedToastMessage("Success".tr, "Pick List Uploaded Successfully".tr, true),
     }).catchError((e) =>{
       setState(() {
         isDataUploading  = false;
       }),
-      ToastMessage.errorMessage(context, e.toString()),
+      print(e.toString()),
+      showAnimatedToastMessage("Error!".tr,e.toString().tr, false),
     });
   }
 

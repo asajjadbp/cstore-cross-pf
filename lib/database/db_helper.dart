@@ -421,7 +421,7 @@ class DatabaseHelper {
           " TEXT, " +
           'CONSTRAINT unique_key UNIQUE (' +
           TableName.skuId + ', ' +
-          TableName.companyId +
+          TableName.storeId +
           ')' +
           ")");
 
@@ -1230,7 +1230,8 @@ class DatabaseHelper {
   ///Insert Promo Plan to system table
   static Future<bool> insertSysPromoPlanArray(List<PromoPlanModel> modelList) async {
     var db = await initDataBase();
-
+    print("Promo plan insertion");
+    print(modelList.length);
     for (PromoPlanModel data in modelList) {
       Map<String, dynamic> fields = {
 
@@ -1254,7 +1255,7 @@ class DatabaseHelper {
       if (isDuplicate) {
         print("Error: Duplicate entry sys Promo PLan");
       } else {
-        print("Promo plan insertion");
+
         await db.insert(
           TableName.tblSysPromoPlan,
           {
@@ -3046,15 +3047,18 @@ class DatabaseHelper {
   // ----********* Update Data-----************
   static Future<List<AvailabilityShowModel>> getUpdateAvlDataList(String workingId) async {
     final db = await initDataBase();
-    final List<Map<String, dynamic>> avlMap = await db.rawQuery("SELECT trans_availability.*, sys_category.en_name || ' ' || sys_subcategory.en_name as cat_en_name, sys_category.ar_name || ' ' || sys_subcategory.ar_name as cat_ar_name, sys_subcategory.en_name as subcat_en_name, sys_subcategory.ar_name as subcat_ar_name, "
+
+    String query = "SELECT trans_availability.*, sys_category.en_name || ' ' || sys_subcategory.en_name as cat_en_name, sys_category.ar_name || ' ' || sys_subcategory.ar_name as cat_ar_name, sys_subcategory.en_name as subcat_en_name, sys_subcategory.ar_name as subcat_ar_name, "
         "sys_brand.en_name as brand_en_name, sys_brand.ar_name as brand_ar_name, sys_product.image, sys_product.en_name as pro_en_name, sys_product.ar_name as pro_ar_name "
         "FROM trans_availability "
         "JOIN sys_product ON sys_product.id = trans_availability.sku_id "
         "JOIN sys_category ON sys_category.id = sys_product.category_id "
         "JOIN sys_brand ON sys_brand.id = sys_product.brand_id "
         "JOIN sys_subcategory ON sys_subcategory.id = sys_product.subcategory_id "
-        "WHERE working_id = '$workingId' AND req_picklist>0");
+        "WHERE working_id = '$workingId' AND req_picklist>0";
+    final List<Map<String, dynamic>> avlMap = await db.rawQuery(query);
     print(jsonEncode(avlMap.length));
+    print(query);
     print("___Update AVL Data List _______");
 
     return List.generate(avlMap.length, (index) {
@@ -3240,8 +3244,6 @@ class DatabaseHelper {
       throw FetchDataException("Please Disable Your VPN".tr);
     } else if(generalStatusController.isMockLocation.value) {
       throw FetchDataException("Please Disable Your Fake Locator".tr);
-    } else if(!generalStatusController.isAutoTimeStatus.value) {
-      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
     } else if(!generalStatusController.isLocationStatus.value) {
       throw FetchDataException("Please Enable Your Location".tr);
     } else {
@@ -3318,9 +3320,7 @@ class DatabaseHelper {
       throw FetchDataException("Please Disable Your VPN".tr);
     } else if(generalStatusController.isMockLocation.value) {
       throw FetchDataException("Please Disable Your Fake Locator".tr);
-    } else if(!generalStatusController.isAutoTimeStatus.value) {
-      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
-    } else if(!generalStatusController.isLocationStatus.value) {
+    }  else if(!generalStatusController.isLocationStatus.value) {
       throw FetchDataException("Please Enable Your Location".tr);
     } else {
 
@@ -3344,8 +3344,6 @@ class DatabaseHelper {
       throw FetchDataException("Please Disable Your VPN".tr);
     } else if(generalStatusController.isMockLocation.value) {
       throw FetchDataException("Please Disable Your Fake Locator".tr);
-    } else if(!generalStatusController.isAutoTimeStatus.value) {
-      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
     } else if(!generalStatusController.isLocationStatus.value) {
       throw FetchDataException("Please Enable Your Location".tr);
     } else {
@@ -3365,8 +3363,6 @@ class DatabaseHelper {
       throw FetchDataException("Please Disable Your VPN".tr);
     } else if(generalStatusController.isMockLocation.value) {
       throw FetchDataException("Please Disable Your Fake Locator".tr);
-    } else if(!generalStatusController.isAutoTimeStatus.value) {
-      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
     } else if(!generalStatusController.isLocationStatus.value) {
       throw FetchDataException("Please Enable Your Location".tr);
     } else {
@@ -3390,9 +3386,7 @@ class DatabaseHelper {
       throw FetchDataException("Please Disable Your VPN".tr);
     } else if(generalStatusController.isMockLocation.value) {
       throw FetchDataException("Please Disable Your Fake Locator".tr);
-    } else if(!generalStatusController.isAutoTimeStatus.value) {
-      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
-    } else if(!generalStatusController.isLocationStatus.value) {
+    }  else if(!generalStatusController.isLocationStatus.value) {
       throw FetchDataException("Please Enable Your Location".tr);
     } else {
 
@@ -3415,8 +3409,6 @@ class DatabaseHelper {
       throw FetchDataException("Please Disable Your VPN".tr);
     } else if(generalStatusController.isMockLocation.value) {
       throw FetchDataException("Please Disable Your Fake Locator".tr);
-    } else if(!generalStatusController.isAutoTimeStatus.value) {
-      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
     } else if(!generalStatusController.isLocationStatus.value) {
       throw FetchDataException("Please Enable Your Location".tr);
     } else {
@@ -3590,8 +3582,6 @@ class DatabaseHelper {
       throw FetchDataException("Please Disable Your VPN".tr);
     } else if(generalStatusController.isMockLocation.value) {
       throw FetchDataException("Please Disable Your Fake Locator".tr);
-    } else if(!generalStatusController.isAutoTimeStatus.value) {
-      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
     } else if(!generalStatusController.isLocationStatus.value) {
       throw FetchDataException("Please Enable Your Location".tr);
     } else {
@@ -3858,8 +3848,8 @@ class DatabaseHelper {
         stocker_id: picklist[index]['stocker_id'].toString(),
         stocker_name: picklist[index]['stocker_name'].toString(),
         shift_time: picklist[index]['shift_time'].toString(),
-        en_cat_name: picklist[index]['en_cat_name'].toString(),
-        ar_cat_name: picklist[index]['ar_cat_name'].toString(),
+        en_cat_name: picklist[index]['en_name'].toString(),
+        ar_cat_name: picklist[index]['ar_name'].toString(),
         sku_picture: picklist[index]['sku_picture'].toString(),
         en_sku_name: picklist[index]['en_sku_name'].toString(),
         ar_sku_name: picklist[index]['ar_sku_name'].toString(),
@@ -3877,7 +3867,7 @@ class DatabaseHelper {
   }
 
   static Future<int> insertPickListByQuery (String queryBulkInsertion) async {
-     String insertQuery = "INSERT OR IGNORE INTO picklist (working_id,picklist_id,store_id, category_id, tmr_id,tmr_name,stocker_id,stocker_name,shift_time,en_cat_name,ar_cat_name,sku_picture,en_sku_name,ar_sku_name,req_picklist,act_picklist,picklist_ready,upload_status,pick_list_send_time,pick_list_receive_time,picklist_reason)"
+     String insertQuery = "INSERT OR IGNORE INTO picklist (working_id,picklist_id,store_id, category_id, tmr_id,tmr_name,stocker_id,stocker_name,shift_time,en_name,ar_name,sku_picture,en_sku_name,ar_sku_name,req_picklist,act_picklist,picklist_ready,upload_status,pick_list_send_time,pick_list_receive_time,picklist_reason)"
                         "VALUES $queryBulkInsertion";
                         // "VALUES($pickListId,$storeId,$catId,$tmrId,$tmrName,$stockerId, $stockerName,$shiftTime,$enCatName,$arCatName,$skuPicture,$enSkuName,$arSkuName,$reqPickList,$actPickList,$pickListReady)";
   var db = await initDataBase();
@@ -3890,8 +3880,6 @@ class DatabaseHelper {
     throw FetchDataException("Please Disable Your VPN".tr);
   } else if(generalStatusController.isMockLocation.value) {
     throw FetchDataException("Please Disable Your Fake Locator".tr);
-  } else if(!generalStatusController.isAutoTimeStatus.value) {
-    throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
   } else if(!generalStatusController.isLocationStatus.value) {
     throw FetchDataException("Please Enable Your Location".tr);
   } else {
@@ -3974,8 +3962,6 @@ class DatabaseHelper {
       throw FetchDataException("Please Disable Your VPN".tr);
     } else if(generalStatusController.isMockLocation.value) {
       throw FetchDataException("Please Disable Your Fake Locator".tr);
-    } else if(!generalStatusController.isAutoTimeStatus.value) {
-      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
     } else if(!generalStatusController.isLocationStatus.value) {
       throw FetchDataException("Please Enable Your Location".tr);
     } else {
@@ -3999,8 +3985,6 @@ class DatabaseHelper {
       throw FetchDataException("Please Disable Your VPN".tr);
     } else if(generalStatusController.isMockLocation.value) {
       throw FetchDataException("Please Disable Your Fake Locator".tr);
-    } else if(!generalStatusController.isAutoTimeStatus.value) {
-      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
     } else if(!generalStatusController.isLocationStatus.value) {
       throw FetchDataException("Please Enable Your Location".tr);
     } else {
@@ -4188,9 +4172,7 @@ class DatabaseHelper {
       throw FetchDataException("Please Disable Your VPN".tr);
     } else if(generalStatusController.isMockLocation.value) {
       throw FetchDataException("Please Disable Your Fake Locator".tr);
-    } else if(!generalStatusController.isAutoTimeStatus.value) {
-      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
-    } else if(!generalStatusController.isLocationStatus.value) {
+    }  else if(!generalStatusController.isLocationStatus.value) {
       throw FetchDataException("Please Enable Your Location".tr);
     } else {
 
@@ -4810,9 +4792,7 @@ class DatabaseHelper {
       throw FetchDataException("Please Disable Your VPN".tr);
     } else if(generalStatusController.isMockLocation.value) {
       throw FetchDataException("Please Disable Your Fake Locator".tr);
-    } else if(!generalStatusController.isAutoTimeStatus.value) {
-      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
-    } else if(!generalStatusController.isLocationStatus.value) {
+    }  else if(!generalStatusController.isLocationStatus.value) {
       throw FetchDataException("Please Enable Your Location".tr);
     } else {
 
@@ -5004,7 +4984,7 @@ class DatabaseHelper {
   static Future<int>  insertTransPromoPlan(String workingID,String clientId,int storeId) async {
     String insertQuery = "INSERT OR IGNORE INTO trans_promoplan (sku_id,modal_image, image_name, promo_reason, promo_status,date_time,act_status,gcs_status,upload_status, working_id) "
         " SELECT sku_id,modal_image,'','','', CURRENT_TIMESTAMP,0,0, 0,$workingID"
-        " FROM sys_promoplan WHERE  company_id in($clientId) AND (store_id=$storeId or store_id is 0)";
+        " FROM sys_promoplan WHERE  company_id in($clientId) AND store_id=$storeId GROUP BY sys_promoplan.store_id,sys_promoplan.sku_id";
     var db = await initDataBase();
     print("_______________INSERT TransPromoPlan________________");
     print(insertQuery);
@@ -5036,7 +5016,7 @@ class DatabaseHelper {
         " JOIN sys_category on sys_category.id = sys_product.category_id "
         " JOIN sys_brand on sys_brand.id = sys_product.brand_id "
         " JOIN sys_promoplan on sys_promoplan.sku_id = trans_promoplan.sku_id "
-        " WHERE working_id=$workingId $searchWhere";
+        " WHERE working_id=$workingId $searchWhere GROUP BY trans_promoplan.sku_id";
 
     final List<Map<String, dynamic>> transPromoPlanMap = await db.rawQuery(query);
 
@@ -5132,7 +5112,7 @@ class DatabaseHelper {
     String rawQuery = "SELECT sys_product.client_id as api_client_id,trans_promoplan.*"
         " FROM trans_promoplan "
         " join sys_product on sys_product.id=trans_promoplan.sku_id "
-        " WHERE working_id=$workingId AND upload_status=0 ";
+        " WHERE working_id=$workingId AND upload_status=0 AND gcs_status=1 ";
 
     print("Freshness QUERY");
     print(rawQuery);
@@ -5299,8 +5279,6 @@ class DatabaseHelper {
       throw FetchDataException("Please Disable Your VPN".tr);
     } else if(generalStatusController.isMockLocation.value) {
       throw FetchDataException("Please Disable Your Fake Locator".tr);
-    } else if(!generalStatusController.isAutoTimeStatus.value) {
-      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
     } else if(!generalStatusController.isLocationStatus.value) {
       throw FetchDataException("Please Enable Your Location".tr);
     } else {
@@ -5359,8 +5337,8 @@ class DatabaseHelper {
 
   static Future<List<TransPlanoGuideGcsImagesListModel>> getPromoPlanGcsImagesList(String workingId) async {
     final db = await initDataBase();
-    String rawQuery = "SELECT sku_id, image_name"
-        " FROM trans_promoplan WHERE working_id=$workingId AND gcs_status=0";
+    String rawQuery = "SELECT sku_id, image_name "
+        " FROM trans_promoplan WHERE working_id=$workingId AND gcs_status=0 AND image_name!= ''";
 
     print("Promo Plan QUERY");
     print(rawQuery);

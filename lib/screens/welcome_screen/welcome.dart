@@ -7,12 +7,11 @@ import 'package:cstore/screens/utils/app_constants.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:cstore/screens/utils/toast/toast.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Database/table_name.dart';
 import '../Language/localization_controller.dart';
-import '../auth/login.dart';
 import '../widget/app_bar_widgets.dart';
 import '../widget/elevated_buttons.dart';
 import '../widget/loading.dart';
@@ -49,10 +48,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
   String currentLanguage = "en";
 
   @override
-  void didChangeDependencies() async {
-    // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
-
+  void initState() {
+    // TODO: implement initState
+    super.initState();
     _controller = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: this,
@@ -65,6 +63,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
       ),
     );
 
+    startDbProcess();
+
+  }
+
+  startDbProcess() async {
     if (isinit) {
       getUserData();
       await DatabaseHelper.database;
@@ -72,12 +75,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
     isinit = false;
   }
 
-  @override
-  // void initState() async {
-  //   // TODO: implement initState
-  //   super.initState();
-  //   await getUserData();
-  // }
 
   Future getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -102,10 +99,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
     setState(() {
 
     });
-    print(userName);
-    print(currentVersion);
-    print(updatedVersion);
-    print(isSyncronize);
 
     if(isSyncronize == "0") {
       await getSyncronise();
@@ -221,6 +214,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
 
   @override
   void dispose() {
+    print('Dispose called');
     _controller.dispose();
     super.dispose();
   }

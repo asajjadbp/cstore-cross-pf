@@ -76,6 +76,7 @@ class _PromoPlan_scrrenState extends State<PromoPlan_scrren> {
     setState(() {
 
     });
+    getGraphCount();
     getPromoPlanTransData("");
   }
 
@@ -380,9 +381,9 @@ setState(() {
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
                   print(jsonEncode(promoTransData[index].initialOsdcItem));
-                  print("${imageBaseUrl}sku_pictures/${promoTransData[index].modalImage}");
+                  print(promoTransData.length);
                 return PromoPlanCard(
-                  modalImage: "${imageBaseUrl}sku_pictures/${promoTransData[index].modalImage}",
+                  modalImage: "https://storage.googleapis.com/binzagr-bucket/sku_pictures/${promoTransData[index].modalImage}",
                   isBtnLoading:isBtnLoading,
                   initialItem: promoTransData[index].initialOsdcItem,
                   actStatus: promoTransData[index].actStatus,
