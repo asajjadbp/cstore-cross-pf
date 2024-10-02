@@ -560,10 +560,6 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
               ),
               onPressed:isDataUploading ? null : isFinishButton ? () async {
 
-                List<String> latLong = gcode.split('=')[1].split(',');
-                String storeLat = latLong[0];
-                String storeLong = latLong[1];
-
                 GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
                 if(generalStatusController.isLocationStatus.value) {
@@ -571,6 +567,10 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                   if(generalStatusController.sysAppSettingModel.isGeoLocationEnabled == "0") {
                     generalStatusController.isGeoFenceDistance.value = 0.5;
                   } else {
+                    List<String> latLong = gcode.split('=')[1].split(',');
+                    String storeLat = latLong[0];
+                    String storeLong = latLong[1];
+
                     await generalStatusController.getGeoLocationDistance(
                         double.parse(generalStatusController.isLat.value),
                         double.parse(generalStatusController.isLong
@@ -578,14 +578,6 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                         double.parse(storeLong.trim()));
                   }
 
-                  print("Store Lat Long");
-                  print(storeLong);
-                  print(storeLat);
-                  print("User Lat Long");
-                  print(generalStatusController.isLat);
-                  print(generalStatusController.isLong);
-                  print("Distance From Store");
-                  print(generalStatusController.isGeoFenceDistance.value);
                 }
                 if(generalStatusController.isVpnStatus.value) {
                   showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false);

@@ -283,23 +283,23 @@ class _DashBoardState extends State<DashBoard> {
       return Expanded(
         child: InkWell(
           onTap: () {
-            setState(() {
-              isServiceLoading = true;
-            });
-            LocationService.getLocation().then((value) => {
-              if (value["locationIsPicked"]) {
+            // setState(() {
+            //   isServiceLoading = true;
+            // });
+            // LocationService.getLocation().then((value) => {
+            //   if (value["locationIsPicked"]) {
             Navigator.of(context).pushNamed(JourneyPlanScreen.routename).then((value) {
-            // getApiUserDashboard();
+            getApiUserDashboard();
 
-            setState(() {
-              isServiceLoading = false;
-            });
-              }), } else {
-                setState(() {
-              isServiceLoading = false;
-              }),
-                showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false)
-              }
+            // setState(() {
+            //   isServiceLoading = false;
+            // });
+            //   }), } else {
+            //     setState(() {
+            //   isServiceLoading = false;
+            //   }),
+            //     showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false)
+            //   }
             });
           },
           child:  Card(

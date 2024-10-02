@@ -2242,8 +2242,8 @@ class DatabaseHelper {
 
   static Future<List<SavePlanoguideListData>> getActivityStatusPlanoGuideDataList(String workingId) async {
     final db = await initDataBase();
-    String rawQuery = "SELECT id,client_id,category_id As category_id,pog,isAdherence as is_adh,skuImageName as image_name "
-        " FROM trans_planoguide WHERE working_id=$workingId AND activity_status=1 AND upload_status=0";
+    String rawQuery = "SELECT id,client_id,category_id As category_id,pog,isAdherence as is_adh,image_name as image_name "
+        " FROM trans_planoguide WHERE working_id=$workingId AND gcs_status=1 AND activity_status=1 AND upload_status=0";
 
     print("PLANOGUIDE QUERY");
     print(rawQuery);

@@ -173,8 +173,10 @@ class _ProofOfSaleState extends State<ProofOfSale> {
                 date_time: now.toString(),
                 working_id: int.parse(workingId)))
             .then((_) {
-          showAnimatedToastMessage("Success".tr,"Data Saved Successfully".tr, true);
+          imageName = "";
           imageFile = null;
+          showAnimatedToastMessage("Success".tr,"Data Saved Successfully".tr, true);
+
         });
       });
       setState(() {
