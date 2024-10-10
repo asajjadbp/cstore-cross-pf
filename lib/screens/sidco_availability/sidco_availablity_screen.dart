@@ -938,8 +938,7 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
                                         context: context,
                                         builder: (BuildContext context) {
                                           return CustomDialog(
-                                            isButtonActive: filteredList[index]
-                                                .requried_picklist == 0,
+                                            isButtonActive: true,
                                             badgeNumber: 0,
                                             textEditingController: textEditingController,
                                             title: languageController.isEnglish
@@ -1100,8 +1099,7 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
                                       builder: (BuildContext context) {
                                         return CustomDialog(
                                           badgeNumber: 0,
-                                          isButtonActive: availableData[index]
-                                              .requried_picklist == 0,
+                                          isButtonActive: true,
                                           textEditingController: textEditingController,
                                           title: languageController.isEnglish.value ? availableData[index]
                                               .pro_en_name : availableData[index]

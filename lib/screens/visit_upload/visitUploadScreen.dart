@@ -592,10 +592,6 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                 } else {
                   Get.delete<GeneralChecksStatusController>();
 
-                  print((moduleIdList.contains("15")) &&
-                      (planoguideCountModel.totalUploaded.toString() ==
-                          "null" ||
-                          planoguideCountModel.totalUploaded == 0));
                   if (userRole == "TMR") {
                     if ((moduleIdList.contains("3") ||
                         moduleIdList.contains("17")) &&

@@ -820,8 +820,7 @@ class _AvailabilityState extends State<Availability> {
                                           context: context,
                                           builder: (BuildContext context) {
                                             return CustomDialog(
-                                              isButtonActive: filteredList[index]
-                                                  .requried_picklist == 0,
+                                              isButtonActive: true,
                                               badgeNumber: 0,
                                               textEditingController: textEditingController,
                                               title: languageController
@@ -998,8 +997,7 @@ class _AvailabilityState extends State<Availability> {
                                           builder: (BuildContext context) {
                                             return CustomDialog(
                                               badgeNumber: 0,
-                                              isButtonActive: availableData[index]
-                                                  .requried_picklist == 0,
+                                              isButtonActive: true,
                                               textEditingController: textEditingController,
                                               title: languageController
                                                   .isEnglish.value
@@ -1460,8 +1458,7 @@ class _AvailabilityState extends State<Availability> {
           isDataUploading = false;
         }),
         ToastMessage.succesMessage(context, "Pick List Uploaded Successfully".tr),
-      }).catchError((onError) =>
-      {
+      }).catchError((onError) => {
         print("API ERROR Before"),
         print(onError.toString()),
         ToastMessage.errorMessage(context, onError.toString()),

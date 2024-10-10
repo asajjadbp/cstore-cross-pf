@@ -1,6 +1,7 @@
 import 'package:cstore/screens/Journey%20Plan/journey_plan_screen.dart';
 import 'package:cstore/screens/Journey%20Plan/view_jp_photo.dart';
 import 'package:cstore/screens/Language/translation.dart';
+import 'package:cstore/screens/Replenishment/replenishment.dart';
 import 'package:cstore/screens/availability/availablity_screen.dart';
 import 'package:cstore/screens/before_fixing/view_before_fixing.dart';
 import 'package:cstore/screens/brand_share/AddBrandShares.dart';
@@ -32,9 +33,11 @@ import 'package:cstore/screens/splash_screen.dart';
 import 'package:cstore/screens/stock/stock_list_screen.dart';
 import 'package:cstore/screens/utils/app_constants.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
+import 'package:cstore/screens/utils/toast/toast.dart';
 import 'package:cstore/screens/visit_upload/visitUploadScreen.dart';
 import 'package:cstore/screens/welcome_screen/welcome.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -65,11 +68,35 @@ class _MyAppState extends State<MyApp> {
   // String _deviceToken = "";
   //
   String languageCode = "en";
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    _firebaseMessaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      // Handle the message
+      print('Handling a foreground message ${message.messageId}');
+      // showAnimatedToastMessage("Test Meesage ", "THis will be shown on front ", true);
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      // Handle the message
+      print('Handling a message open app ${message.messageId}');
+    });
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
     getLanguageFromSession();
+  }
+
+  Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+    await Firebase.initializeApp();
+    // Handle the message
+    print('Handling a background message ${message.messageId}');
   }
 
   getLanguageFromSession() async {
@@ -211,6 +238,7 @@ class _MyAppState extends State<MyApp> {
         ShowProofOfSaleScreen.routename:(context)=>const ShowProofOfSaleScreen(),
         AddMarketIssue.routeName:(context)=>const AddMarketIssue(),
         ViewMarketIssueScreen.routename:(context)=>const ViewMarketIssueScreen(),
+        ReplenishmentScreen.routeName: (context)=>const ReplenishmentScreen(),
       },
     );
   }

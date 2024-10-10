@@ -137,6 +137,7 @@ class _LoginState extends State<Login> {
                                 children: [
                                   Container(
                                       width: MediaQuery.of(context).size.width/2,
+                                      height: 70,
                                       child: SvgPicture.network(loginController.agencyPhoto)),
 
                                   Container(

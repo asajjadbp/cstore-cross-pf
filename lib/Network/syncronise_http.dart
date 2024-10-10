@@ -1,6 +1,7 @@
 // import 'dart:convert';
 
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:cstore/Model/request_model.dart/jp_request_model.dart';
 import 'package:cstore/Model/response_model.dart/syncronise_response_model.dart';
@@ -28,7 +29,7 @@ class SyncroniseHTTP {
         SyncroniseResponseModel.fromJson(response);
 
     print("_____________JSON DATA_______________");
-    print(jsonEncode(syncResponseData.data[0].sysStorePog));
+    log(jsonEncode(response['data'][0]));
     print("_________________________________");
 
 

@@ -288,4 +288,11 @@ class TableName {
   static const String sysStoreChannelId = "channel_id";
   static const String sysStoreChannelId6 = "channel_id6";
   static const String sysStoreChannelId7 = "channel_id7";
+
+  ///Replenishment Table Varibales
+  static const String transReplenishmentTable = "trans_picklist";
+  static const String transRequiredPieces = "required_pieces";
+  static const String transPickedPieces = "picked_pieces";
+  static const String transPickListReason = "not_picked_reason";
+
 }

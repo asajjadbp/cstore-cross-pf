@@ -42,6 +42,10 @@ class BrandShares_ScreenState extends State<BrandShares_Screen> {
 
   bool isBtnLoading = false;
 
+  int searchClientId = -1;
+  int searchCatId = -1;
+  int searchBrandId = -1;
+
   @override
   void initState() {
     super.initState();
@@ -64,7 +68,7 @@ class BrandShares_ScreenState extends State<BrandShares_Screen> {
     setState(() {
       isLoading = isLoader;
     });
-    await DatabaseHelper.getBransSharesDataList(workingId).then((value) async {
+    await DatabaseHelper.getBransSharesDataList(workingId,searchCatId.toString(),searchBrandId.toString()).then((value) async {
       transData = value.cast<TransBransShareModel>();
       doneItems = transData.where((element) => element.activity_status == 1).toList().length;
       pendingItems = transData.where((element) => element.activity_status == 0).toList().length;
@@ -82,8 +86,12 @@ class BrandShares_ScreenState extends State<BrandShares_Screen> {
     setState(() {
       isFilterLoading = true;
     });
+
+    print(searchCatId);
+    print(searchBrandId);
+
     if(currentSelectedValue == "Done") {
-      await DatabaseHelper.getBransSharesFilteredDataList(workingId,1).then((value) {
+      await DatabaseHelper.getBransSharesFilteredDataList(workingId,1,searchCatId.toString(),searchBrandId.toString()).then((value) {
         setState(() {
           filteredList = value;
           isFilterLoading = false;
@@ -91,7 +99,7 @@ class BrandShares_ScreenState extends State<BrandShares_Screen> {
       });
 
     } else if(currentSelectedValue == "Pending") {
-      await DatabaseHelper.getBransSharesFilteredDataList(workingId,0).then((value) {
+      await DatabaseHelper.getBransSharesFilteredDataList(workingId,0,searchCatId.toString(),searchBrandId.toString()).then((value) {
         setState(() {
           filteredList = value;
           isFilterLoading = false;
@@ -116,8 +124,18 @@ class BrandShares_ScreenState extends State<BrandShares_Screen> {
         backgroundColor: const Color(0xFFF4F7FD),
         appBar: generalAppBar(context, languageController.isEnglish.value ? storeEnName : storeArName, userName, (){
           Navigator.of(context).pop();
-        }, true, false, false,(int getClient, int getCat, int getSubCat, int getBrand) {
+        }, true, true, false,(int getClient, int getCat, int getSubCat, int getBrand) {
 
+            searchClientId = getClient;
+            searchBrandId = getBrand;
+            searchCatId = getCat;
+
+          getTransBrandShareOne(true);
+
+          setState(() {
+            currentSelectedValue = "All";
+          });
+          Navigator.of(context).pop();
         }),
         body: isLoading ? const Center(child: MyLoadingCircle(),) : transData.isEmpty
             ?  Center(

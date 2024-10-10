@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cstore/Model/database_model/picklist_model.dart';
@@ -599,6 +600,32 @@ class DatabaseHelper {
           TableName.trans_pricing_regular +
           " TEXT, " +
           TableName.trans_pricing_promo +
+          " TEXT, " +
+          TableName.dateTime +
+          " TEXT, " +
+          TableName.uploadStatus +
+          " INTEGER, " +
+          TableName.trans_rtv_activity_status +
+          " INTEGER, " +
+          TableName.workingId +
+          " INTEGER, " +
+          'CONSTRAINT unique_key UNIQUE (' +
+          TableName.skuId + ', ' +
+          TableName.workingId +
+          ')' +
+          ')');
+
+
+      await db.execute('CREATE TABLE ' +
+          TableName.transReplenishmentTable +
+          "(" +
+          TableName.skuId +
+          " INTEGER , " +
+          TableName.transRequiredPieces +
+          " TEXT, " +
+          TableName.transPickedPieces +
+          " TEXT, " +
+          TableName.transPickListReason +
           " TEXT, " +
           TableName.dateTime +
           " TEXT, " +
@@ -2263,14 +2290,25 @@ class DatabaseHelper {
     });
   }
 
-  static Future<List<TransBransShareModel>> getBransSharesDataList(String workingId) async {
+  static Future<List<TransBransShareModel>> getBransSharesDataList(String workingId,String categoryId,String brandId) async {
     final db = await initDataBase();
+
+    String searchWhere = "";
+
+    if (brandId != "-1") {
+      searchWhere = "$searchWhere And sys_brand.id = '$brandId'";
+    }
+
+    if (categoryId != "-1") {
+      searchWhere = "$searchWhere And sys_category.id = '$categoryId'";
+    }
+
     final List<Map<String, dynamic>> brandShareMap = await db.rawQuery("SELECT trans_brand_share.client_id,trans_brand_share.id as trans_brand_shares_id,"
         "trans_brand_share.category_id as cat_id,trans_brand_share.brand_id ,sys_category.en_name as cat_en_name,sys_category.ar_name as cat_ar_name,sys_brand.ar_name as brand_ar_name,sys_brand.en_name as brand_en_name,trans_brand_share.given_faces,trans_brand_share.upload_status,"
         " trans_brand_share.actual_faces,trans_brand_share.activity_status FROM trans_brand_share"
         " join sys_category on sys_category.id=trans_brand_share.category_id"
         " join sys_brand on sys_brand.id=trans_brand_share.brand_id"
-        " WHERE working_id=$workingId ORDER BY category_id,brand_en_name ASC");
+        " WHERE working_id=$workingId $searchWhere ORDER BY category_id,brand_en_name ASC");
 
 
     return List.generate(brandShareMap.length, (index) {
@@ -2291,14 +2329,25 @@ class DatabaseHelper {
     });
   }
 
-  static Future<List<TransBransShareModel>> getBransSharesFilteredDataList(String workingId,int activityStatus) async {
+  static Future<List<TransBransShareModel>> getBransSharesFilteredDataList(String workingId,int activityStatus,String categoryId,String brandId) async {
     final db = await initDataBase();
+
+    String searchWhere = "";
+
+    if (brandId != "-1") {
+      searchWhere = "$searchWhere And sys_brand.id = '$brandId'";
+    }
+
+    if (categoryId != "-1") {
+      searchWhere = "$searchWhere And sys_category.id = '$categoryId'";
+    }
+
     final List<Map<String, dynamic>> brandShareMap = await db.rawQuery("SELECT trans_brand_share.client_id,trans_brand_share.id as trans_brand_shares_id,"
         "trans_brand_share.category_id as cat_id,trans_brand_share.brand_id ,sys_category.en_name as cat_en_name,sys_category.ar_name as cat_ar_name,sys_brand.ar_name as brand_ar_name,sys_brand.en_name as brand_en_name,trans_brand_share.given_faces,trans_brand_share.upload_status,"
         " trans_brand_share.actual_faces,trans_brand_share.activity_status FROM trans_brand_share"
         " join sys_category on sys_category.id=trans_brand_share.category_id"
         " join sys_brand on sys_brand.id=trans_brand_share.brand_id"
-        " WHERE working_id=$workingId AND activity_status=$activityStatus ORDER BY category_id,brand_en_name ASC");
+        " WHERE working_id=$workingId AND activity_status=$activityStatus $searchWhere ORDER BY category_id,brand_en_name ASC");
 
 
     return List.generate(brandShareMap.length, (index) {
@@ -3690,6 +3739,10 @@ class DatabaseHelper {
       searchWhere = " AND sys_product.category_id = $categoryId ";
     }
 
+    // if(subCategoryId != "-1") {
+    //   searchWhere = " AND sys_product.subcategory_id = $subCategoryId ";
+    // }
+
     final List<Map<String, dynamic>> brandMaps = await db.rawQuery(
         "SELECT sys_brand.id,sys_brand.en_name ,sys_brand.ar_name,sys_brand.client_id "
             "FROM sys_product JOIN sys_client on sys_client.client_id=sys_brand.client_id "
@@ -4363,6 +4416,160 @@ class DatabaseHelper {
       print("Compiler is HERE ${db.isOpen}");
     }
   }
+
+  ///Replenishment Database Functions
+  static Future<List<PricingShowModel>> getDataListReplenishment(String workingId, String clientId,String jpSessionClientIds, String brandId,String categoryId,String subCategoryId,String currentSelectedItem) async {
+
+    String searchOtherExclude = "";
+    String otherExclSearchParam = await getOtherExcludesString(workingId);
+    print(otherExclSearchParam);
+
+    if(otherExclSearchParam.isNotEmpty) {
+      searchOtherExclude = "And sys_product.id not in ($otherExclSearchParam)";
+    }
+
+
+    String searchWhere = "";
+    String transWhere = "";
+
+    String clientIds = "";
+
+    if (clientId != "-1") {
+      clientIds = clientId;
+    } else {
+      clientIds  = jpSessionClientIds;
+    }
+
+    if (brandId != "-1") {
+      searchWhere = "$searchWhere And sys_product.brand_id = '$brandId'";
+    }
+    if (subCategoryId != "-1") {
+      searchWhere = "$searchWhere And sys_product.subcategory_id = '$subCategoryId'";
+    }
+    if (categoryId != "-1") {
+      searchWhere = "$searchWhere And sys_product.category_id = '$categoryId'";
+    }
+    print("Sub Category FIlter");
+    print(searchWhere);
+
+
+    if(currentSelectedItem == "Required") {
+      transWhere = "$transWhere HAVING TransTable.required_pieces > 0 ";
+    }
+
+    if(currentSelectedItem == "Picked") {
+      transWhere = "$transWhere HAVING TransTable.picked_pieces >= 0 ";
+    }
+
+    final db = await initDataBase();
+    String query = "SELECT SystemTable.*,TransTable.act_status,TransTable.required_pieces,TransTable.picked_pieces,TransTable.picked_pieces,TransTable.not_picked_reason From (SELECT sys_product.id as pro_id, "
+        "sys_product.en_name as pro_en_name, "
+        "sys_product.ar_name as pro_ar_name,sys_category.en_name  ||  '  ' ||  sys_subcategory.en_name as cat_en_name, "
+        "sys_category.ar_name as cat_ar_name, "
+        "sys_brand.en_name as brand_en_name,sys_brand.ar_name as brand_ar_name,sys_product.image, "
+        "sys_product.rsp, sys_subcategory.en_name as sub_category,sys_brand.en_name as brand "
+        "from sys_product "
+        "JOIN sys_category on sys_category.id=sys_product.category_id "
+        "JOIN sys_subcategory on sys_subcategory.id=sys_product.subcategory_id "
+        "JOIN sys_brand on sys_brand.id=sys_product.brand_id "
+        "WHERE 1=1 And sys_product.client_id in ($clientIds) $searchOtherExclude $searchWhere) SystemTable "
+        "LEFT JOIN ( SELECT sku_id,act_status,required_pieces,picked_pieces,not_picked_reason FROM trans_picklist WHERE working_id=$workingId) TransTable "
+        "on SystemTable.pro_id = TransTable.sku_id "
+        "GROUP BY SystemTable.pro_id $transWhere ORDER BY sub_category,brand ASC ";
+
+    print("++++++++++++++++++++");
+    log(query);
+    print("+++++++++++++++++++++");
+
+    final List<Map<String, dynamic>> pricingMap = await db.rawQuery(query);
+    return List.generate(pricingMap.length, (index) {
+
+      return PricingShowModel(
+        pro_id: pricingMap[index]['pro_id'] as int,
+        cat_en_name: pricingMap[index]['cat_en_name'] ?? "",
+        cat_ar_name: pricingMap[index]['cat_ar_name'] ?? "",
+        pro_en_name: pricingMap[index]['pro_en_name'] ?? "",
+        pro_ar_name: pricingMap[index]['pro_ar_name'] ?? "",
+        img_name: pricingMap[index]['image'] ?? "",
+        rsp: pricingMap[index]['not_picked_reason'] ?? "",
+        brand_en_name: pricingMap[index]['brand_en_name'] ?? "",
+        brand_ar_name: pricingMap[index]['brand_ar_name'] ?? "",
+        pricing_taken: pricingMap[index]['picked_pieces'] == null || pricingMap[index]['picked_pieces'] == '' ? 0 : int.parse(pricingMap[index]['picked_pieces'].toString()),
+        regular_price: pricingMap[index]['required_pieces'] ?? "",
+        promo_price: pricingMap[index]['picked_pieces'] ?? "",
+        upload_status: pricingMap[index]['upload_status'] ?? 0,
+        act_status: pricingMap[index]['act_status'] ?? 0,
+      );
+    });
+  }
+  ///insert Replenishment data from module
+  static Future<int> insertTransReplenishment(int skuId, String regular, String promo,String reason ,String workingID) async {
+    String insertQuery = '''
+    INSERT INTO trans_picklist (sku_id, required_pieces, picked_pieces,not_picked_reason, date_time, upload_status,act_status, working_id)
+    VALUES ($skuId, ${wrapIfString(regular)}, ${wrapIfString(promo)},${wrapIfString(reason)},CURRENT_TIMESTAMP,0,1,$workingID)
+  ''';
+
+    var db = await initDataBase();
+    print("_______________INSERT REPLENISHMENT________________");
+    print(insertQuery);
+    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+    if(generalStatusController.isVpnStatus.value) {
+      throw FetchDataException("Please Disable Your VPN".tr);
+    } else if(generalStatusController.isMockLocation.value) {
+      throw FetchDataException("Please Disable Your Fake Locator".tr);
+    } else if(!generalStatusController.isAutoTimeStatus.value) {
+      throw FetchDataException("Please Enable Your Auto time Option From Setting".tr);
+    } else if(!generalStatusController.isLocationStatus.value) {
+      throw FetchDataException("Please Enable Your Location".tr);
+    } else {
+
+      Get.delete<GeneralChecksStatusController>();
+
+      return await db.rawInsert(insertQuery);
+    }
+  }
+
+  ///update Replenishment data from module
+  static Future<int> updateTransReplenishment(int skuId, String regular, String promo,String reason, String workingID) async {
+    String writeQuery = "update trans_picklist set required_pieces=${wrapIfString(regular)},picked_pieces=${wrapIfString(promo)},not_picked_reason=${wrapIfString(reason)},upload_status=0 Where sku_id=$skuId AND working_id=$workingID";
+    var db = await initDataBase();
+    print("_______________UPDATE REPLENISHMENT________________");
+    print(writeQuery);
+    return await db.rawUpdate(writeQuery);
+  }
+
+  static Future<int> deleteTransReplenishment(int skuId,String workingID) async {
+    String writeQuery = "DELETE FROM trans_picklist WHERE sku_id=$skuId AND working_id=$workingID";
+    var db = await initDataBase();
+    print("_______________DELETE PROMO PRICE________________");
+    print(writeQuery);
+    return await db.rawUpdate(writeQuery);
+  }
+
+  ///Get Replenishment COUNT RECORDS FOR API UPLOAD
+  static Future<PricingCountModel> getReplenishmentCountData(String workingId) async {
+    final db = await initDataBase();
+
+    String query  = " SELECT COUNT(DISTINCT a.id) as all_sku, "
+        " sum(case when B.picked_pieces != '' Then 1 else 0 end) as total_picked_products, "
+        " sum(case when B.required_pieces != '' Then 1 else 0 end) as total_required_products "
+        " FROM (SELECT id from sys_product WHERE 1=1) A "
+        " LEFT JOIN(SELECT sku_id,required_pieces,picked_pieces from trans_picklist where 1=1 AND  working_id=$workingId) B "
+        " ON A.id=B.sku_id ";
+
+
+    final List<Map<String, dynamic>> result = (await db.rawQuery(query));
+    print(jsonEncode(result));
+    print("____________Price Check Cont_______________");
+    return  PricingCountModel(
+      total_pricing_products: result[0]['all_sku'] ?? 0,
+      total_promo_pricing: result[0]['total_picked_products'] ?? 0,
+      total_regular_pricing: result[0]['total_required_products'] ?? 0,
+    );
+  }
+
+
 
   ///Pricing Database Functions
 

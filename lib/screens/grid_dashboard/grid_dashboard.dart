@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cstore/Database/db_helper.dart';
 import 'package:cstore/Model/database_model/required_module_model.dart';
 import 'package:cstore/Network/sql_data_http_manager.dart';
+import 'package:cstore/screens/Replenishment/replenishment.dart';
 import 'package:cstore/screens/availability/availablity_screen.dart';
 import 'package:cstore/screens/freshness/Freshness.dart';
 import 'package:cstore/screens/planogram/planogram_screen.dart';
@@ -403,7 +404,7 @@ class _GridDashBoardState extends State<GridDashBoard> {
                                             }
                                             else if (agencyData[i].id == 7) {
                                               Navigator.of(context).pushNamed(
-                                                  PriceCheck_Screen.routeName);
+                                                  ReplenishmentScreen.routeName);
                                             } else if (agencyData[i].id == 15) {
                                               //Navigator.of(context).pushNamed(Planoguides_Screen.routename);
                                               await DatabaseHelper
