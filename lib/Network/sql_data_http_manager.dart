@@ -22,6 +22,7 @@ import '../Model/request_model.dart/save_one_plus_one_request.dart';
 import '../Model/request_model.dart/save_osd_request.dart';
 import '../Model/request_model.dart/save_pos_request.dart';
 import '../Model/request_model.dart/save_promo_plan_request_model.dart';
+import '../Model/request_model.dart/save_replenishment_request.dart';
 import '../Model/request_model.dart/save_stock_request_model.dart';
 import '../Model/request_model.dart/sos_end_api_request_model.dart';
 import '../Model/response_model.dart/tmr_pick_list_response_model.dart';
@@ -217,6 +218,14 @@ class SqlHttpManager {
     print(url);
     print(jsonEncode(saveMarketIssueData));
     var response = await _handler.postWithJson(Uri.parse(url), saveMarketIssueData.toJson(), token);
+    return response;
+  }
+
+  Future<dynamic> saveReplenishData(String token, String baseUrl,SaveReplenishData saveReplenishData) async {
+    final url = baseUrl + Api.postReplenishData;
+    print(url);
+    print(jsonEncode(saveReplenishData));
+    var response = await _handler.postWithJson(Uri.parse(url), saveReplenishData.toJson(), token);
     return response;
   }
 

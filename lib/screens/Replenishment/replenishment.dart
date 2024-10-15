@@ -9,6 +9,7 @@ import '../../Model/database_model/category_model.dart';
 import '../../Model/database_model/client_model.dart';
 import '../../Model/database_model/pricing_show_model.dart';
 import '../../Model/database_model/sys_brand_model.dart';
+import '../../Model/response_model.dart/repelish_response_model.dart';
 import '../Language/localization_controller.dart';
 import '../utils/app_constants.dart';
 import '../utils/appcolor.dart';
@@ -26,8 +27,8 @@ class ReplenishmentScreen extends StatefulWidget {
 }
 
 class _ReplenishmentScreenState extends State<ReplenishmentScreen> {
-  List<PricingShowModel> transData = [];
-  List<PricingShowModel> filterTransData = [];
+  List<ReplenishShowModel> transData = [];
+  List<ReplenishShowModel> filterTransData = [];
   List<TextEditingController> promoController = [];
   List<TextEditingController> regularController = [];
 
@@ -67,6 +68,9 @@ class _ReplenishmentScreenState extends State<ReplenishmentScreen> {
   List<CategoryModel> categoryData = [CategoryModel( client: -1, id: -1, en_name: '', ar_name: '')];
   List<CategoryModel> subCategoryData = [CategoryModel( client: -1, id: -1, en_name: '', ar_name: '')];
   List<SYS_BrandModel> brandData = [SYS_BrandModel( client: -1, id: -1, en_name: '', ar_name: '')];
+
+  List<String> reasonList = const ["Damage","Expired","Near Expiry","Out Of Stock"];
+
   @override
   void initState() {
     super.initState();
@@ -102,15 +106,39 @@ class _ReplenishmentScreenState extends State<ReplenishmentScreen> {
     });
   }
   Future<void> getTransReplenishment() async {
+    String pickListReasonValue = "";
+    var splitPickListReason;
+
     await DatabaseHelper.getDataListReplenishment(workingId,selectedClientId.toString(),clientId,selectedBrandId.toString(),selectedCategoryId.toString(),selectedSubCategoryId.toString(),currentSelectedItem)
         .then((value) async {
-        transData = value;
+        transData = value.cast<ReplenishShowModel>();
         getReplenishmentCount();
         getReplenishmentCount();
+
+        for(int i=0; i<transData.length; i++) {
+
+          pickListReasonValue = transData[i].reason;
+
+          if(pickListReasonValue.isNotEmpty) {
+            splitPickListReason = pickListReasonValue.split(",");
+            for(int j = 0; j < splitPickListReason.length; j++) {
+              setState(() {
+                transData[i].reasonValue?.add(splitPickListReason[j].toString().trim());
+              });
+            }
+          } else {
+            setState(() {
+              transData[i].reasonValue = [];
+            });
+          };
+
+          print(pickListReasonValue);
+          print(transData[i].reasonValue);}
+
         setState(() {});
     });
   }
-  void InsertTransPromoPrice(String regularPrice,String promoPrice,skuId) async {
+  void InsertTransPromoPrice(String regularPrice,String promoPrice,skuId,String reason) async {
     try {
       if (regularPrice == "0" || regularPrice == "0.0" || regularPrice.isEmpty) {
         showAnimatedToastMessage("Error!".tr,"Please add proper required pieces".tr, false);
@@ -121,7 +149,7 @@ class _ReplenishmentScreenState extends State<ReplenishmentScreen> {
           isBtnLoading = false;
         });
         await DatabaseHelper.insertTransReplenishment(
-            skuId, regularPrice.toString(), promoPrice.toString(),'', workingId)
+            skuId, regularPrice.toString(), promoPrice.toString(),reason, workingId)
             .then((_) {
           showAnimatedToastMessage("Success".tr, "Data Saved Successfully".tr, true);
           promoPrice = "";
@@ -136,7 +164,7 @@ class _ReplenishmentScreenState extends State<ReplenishmentScreen> {
       showAnimatedToastMessage("Error!".tr,e.toString(), false);
     }
   }
-  void UpdateTransPromoPrice(regularPrice,promoPrice,skuId) async {
+  void UpdateTransPromoPrice(regularPrice,promoPrice,skuId,String reason) async {
     if (regularPrice == "0" || regularPrice == "0.0" || regularPrice.isEmpty) {
       showAnimatedToastMessage("Error!".tr,"Please add proper required pieces".tr, false);
     } else if (promoPrice.isNotEmpty && (double.parse(promoPrice) > double.parse(regularPrice))) {
@@ -146,7 +174,7 @@ class _ReplenishmentScreenState extends State<ReplenishmentScreen> {
       isBtnLoading = false;
     });
     await DatabaseHelper.updateTransReplenishment(
-        skuId, regularPrice.toString(), promoPrice.toString(),'', workingId)
+        skuId, regularPrice.toString(), promoPrice.toString(),reason, workingId)
         .then((_) {
       showAnimatedToastMessage("Success".tr,"Data update successfully".tr, true);
 
@@ -419,6 +447,14 @@ class _ReplenishmentScreenState extends State<ReplenishmentScreen> {
                 itemCount: filterTransData.length,
                 itemBuilder: (ctx, i) {
                   return pricecheckcard(
+                    reasonDropdownList: reasonList,
+                    onReasonItemSelected: (value){
+                      setState(() {
+                        filterTransData[i].reasonValue = value;
+                      });
+                      print(filterTransData[i].reasonValue);
+                    },
+                    reasonValue: filterTransData[i].reasonValue!,
                     onDeleteTap: () {
                       deletePriceCheckData(filterTransData[i].pro_id);
                     },
@@ -432,12 +468,15 @@ class _ReplenishmentScreenState extends State<ReplenishmentScreen> {
 
                       print(regular);
                       print(promo);
+                      String reasons = filterTransData[i].reasonValue!.join(', ');
 
+                      print("REASONS PICKLIST");
+                      print(reasons);
 
                       if(filterTransData[i].act_status!=1){
-                        InsertTransPromoPrice(regular,promo,filterTransData[i].pro_id);
+                        InsertTransPromoPrice(regular,promo,filterTransData[i].pro_id,reasons);
                       } else{
-                        UpdateTransPromoPrice(regular,promo,filterTransData[i].pro_id);}
+                        UpdateTransPromoPrice(regular,promo,filterTransData[i].pro_id,reasons);}
 
                     }, actStatus: filterTransData[i].act_status,
                   );
@@ -459,6 +498,14 @@ class _ReplenishmentScreenState extends State<ReplenishmentScreen> {
                   regularController[i].text = transData[i].regular_price;
 
                   return pricecheckcard(
+                    reasonDropdownList: reasonList,
+                    onReasonItemSelected: (value){
+                      setState(() {
+                        transData[i].reasonValue = value;
+                      });
+                      print(transData[i].reasonValue);
+                    },
+                    reasonValue: transData[i].reasonValue!,
                     onDeleteTap: () {
                       deletePriceCheckData(transData[i].pro_id);
                     },
@@ -476,11 +523,15 @@ class _ReplenishmentScreenState extends State<ReplenishmentScreen> {
                       print(promo);
                       print(transData[i].act_status);
 
+                        String reasons = transData[i].reasonValue!.join(', ');
+
+                        print("REASONS PICKLIST");
+                        print(reasons);
 
                        if(transData[i].act_status!=1){
-                        InsertTransPromoPrice(regular,promo,transData[i].pro_id);
+                        InsertTransPromoPrice(regular,promo,transData[i].pro_id,reasons);
                        } else{
-                        UpdateTransPromoPrice(regular,promo,transData[i].pro_id);}
+                        UpdateTransPromoPrice(regular,promo,transData[i].pro_id,reasons);}
 
                     }, actStatus: transData[i].act_status,
                   );

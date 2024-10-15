@@ -152,6 +152,13 @@ class Translation extends Translations {
       "Location access successfully" : "Location access successfully",
       "Username & Password Not Exist" : "Username & Password Not Exist",
       "Please enter your license key" : "Please enter your license key",
+      "Please add proper required pieces" : "Please add proper required pieces",
+      "Picked pieces can't be greater than required pieces" : "Picked pieces can't be greater than required pieces",
+      "Picked Pieces" : "Picked Pieces",
+      "Required Pieces" : "Required Pieces",
+      "Picked" : "Picked",
+      "Replenish" : "Replenish",
+      "Rate %" : "Rate %",
 
       //////////////////////////////////////////////Sign up ///////////////////////////////////////////////
       "First Name": "First Name",
@@ -919,6 +926,15 @@ class Translation extends Translations {
       "Please Enable Your Auto time Option From Setting" : "يرجى تمكين خيار الوقت التلقائي من الإعداد",
       "Please Enable Your Location" :  "الرجاء تمكين موقعك",
       "You’re just 0.7 km away from the store. Please contact your supervisor for the exact location details" : "أنت على بعد 0.7 كم من المتجر. يرجى الاتصال بالمدير للحصول على تفاصيل الموقع بالضبط",
+
+      "Please add proper required pieces" : "يرجى إضافة القطع المطلوبة بشكل صحيح",
+      "Picked pieces can't be greater than required pieces" : "لا يمكن أن تكون القطع المختارة أكبر من القطع المطلوبة",
+      "Picked Pieces" : "القطع المختارة",
+      "Required Pieces" : "القطع المطلوبة",
+      "Picked" : "مختار",
+      "Replenish" : "إعادة تعبئة",
+      "Rate %" : "معدل ٪",
+
     },
   };
 }

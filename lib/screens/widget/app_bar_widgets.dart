@@ -27,7 +27,7 @@ generalAppBar(BuildContext context,String userName,String storeName, Function on
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(userName ,overflow: TextOverflow.ellipsis,maxLines: 1,),
+                  Expanded(child: Text(userName ,overflow: TextOverflow.ellipsis,maxLines: 1,)),
                   if(storeName.isEmpty)
                   Text(DateFormat("yyyy/MM/dd").format(DateTime.now())),
                 ],

@@ -39,6 +39,7 @@ import '../../Model/request_model.dart/save_one_plus_one_request.dart';
 import '../../Model/request_model.dart/save_osd_request.dart';
 import '../../Model/request_model.dart/save_pos_request.dart';
 import '../../Model/request_model.dart/save_promo_plan_request_model.dart';
+import '../../Model/request_model.dart/save_replenishment_request.dart';
 import '../../Model/request_model.dart/save_stock_request_model.dart';
 import '../../Model/request_model.dart/sos_end_api_request_model.dart';
 import '../../Network/jp_http.dart';
@@ -112,6 +113,10 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
   List<SavePricingDataListData> priceCheckImageList = [];
   PriceCheckCountModel priceCheckCountModel = PriceCheckCountModel(totalPriceCheck: 0, totalNotUpload: 0, totalUpload: 0,totalRegularSku: 0,totalPromoSku: 0);
 
+
+  List<SaveReplenishListData> replenishImageList = [];
+  PriceCheckCountModel replenishmentCountModel = PriceCheckCountModel(totalPriceCheck: 0, totalNotUpload: 0, totalUpload: 0,totalRegularSku: 0,totalPromoSku: 0);
+
   List<ReadyPickListData> pickListDataForApi = [];
 
   FreshnessGraphCountShowModel freshnessGraphCountShowModel = FreshnessGraphCountShowModel(totalFreshnessTaken: 0,totalVolume: 0,totalNotUploadCount: 0,totalUploadCount: 0);
@@ -167,6 +172,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
   bool isPlanoguideFinishLoading = false;
   bool isShelfShareFinishLoading = false;
   bool isRtvFinishLoading = false;
+  bool isReplenishmentFinishLoading = false;
   bool isPriceCheckFinishLoading = false;
   bool isFreshnessFinishLoading = false;
   bool isPromoPlanFinishLoading = false;
@@ -246,14 +252,16 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  languageController.isEnglish.value ? storeEnName : storeArName,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
-                  style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black),
+                Expanded(
+                  child: Text(
+                    languageController.isEnglish.value ? storeEnName : storeArName,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                    style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black),
+                  ),
                 ),
                 Row(
                   children: [
@@ -441,6 +449,19 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                             uploadedData:priceCheckCountModel.totalRegularSku,
                             notUploadedData: priceCheckCountModel.totalPromoSku,
                             totalPriceCheck: priceCheckCountModel.totalPriceCheck,),
+
+                        if(replenishmentCountModel.totalRegularSku > 0)
+                          VisitReplenishmentUploadScreenCard(
+                            onUploadTap: () {
+                               replenishUploadAPi();
+                            },
+                            isUploaded: replenishmentCountModel.totalNotUpload == 0,
+                            isUploadData: isReplenishmentFinishLoading,
+                            moduleName: "Required".tr,
+                            screenName: "Replenish".tr,
+                            uploadedData:replenishmentCountModel.totalPromoSku,
+                            notUploadedData: replenishmentCountModel.totalPriceCheck,
+                            totalPriceCheck: replenishmentCountModel.totalRegularSku,),
 
                         if (freshnessGraphCountShowModel.totalFreshnessTaken > 0 )
                           VisitFreshnessUploadScreenCard(
@@ -817,6 +838,15 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
     await DatabaseHelper.getPriceCheckCountData(workingId).then((value) {
 
       priceCheckCountModel = value;
+
+      setState(() {
+
+      });
+    });
+
+    await DatabaseHelper.getReplenishmentCountDataForSummary(workingId).then((value) {
+
+      replenishmentCountModel = value;
 
       setState(() {
 
@@ -2286,6 +2316,72 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
     return true;
   }
 
+  replenishUploadAPi() async {
+    await DatabaseHelper.getActivityStatusReplenishDataList(workingId).then((value) {
+
+      replenishImageList = value.cast<SaveReplenishListData>();
+
+      setState(() {
+
+      });
+    });
+
+    SaveReplenishData saveReplenishData = SaveReplenishData(
+      username: userName,
+      workingId: workingId,
+      storeId: storeId,
+      workingDate: workingDate,
+      replenishList: replenishImageList
+    );
+
+    print("************ Replenish Upload in Api **********************");
+    print(jsonEncode(saveReplenishData));
+
+    setState((){
+      isReplenishmentFinishLoading = true;
+    });
+
+    SqlHttpManager().saveReplenishData(token, baseUrl, saveReplenishData).then((value) async => {
+
+
+      print("************ Replenish Values **********************"),
+
+      await updateTransReplenishAfterApi(),
+
+      await getAllCountData(),
+
+      setState((){
+        isReplenishmentFinishLoading = false;
+      }),
+
+      showAnimatedToastMessage("Success".tr, "Replenish Data Uploaded Successfully".tr, true),
+
+      // ToastMessage.succesMessage(context, "Price Check Data Uploaded Successfully".tr),
+
+    }).catchError((e) =>{
+      print(e.toString()),
+      showAnimatedToastMessage("Error!".tr,e.toString(),false),
+      setState((){
+        isReplenishmentFinishLoading = false;
+      }),
+    });
+
+  }
+
+  Future<bool> updateTransReplenishAfterApi() async {
+    String ids = "";
+    for(int i=0;i<replenishImageList.length;i++) {
+      ids = "${replenishImageList[i].skuId.toString()},$ids";
+    }
+    ids = removeLastComma(ids);
+    print(ids);
+    await DatabaseHelper.updateReplenishmentAfterApi(workingId,ids).then((value) {
+
+    });
+
+    return true;
+  }
+
   priceCheckUploadApi() async {
 
     await DatabaseHelper.getActivityStatusPriceCheckDataList(workingId).then((value) {
@@ -2472,7 +2568,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
   Future<bool> updateTransFreshnessAfterApi() async {
     String ids = "";
     for(int i=0;i<saveFreshnessList.length;i++) {
-      ids = "${wrapIfString(saveFreshnessList[i].dateTime.toString())},$ids";
+      ids = '${wrapIfString(saveFreshnessList[i].dateTime.toString())},$ids';
     }
     ids = removeLastComma(ids);
     print(ids);
@@ -2536,7 +2632,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
   Future<bool> updateTransStockAfterApi() async {
     String ids = "";
     for(int i=0;i<saveStockList.length;i++) {
-      ids = "${wrapIfString(saveStockList[i].dateTime.toString())},$ids";
+      ids = '${wrapIfString(saveStockList[i].dateTime.toString())},$ids';
     }
     ids = removeLastComma(ids);
     print(ids);
@@ -2570,7 +2666,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
     String ids = "";
     for(int i=0;i<savePromoPlanList.length;i++) {
-      ids = "${wrapIfString(savePromoPlanList[i].promoId.toString())},$ids";
+      ids = '${wrapIfString(savePromoPlanList[i].promoId.toString())},$ids';
     }
     ids = removeLastComma(ids);
     print(ids);
@@ -2606,7 +2702,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
   Future<bool> updateTransPromoPlanAfterApi() async {
     String ids = "";
     for(int i=0;i<savePromoPlanList.length;i++) {
-      ids = "${wrapIfString(savePromoPlanList[i].promoId.toString())},$ids";
+      ids = '${wrapIfString(savePromoPlanList[i].promoId.toString())},$ids';
     }
     ids = removeLastComma(ids);
     print(ids);
@@ -2671,7 +2767,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
   Future<bool> updatePlanogramAfterApi() async {
     String ids = "";
     for(int i=0;i<planogramImageList.length;i++) {
-      ids = "${wrapIfString(planogramImageList[i].id.toString())},$ids";
+      ids = '${wrapIfString(planogramImageList[i].id.toString())},$ids';
     }
     ids = removeLastComma(ids);
     print(ids);
@@ -2734,7 +2830,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
   Future<bool> updatePosAfterApi1() async {
     String ids = "";
     for(int i=0;i<posImageList.length;i++) {
-      ids = "${wrapIfString(posImageList[i].skuId.toString())},$ids";
+      ids = '${wrapIfString(posImageList[i].skuId.toString())},$ids';
     }
     ids = removeLastComma(ids);
     print(ids);
@@ -2798,7 +2894,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
   Future<bool> updateMarketIssueAfterApi1() async {
     String ids = "";
     for(int i=0;i<marketIssueImageList.length;i++) {
-      ids = "${wrapIfString(marketIssueImageList[i].id.toString())},$ids";
+      ids = '${wrapIfString(marketIssueImageList[i].id.toString())},$ids';
     }
     ids = removeLastComma(ids);
     print(ids);
@@ -2861,7 +2957,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
   Future<bool> updateOnePlusOneAfterApi1() async {
     String ids = "";
     for(int i=0;i<onePlusOneImageList.length;i++) {
-      ids = "${wrapIfString(onePlusOneImageList[i].id.toString())},$ids";
+      ids = '${wrapIfString(onePlusOneImageList[i].id.toString())},$ids';
     }
     ids = removeLastComma(ids);
     print(ids);
@@ -2940,7 +3036,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
   Future<bool> updateOsdAfterApi1() async {
     String ids = "";
     for(int i=0;i<osdImageList.length;i++) {
-      ids = "${wrapIfString(osdImageList[i].id.toString())},$ids";
+      ids = '${wrapIfString(osdImageList[i].id.toString())},$ids';
     }
     ids = removeLastComma(ids);
     print(ids);
@@ -3019,6 +3115,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
     await DatabaseHelper.deleteTransTableByWorkingId(TableName.tblTransPOS,workingId);
     await DatabaseHelper.deleteTransTableByWorkingId(TableName.tblTransOsdc,workingId);
     await DatabaseHelper.deleteTransTableByWorkingId(TableName.tblTransOnePlusOne,workingId);
+    await DatabaseHelper.deleteTransTableByWorkingId(TableName.transReplenishmentTable,workingId);
 
     await deleteFolder(workingId);
 

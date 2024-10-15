@@ -3,6 +3,7 @@ import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import '../../widget/drop_downs.dart';
 import '../../widget/elevated_buttons.dart';
 import '../../widget/loading.dart';
 
@@ -14,6 +15,9 @@ class pricecheckcard extends StatelessWidget {
     required this.actStatus,
     required this.promo,
     required this.pricingValues,
+    required this.reasonDropdownList,
+    required this.onReasonItemSelected,
+    required this.reasonValue,
     required this.onDeleteTap});
 
   final Function onDeleteTap;
@@ -25,6 +29,9 @@ class pricecheckcard extends StatelessWidget {
   final Function(String regular,String promo) pricingValues;
   TextEditingController valueControllerPromo = TextEditingController();
   TextEditingController valueControllerRegular = TextEditingController();
+  List<String> reasonDropdownList;
+  final Function(dynamic value) onReasonItemSelected;
+  final List<String> reasonValue;
 
   @override
   Widget build(BuildContext context) {
@@ -350,6 +357,24 @@ class pricecheckcard extends StatelessWidget {
                                               ),
                                             ),
                                           ],
+                                        ),
+                                        Align(
+                                          alignment: Alignment.center,
+                                          child: Visibility(
+                                            visible: true,
+                                            child: Container(
+                                              margin: const EdgeInsets.symmetric(vertical: 5),
+                                              width: MediaQuery.of(context).size.width / 1.8,
+                                              child: UnitDropDownWithInitialValue(
+                                                  initialValue: reasonValue,
+                                                  hintText: "Reason".tr,
+                                                  unitData: reasonDropdownList,
+                                                  onChange: (value) {
+                                                    print(value);
+                                                    onReasonItemSelected(value);
+                                                  }),
+                                            ),
+                                          ),
                                         ),
                                         Container(
                                           margin: const EdgeInsets.only(

@@ -188,7 +188,7 @@ class _GridDashBoardState extends State<GridDashBoard> {
 
   String wrapIfString(dynamic value) {
     if (value is String) {
-      return "'$value'";
+      return '"$value"';
     } else {
       return value.toString();
     }
@@ -198,7 +198,7 @@ class _GridDashBoardState extends State<GridDashBoard> {
     String valueQuery = "";
     if (valuePickList.isNotEmpty) {
       for (int i = 0; i < valuePickList.length; i++) {
-        valueQuery = "$valueQuery($workingId,${valuePickList[i]
+        valueQuery = '$valueQuery($workingId,${valuePickList[i]
             .picklist_id},${valuePickList[i].store_id},${valuePickList[i]
             .category_id},${valuePickList[i].tmr_id},${wrapIfString(
             valuePickList[i].tmr_name)},${valuePickList[i]
@@ -211,9 +211,9 @@ class _GridDashBoardState extends State<GridDashBoard> {
             valuePickList[i].en_sku_name)},${wrapIfString(
             valuePickList[i].ar_sku_name)},${valuePickList[i]
             .req_pickList},${valuePickList[i].act_pickList},${valuePickList[i]
-            .pickList_ready},0,'',${wrapIfString(
+            .pickList_ready},0,"",${wrapIfString(
             valuePickList[i].pick_list_receive_time)},${wrapIfString(
-            valuePickList[i].pick_list_reason)}),";
+            valuePickList[i].pick_list_reason)}),';
       }
       if (valueQuery.endsWith(",")) {
         valueQuery = valueQuery.substring(0, valueQuery.length - 1);
@@ -403,6 +403,9 @@ class _GridDashBoardState extends State<GridDashBoard> {
                                                   StockListScreen.routeName);
                                             }
                                             else if (agencyData[i].id == 7) {
+                                              Navigator.of(context).pushNamed(
+                                                  PriceCheck_Screen.routeName);
+                                            } else if (agencyData[i].id == 21) {
                                               Navigator.of(context).pushNamed(
                                                   ReplenishmentScreen.routeName);
                                             } else if (agencyData[i].id == 15) {
