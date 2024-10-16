@@ -12,70 +12,142 @@ import 'package:image/image.dart' as img;
 
 Future<void> takePicture(BuildContext context, File? imageFile,
     String imageName, String visitId, String moduleName) async {
-  final PermissionStatus permissionStatus = await _getPermission();
-  XFile compressedImageFile;
-  XFile compressedWaterMarkImageFile;
-  if (permissionStatus == PermissionStatus.granted) {
-    if (imageFile != null) {
-      final String dirPath = (await getExternalStorageDirectory())!.path;
-      final String folderPath = '$dirPath/cstore/$visitId/$moduleName';
 
-      final String filePath = '$folderPath/$imageName';
-      final Directory folder = Directory(folderPath);
+  if(Platform.isAndroid) {
 
-      //Image Compress Function call
-      final dir = await getTemporaryDirectory();
-      final targetPath = path.join(dir.path, imageName);
+    final PermissionStatus permissionStatus = await _getPermission();
+    XFile compressedImageFile;
+    XFile compressedWaterMarkImageFile;
+    if (permissionStatus == PermissionStatus.granted) {
+      if (imageFile != null) {
+        final String dirPath = (await getExternalStorageDirectory())!.path;
+        final String folderPath = '$dirPath/cstore/$visitId/$moduleName';
 
-      int sizeInBytes = imageFile.readAsBytesSync().lengthInBytes;
-      final kb = sizeInBytes / 1024;
-      final mb = kb / 1024;
+        final String filePath = '$folderPath/$imageName';
+        final Directory folder = Directory(folderPath);
 
-      if(mb >= 6) {
-        compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,50);
-      } else if(mb < 6 && mb > 4) {
-        compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,65);
-      } else if(mb < 4 && mb > 2) {
-        compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,80);
-      } else {
-        compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,100);
+        //Image Compress Function call
+        final dir = await getTemporaryDirectory();
+        final targetPath = path.join(dir.path, imageName);
+
+        int sizeInBytes = imageFile.readAsBytesSync().lengthInBytes;
+        final kb = sizeInBytes / 1024;
+        final mb = kb / 1024;
+
+        if(mb >= 6) {
+          compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,50);
+        } else if(mb < 6 && mb > 4) {
+          compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,65);
+        } else if(mb < 4 && mb > 2) {
+          compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,80);
+        } else {
+          compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,100);
+        }
+
+        //Image Compress Function call
+        compressedWaterMarkImageFile = await addWatermark(compressedImageFile, DateTime.now().toString());
+
+        print("__________________FIle Details________________");
+        print(mb);
+        print(dirPath);
+        print(filePath);
+        print(imageName);
+        print(compressedWaterMarkImageFile.path);
+        print(imageFile.lengthSync());
+        print(await compressedWaterMarkImageFile.length());
+        print("__________________FIle Details________________");
+
+        if (await folder.exists()) {
+          await File(compressedWaterMarkImageFile.path).copy(filePath).then((value) {
+            // ToastMessage.succesMessage(context, "Image store successfully");
+          });
+        } else {
+          await Directory(folderPath).create(recursive: true);
+          await File(compressedWaterMarkImageFile.path).copy(filePath).then((value) {
+            // ToastMessage.succesMessage(context, "Image store successfully");
+          });
+        }
+
+        // setState(() {
+        //   imageFile = File(filePath);
+        // });
       }
-
-      //Image Compress Function call
-      compressedWaterMarkImageFile = await addWatermark(compressedImageFile, DateTime.now().toString());
-
-      print("__________________FIle Details________________");
-      print(mb);
-      print(dirPath);
-      print(filePath);
-      print(imageName);
-      print(compressedWaterMarkImageFile.path);
-      print(imageFile.lengthSync());
-      print(await compressedWaterMarkImageFile.length());
-      print("__________________FIle Details________________");
-
-      if (await folder.exists()) {
-        await File(compressedWaterMarkImageFile.path).copy(filePath).then((value) {
-          // ToastMessage.succesMessage(context, "Image store successfully");
-        });
-      } else {
-        await Directory(folderPath).create(recursive: true);
-        await File(compressedWaterMarkImageFile.path).copy(filePath).then((value) {
-          // ToastMessage.succesMessage(context, "Image store successfully");
-        });
-      }
-
-      // setState(() {
-      //   imageFile = File(filePath);
-      // });
+    } else {
+      // print('Permission denied');
+      ToastMessage.errorMessage(context, "Permissing denied");
     }
-  } else {
-    // print('Permission denied');
-    ToastMessage.errorMessage(context, "Permissing denied");
+
+  } else if(Platform.isIOS) {
+    final PermissionStatus permissionStatus = await _getStoragePermission();
+    XFile compressedImageFile;
+    XFile compressedWaterMarkImageFile;
+    if (permissionStatus == PermissionStatus.granted) {
+      if (imageFile != null) {
+        final String dirPath = (await getApplicationDocumentsDirectory()).path;
+        final String folderPath = '$dirPath/cstore/$visitId/$moduleName';
+
+        final String filePath = '$folderPath/$imageName';
+        final Directory folder = Directory(folderPath);
+
+        //Image Compress Function call
+        final dir = await getTemporaryDirectory();
+        final targetPath = path.join(dir.path, imageName);
+
+        int sizeInBytes = imageFile.readAsBytesSync().lengthInBytes;
+        final kb = sizeInBytes / 1024;
+        final mb = kb / 1024;
+
+        if(mb >= 6) {
+          compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,50);
+        } else if(mb < 6 && mb > 4) {
+          compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,65);
+        } else if(mb < 4 && mb > 2) {
+          compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,80);
+        } else {
+          compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,100);
+        }
+
+        //Image Compress Function call
+        compressedWaterMarkImageFile = await addWatermark(compressedImageFile, DateTime.now().toString());
+
+        print("__________________FIle Details________________");
+        print(mb);
+        print(dirPath);
+        print(filePath);
+        print(imageName);
+        print(compressedWaterMarkImageFile.path);
+        print(imageFile.lengthSync());
+        print(await compressedWaterMarkImageFile.length());
+        print("__________________FIle Details________________");
+
+        if (await folder.exists()) {
+          await File(compressedWaterMarkImageFile.path).copy(filePath).then((value) {
+            // ToastMessage.succesMessage(context, "Image store successfully");
+          });
+        } else {
+          await Directory(folderPath).create(recursive: true);
+          await File(compressedWaterMarkImageFile.path).copy(filePath).then((value) {
+            // ToastMessage.succesMessage(context, "Image store successfully");
+          });
+        }
+
+        // setState(() {
+        //   imageFile = File(filePath);
+        // });
+      }
+    } else {
+      // print('Permission denied');
+      ToastMessage.errorMessage(context, "Permissing denied");
+    }
   }
 }
 
 Future<PermissionStatus> _getPermission() async {
+  final PermissionStatus permission = await Permission.camera.request();
+  return permission;
+}
+
+Future<PermissionStatus> _getStoragePermission() async {
   final PermissionStatus permission = await Permission.camera.request();
   return permission;
 }

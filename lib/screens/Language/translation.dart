@@ -423,7 +423,7 @@ class Translation extends Translations {
       "Reset Freshness" : "Reset Freshness",
       "Are you sure you want to reset" : "Are you sure you want to reset",
       "You can not enter data for current or previous month" : "You can not enter data for current or previous month",
-      "Permissing denied" : "Permissing denied",
+      "Permissiog denied" : "Permission denied",
       "View Planogram" : "View Planogram",
       "Plan" : "Plan",
       "Enter document" : "Enter document",

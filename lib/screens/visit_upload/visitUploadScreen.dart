@@ -583,181 +583,195 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
                 GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-                if(generalStatusController.isLocationStatus.value) {
+                List<String> latLong = gcode.split('=')[1].split(',');
+                String storeLat = latLong[0];
+                String storeLong = latLong[1];
 
-                  if(generalStatusController.sysAppSettingModel.isGeoLocationEnabled == "0") {
-                    generalStatusController.isGeoFenceDistance.value = 0.5;
+               await LocationService.getLocation().then((value) async => {
+                  if (value["locationIsPicked"]) {
+
+               if(generalStatusController.isLocationStatus.value) {
+
+                 if(generalStatusController.sysAppSettingModel.isGeoLocationEnabled == "0") {
+                   generalStatusController.isGeoFenceDistance.value = 0.5,
+                 } else {
+
+                   await generalStatusController.getGeoLocationDistance(
+                       double.parse(generalStatusController.isLat.value),
+                       double.parse(generalStatusController.isLong
+                           .value), double.parse(storeLat.trim()),
+                       double.parse(storeLong.trim())),
+                 }
+               },
+               if(generalStatusController.isVpnStatus.value) {
+                 showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false),
+               }
+               else if(generalStatusController.isMockLocation.value) {
+                 showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false),
+               }
+               else if(!generalStatusController.isAutoTimeStatus.value) {
+                 showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false),
+               }
+               else if(!generalStatusController.isLocationStatus.value) {
+                 showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false),
+               }
+               else if(generalStatusController.isGeoFenceDistance.value > 0.7) {
+                 showAnimatedToastMessage("Error!".tr, "You’re just 0.7 km away from the store. Please contact your supervisor for the exact location details".tr, false),
+               } else {
+                 Get.delete<GeneralChecksStatusController>(),
+
+                 if (userRole == "TMR") {
+                   if ((moduleIdList.contains("3") ||
+                       moduleIdList.contains("17")) &&
+                       ((availabilityCountModel.totalSku !=
+                           availabilityCountModel.totalUploaded) ||
+                           availabilityCountModel.totalSku == 0 ||
+                           availabilityCountModel.totalUploaded.toString() ==
+                               "null")) {
+                     showAnimatedToastMessage(
+                         "Error!".tr, "Please Mark All Sku's Availability".tr,
+                         false),
+                   } else if ((moduleIdList.contains("3")) &&
+                       (tmrPickListCountModel.totalPickListItems !=
+                           tmrPickListCountModel.totalPickReady)) {
+                     showAnimatedToastMessage(
+                         "Error!".tr, "Please Wait for pick list response".tr,
+                         false),
+                   } else
+                   if ((moduleIdList.contains("15")) && (planoguideCountModel
+                       .totalUploaded.toString() == "null" ||
+                       planoguideCountModel.totalUploaded == 0)) {
+                     showAnimatedToastMessage("Error!".tr,
+                         "PLease Add At lease one planoguide".tr, false),
+                   } else if ((moduleIdList.contains("16")) &&
+                       (brandShareCountModel.totalUpload.toString() ==
+                           "null" || brandShareCountModel.totalUpload == 0)) {
+                     showAnimatedToastMessage("Error!".tr,
+                         "Please Add at least one brand share".tr, false),
+                   } else {
+                     // print("Visit Finished Successfully");
+
+                     showDialog(
+                       context: context,
+                       barrierDismissible: false,
+                       builder: (BuildContext context) {
+                         return StatefulBuilder(
+                             builder: (BuildContext context1,
+                                 StateSetter menuState) {
+                               return AlertDialog(
+                                 title: Text('Visit'.tr),
+                                 content: Text(
+                                     'Are you sure you want to finish this visit?'
+                                         .tr),
+                                 actions: <Widget>[
+                                   isDataUploading ? const Row(
+                                     mainAxisAlignment: MainAxisAlignment
+                                         .center,
+                                     crossAxisAlignment: CrossAxisAlignment
+                                         .center,
+                                     children: [
+                                       CircularProgressIndicator(
+                                         color: MyColors.appMainColor2,),
+                                     ],
+                                   ) : Row(
+                                     mainAxisAlignment: MainAxisAlignment.end,
+                                     crossAxisAlignment: CrossAxisAlignment
+                                         .end,
+                                     children: [
+                                       TextButton(
+                                         onPressed: () {
+                                           Navigator.of(context)
+                                               .pop(); // Close the dialog
+                                         },
+                                         child: Text('No'.tr),
+                                       ),
+                                       TextButton(
+                                         onPressed: () {
+                                           // Perform logout operation
+                                           finishVisit(menuState);
+                                         },
+                                         child: Text('Yes'.tr),
+                                       ),
+                                     ],
+                                   )
+                                 ],
+                               );
+                             }
+                         );
+                       },
+                     ),
+                   }
+                 }
+                 else {
+                   if ((moduleIdList.contains("4")) &&
+                       (pickListCountModel.totalPickListItems !=
+                           pickListCountModel.totalPickReady) &&
+                       (pickListCountModel.totalPickListItems !=
+                           pickListCountModel.totalUpload) ||
+                       pickListCountModel.totalUpload.toString() == "null") {
+                     // ToastMessage.errorMessage(context, "Please make all pick list ready and upload it".tr);
+                     showAnimatedToastMessage("Error!".tr,
+                         "Please make all pick list ready and upload it".tr,
+                         false),
+                   } else {
+                     showDialog(
+                       context: context,
+                       barrierDismissible: false,
+                       builder: (BuildContext context) {
+                         return StatefulBuilder(
+                             builder: (BuildContext context1,
+                                 StateSetter menuState) {
+                               return AlertDialog(
+                                 title: Text('Visit'.tr),
+                                 content: Text(
+                                     'Are you sure you want to finish this visit?'
+                                         .tr),
+                                 actions: <Widget>[
+                                   isDataUploading ? const Row(
+                                     mainAxisAlignment: MainAxisAlignment
+                                         .center,
+                                     crossAxisAlignment: CrossAxisAlignment
+                                         .center,
+                                     children: [
+                                       CircularProgressIndicator(
+                                         color: MyColors.appMainColor2,),
+                                     ],
+                                   ) : Row(
+                                     mainAxisAlignment: MainAxisAlignment.end,
+                                     crossAxisAlignment: CrossAxisAlignment
+                                         .end,
+                                     children: [
+                                       TextButton(
+                                         onPressed: () {
+                                           Navigator.of(context)
+                                               .pop(); // Close the dialog
+                                         },
+                                         child: Text('No'.tr),
+                                       ),
+                                       TextButton(
+                                         onPressed: () {
+                                           // Perform logout operation
+                                           finishVisit(menuState);
+                                         },
+                                         child: Text('Yes'.tr),
+                                       ),
+                                     ],
+                                   )
+                                 ],
+                               );
+                             }
+                         );
+                       },
+                     ),
+                   }
+                 }
+               }
+
                   } else {
-                    List<String> latLong = gcode.split('=')[1].split(',');
-                    String storeLat = latLong[0];
-                    String storeLong = latLong[1];
-
-                    await generalStatusController.getGeoLocationDistance(
-                        double.parse(generalStatusController.isLat.value),
-                        double.parse(generalStatusController.isLong
-                            .value), double.parse(storeLat.trim()),
-                        double.parse(storeLong.trim()));
+                    showAnimatedToastMessage("Error!".tr, value["msg"].toString().tr, false),
                   }
+               });
 
-                }
-                if(generalStatusController.isVpnStatus.value) {
-                  showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false);
-                } else if(generalStatusController.isMockLocation.value) {
-                  showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false);
-                } else if(!generalStatusController.isAutoTimeStatus.value) {
-                  showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false);
-                } else if(!generalStatusController.isLocationStatus.value) {
-                  showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false);
-                } else if(generalStatusController.isGeoFenceDistance.value > 0.7) {
-                  showAnimatedToastMessage("Error!".tr, "You’re just 0.7 km away from the store. Please contact your supervisor for the exact location details".tr, false);
-                } else {
-                  Get.delete<GeneralChecksStatusController>();
-
-                  if (userRole == "TMR") {
-                    if ((moduleIdList.contains("3") ||
-                        moduleIdList.contains("17")) &&
-                        ((availabilityCountModel.totalSku !=
-                            availabilityCountModel.totalUploaded) ||
-                            availabilityCountModel.totalSku == 0 ||
-                            availabilityCountModel.totalUploaded.toString() ==
-                                "null")) {
-                      showAnimatedToastMessage(
-                          "Error!".tr, "Please Mark All Sku's Availability".tr,
-                          false);
-                    } else if ((moduleIdList.contains("3")) &&
-                        (tmrPickListCountModel.totalPickListItems !=
-                            tmrPickListCountModel.totalPickReady)) {
-                      showAnimatedToastMessage(
-                          "Error!".tr, "Please Wait for pick list response".tr,
-                          false);
-                    } else
-                    if ((moduleIdList.contains("15")) && (planoguideCountModel
-                        .totalUploaded.toString() == "null" ||
-                        planoguideCountModel.totalUploaded == 0)) {
-                      showAnimatedToastMessage("Error!".tr,
-                          "PLease Add At lease one planoguide".tr, false);
-                    } else if ((moduleIdList.contains("16")) &&
-                        (brandShareCountModel.totalUpload.toString() ==
-                            "null" || brandShareCountModel.totalUpload == 0)) {
-                      showAnimatedToastMessage("Error!".tr,
-                          "Please Add at least one brand share".tr, false);
-                    } else {
-                      // print("Visit Finished Successfully");
-
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (BuildContext context) {
-                          return StatefulBuilder(
-                              builder: (BuildContext context1,
-                                  StateSetter menuState) {
-                                return AlertDialog(
-                                  title: Text('Visit'.tr),
-                                  content: Text(
-                                      'Are you sure you want to finish this visit?'
-                                          .tr),
-                                  actions: <Widget>[
-                                    isDataUploading ? const Row(
-                                      mainAxisAlignment: MainAxisAlignment
-                                          .center,
-                                      crossAxisAlignment: CrossAxisAlignment
-                                          .center,
-                                      children: [
-                                        CircularProgressIndicator(
-                                          color: MyColors.appMainColor2,),
-                                      ],
-                                    ) : Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      crossAxisAlignment: CrossAxisAlignment
-                                          .end,
-                                      children: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context)
-                                                .pop(); // Close the dialog
-                                          },
-                                          child: Text('No'.tr),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            // Perform logout operation
-                                            finishVisit(menuState);
-                                          },
-                                          child: Text('Yes'.tr),
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                );
-                              }
-                          );
-                        },
-                      );
-                    }
-                  } else {
-                    if ((moduleIdList.contains("4")) &&
-                        (pickListCountModel.totalPickListItems !=
-                            pickListCountModel.totalPickReady) &&
-                        (pickListCountModel.totalPickListItems !=
-                            pickListCountModel.totalUpload) ||
-                        pickListCountModel.totalUpload.toString() == "null") {
-                      // ToastMessage.errorMessage(context, "Please make all pick list ready and upload it".tr);
-                      showAnimatedToastMessage("Error!".tr,
-                          "Please make all pick list ready and upload it".tr,
-                          false);
-                    } else {
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (BuildContext context) {
-                          return StatefulBuilder(
-                              builder: (BuildContext context1,
-                                  StateSetter menuState) {
-                                return AlertDialog(
-                                  title: Text('Visit'.tr),
-                                  content: Text(
-                                      'Are you sure you want to finish this visit?'
-                                          .tr),
-                                  actions: <Widget>[
-                                    isDataUploading ? const Row(
-                                      mainAxisAlignment: MainAxisAlignment
-                                          .center,
-                                      crossAxisAlignment: CrossAxisAlignment
-                                          .center,
-                                      children: [
-                                        CircularProgressIndicator(
-                                          color: MyColors.appMainColor2,),
-                                      ],
-                                    ) : Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      crossAxisAlignment: CrossAxisAlignment
-                                          .end,
-                                      children: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context)
-                                                .pop(); // Close the dialog
-                                          },
-                                          child: Text('No'.tr),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            // Perform logout operation
-                                            finishVisit(menuState);
-                                          },
-                                          child: Text('Yes'.tr),
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                );
-                              }
-                          );
-                        },
-                      );
-                    }
-                  }
-                }
               } : null,
               child: Text(
                 "Finish Visit".tr,style: TextStyle(color: isFinishButton ? MyColors.whiteColor : MyColors.appMainColor2),

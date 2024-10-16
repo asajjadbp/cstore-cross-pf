@@ -25,6 +25,7 @@ import '../utils/app_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../utils/services/general_checks_controller_call_function.dart';
+import '../utils/services/getting_gps.dart';
 import '../widget/app_bar_widgets.dart';
 
 class JourneyPlanScreen extends StatefulWidget {
@@ -224,72 +225,86 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
                         isCheckLoading = true;
                       });
 
-                      GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+                      if (jpData[i].visitStatus == "1") {
+                        GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+                        List<String> latLong = jpData[i].gcode.split('=')[1].split(',');
+                        String storeLat = latLong[0];
+                        String storeLong = latLong[1];
 
-                      if(generalStatusController.isLocationStatus.value) {
+                        await LocationService.getLocation().then((value) async => {
+                        if (value["locationIsPicked"]) {
 
-                        if(generalStatusController.isGeoLocation.value) {
-                          generalStatusController.isGeoFenceDistance.value = 0.5;
-                        } else {
-                          List<String> latLong = jpData[i].gcode.split('=')[1].split(',');
-                          String storeLat = latLong[0];
-                          String storeLong = latLong[1];
+                            if(generalStatusController.isLocationStatus.value) {
 
-                          print("Store Lat Long");
-                          print(latLong);
-                          print(storeLong);
-                          print(storeLat);
-                          print("User Lat Long");
-                          print(generalStatusController.isLat);
-                          print(generalStatusController.isLong);
-                          print(generalStatusController.isLatLong);
+                          if(generalStatusController.isGeoLocation.value) {
+                            generalStatusController.isGeoFenceDistance.value = 0.5,
+                          } else {
 
-                          await generalStatusController.getGeoLocationDistance(
-                              double.parse(generalStatusController.isLat.value),
-                              double.parse(generalStatusController.isLong
-                                  .value), double.parse(storeLat.trim()),
-                              double.parse(storeLong.trim()));
+                            print("Store Lat Long"),
+                            print(latLong),
+                            print(storeLong),
+                            print(storeLat),
+                            print("User Lat Long"),
+                            print(generalStatusController.isLat),
+                            print(generalStatusController.isLong),
+                            print(generalStatusController.isLatLong),
+
+                            await generalStatusController.getGeoLocationDistance(
+                                double.parse(generalStatusController.isLat.value),
+                                double.parse(generalStatusController.isLong
+                                    .value), double.parse(storeLat.trim()),
+                                double.parse(storeLong.trim())),
+                          },
+                          print("Distance From Store"),
+                          print(generalStatusController.isGeoFenceDistance.value),
+                        },
+                        if(generalStatusController.isVpnStatus.value) {
+                          setState(() {
+                            isCheckLoading = false;
+                          }),
+                          showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false),
                         }
-                        print("Distance From Store");
-                        print(generalStatusController.isGeoFenceDistance.value);
-                      }
-                      if(generalStatusController.isVpnStatus.value) {
-                        setState(() {
-                          isCheckLoading = false;
-                        });
-                        showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false);
-                      } else if(generalStatusController.isMockLocation.value) {
-                        setState(() {
-                          isCheckLoading = false;
-                        });
-                        showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false);
-                      } else if(!generalStatusController.isAutoTimeStatus.value) {
-                        setState(() {
-                          isCheckLoading = false;
-                        });
-                        showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false);
-                      } else if(!generalStatusController.isLocationStatus.value) {
-                        setState(() {
-                          isCheckLoading = false;
-                        });
-                        showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false);
-                      }
-                      else if(generalStatusController.isGeoFenceDistance.value > 0.7) {
-                        setState(() {
-                          isCheckLoading = false;
-                        });
-                        showAnimatedToastMessage("Error!".tr, "You’re just 0.7 km away from the store. Please contact your supervisor for the exact location details".tr, false);
-                      }
-                      else {
-                        setState(() {
-                          isCheckLoading = false;
-                        });
-                        Get.delete<GeneralChecksStatusController>();
-                        if (jpData[i].visitStatus == "1") {
-                          setVisitSession(jpData[i]);
-                        } else {
-                          getImage(jpData[i]);
+                        else if(generalStatusController.isMockLocation.value) {
+                          setState(() {
+                            isCheckLoading = false;
+                          }),
+                          showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false),
                         }
+                        else if(!generalStatusController.isAutoTimeStatus.value) {
+                          setState(() {
+                            isCheckLoading = false;
+                          }),
+                          showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false),
+                        }
+                        else if(!generalStatusController.isLocationStatus.value) {
+                          setState(() {
+                            isCheckLoading = false;
+                          }),
+                          showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false),
+                        }
+                        else if(generalStatusController.isGeoFenceDistance.value > 0.7) {
+                          setState(() {
+                            isCheckLoading = false;
+                          }),
+                          showAnimatedToastMessage("Error!".tr, "You’re just 0.7 km away from the store. Please contact your supervisor for the exact location details".tr, false),
+                        }
+                        else {
+                          setState(() {
+                            isCheckLoading = false;
+                          }),
+                          Get.delete<GeneralChecksStatusController>(),
+                          setVisitSession(jpData[i]),
+                        }
+
+                        } else {
+                            setState(() {
+                          isCheckLoading = false;
+                        }),
+                          showAnimatedToastMessage("Error!".tr, value["msg"].toString().tr, false),
+                        }
+                        });
+                      } else {
+                        getImage(jpData[i]);
                       }
                     },
                     onDropClick: () {

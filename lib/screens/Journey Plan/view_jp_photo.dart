@@ -5,12 +5,15 @@ import 'package:cstore/screens/utils/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:get/get.dart';
 import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import '../../Database/db_helper.dart';
 import '../../Database/table_name.dart';
 import '../../Model/response_model.dart/jp_response_model.dart';
+import '../important_service/genral_checks_status.dart';
+import '../utils/services/general_checks_controller_call_function.dart';
 import '../utils/services/take_image_and_save_to_folder.dart';
 import '../widget/app_bar_widgets.dart';
 import '/Network/jp_http.dart';
@@ -110,16 +113,12 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
   }
 
   void uploadImageToCloud(
-      File imageFile, String workingId, String clientId) async {
-    setState(() {
-      isLoading = true;
-    });
+      File imageFile, String workingId, String clientId,dynamic value) async {
+
     try {
       XFile compressedImageFile;
       XFile compressedWaterMarkImageFile;
 
-      await LocationService.getLocation().then((value) async {
-        if (value["locationIsPicked"]) {
           final credentials = ServiceAccountCredentials.fromJson(
             await rootBundle.loadString(
                 'assets/google_cloud_creds/appimages-keycstoreapp-7c0f4-a6d4c3e5b590.json'),
@@ -185,13 +184,7 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
           // print(downloadUrl);
           submitStartVist(
               workingId, filename, value['lat'], value['long'], clientId);
-        } else {
-          setState(() {
-            isLoading = false;
-          });
-          showAnimatedToastMessage("Error!".tr, value["msg"].tr, false);
-        }
-      });
+
     } catch (e) {
       setState(() {
         isLoading = false;
@@ -286,12 +279,82 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
                   : RowButtons(
                 isNextActive: true,
                   buttonText: "Save".tr,
-                  onSaveTap: () {
+                  onSaveTap: () async {
+                    setState(() {
+                      isLoading = true;
+                    });
+
+                    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+                    List<String> latLong = journeyPlanDetail.gcode.split('=')[1].split(',');
+                    String storeLat = latLong[0];
+                    String storeLong = latLong[1];
                       // submitStartVist(routeArg["workingId"].toString());
-                      uploadImageToCloud(
-                          routeArg["image"],
-                          journeyPlanDetail.workingId.toString(),
-                          journeyPlanDetail.clientIds.toString());
+                    await LocationService.getLocation().then((value) async => {
+                      if (value["locationIsPicked"]) {
+
+                        if(generalStatusController.isLocationStatus.value) {
+
+                      if(generalStatusController.isGeoLocation.value) {
+                        generalStatusController.isGeoFenceDistance.value = 0.5,
+                      } else {
+
+                        print("Store Lat Long"),
+                        print(latLong),
+                        print(storeLong),
+                        print(storeLat),
+                        print("User Lat Long"),
+                        print(generalStatusController.isLat),
+                        print(generalStatusController.isLong),
+                        print(generalStatusController.isLatLong),
+
+                        await generalStatusController.getGeoLocationDistance(
+                            double.parse(generalStatusController.isLat.value),
+                            double.parse(generalStatusController.isLong
+                                .value), double.parse(storeLat.trim()),
+                            double.parse(storeLong.trim())),
+                      },
+                      print("Distance From Store"),
+                      print(generalStatusController.isGeoFenceDistance.value),
+                    },
+
+                    if(generalStatusController.isVpnStatus.value) {
+                      setState(() {
+                        isLoading = false;
+                      }),
+                      showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false),
+                    }
+                    else if(generalStatusController.isMockLocation.value) {
+                      setState(() {
+                        isLoading = false;
+                      }),
+                      showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false),
+                    }
+                    else if(!generalStatusController.isAutoTimeStatus.value) {
+                        setState(() {
+                          isLoading = false;
+                        }),
+                      showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false),
+                    } else if(generalStatusController.isGeoFenceDistance.value > 0.7) {
+                            setState(() {
+                              isLoading = false;
+                            }),
+                      showAnimatedToastMessage("Error!".tr, "You’re just 0.7 km away from the store. Please contact your supervisor for the exact location details".tr, false),
+                    } else {
+                    Get.delete<GeneralChecksStatusController>(),
+                              uploadImageToCloud(
+                                  routeArg["image"],
+                                  journeyPlanDetail.workingId.toString(),
+                                  journeyPlanDetail.clientIds.toString(), value)
+                            }
+                      } else {
+                        setState(() {
+                          isLoading = false;
+                        }),
+
+                    showAnimatedToastMessage("Error!".tr, value["msg"].toString().tr, false),
+                      }
+                    });
+
                     }, onBackTap: () {
                       Navigator.of(context).pop();
                     }),
