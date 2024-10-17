@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:camera/camera.dart';
 import 'package:cstore/Model/database_model/category_model.dart';
 import 'package:cstore/Model/database_model/client_model.dart';
 import 'package:cstore/Database/db_helper.dart';

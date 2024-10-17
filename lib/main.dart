@@ -46,9 +46,6 @@ import 'screens/auth/license.dart';
 import 'screens/auth/login.dart';
 import 'screens/before_fixing/before_fixing.dart';
 import 'screens/grid_dashboard/grid_dashboard.dart';
-import 'package:camera/camera.dart';
-
-List<CameraDescription> cameras = [];
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -17,15 +17,12 @@ import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_internet_speed_test/flutter_internet_speed_test.dart';
 import '../../Model/database_model/dashboard_model.dart';
 import '../../Model/database_model/picklist_model.dart';
 import '../../Model/request_model.dart/jp_request_model.dart';
-import '../../Network/app_exceptions.dart';
 import '../Language/localization_controller.dart';
 import '../before_fixing/before_fixing.dart';
 import '../brand_share/AddBrandShares.dart';
-import '../important_service/genral_checks_status.dart';
 import '../knowledge_share/knowledge_share_screen.dart';
 import '../market_issues_show/add_market_issue_screen.dart';
 import '../osdc/add_osdc.dart';
@@ -41,7 +38,6 @@ import '../stock/stock_list_screen.dart';
 import '../utils/toast/toast.dart';
 import '../widget/elevated_buttons.dart';
 import 'widgets/card_widget.dart';
-import '../utils/services/general_checks_controller_call_function.dart';
 
 class GridDashBoard extends StatefulWidget {
   static const routeName = "/GridDashboard";
@@ -86,10 +82,6 @@ class _GridDashBoardState extends State<GridDashBoard> {
   // List<ReadyPickListData> pickListDataForApi = [];
 
   bool isFinishButton = true;
-
-  final FlutterInternetSpeedTest _internetSpeedTest = FlutterInternetSpeedTest();
-
-  double _uploadSpeed = 0.0;
 
   String workingId = "";
   String workingDate = "";
