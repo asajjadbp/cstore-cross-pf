@@ -1,3 +1,4 @@
+import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -8,6 +9,7 @@ class shareofshellshow extends StatelessWidget {
       required this.total,
       required this.actual,
       required this.unit,
+      required this.onDelete,
       required this.brandName,});
 
   final String catName;
@@ -15,6 +17,7 @@ class shareofshellshow extends StatelessWidget {
   final String actual;
   final String unit;
   final String brandName;
+  final Function onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -36,16 +39,27 @@ class shareofshellshow extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Container(
-                        margin: const EdgeInsets.symmetric(horizontal:5),
-                        child: Text(
-                          catName,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                          fontSize: 15,
-                          color: Color.fromRGBO(68, 68, 68, 1),
-                          fontWeight: FontWeight.bold),
-                        )),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                              alignment: Alignment.center,
+                              margin: const EdgeInsets.symmetric(horizontal:5),
+                              child: Text(
+                                catName,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                fontSize: 15,
+                                color: Color.fromRGBO(68, 68, 68, 1),
+                                fontWeight: FontWeight.bold),
+                              )),
+                        ),
+                        IconButton(onPressed: (){
+                          onDelete();
+                        }, icon: const Icon(Icons.delete,color: MyColors.backbtnColor,))
+                      ],
+                    ),
 
                     Container(
                       margin:const  EdgeInsets.symmetric(vertical: 15),

@@ -685,7 +685,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                                          },
                                          child: Text('No'.tr),
                                        ),
-                                       TextButton(
+                                       isDataUploading ? const CircularProgressIndicator() : TextButton(
                                          onPressed: () {
                                            // Perform logout operation
                                            finishVisit(menuState);
@@ -748,7 +748,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                                          },
                                          child: Text('No'.tr),
                                        ),
-                                       TextButton(
+                                       isDataUploading ? const CircularProgressIndicator() : TextButton(
                                          onPressed: () {
                                            // Perform logout operation
                                            finishVisit(menuState);

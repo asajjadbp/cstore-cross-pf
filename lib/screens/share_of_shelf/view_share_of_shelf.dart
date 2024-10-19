@@ -77,6 +77,7 @@ class _ViewShareOfShelfState extends State<ViewShareOfShelf> {
   void deleteSOS(int recordId) async {
     await DatabaseHelper.deleteOneRecord(TableName.tblTransSos, recordId)
         .then((_) async {
+          Navigator.of(context).pop();
       getTransSOSOne();
     });
   }
@@ -97,6 +98,30 @@ class _ViewShareOfShelfState extends State<ViewShareOfShelf> {
           itemCount: transData.length,
           itemBuilder: (ctx, i) {
             return shareofshellshow(
+              onDelete: (){
+                showDialog(context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title:  Text("Are you sure you want to delete this item Permanently".tr),
+                      actions: [
+                        TextButton(
+                          child:  Text("No".tr),
+                          onPressed: () {
+                            Navigator.of(context).pop(true);
+                          },
+                        ),
+                        TextButton(
+                          child:  Text("Yes".tr),
+                          onPressed: () {
+                            deleteSOS(transData[i].id);
+                          },
+                        )
+                      ],
+                    );
+                  },);
+
+
+              },
               catName:languageController.isEnglish.value ?  transData[i].cat_en_name: transData[i].cat_ar_name,
               total: transData[i].total_cat_space,
               actual: transData[i].actual_space,

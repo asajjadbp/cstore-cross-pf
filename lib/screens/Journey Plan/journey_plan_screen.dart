@@ -226,76 +226,76 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
                       });
 
                       if (jpData[i].visitStatus == "1") {
-                        GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
-                        List<String> latLong = jpData[i].gcode.split('=')[1].split(',');
-                        String storeLat = latLong[0];
-                        String storeLong = latLong[1];
+                        // GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+                        // List<String> latLong = jpData[i].gcode.split('=')[1].split(',');
+                        // String storeLat = latLong[0];
+                        // String storeLong = latLong[1];
 
                         await LocationService.getLocation().then((value) async => {
                         if (value["locationIsPicked"]) {
-
-                            if(generalStatusController.isLocationStatus.value) {
-
-                          if(generalStatusController.isGeoLocation.value) {
-                            generalStatusController.isGeoFenceDistance.value = 0.5,
-                          } else {
-
-                            print("Store Lat Long"),
-                            print(latLong),
-                            print(storeLong),
-                            print(storeLat),
-                            print("User Lat Long"),
-                            print(generalStatusController.isLat),
-                            print(generalStatusController.isLong),
-                            print(generalStatusController.isLatLong),
-
-                            await generalStatusController.getGeoLocationDistance(
-                                double.parse(generalStatusController.isLat.value),
-                                double.parse(generalStatusController.isLong
-                                    .value), double.parse(storeLat.trim()),
-                                double.parse(storeLong.trim())),
-                          },
-                          print("Distance From Store"),
-                          print(generalStatusController.isGeoFenceDistance.value),
-                        },
-                        if(generalStatusController.isVpnStatus.value) {
-                          setState(() {
-                            isCheckLoading = false;
-                          }),
-                          showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false),
-                        }
-                        else if(generalStatusController.isMockLocation.value) {
-                          setState(() {
-                            isCheckLoading = false;
-                          }),
-                          showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false),
-                        }
-                        else if(!generalStatusController.isAutoTimeStatus.value) {
-                          setState(() {
-                            isCheckLoading = false;
-                          }),
-                          showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false),
-                        }
-                        else if(!generalStatusController.isLocationStatus.value) {
-                          setState(() {
-                            isCheckLoading = false;
-                          }),
-                          showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false),
-                        }
-                        else if(generalStatusController.isGeoFenceDistance.value > 0.7) {
-                          setState(() {
-                            isCheckLoading = false;
-                          }),
-                          showAnimatedToastMessage("Error!".tr, "You’re just 0.7 km away from the store. Please contact your supervisor for the exact location details".tr, false),
-                        }
-                        else {
-                          setState(() {
-                            isCheckLoading = false;
-                          }),
-                          Get.delete<GeneralChecksStatusController>(),
                           setVisitSession(jpData[i]),
-                        }
-
+                        //     if(generalStatusController.isLocationStatus.value) {
+                        //
+                        //   if(generalStatusController.isGeoLocation.value) {
+                        //     generalStatusController.isGeoFenceDistance.value = 0.5,
+                        //   } else {
+                        //
+                        //     print("Store Lat Long"),
+                        //     print(latLong),
+                        //     print(storeLong),
+                        //     print(storeLat),
+                        //     print("User Lat Long"),
+                        //     print(generalStatusController.isLat),
+                        //     print(generalStatusController.isLong),
+                        //     print(generalStatusController.isLatLong),
+                        //
+                        //     await generalStatusController.getGeoLocationDistance(
+                        //         double.parse(generalStatusController.isLat.value),
+                        //         double.parse(generalStatusController.isLong
+                        //             .value), double.parse(storeLat.trim()),
+                        //         double.parse(storeLong.trim())),
+                        //   },
+                        //   print("Distance From Store"),
+                        //   print(generalStatusController.isGeoFenceDistance.value),
+                        // },
+                        // if(generalStatusController.isVpnStatus.value) {
+                        //   setState(() {
+                        //     isCheckLoading = false;
+                        //   }),
+                        //   showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false),
+                        // }
+                        // else if(generalStatusController.isMockLocation.value) {
+                        //   setState(() {
+                        //     isCheckLoading = false;
+                        //   }),
+                        //   showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false),
+                        // }
+                        // else if(!generalStatusController.isAutoTimeStatus.value) {
+                        //   setState(() {
+                        //     isCheckLoading = false;
+                        //   }),
+                        //   showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false),
+                        // }
+                        // else if(!generalStatusController.isLocationStatus.value) {
+                        //   setState(() {
+                        //     isCheckLoading = false;
+                        //   }),
+                        //   showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false),
+                        // }
+                        // else if(generalStatusController.isGeoFenceDistance.value > 0.7) {
+                        //   setState(() {
+                        //     isCheckLoading = false;
+                        //   }),
+                        //   showAnimatedToastMessage("Error!".tr, "You’re just 0.7 km away from the store. Please contact your supervisor for the exact location details".tr, false),
+                        // }
+                        // else {
+                        //   setState(() {
+                        //     isCheckLoading = false;
+                        //   }),
+                        //   Get.delete<GeneralChecksStatusController>(),
+                        //
+                        // }
+                        //
                         } else {
                             setState(() {
                           isCheckLoading = false;
@@ -408,6 +408,9 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
   Future<void> getImage(JourneyPlanDetail journeyPlanDetail) async {
     await ImageTakingService.imageSelect().then((value) {
       if (value == null) {
+        setState(() {
+          isCheckLoading = false;
+        });
         showAnimatedToastMessage("Error!".tr, "No Image Picked".tr, false);
         return;
       }

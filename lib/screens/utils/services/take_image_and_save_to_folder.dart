@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -41,7 +42,7 @@ Future<void> takePicture(BuildContext context, File? imageFile,
         } else if(mb < 4 && mb > 2) {
           compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,80);
         } else {
-          compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,100);
+          compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,80);
         }
 
         //Image Compress Function call
@@ -74,7 +75,7 @@ Future<void> takePicture(BuildContext context, File? imageFile,
       }
     } else {
       // print('Permission denied');
-      ToastMessage.errorMessage(context, "Permissing denied");
+      ToastMessage.errorMessage(context, "Permission denied".tr);
     }
 
   } else if(Platform.isIOS) {
@@ -104,7 +105,7 @@ Future<void> takePicture(BuildContext context, File? imageFile,
         } else if(mb < 4 && mb > 2) {
           compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,80);
         } else {
-          compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,100);
+          compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,80);
         }
 
         //Image Compress Function call
@@ -137,7 +138,8 @@ Future<void> takePicture(BuildContext context, File? imageFile,
       }
     } else {
       // print('Permission denied');
-      ToastMessage.errorMessage(context, "Permissing denied");
+      ToastMessage.errorMessage(context, "Permission"
+          " denied".tr);
     }
   }
 }

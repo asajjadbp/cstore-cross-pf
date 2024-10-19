@@ -561,7 +561,7 @@ class Translation extends Translations {
       "Requests" : "الطلبات",
       "You can not enter data for current or previous month" : "لا يمكنك إدخال بيانات الشهر الحالي أو السابق",
       "Select type" : "حدد النوع",
-      "View OSD" : "خارج الرف",
+      "View OSD" : "عرض خارج الرف",
 
     "Dashboard":	"لوحة المعلومات",
     "Today":"	اليوم",

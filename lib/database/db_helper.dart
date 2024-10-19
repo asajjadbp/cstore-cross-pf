@@ -2482,7 +2482,7 @@ class DatabaseHelper {
 
   static Future<List<SaveOtherPhotoData>> getOtherPhotoApiUploadDataList(String workingId) async {
     final db = await initDataBase();
-    String rawQuery = 'SELECT id,client_id,category_id,photo_type_id, image_name '
+    String rawQuery = 'SELECT id,client_id,category_id,type_id, image_name '
         ' FROM trans_photo WHERE working_id=$workingId AND upload_status=0';
 
     print('Other Photo QUERY');
@@ -2493,7 +2493,7 @@ class DatabaseHelper {
     return List.generate(beforeFixingMap.length, (index) {
       return SaveOtherPhotoData(
           transPhotoId: beforeFixingMap[index]['id'],
-          typeId: beforeFixingMap[index]['photo_type_id'],
+          typeId: beforeFixingMap[index]['type_id'],
           categoryId: beforeFixingMap[index]['category_id'],
           clientId: beforeFixingMap[index]['client_id'],
           imageName: beforeFixingMap[index]['image_name']
