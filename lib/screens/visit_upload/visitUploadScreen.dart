@@ -581,45 +581,46 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
               ),
               onPressed:isDataUploading ? null : isFinishButton ? () async {
 
-                GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+                setState(() {
+                  isDataUploading = true;
+                });
 
-                List<String> latLong = gcode.split('=')[1].split(',');
-                String storeLat = latLong[0];
-                String storeLong = latLong[1];
+                // GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+                //
+                // List<String> latLong = gcode.split('=')[1].split(',');
+                // String storeLat = latLong[0];
+                // String storeLong = latLong[1];
 
-               await LocationService.getLocation().then((value) async => {
-                  if (value["locationIsPicked"]) {
 
-               if(generalStatusController.isLocationStatus.value) {
-
-                 if(generalStatusController.sysAppSettingModel.isGeoLocationEnabled == "0") {
-                   generalStatusController.isGeoFenceDistance.value = 0.5,
-                 } else {
-
-                   await generalStatusController.getGeoLocationDistance(
-                       double.parse(generalStatusController.isLat.value),
-                       double.parse(generalStatusController.isLong
-                           .value), double.parse(storeLat.trim()),
-                       double.parse(storeLong.trim())),
-                 }
-               },
-               if(generalStatusController.isVpnStatus.value) {
-                 showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false),
-               }
-               else if(generalStatusController.isMockLocation.value) {
-                 showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false),
-               }
-               else if(!generalStatusController.isAutoTimeStatus.value) {
-                 showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false),
-               }
-               else if(!generalStatusController.isLocationStatus.value) {
-                 showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false),
-               }
-               else if(generalStatusController.isGeoFenceDistance.value > 0.7) {
-                 showAnimatedToastMessage("Error!".tr, "You’re just 0.7 km away from the store. Please contact your supervisor for the exact location details".tr, false),
-               } else {
-                 Get.delete<GeneralChecksStatusController>(),
-
+               // if(generalStatusController.isLocationStatus.value) {
+               //
+               //   if(generalStatusController.sysAppSettingModel.isGeoLocationEnabled == "0") {
+               //     generalStatusController.isGeoFenceDistance.value = 0.5,
+               //   } else {
+               //
+               //     await generalStatusController.getGeoLocationDistance(
+               //         double.parse(generalStatusController.isLat.value),
+               //         double.parse(generalStatusController.isLong
+               //             .value), double.parse(storeLat.trim()),
+               //         double.parse(storeLong.trim())),
+               //   }
+               // },
+               // if(generalStatusController.isVpnStatus.value) {
+               //   showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false),
+               // }
+               // else if(generalStatusController.isMockLocation.value) {
+               //   showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false),
+               // }
+               // else if(!generalStatusController.isAutoTimeStatus.value) {
+               //   showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false),
+               // }
+               // else if(!generalStatusController.isLocationStatus.value) {
+               //   showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false),
+               // }
+               // else if(generalStatusController.isGeoFenceDistance.value > 0.7) {
+               //   showAnimatedToastMessage("Error!".tr, "You’re just 0.7 km away from the store. Please contact your supervisor for the exact location details".tr, false),
+               // } else {
+               //   Get.delete<GeneralChecksStatusController>(),
                  if (userRole == "TMR") {
                    if ((moduleIdList.contains("3") ||
                        moduleIdList.contains("17")) &&
@@ -628,27 +629,42 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                            availabilityCountModel.totalSku == 0 ||
                            availabilityCountModel.totalUploaded.toString() ==
                                "null")) {
+                     setState(() {
+                       isDataUploading = false;
+                     });
                      showAnimatedToastMessage(
                          "Error!".tr, "Please Mark All Sku's Availability".tr,
-                         false),
+                         false);
                    } else if ((moduleIdList.contains("3")) &&
                        (tmrPickListCountModel.totalPickListItems !=
                            tmrPickListCountModel.totalPickReady)) {
+                     setState(() {
+                       isDataUploading = false;
+                     });
                      showAnimatedToastMessage(
                          "Error!".tr, "Please Wait for pick list response".tr,
-                         false),
+                         false);
                    } else
                    if ((moduleIdList.contains("15")) && (planoguideCountModel
                        .totalUploaded.toString() == "null" ||
                        planoguideCountModel.totalUploaded == 0)) {
+                     setState(() {
+                       isDataUploading = false;
+                     });
                      showAnimatedToastMessage("Error!".tr,
-                         "PLease Add At lease one planoguide".tr, false),
+                         "PLease Add At lease one planoguide".tr, false);
                    } else if ((moduleIdList.contains("16")) &&
                        (brandShareCountModel.totalUpload.toString() ==
                            "null" || brandShareCountModel.totalUpload == 0)) {
+                     setState(() {
+                       isDataUploading = false;
+                     });
                      showAnimatedToastMessage("Error!".tr,
-                         "Please Add at least one brand share".tr, false),
+                         "Please Add at least one brand share".tr, false);
                    } else {
+                     setState(() {
+                       isDataUploading = false;
+                     });
                      // print("Visit Finished Successfully");
 
                      showDialog(
@@ -699,7 +715,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                              }
                          );
                        },
-                     ),
+                     );
                    }
                  }
                  else {
@@ -709,11 +725,17 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                        (pickListCountModel.totalPickListItems !=
                            pickListCountModel.totalUpload) ||
                        pickListCountModel.totalUpload.toString() == "null") {
+                     setState(() {
+                       isDataUploading = false;
+                     });
                      // ToastMessage.errorMessage(context, "Please make all pick list ready and upload it".tr);
                      showAnimatedToastMessage("Error!".tr,
                          "Please make all pick list ready and upload it".tr,
-                         false),
+                         false);
                    } else {
+                     setState(() {
+                       isDataUploading = false;
+                     });
                      showDialog(
                        context: context,
                        barrierDismissible: false,
@@ -762,15 +784,10 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                              }
                          );
                        },
-                     ),
+                     );
                    }
                  }
-               }
-
-                  } else {
-                    showAnimatedToastMessage("Error!".tr, value["msg"].toString().tr, false),
-                  }
-               });
+               // }
 
               } : null,
               child: Text(
@@ -3070,34 +3087,79 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       print(value);
 
       if(value['locationIsPicked']) {
-        setState(() {
-          location = value['lat'] +","+ value['long'];
-        });
 
-        print(location);
-        JourneyPlanHTTP().finishVisit(token, baseUrl, FinishVisitRequestModel(
-          username: userName,
-          workingId: workingId,
-          workingDate: workingDate,
-          storeId: storeId,
-          checkOutGps: location,
-        )).then((value) async => {
 
-          await deleteVisitData(),
+        GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-          menuState(() {
-            isDataUploading = false;
-          }),
-          showAnimatedToastMessage("Success".tr, "Visit Ended Successfully".tr, true),
-          // ToastMessage.succesMessage(context, "Visit Ended Successfully".tr),
-          Navigator.popUntil(context, (route) => count++ == 3),
-        }).catchError((e) =>{
-          print(e.toString()),
-          menuState(() {
-            isDataUploading = false;
-          }),
-          showAnimatedToastMessage("Error!".tr,e.toString(),false),
-        });
+        List<String> latLong = gcode.split('=')[1].split(',');
+        String storeLat = latLong[0];
+        String storeLong = latLong[1];
+
+
+        if(generalStatusController.isLocationStatus.value) {
+
+          if(generalStatusController.sysAppSettingModel.isGeoLocationEnabled == "0") {
+            generalStatusController.isGeoFenceDistance.value = 0.5;
+            menuState((){});
+            setState(() {
+
+            });
+          } else {
+
+            await generalStatusController.getGeoLocationDistance(
+                double.parse(generalStatusController.isLat.value),
+                double.parse(generalStatusController.isLong
+                    .value), double.parse(storeLat.trim()),
+                double.parse(storeLong.trim()));
+          }
+        };
+        if(generalStatusController.isVpnStatus.value) {
+          showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false);
+        }
+        else if(generalStatusController.isMockLocation.value) {
+          showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false);
+        }
+        else if(!generalStatusController.isAutoTimeStatus.value) {
+          showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false);
+        }
+        else if(!generalStatusController.isLocationStatus.value) {
+          showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false);
+        }
+        else if(generalStatusController.isGeoFenceDistance.value > 0.7) {
+          showAnimatedToastMessage("Error!".tr, "You’re just 0.7 km away from the store. Please contact your supervisor for the exact location details".tr, false);
+        } else {
+          Get.delete<GeneralChecksStatusController>();
+
+          setState(() {
+            location = value['lat'] +","+ value['long'];
+          });
+
+          print(location);
+          JourneyPlanHTTP().finishVisit(token, baseUrl, FinishVisitRequestModel(
+            username: userName,
+            workingId: workingId,
+            workingDate: workingDate,
+            storeId: storeId,
+            checkOutGps: location,
+          )).then((value) async => {
+
+            await deleteVisitData(),
+
+            menuState(() {
+              isDataUploading = false;
+            }),
+            showAnimatedToastMessage("Success".tr, "Visit Ended Successfully".tr, true),
+            // ToastMessage.succesMessage(context, "Visit Ended Successfully".tr),
+            Navigator.popUntil(context, (route) => count++ == 3),
+          }).catchError((e) =>{
+            print(e.toString()),
+            menuState(() {
+              isDataUploading = false;
+            }),
+            showAnimatedToastMessage("Error!".tr,e.toString(),false),
+          });
+
+      }
 
       }
 

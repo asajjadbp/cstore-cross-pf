@@ -63,7 +63,7 @@ class PlanoguidesCard extends StatelessWidget {
         children: [
            Container(
                margin: const EdgeInsets.only(left: 5,),
-               child: Icon(Icons.pending,color: isActivity ? MyColors.greenColor : MyColors.warningColor,)),
+               child:isActivity ? initialValue == "Adhere" ? const Icon(Icons.check_circle_rounded,color: MyColors.greenColor,) : const Icon(Icons.warning_amber_rounded,color: MyColors.backbtnColor,) : const Icon(Icons.pending,color: MyColors.warningColor,)),
           Container(
               margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
               child: TextFormField(

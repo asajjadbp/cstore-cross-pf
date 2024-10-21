@@ -239,7 +239,7 @@ class _StockListScreenState extends State<StockListScreen> {
       isBrandLoading = true;
     });
 
-    await DatabaseHelper.getBrandList(selectedClientId,selectedCategoryId.toString()).then((value) {
+    await DatabaseHelper.getBrandList(selectedClientId,selectedCategoryId.toString(),selectedSubCategoryId.toString()).then((value) {
       brandData = value;
 
       brandData.insert(

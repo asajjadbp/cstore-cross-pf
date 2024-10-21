@@ -227,7 +227,7 @@ class _PriceCheck_ScreenState extends State<PriceCheck_Screen> {
       isBrandLoading = true;
     });
 
-    await DatabaseHelper.getBrandList(selectedClientId,selectedCategoryId.toString()).then((value) {
+    await DatabaseHelper.getBrandList(selectedClientId,selectedCategoryId.toString(),selectedSubCategoryId.toString()).then((value) {
       brandData = value;
 
       brandData.insert(0, SYS_BrandModel(en_name: "Select Brand",ar_name: "Select Brand",id: -1, client: -1));

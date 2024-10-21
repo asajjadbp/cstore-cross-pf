@@ -7,6 +7,7 @@ class shareofshellshow extends StatelessWidget {
       {super.key,
       required this.catName,
       required this.total,
+      required this.buttonStatus,
       required this.actual,
       required this.unit,
       required this.onDelete,
@@ -16,6 +17,7 @@ class shareofshellshow extends StatelessWidget {
   final String total;
   final String actual;
   final String unit;
+  final bool buttonStatus;
   final String brandName;
   final Function onDelete;
 
@@ -55,6 +57,7 @@ class shareofshellshow extends StatelessWidget {
                                 fontWeight: FontWeight.bold),
                               )),
                         ),
+                        if(buttonStatus)
                         IconButton(onPressed: (){
                           onDelete();
                         }, icon: const Icon(Icons.delete,color: MyColors.backbtnColor,))

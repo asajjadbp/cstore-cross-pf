@@ -13,6 +13,7 @@ class ShowTransSOSModel {
   late String actual_space;
   late String unitEnName;
   late String unitArName;
+  late int uploadStatus;
 
   ShowTransSOSModel({
     required this.id,
@@ -25,6 +26,7 @@ class ShowTransSOSModel {
     required this.actual_space,
     required this.unitEnName,
     required this.unitArName,
+    required this.uploadStatus,
   });
 
   Map<String, Object?> toMap() {
@@ -39,6 +41,7 @@ class ShowTransSOSModel {
       TableName.arName: brand_ar_name,
      "unit_en_name": unitEnName,
      "unit_ar_name": unitArName,
+      'upload_status' : uploadStatus,
     };
   }
 
@@ -56,5 +59,6 @@ class ShowTransSOSModel {
     actual_space = json["actual_space"].toString();
     unitEnName = json["unit_en_name"];
     unitArName = json["unit_ar_name"];
+    uploadStatus = json['upload_status'];
   }
 }

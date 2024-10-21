@@ -155,7 +155,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
     menuState(() {
       isBrandLoading = true;
     });
-    await DatabaseHelper.getBrandList(getClient,selectedCategoryId.toString()).then((value) {
+    await DatabaseHelper.getBrandList(getClient,selectedCategoryId.toString(),selectedSubCategoryId.toString()).then((value) {
       brandData = value;
 
       brandData.insert(
@@ -292,6 +292,10 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                                 onChange: (value) {
                                   selectedCategoryId = value.id;
                                   initialCategoryItem = value;
+
+                                  getBrandData(selectedClientId, menuState);
+                                  getSubCategoryData(selectedClientId, menuState);
+
                                   menuState(() {});
                                 }),
                         const SizedBox(
@@ -321,6 +325,9 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                                 onChange: (value) {
                                   selectedSubCategoryId = value.id;
                                   initialSubCategoryItem = value;
+
+                                  getBrandData(selectedClientId, menuState);
+
                                   menuState(() {});
                                 }),
                         const SizedBox(

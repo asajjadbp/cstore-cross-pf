@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cstore/Database/db_helper.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -8,8 +9,49 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path/path.dart' as path;
+import 'package:sqflite/sqflite.dart';
 import '../toast/toast.dart';
 import 'package:image/image.dart' as img;
+
+
+Future<void> saveDbFile(BuildContext context) async {
+  try {
+    final PermissionStatus permissionStatus = await _getPermission();
+
+    if (permissionStatus == PermissionStatus.granted) {
+
+      final String dirPath = (await getExternalStorageDirectory())!.path;
+      final String folderPath = '$dirPath/cstore/database';
+      String timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+
+      final String filePath = '$folderPath/cstore_pro_$timestamp.db';
+      final Directory folder = Directory(folderPath);
+
+      const databaseName = 'cstore_pro.db';
+      var databasesPath = await getDatabasesPath();
+
+      await DatabaseHelper.closeDb('$databasesPath/$databaseName');
+
+      if (await folder.exists()) {
+        await File('$databasesPath/$databaseName').copy(filePath).then((value) {
+          showAnimatedToastMessage(
+              "Success", "Database stored successfully".tr, true);
+        });
+      } else {
+        await Directory(folderPath).create(recursive: true);
+        await File('$databasesPath/$databaseName').copy(filePath).then((value) {
+          showAnimatedToastMessage(
+              "Success", "Database stored successfully".tr, true);
+        });
+      }
+    } else {
+      showAnimatedToastMessage("Success", "Permission denied".tr, false);
+    }
+  } catch (e) {
+    print("Error while saving DB");
+    print(e.toString());
+  }
+}
 
 Future<void> takePicture(BuildContext context, File? imageFile,
     String imageName, String visitId, String moduleName) async {

@@ -31,7 +31,7 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
   bool isFilterLoading = true;
   
   List<TransPlanoGuideModel> transData = [];
-  List<String> unitList = ['Adherence', 'Not Adherence'];
+  List<String> unitList = ['Adhere', 'Not Adhere'];
   String clientId = "";
   String workingId = "";
   String storeEnName = "";
@@ -329,7 +329,7 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
                         labelName2: "Planoguide".tr,
                         unitList: unitList,
                         selectedUnit: (value) {
-                          if(value == "Adherence") {
+                          if(value == "Adhere") {
                             filteredData[index].isAdherence = "1";
                            int ind = transData.indexWhere((element) => element.id == filteredData[index].id);
 
@@ -352,7 +352,7 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
                         context: context,
                         isBtnLoading: isBtnLoading,
                         onSaveClick: (){savePlanoGuideData(index,true,filteredData[index].gcs_status,filteredData[index]);},
-                        initialValue: filteredData[index].isAdherence == "-1" ? "" : filteredData[index].isAdherence == "1" ? "Adherence" : "Not Adherence",
+                        initialValue: filteredData[index].isAdherence == "-1" ? "" : filteredData[index].isAdherence == "1" ? "Adhere" : "Not Adhere",
                       );
                     },)  : ListView.builder(
           itemCount: transData.length,
@@ -372,7 +372,7 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
                         labelName2: "POG".tr,
                         unitList: unitList,
                         selectedUnit: (value) {
-                          if(value == "Adherence") {
+                          if(value == "Adhere") {
                             transData[index].isAdherence = "1";
                           } else {
                             transData[index].isAdherence = "0";
@@ -390,7 +390,7 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
                       context: context,
                     isBtnLoading: isBtnLoading,
                       onSaveClick: (){savePlanoGuideData(index,true,transData[index].gcs_status,transData[index]);},
-                    initialValue: transData[index].isAdherence == "-1" ? "" : transData[index].isAdherence == "1" ? "Adherence" : "Not Adherence",
+                    initialValue: transData[index].isAdherence == "-1" ? "" : transData[index].isAdherence == "1" ? "Adhere" : "Not Adhere",
                   );
           },),
                 ),

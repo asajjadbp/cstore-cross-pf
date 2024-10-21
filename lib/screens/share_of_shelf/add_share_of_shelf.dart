@@ -122,7 +122,7 @@ class _ShareOfShelfState extends State<ShareOfShelf> {
     });
 
 
-    await DatabaseHelper.getBrandList(selectedClientId,selectedCategoryId.toString()).then((value) {
+    await DatabaseHelper.getBrandList(selectedClientId,selectedCategoryId.toString(),"-1").then((value) {
       setState(() {
         isBrandLoading = false;
       });

@@ -169,7 +169,7 @@ class _Freshness_ScreenState extends State<Freshness_Screen> {
       isBrandLoading = true;
     });
 
-    await DatabaseHelper.getBrandList(selectedClientId,selectedCategoryId.toString()).then((value) {
+    await DatabaseHelper.getBrandList(selectedClientId,selectedCategoryId.toString(),selectedSubCategoryId.toString()).then((value) {
       brandData = value;
 
       brandData.insert(
@@ -432,8 +432,7 @@ class _Freshness_ScreenState extends State<Freshness_Screen> {
                 itemCount: filterTransData.length,
                 itemBuilder: (ctx, i) {
                   return FreshnessListCard(
-                    image:
-                    "${imageBaseUrl}sku_pictures/${transData[i].img_name}",
+                    image:"${imageBaseUrl}sku_pictures/${filterTransData[i].img_name}",
                     proName:languageController.isEnglish.value ?  filterTransData[i].pro_en_name:filterTransData[i].pro_ar_name,
                     catName:languageController.isEnglish.value ?  filterTransData[i].cat_en_name:filterTransData[i].cat_ar_name,
                     rsp: filterTransData[i].rsp,

@@ -235,7 +235,7 @@ class _AvailabilityState extends State<Availability> {
       isBrandLoading = true;
     });
 
-    await DatabaseHelper.getBrandList(selectedClientId,selectedCategoryId.toString()).then((value) {
+    await DatabaseHelper.getBrandList(selectedClientId,selectedCategoryId.toString(),selectedSubCategoryId.toString()).then((value) {
       brandData = value;
 
       brandData.insert(0, SYS_BrandModel(en_name: "Select Brand",ar_name: "Select Brand",id: -1, client: -1));
@@ -799,18 +799,18 @@ class _AvailabilityState extends State<Availability> {
                                 categoryName: languageController.isEnglish.value ? filteredList[index].cat_en_name : filteredList[index].cat_ar_name,
                                 pickListText: filteredList[index].requried_picklist.toString(),
                                 onTapPickList: () async {
-                                  GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+                                   //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-                                  if(generalStatusController.isVpnStatus.value) {
-                                    showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false);
-                                  } else if(generalStatusController.isMockLocation.value) {
-                                    showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false);
-                                  } else if(!generalStatusController.isAutoTimeStatus.value) {
-                                    showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false);
-                                  } else if(!generalStatusController.isLocationStatus.value) {
-                                    showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false);
-                                  } else {
-                                    Get.delete<GeneralChecksStatusController>();
+                                  // if(generalStatusController.isVpnStatus.value) {
+                                  //   showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false);
+                                  // } else if(generalStatusController.isMockLocation.value) {
+                                  //   showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false);
+                                  // } else if(!generalStatusController.isAutoTimeStatus.value) {
+                                  //   showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false);
+                                  // } else if(!generalStatusController.isLocationStatus.value) {
+                                  //   showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false);
+                                  // } else {
+                                  //   Get.delete<GeneralChecksStatusController>();
 
                                     if (filteredList[index].avl_status != -1) {
                                       textEditingController.text =
@@ -862,21 +862,21 @@ class _AvailabilityState extends State<Availability> {
                                       ToastMessage.errorMessage(context,
                                           "Please mark item status first".tr);
                                     }
-                                  }
+                                  // }
                                 },
                                 onAvailable: () async {
-                                  GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+                                   //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-                                  if(generalStatusController.isVpnStatus.value) {
-                                    showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false);
-                                  } else if(generalStatusController.isMockLocation.value) {
-                                    showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false);
-                                  } else if(!generalStatusController.isAutoTimeStatus.value) {
-                                    showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false);
-                                  } else if(!generalStatusController.isLocationStatus.value) {
-                                    showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false);
-                                  } else {
-                                    Get.delete<GeneralChecksStatusController>();
+                                  // if(generalStatusController.isVpnStatus.value) {
+                                  //   showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false);
+                                  // } else if(generalStatusController.isMockLocation.value) {
+                                  //   showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false);
+                                  // } else if(!generalStatusController.isAutoTimeStatus.value) {
+                                  //   showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false);
+                                  // } else if(!generalStatusController.isLocationStatus.value) {
+                                  //   showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false);
+                                  // } else {
+                                  //   Get.delete<GeneralChecksStatusController>();
                                     setState(() {
                                       filteredList[index].avl_status = 1;
                                       filteredList[index].activity_status = 1;
@@ -892,22 +892,22 @@ class _AvailabilityState extends State<Availability> {
                                           filteredList[index].avl_status);
                                       isEdit = true;
                                     });
-                                  }
+                                  // }
                                   // updateAvailableItem(index, 1, "reason");
                                 },
                                 onNotAvailable: () async {
-                                  GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+                                   //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-                                  if(generalStatusController.isVpnStatus.value) {
-                                    showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false);
-                                  } else if(generalStatusController.isMockLocation.value) {
-                                    showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false);
-                                  } else if(!generalStatusController.isAutoTimeStatus.value) {
-                                    showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false);
-                                  } else if(!generalStatusController.isLocationStatus.value) {
-                                    showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false);
-                                  } else {
-                                    Get.delete<GeneralChecksStatusController>();
+                                  // if(generalStatusController.isVpnStatus.value) {
+                                  //   showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false);
+                                  // } else if(generalStatusController.isMockLocation.value) {
+                                  //   showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false);
+                                  // } else if(!generalStatusController.isAutoTimeStatus.value) {
+                                  //   showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false);
+                                  // } else if(!generalStatusController.isLocationStatus.value) {
+                                  //   showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false);
+                                  // } else {
+                                  //   Get.delete<GeneralChecksStatusController>();
                                     setState(() {
                                       textEditingController.text =
                                           filteredList[index].requried_picklist
@@ -957,7 +957,7 @@ class _AvailabilityState extends State<Availability> {
                                           }
                                       );
                                     });
-                                  }
+                                  // }
                                   // updateAvailableItem(index, 0, "reason");
                                 });
 
@@ -976,18 +976,18 @@ class _AvailabilityState extends State<Availability> {
                                 categoryName:languageController.isEnglish.value ? availableData[index].cat_en_name : availableData[index].cat_ar_name,
                                 pickListText: availableData[index].requried_picklist.toString(),
                                 onTapPickList: () async {
-                                  GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+                                   //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-                                  if(generalStatusController.isVpnStatus.value) {
-                                    showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false);
-                                  } else if(generalStatusController.isMockLocation.value) {
-                                    showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false);
-                                  } else if(!generalStatusController.isAutoTimeStatus.value) {
-                                    showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false);
-                                  } else if(!generalStatusController.isLocationStatus.value) {
-                                    showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false);
-                                  } else {
-                                    Get.delete<GeneralChecksStatusController>();
+                                  // if(generalStatusController.isVpnStatus.value) {
+                                  //   showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false);
+                                  // } else if(generalStatusController.isMockLocation.value) {
+                                  //   showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false);
+                                  // } else if(!generalStatusController.isAutoTimeStatus.value) {
+                                  //   showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false);
+                                  // } else if(!generalStatusController.isLocationStatus.value) {
+                                  //   showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false);
+                                  // } else {
+                                  //   Get.delete<GeneralChecksStatusController>();
                                     if (availableData[index].avl_status != -1) {
                                       textEditingController.text =
                                           availableData[index].requried_picklist
@@ -1029,20 +1029,20 @@ class _AvailabilityState extends State<Availability> {
                                       ToastMessage.errorMessage(context,
                                           "Please mark item status first".tr);
                                     }
-                                  }
+                                  // }
                                 },
                                 onAvailable: ()async {
-                                  GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+                                   //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-                                  if(generalStatusController.isVpnStatus.value) {
-                                    showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false);
-                                  } else if(generalStatusController.isMockLocation.value) {
-                                    showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false);
-                                  } else if(!generalStatusController.isAutoTimeStatus.value) {
-                                    showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false);
-                                  } else if(!generalStatusController.isLocationStatus.value) {
-                                    showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false);
-                                  } else {
+                                  // if(generalStatusController.isVpnStatus.value) {
+                                  //   showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false);
+                                  // } else if(generalStatusController.isMockLocation.value) {
+                                  //   showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false);
+                                  // } else if(!generalStatusController.isAutoTimeStatus.value) {
+                                  //   showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false);
+                                  // } else if(!generalStatusController.isLocationStatus.value) {
+                                  //   showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false);
+                                  // } else {
                                     Get.delete<GeneralChecksStatusController>();
                                     setState(() {
                                       availableData[index].avl_status = 1;
@@ -1053,21 +1053,21 @@ class _AvailabilityState extends State<Availability> {
                                           availableData[index].avl_status);
                                       isEdit = true;
                                     });
-                                  }
+                                  // }
                                   // updateAvailableItem(index, 1, "reason");
                                 },
                                 onNotAvailable: ()async {
-                                  GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+                                   //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-                                  if(generalStatusController.isVpnStatus.value) {
-                                    showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false);
-                                  } else if(generalStatusController.isMockLocation.value) {
-                                    showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false);
-                                  } else if(!generalStatusController.isAutoTimeStatus.value) {
-                                    showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false);
-                                  } else if(!generalStatusController.isLocationStatus.value) {
-                                    showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false);
-                                  } else {
+                                  // if(generalStatusController.isVpnStatus.value) {
+                                  //   showAnimatedToastMessage("Error!".tr,"Please Disable Your VPN".tr, false);
+                                  // } else if(generalStatusController.isMockLocation.value) {
+                                  //   showAnimatedToastMessage("Error!".tr, "Please Disable Your Fake Locator".tr, false);
+                                  // } else if(!generalStatusController.isAutoTimeStatus.value) {
+                                  //   showAnimatedToastMessage("Error!".tr, "Please Enable Your Auto time Option From Setting".tr, false);
+                                  // } else if(!generalStatusController.isLocationStatus.value) {
+                                  //   showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false);
+                                  // } else {
                                     Get.delete<GeneralChecksStatusController>();
                                     setState(() {
                                       textEditingController.text =
@@ -1114,7 +1114,7 @@ class _AvailabilityState extends State<Availability> {
                                           }
                                       );
                                     });
-                                  }
+                                  // }
                                   // updateAvailableItem(index, 0, "reason");
                                 });
 

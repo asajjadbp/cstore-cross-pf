@@ -98,6 +98,7 @@ class _ViewShareOfShelfState extends State<ViewShareOfShelf> {
           itemCount: transData.length,
           itemBuilder: (ctx, i) {
             return shareofshellshow(
+              buttonStatus: transData[i].uploadStatus == 0,
               onDelete: (){
                 showDialog(context: context,
                   builder: (BuildContext context) {

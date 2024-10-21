@@ -2031,24 +2031,24 @@ class DatabaseHelper {
   static Future<void> insertBeforeFaxing(TransBeforeFaxingModel beforeFaxing) async {
     var db = await initDataBase();
 
-    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-    if(generalStatusController.isVpnStatus.value) {
-      throw FetchDataException('Please Disable Your VPN'.tr);
-    } else if(generalStatusController.isMockLocation.value) {
-      throw FetchDataException('Please Disable Your Fake Locator'.tr);
-    } else if(!generalStatusController.isAutoTimeStatus.value) {
-      throw FetchDataException('Please Enable Your Auto time Option From Setting'.tr);
-    } else if(!generalStatusController.isLocationStatus.value) {
-      throw FetchDataException('Please Enable Your Location'.tr);
-    } else {
-      Get.delete<GeneralChecksStatusController>();
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // } else if(!generalStatusController.isAutoTimeStatus.value) {
+    //   throw FetchDataException('Please Enable Your Auto time Option From Setting'.tr);
+    // } else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //   Get.delete<GeneralChecksStatusController>();
       await db.insert(
         TableName.tblTransBeforeFaxing,
         beforeFaxing.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-    }
+    // }
   }
 
   ///Get System Setting Details
@@ -2908,7 +2908,7 @@ class DatabaseHelper {
 
     final db = await initDataBase();
     final List<Map<String, dynamic>> sos = await db.rawQuery(
-        'SELECT trans_sos.id,sys_client.client_name,sys_category.en_name as cat_en_name,sys_category.ar_name as cat_ar_name, sys_brand.en_name as brand_en_name, sys_brand.ar_name as brand_ar_name,trans_sos.unit,trans_sos.cat_space as total_space,trans_sos.actual_space,sys_sos_units.en_name as unit_en_name,sys_sos_units.ar_name as unit_ar_name '
+        'SELECT trans_sos.id,sys_client.client_name,sys_category.en_name as cat_en_name,sys_category.ar_name as cat_ar_name, sys_brand.en_name as brand_en_name, sys_brand.ar_name as brand_ar_name,trans_sos.unit,trans_sos.cat_space as total_space,trans_sos.actual_space,sys_sos_units.en_name as unit_en_name,sys_sos_units.ar_name as unit_ar_name,upload_status '
             ' FROM trans_sos '
             'JOIN sys_client on sys_client.client_id=trans_sos.client_id '
             'JOIN sys_category on sys_category.id=trans_sos.category_id '
@@ -2929,7 +2929,7 @@ class DatabaseHelper {
         actual_space:sos[index]['actual_space'] as String,
         unitEnName:sos[index]['unit_en_name'].toString(),
         unitArName:sos[index]['unit_ar_name'].toString(),
-
+        uploadStatus: sos[index]['upload_status'],
       );
     });
   }
@@ -3289,72 +3289,72 @@ class DatabaseHelper {
       TransMarketIssueModel marketIssueModel) async {
     var db = await initDataBase();
 
-    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-    if(generalStatusController.isVpnStatus.value) {
-      throw FetchDataException('Please Disable Your VPN'.tr);
-    } else if(generalStatusController.isMockLocation.value) {
-      throw FetchDataException('Please Disable Your Fake Locator'.tr);
-    } else if(!generalStatusController.isLocationStatus.value) {
-      throw FetchDataException('Please Enable Your Location'.tr);
-    } else {
-      Get.delete<GeneralChecksStatusController>();
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // } else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //   Get.delete<GeneralChecksStatusController>();
 
       await db.insert(
         TableName.tblTransMarketIssue,
         marketIssueModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-    }
+    // }
   }
 
   static Future<void> insertTransPhoto(TransPhotoModel transPhotoModel) async {
     var db = await initDataBase();
 
-    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-    if(generalStatusController.isVpnStatus.value) {
-      throw FetchDataException('Please Disable Your VPN'.tr);
-    } else if(generalStatusController.isMockLocation.value) {
-      throw FetchDataException('Please Disable Your Fake Locator'.tr);
-    } else if(!generalStatusController.isAutoTimeStatus.value) {
-      throw FetchDataException('Please Enable Your Auto time Option From Setting'.tr);
-    } else if(!generalStatusController.isLocationStatus.value) {
-      throw FetchDataException('Please Enable Your Location'.tr);
-    } else {
-
-      Get.delete<GeneralChecksStatusController>();
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // } else if(!generalStatusController.isAutoTimeStatus.value) {
+    //   throw FetchDataException('Please Enable Your Auto time Option From Setting'.tr);
+    // } else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //
+    //   Get.delete<GeneralChecksStatusController>();
 
       await db.insert(
         TableName.tblTransPhoto,
         transPhotoModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-    }
+    // }
   }
 
   static Future<void> insertTransPlanogram(TransPlanogramModel transPlanogramModel) async {
     var db = await initDataBase();
-    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-    if(generalStatusController.isVpnStatus.value) {
-      throw FetchDataException('Please Disable Your VPN'.tr);
-    } else if(generalStatusController.isMockLocation.value) {
-      throw FetchDataException('Please Disable Your Fake Locator'.tr);
-    } else if(!generalStatusController.isAutoTimeStatus.value) {
-      throw FetchDataException('Please Enable Your Auto time Option From Setting'.tr);
-    } else if(!generalStatusController.isLocationStatus.value) {
-      throw FetchDataException('Please Enable Your Location'.tr);
-    } else {
-
-      Get.delete<GeneralChecksStatusController>();
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // } else if(!generalStatusController.isAutoTimeStatus.value) {
+    //   throw FetchDataException('Please Enable Your Auto time Option From Setting'.tr);
+    // } else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //
+    //   Get.delete<GeneralChecksStatusController>();
 
       await db.insert(
         TableName.tblTransPlanogram,
         transPlanogramModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-    }
+    // }
   }
 
   static Future<int>  updateTransAVL(int avlStatus,String workingId,String skuId) async {
@@ -3365,20 +3365,20 @@ class DatabaseHelper {
     print('_______________UpdATE________________');
     print(writeQuery);
 
-    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-    if(generalStatusController.isVpnStatus.value) {
-      throw FetchDataException('Please Disable Your VPN'.tr);
-    } else if(generalStatusController.isMockLocation.value) {
-      throw FetchDataException('Please Disable Your Fake Locator'.tr);
-    }  else if(!generalStatusController.isLocationStatus.value) {
-      throw FetchDataException('Please Enable Your Location'.tr);
-    } else {
-
-      Get.delete<GeneralChecksStatusController>();
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // }  else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //
+    //   Get.delete<GeneralChecksStatusController>();
 
       return await db.rawUpdate(writeQuery);
-    }
+    // }
   }
 
   static Future<int>  updateSavePickList(String workingId,String reqPickList,String skuId) async {
@@ -3389,107 +3389,133 @@ class DatabaseHelper {
     print('_______________UpdATE________________');
     print(writeQuery);
 
-    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-    if(generalStatusController.isVpnStatus.value) {
-      throw FetchDataException('Please Disable Your VPN'.tr);
-    } else if(generalStatusController.isMockLocation.value) {
-      throw FetchDataException('Please Disable Your Fake Locator'.tr);
-    } else if(!generalStatusController.isLocationStatus.value) {
-      throw FetchDataException('Please Enable Your Location'.tr);
-    } else {
-
-      Get.delete<GeneralChecksStatusController>();
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // } else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //
+    //   Get.delete<GeneralChecksStatusController>();
 
       return await db.rawUpdate(writeQuery);
-    }
+    // }
   }
+
+
+  static Future<int>  updateSidcoSavePickList(String workingId,String reqPickList,String skuId) async {
+
+    String writeQuery = 'UPDATE trans_availability SET req_picklist=$reqPickList WHERE working_id=$workingId AND sku_id=$skuId';
+
+    var db = await initDataBase();
+    print('_______________UpdATE________________');
+    print(writeQuery);
+
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // } else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //
+    //   Get.delete<GeneralChecksStatusController>();
+
+    return await db.rawUpdate(writeQuery);
+    // }
+  }
+
 
   static Future<void> insertTransSOS(TransSOSModel transSOSModel) async {
     var db = await initDataBase();
 
-    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-    if(generalStatusController.isVpnStatus.value) {
-      throw FetchDataException('Please Disable Your VPN'.tr);
-    } else if(generalStatusController.isMockLocation.value) {
-      throw FetchDataException('Please Disable Your Fake Locator'.tr);
-    } else if(!generalStatusController.isLocationStatus.value) {
-      throw FetchDataException('Please Enable Your Location'.tr);
-    } else {
-
-      Get.delete<GeneralChecksStatusController>();
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // } else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //
+    //   Get.delete<GeneralChecksStatusController>();
 
       await db.insert(
         TableName.tblTransSos,
         transSOSModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-    }
+    // }
   }
 
   static Future<void> insertTransPricing(TransPricingModel pricingModel) async {
     var db = await initDataBase();
 
-    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-    if(generalStatusController.isVpnStatus.value) {
-      throw FetchDataException('Please Disable Your VPN'.tr);
-    } else if(generalStatusController.isMockLocation.value) {
-      throw FetchDataException('Please Disable Your Fake Locator'.tr);
-    }  else if(!generalStatusController.isLocationStatus.value) {
-      throw FetchDataException('Please Enable Your Location'.tr);
-    } else {
-
-      Get.delete<GeneralChecksStatusController>();
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // }  else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //
+    //   Get.delete<GeneralChecksStatusController>();
 
       await db.insert(
         TableName.tblTransPricing,
         pricingModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-    }
+    // }
   }
 
   static Future<void> insertTransStock(TransStockModel transStockModel) async {
     var db = await initDataBase();
 
-    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-    if(generalStatusController.isVpnStatus.value) {
-      throw FetchDataException('Please Disable Your VPN'.tr);
-    } else if(generalStatusController.isMockLocation.value) {
-      throw FetchDataException('Please Disable Your Fake Locator'.tr);
-    } else if(!generalStatusController.isLocationStatus.value) {
-      throw FetchDataException('Please Enable Your Location'.tr);
-    } else {
-
-      Get.delete<GeneralChecksStatusController>();
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // } else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //
+    //   Get.delete<GeneralChecksStatusController>();
 
       await db.insert(
         TableName.tblTransStock,
         transStockModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-    }
+    // }
   }
 
   static Future<int> insertTransOSDC(TransOSDCModel transOSDCModel) async {
     var db = await initDataBase();
 
-    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-    if(generalStatusController.isVpnStatus.value) {
-      throw FetchDataException('Please Disable Your VPN'.tr);
-    } else if(generalStatusController.isMockLocation.value) {
-      throw FetchDataException('Please Disable Your Fake Locator'.tr);
-    } else if(!generalStatusController.isAutoTimeStatus.value) {
-      throw FetchDataException('Please Enable Your Auto time Option From Setting'.tr);
-    } else if(!generalStatusController.isLocationStatus.value) {
-      throw FetchDataException('Please Enable Your Location'.tr);
-    } else {
-
-      Get.delete<GeneralChecksStatusController>();
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // } else if(!generalStatusController.isAutoTimeStatus.value) {
+    //   throw FetchDataException('Please Enable Your Auto time Option From Setting'.tr);
+    // } else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //
+    //   Get.delete<GeneralChecksStatusController>();
 
       final osdcId = await db.insert(
         TableName.tblTransOsdc,
@@ -3498,57 +3524,57 @@ class DatabaseHelper {
       );
 
       return osdcId;
-    }
+    // }
   }
 
   static Future<void> insertTransOSDCImage(TransOSDCImagesModel transOSDCImage) async {
     var db = await initDataBase();
 
-    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-    if(generalStatusController.isVpnStatus.value) {
-      throw FetchDataException('Please Disable Your VPN'.tr);
-    } else if(generalStatusController.isMockLocation.value) {
-      throw FetchDataException('Please Disable Your Fake Locator'.tr);
-    } else if(!generalStatusController.isAutoTimeStatus.value) {
-      throw FetchDataException('Please Enable Your Auto time Option From Setting'.tr);
-    } else if(!generalStatusController.isLocationStatus.value) {
-      throw FetchDataException('Please Enable Your Location'.tr);
-    } else {
-
-      Get.delete<GeneralChecksStatusController>();
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // } else if(!generalStatusController.isAutoTimeStatus.value) {
+    //   throw FetchDataException('Please Enable Your Auto time Option From Setting'.tr);
+    // } else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //
+    //   Get.delete<GeneralChecksStatusController>();
 
       await db.insert(
         TableName.tblTransOsdcImages,
         transOSDCImage.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-    }
+    // }
   }
 
   static Future<void> insertTransOnePlusOne(TransOnePlusOneModel transOnePlusOneModel) async {
     var db = await initDataBase();
 
-    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-    if(generalStatusController.isVpnStatus.value) {
-      throw FetchDataException('Please Disable Your VPN'.tr);
-    } else if(generalStatusController.isMockLocation.value) {
-      throw FetchDataException('Please Disable Your Fake Locator'.tr);
-    } else if(!generalStatusController.isAutoTimeStatus.value) {
-      throw FetchDataException('Please Enable Your Auto time Option From Setting'.tr);
-    } else if(!generalStatusController.isLocationStatus.value) {
-      throw FetchDataException('Please Enable Your Location'.tr);
-    } else {
-
-      Get.delete<GeneralChecksStatusController>();
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // } else if(!generalStatusController.isAutoTimeStatus.value) {
+    //   throw FetchDataException('Please Enable Your Auto time Option From Setting'.tr);
+    // } else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //
+    //   Get.delete<GeneralChecksStatusController>();
 
       await db.insert(
         TableName.tblTransOnePlusOne,
         transOnePlusOneModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-    }
+    // }
   }
   // static Future<void> insertTransPromoPlan(TransPromoPlanModel transPromoPlanModel) async {
   //   var db = await initDataBase();
@@ -3566,22 +3592,22 @@ class DatabaseHelper {
     print('_______________INSERT TransPlanoGuide________________');
     print(insertQuery);
 
-    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-    if(generalStatusController.isVpnStatus.value) {
-      throw FetchDataException('Please Disable Your VPN'.tr);
-    } else if(generalStatusController.isMockLocation.value) {
-      throw FetchDataException('Please Disable Your Fake Locator'.tr);
-    } else if(!generalStatusController.isAutoTimeStatus.value) {
-      throw FetchDataException('Please Enable Your Auto time Option From Setting'.tr);
-    } else if(!generalStatusController.isLocationStatus.value) {
-      throw FetchDataException('Please Enable Your Location'.tr);
-    } else {
-
-      Get.delete<GeneralChecksStatusController>();
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // } else if(!generalStatusController.isAutoTimeStatus.value) {
+    //   throw FetchDataException('Please Enable Your Auto time Option From Setting'.tr);
+    // } else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //
+    //   Get.delete<GeneralChecksStatusController>();
 
       return await db.rawInsert(insertQuery);
-    }
+    // }
   }
 
   static Future<int>  insertTransBrandShares(String workingID) async {
@@ -3591,22 +3617,22 @@ class DatabaseHelper {
     var db = await initDataBase();
     print('_______________INSERT BransShare________________');
     print(insertQuery);
-    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-    if(generalStatusController.isVpnStatus.value) {
-      throw FetchDataException('Please Disable Your VPN'.tr);
-    } else if(generalStatusController.isMockLocation.value) {
-      throw FetchDataException('Please Disable Your Fake Locator'.tr);
-    } else if(!generalStatusController.isAutoTimeStatus.value) {
-      throw FetchDataException('Please Enable Your Auto time Option From Setting'.tr);
-    } else if(!generalStatusController.isLocationStatus.value) {
-      throw FetchDataException('Please Enable Your Location'.tr);
-    } else {
-
-      Get.delete<GeneralChecksStatusController>();
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // } else if(!generalStatusController.isAutoTimeStatus.value) {
+    //   throw FetchDataException('Please Enable Your Auto time Option From Setting'.tr);
+    // } else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //
+    //   Get.delete<GeneralChecksStatusController>();
 
       return await db.rawInsert(insertQuery);
-    }
+    // }
   }
 
   static Future<int>  insertTransAvailability(String workingID,String clientId,String now) async {
@@ -3627,20 +3653,20 @@ class DatabaseHelper {
     print('_______________INSERT AVAILABILITY________________');
     print(insertQuery);
 
-    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-    if(generalStatusController.isVpnStatus.value) {
-      throw FetchDataException('Please Disable Your VPN'.tr);
-    } else if(generalStatusController.isMockLocation.value) {
-      throw FetchDataException('Please Disable Your Fake Locator'.tr);
-    } else if(!generalStatusController.isLocationStatus.value) {
-      throw FetchDataException('Please Enable Your Location'.tr);
-    } else {
-
-      Get.delete<GeneralChecksStatusController>();
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // } else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //
+    //   Get.delete<GeneralChecksStatusController>();
 
       return await db.rawInsert(insertQuery);
-    }
+    // }
   }
 
 //--------************get drop down data-------**********
@@ -3732,7 +3758,7 @@ class DatabaseHelper {
     });
   }
 
-  static Future<List<SYS_BrandModel>> getBrandList(int clientId, String categoryId) async {
+  static Future<List<SYS_BrandModel>> getBrandList(int clientId, String categoryId,String subCategoryId) async {
     final db = await initDataBase();
 
     String searchWhere = '';
@@ -3741,9 +3767,9 @@ class DatabaseHelper {
       searchWhere = ' AND sys_product.category_id = $categoryId ';
     }
 
-    // if(subCategoryId != '-1') {
-    //   searchWhere = ' AND sys_product.subcategory_id = $subCategoryId ';
-    // }
+    if(subCategoryId != '-1') {
+      searchWhere = ' AND sys_product.subcategory_id = $subCategoryId ';
+    }
 
     final List<Map<String, dynamic>> brandMaps = await db.rawQuery(
         'SELECT sys_brand.id,sys_brand.en_name ,sys_brand.ar_name,sys_brand.client_id '
@@ -3929,20 +3955,20 @@ class DatabaseHelper {
   print('_______________INSERT PICKLIST________________');
   log(insertQuery);
 
-  GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+  //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-  if(generalStatusController.isVpnStatus.value) {
-    throw FetchDataException('Please Disable Your VPN'.tr);
-  } else if(generalStatusController.isMockLocation.value) {
-    throw FetchDataException('Please Disable Your Fake Locator'.tr);
-  } else if(!generalStatusController.isLocationStatus.value) {
-    throw FetchDataException('Please Enable Your Location'.tr);
-  } else {
-
-    Get.delete<GeneralChecksStatusController>();
+  // if(generalStatusController.isVpnStatus.value) {
+  //   throw FetchDataException('Please Disable Your VPN'.tr);
+  // } else if(generalStatusController.isMockLocation.value) {
+  //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+  // } else if(!generalStatusController.isLocationStatus.value) {
+  //   throw FetchDataException('Please Enable Your Location'.tr);
+  // } else {
+  //
+  //   Get.delete<GeneralChecksStatusController>();
 
       return await db.rawInsert(insertQuery);
-    }
+    // }
   }
 
   // static Future<void> insertPicklistArray(List<PickListModel> modelList) async {
@@ -4011,20 +4037,20 @@ class DatabaseHelper {
     print('_______________UpdATE________________');
     print(writeQuery);
 
-    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-    if(generalStatusController.isVpnStatus.value) {
-      throw FetchDataException('Please Disable Your VPN'.tr);
-    } else if(generalStatusController.isMockLocation.value) {
-      throw FetchDataException('Please Disable Your Fake Locator'.tr);
-    } else if(!generalStatusController.isLocationStatus.value) {
-      throw FetchDataException('Please Enable Your Location'.tr);
-    } else {
-
-      Get.delete<GeneralChecksStatusController>();
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // } else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //
+    //   Get.delete<GeneralChecksStatusController>();
 
       return await db.rawUpdate(writeQuery);
-    }
+    // }
   }
 
   ///Trans Pick list update Sql
@@ -4034,21 +4060,21 @@ class DatabaseHelper {
     print('_______________UpdATE________________');
     print(writeQuery);
 
-    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-    if(generalStatusController.isVpnStatus.value) {
-      throw FetchDataException('Please Disable Your VPN'.tr);
-    } else if(generalStatusController.isMockLocation.value) {
-      throw FetchDataException('Please Disable Your Fake Locator'.tr);
-    } else if(!generalStatusController.isLocationStatus.value) {
-      throw FetchDataException('Please Enable Your Location'.tr);
-    } else {
-
-      Get.delete<GeneralChecksStatusController>();
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // } else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //
+    //   Get.delete<GeneralChecksStatusController>();
 
       return await db
           .rawUpdate(writeQuery, [actPicklist, picklistReady, picklistId]);
-    }
+    // }
   }
 
   ///Trans Pick list update Sql after APi
@@ -4221,20 +4247,20 @@ class DatabaseHelper {
     var db = await initDataBase();
     print('_______________UpdATE Share Shelf________________');
     print(writeQuery);
-    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-    if(generalStatusController.isVpnStatus.value) {
-      throw FetchDataException('Please Disable Your VPN'.tr);
-    } else if(generalStatusController.isMockLocation.value) {
-      throw FetchDataException('Please Disable Your Fake Locator'.tr);
-    }  else if(!generalStatusController.isLocationStatus.value) {
-      throw FetchDataException('Please Enable Your Location'.tr);
-    } else {
-
-      Get.delete<GeneralChecksStatusController>();
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // }  else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //
+    //   Get.delete<GeneralChecksStatusController>();
 
       return await db.rawUpdate(writeQuery);
-    }
+    // }
   }
 
   ///get planoguide Images For GCS upload
@@ -4515,23 +4541,50 @@ class DatabaseHelper {
     var db = await initDataBase();
     print('_______________INSERT REPLENISHMENT________________');
     print(insertQuery);
-    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-    if(generalStatusController.isVpnStatus.value) {
-      throw FetchDataException('Please Disable Your VPN'.tr);
-    } else if(generalStatusController.isMockLocation.value) {
-      throw FetchDataException('Please Disable Your Fake Locator'.tr);
-    } else if(!generalStatusController.isAutoTimeStatus.value) {
-      throw FetchDataException('Please Enable Your Auto time Option From Setting'.tr);
-    } else if(!generalStatusController.isLocationStatus.value) {
-      throw FetchDataException('Please Enable Your Location'.tr);
-    } else {
-
-      Get.delete<GeneralChecksStatusController>();
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // } else if(!generalStatusController.isAutoTimeStatus.value) {
+    //   throw FetchDataException('Please Enable Your Auto time Option From Setting'.tr);
+    // } else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //
+    //   Get.delete<GeneralChecksStatusController>();
 
       return await db.rawInsert(insertQuery);
-    }
+    // }
   }
+
+  static Future<int>  updateSavePickListForReplenishment(String workingId,String reqPickList,String skuId) async {
+
+    String writeQuery = '''
+    INSERT OR REPLACE INTO trans_picklist (working_id, sku_id, required_pieces)
+    VALUES ($workingId, $skuId, $reqPickList);
+  ''';
+    var db = await initDataBase();
+    print('_______________UpdATE Replenishment ________________');
+    print(writeQuery);
+
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // } else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //
+    //   Get.delete<GeneralChecksStatusController>();
+
+    return await db.rawInsert(writeQuery);
+    // }
+  }
+
 
   ///update Replenishment data from module
   static Future<int> updateTransReplenishment(int skuId, String regular, String promo,String reason, String workingID) async {
@@ -4761,22 +4814,22 @@ class DatabaseHelper {
     var db = await initDataBase();
     print('_______________INSERT TransPromoPrice________________');
     print(insertQuery);
-    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-    if(generalStatusController.isVpnStatus.value) {
-      throw FetchDataException('Please Disable Your VPN'.tr);
-    } else if(generalStatusController.isMockLocation.value) {
-      throw FetchDataException('Please Disable Your Fake Locator'.tr);
-    } else if(!generalStatusController.isAutoTimeStatus.value) {
-      throw FetchDataException('Please Enable Your Auto time Option From Setting'.tr);
-    } else if(!generalStatusController.isLocationStatus.value) {
-      throw FetchDataException('Please Enable Your Location'.tr);
-    } else {
-
-      Get.delete<GeneralChecksStatusController>();
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // } else if(!generalStatusController.isAutoTimeStatus.value) {
+    //   throw FetchDataException('Please Enable Your Auto time Option From Setting'.tr);
+    // } else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //
+    //   Get.delete<GeneralChecksStatusController>();
 
       return await db.rawInsert(insertQuery);
-    }
+    // }
   }
 
   static Future<int> updateTransPromoPricing(int skuId, String regular, String promo, String workingID) async {
@@ -4799,26 +4852,26 @@ class DatabaseHelper {
 
   static Future<void> insertTransRtvData(TransRtvModel transRtvModel) async {
     var db = await initDataBase();
-    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-    if(generalStatusController.isVpnStatus.value) {
-      throw FetchDataException('Please Disable Your VPN'.tr);
-    } else if(generalStatusController.isMockLocation.value) {
-      throw FetchDataException('Please Disable Your Fake Locator'.tr);
-    } else if(!generalStatusController.isAutoTimeStatus.value) {
-      throw FetchDataException('Please Enable Your Auto time Option From Setting'.tr);
-    } else if(!generalStatusController.isLocationStatus.value) {
-      throw FetchDataException('Please Enable Your Location'.tr);
-    } else {
-
-      Get.delete<GeneralChecksStatusController>();
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // } else if(!generalStatusController.isAutoTimeStatus.value) {
+    //   throw FetchDataException('Please Enable Your Auto time Option From Setting'.tr);
+    // } else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //
+    //   Get.delete<GeneralChecksStatusController>();
 
       await db.insert(
         TableName.tblTransRtv,
         transRtvModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-    }
+    // }
   }
 
   static Future<List<Sys_RTVReasonModel>> getRtvReasonList() async {
@@ -5054,20 +5107,20 @@ class DatabaseHelper {
     var db = await initDataBase();
     print('_______________INSERT Trans Freshness________________');
     print(insertQuery);
-    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-    if(generalStatusController.isVpnStatus.value) {
-      throw FetchDataException('Please Disable Your VPN'.tr);
-    } else if(generalStatusController.isMockLocation.value) {
-      throw FetchDataException('Please Disable Your Fake Locator'.tr);
-    }  else if(!generalStatusController.isLocationStatus.value) {
-      throw FetchDataException('Please Enable Your Location'.tr);
-    } else {
-
-      Get.delete<GeneralChecksStatusController>();
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // }  else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //
+    //   Get.delete<GeneralChecksStatusController>();
 
       return await db.rawInsert(insertQuery);
-    }
+    // }
   }
 
   static Future<List<TransFreshnessModel>> getTransFreshnessDataList(String workingId, String clientId, String brandId, String categoryId, String subCategoryId) async {
@@ -5330,22 +5383,22 @@ class DatabaseHelper {
     print('_______________UpdATE Promo Plan________________');
     print(writeQuery);
 
-    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-    if(generalStatusController.isVpnStatus.value) {
-      throw FetchDataException('Please Disable Your VPN'.tr);
-    } else if(generalStatusController.isMockLocation.value) {
-      throw FetchDataException('Please Disable Your Fake Locator'.tr);
-    } else if(!generalStatusController.isAutoTimeStatus.value) {
-      throw FetchDataException('Please Enable Your Auto time Option From Setting'.tr);
-    } else if(!generalStatusController.isLocationStatus.value) {
-      throw FetchDataException('Please Enable Your Location'.tr);
-    } else {
-
-      Get.delete<GeneralChecksStatusController>();
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // } else if(!generalStatusController.isAutoTimeStatus.value) {
+    //   throw FetchDataException('Please Enable Your Auto time Option From Setting'.tr);
+    // } else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //
+    //   Get.delete<GeneralChecksStatusController>();
 
       return await db.rawUpdate(writeQuery);
-    }
+    // }
   }
 
   static Future<PromoPlanGraphAndApiCountShowModel> getPromoGraphAndApiCount(String workingId,) async {
@@ -5541,20 +5594,20 @@ class DatabaseHelper {
     var db = await initDataBase();
     print('_______________INSERT Trans stock________________');
     print(insertQuery);
-    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-    if(generalStatusController.isVpnStatus.value) {
-      throw FetchDataException('Please Disable Your VPN'.tr);
-    } else if(generalStatusController.isMockLocation.value) {
-      throw FetchDataException('Please Disable Your Fake Locator'.tr);
-    } else if(!generalStatusController.isLocationStatus.value) {
-      throw FetchDataException('Please Enable Your Location'.tr);
-    } else {
-
-      Get.delete<GeneralChecksStatusController>();
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // } else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //
+    //   Get.delete<GeneralChecksStatusController>();
 
       return await db.rawInsert(insertQuery);
-    }
+    // }
   }
 
   static Future<List<SaveStockListData>> getStockDataListFromApi(String workingId) async {
@@ -5695,26 +5748,26 @@ class DatabaseHelper {
 
   static Future<void> insertTransPOS(TransAddProfOfSale transAddProfOfSale) async {
     var db = await initDataBase();
-    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-    if(generalStatusController.isVpnStatus.value) {
-      throw FetchDataException('Please Disable Your VPN'.tr);
-    } else if(generalStatusController.isMockLocation.value) {
-      throw FetchDataException('Please Disable Your Fake Locator'.tr);
-    } else if(!generalStatusController.isAutoTimeStatus.value) {
-      throw FetchDataException('Please Enable Your Auto time Option From Setting'.tr);
-    } else if(!generalStatusController.isLocationStatus.value) {
-      throw FetchDataException('Please Enable Your Location'.tr);
-    } else {
-
-      Get.delete<GeneralChecksStatusController>();
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // } else if(!generalStatusController.isAutoTimeStatus.value) {
+    //   throw FetchDataException('Please Enable Your Auto time Option From Setting'.tr);
+    // } else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //
+    //   Get.delete<GeneralChecksStatusController>();
 
       await db.insert(
         TableName.tblTransPOS,
         transAddProfOfSale.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-    }
+    // }
   }
 
   static Future<List<ShowProofOfSaleModel>> getTransPOS(String workingId) async {
@@ -5880,26 +5933,26 @@ class DatabaseHelper {
 
   static Future<void> insertTransRtvOnePlusOne(TransRtvOnePlusOneModel transRtvModel) async {
     var db = await initDataBase();
-    GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
 
-    if(generalStatusController.isVpnStatus.value) {
-      throw FetchDataException('Please Disable Your VPN'.tr);
-    } else if(generalStatusController.isMockLocation.value) {
-      throw FetchDataException('Please Disable Your Fake Locator'.tr);
-    } else if(!generalStatusController.isAutoTimeStatus.value) {
-      throw FetchDataException('Please Enable Your Auto time Option From Setting'.tr);
-    } else if(!generalStatusController.isLocationStatus.value) {
-      throw FetchDataException('Please Enable Your Location'.tr);
-    } else {
-
-      Get.delete<GeneralChecksStatusController>();
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // } else if(!generalStatusController.isAutoTimeStatus.value) {
+    //   throw FetchDataException('Please Enable Your Auto time Option From Setting'.tr);
+    // } else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //
+    //   Get.delete<GeneralChecksStatusController>();
 
       await db.insert(
         TableName.tblTransOnePlusOne,
         transRtvModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-    }
+    // }
   }
 
   static Future<List<RTVShowModel>> getDataListRTVOnePlusOne(String workingId, String clientId, String jpSessionClientIds, String brandId, String categoryId, String subCategoryId) async {

@@ -153,7 +153,7 @@ class _PlanogramScreenState extends State<PlanogramScreen> {
       isBrandLoading = true;
     });
 
-    await DatabaseHelper.getBrandList(selectedClientId,categoryId).then((value) {
+    await DatabaseHelper.getBrandList(selectedClientId,categoryId,"-1").then((value) {
       setState(() {
         isBrandLoading = false;
       });
