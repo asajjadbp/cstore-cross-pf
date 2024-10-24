@@ -2141,6 +2141,78 @@ class DatabaseHelper {
     });
   }
 
+  // ----********* trans table data insert-----************
+  static Future<List<AvailabilityShowModel>> getSidcoAvlDataList(String workingId, String clientId, String brandId,String categoryId,String subCategoryId) async {
+    final db = await initDataBase();
+
+    // Start building the base query
+    String query = ' SELECT A.*,CASE WHEN B.required_pieces IS NUll THEN 0 ELSE B.required_pieces END AS req_pick_pieces '
+        ' From ( SELECT trans_availability.*, sys_category.en_name || " " || sys_subcategory.en_name as cat_en_name, '
+        ' sys_category.ar_name || " " || sys_subcategory.ar_name as cat_ar_name, '
+        ' sys_subcategory.en_name as subcat_en_name, sys_subcategory.ar_name as subcat_ar_name, '
+        ' sys_brand.en_name as brand_en_name, sys_brand.ar_name as brand_ar_name, sys_product.image, sys_product.en_name as pro_en_name, sys_product.ar_name as pro_ar_name '
+        ' FROM trans_availability JOIN sys_product ON sys_product.id = trans_availability.sku_id '
+        ' JOIN sys_category ON sys_category.id = sys_product.category_id '
+        ' JOIN sys_brand ON sys_brand.id = sys_product.brand_id '
+        ' JOIN sys_subcategory ON sys_subcategory.id = sys_product.subcategory_id '
+        ' WHERE trans_availability.working_id = "$workingId") A '
+        ' LEFT JOIN ( SELECT sku_id,required_pieces '
+        ' FROM trans_picklist WHERE working_id = "$workingId") B ON A.sku_id = B.sku_id ';
+
+    // List to hold conditions
+    List<String> conditions = [];
+
+    // Add conditions based on search parameters
+    if (clientId != '-1') {
+      conditions.add('trans_availability.client_id = "$clientId"');
+    }
+    if (brandId != '-1') {
+      conditions.add('sys_product.brand_id = "$brandId"');
+    }
+    if (subCategoryId != '-1') {
+      conditions.add('sys_product.subcategory_id = "$subCategoryId"');
+    }
+    if (categoryId != '-1') {
+      conditions.add('sys_product.category_id = "$categoryId"');
+    }
+
+    // Join conditions with 'AND' in the query
+    if (conditions.isNotEmpty) {
+      query += ' AND ' + conditions.join(' AND ');
+    }
+
+    query += ' ORDER BY A.subcat_en_name,A.brand_en_name ASC';
+    print('AVL');
+    print(query);
+    final List<Map<String, dynamic>> avlMap = await db.rawQuery(query);
+    print(avlMap);
+    return List.generate(avlMap.length, (index) {
+      return AvailabilityShowModel(
+          pro_id: avlMap[index]['sku_id'] as int,
+          upload_status: avlMap[index]['upload_status'] ?? 0,
+          client_id: avlMap[index]['client_id'] as int,
+          cat_en_name: avlMap[index]['cat_en_name'] ?? '',
+          cat_ar_name: avlMap[index]['cat_ar_name'] ?? '',
+          pro_en_name: avlMap[index]['pro_en_name'] ?? '',
+          pro_ar_name: avlMap[index]['pro_ar_name'] ?? '',
+          image: avlMap[index]['image'] ?? '',
+          avl_status: avlMap[index]['avl_status'] ?? -1,
+          actual_picklist: avlMap[index]['actual_picklist'] ?? 0,
+          activity_status: avlMap[index]['activity_status'] ?? 0,
+          requried_picklist: int.parse(avlMap[index]['req_pick_pieces'].toString()),
+          brand_en_name: avlMap[index]['brand_en_name'] ?? '',
+          brand_ar_name: avlMap[index]['brand_ar_name'] ?? '',
+          picklist_reason: 1,
+          picklist_ready: avlMap[index]['picklist_ready'] ?? 0,
+          picker_name : avlMap[index]['picker_name'] ?? '',
+          pick_upload_status: avlMap[index]['pick_upload_status'],
+          pick_list_send_time: avlMap[index]['pick_list_send_time'] ?? '',
+          pick_list_receive_time: avlMap[index]['pick_list_receive_time'] ?? ''
+      );
+    });
+  }
+
+
   static Future<List<AvailabilityShowModel>> getActivityStatusAvlDataList(String workingId) async {
     final db = await initDataBase();
 
@@ -4490,7 +4562,7 @@ class DatabaseHelper {
     }
 
     final db = await initDataBase();
-    String query = 'SELECT SystemTable.*,TransTable.act_status,TransTable.required_pieces,TransTable.picked_pieces,TransTable.picked_pieces,TransTable.not_picked_reason From (SELECT sys_product.id as pro_id, '
+    String query = 'SELECT SystemTable.*,TransTable.act_status,TransTable.upload_status,TransTable.required_pieces,TransTable.picked_pieces,TransTable.not_picked_reason From (SELECT sys_product.id as pro_id, '
         'sys_product.en_name as pro_en_name, '
         'sys_product.ar_name as pro_ar_name,sys_category.en_name  ||  "  " ||  sys_subcategory.en_name as cat_en_name, '
         'sys_category.ar_name as cat_ar_name, '
@@ -4501,7 +4573,7 @@ class DatabaseHelper {
         'JOIN sys_subcategory on sys_subcategory.id=sys_product.subcategory_id '
         'JOIN sys_brand on sys_brand.id=sys_product.brand_id '
         'WHERE 1=1 And sys_product.client_id in ($clientIds) $searchOtherExclude $searchWhere) SystemTable '
-        'LEFT JOIN ( SELECT sku_id,act_status,required_pieces,picked_pieces,not_picked_reason FROM trans_picklist WHERE working_id=$workingId) TransTable '
+        'LEFT JOIN ( SELECT sku_id,upload_status,act_status,required_pieces,picked_pieces,not_picked_reason FROM trans_picklist WHERE working_id=$workingId) TransTable '
         'on SystemTable.pro_id = TransTable.sku_id '
         'GROUP BY SystemTable.pro_id $transWhere ORDER BY sub_category,brand ASC ';
 
@@ -4534,7 +4606,7 @@ class DatabaseHelper {
   ///insert Replenishment data from module
   static Future<int> insertTransReplenishment(int skuId, String regular, String promo,String reason ,String workingID) async {
     String insertQuery = '''
-    INSERT INTO trans_picklist (sku_id, required_pieces, picked_pieces,not_picked_reason, date_time, upload_status,act_status, working_id)
+     INSERT OR REPLACE INTO trans_picklist (sku_id, required_pieces, picked_pieces,not_picked_reason, date_time, upload_status,act_status, working_id)
     VALUES ($skuId, ${wrapIfString(regular)}, ${wrapIfString(promo)},${wrapIfString(reason)},CURRENT_TIMESTAMP,0,1,$workingID)
   ''';
 
@@ -4562,8 +4634,8 @@ class DatabaseHelper {
   static Future<int>  updateSavePickListForReplenishment(String workingId,String reqPickList,String skuId) async {
 
     String writeQuery = '''
-    INSERT OR REPLACE INTO trans_picklist (working_id, sku_id, required_pieces)
-    VALUES ($workingId, $skuId, $reqPickList);
+    INSERT OR REPLACE INTO trans_picklist (working_id, sku_id, required_pieces, act_status,upload_status)
+    VALUES ($workingId, $skuId, $reqPickList, 1, 0);
   ''';
     var db = await initDataBase();
     print('_______________UpdATE Replenishment ________________');
@@ -4677,7 +4749,7 @@ class DatabaseHelper {
     print(jsonEncode(result));
     print('____________Replenishment Count_______________');
     return  PriceCheckCountModel(
-      totalPriceCheck:result[0]['total_required'] == 0 || result[0]['total_required'] == null ? 0 : ((result[0]['total_picked'].round()/result[0]['total_required'].round()) * 100).round(),
+      totalPriceCheck:result[0]['total_required'] == 0 || result[0]['total_required'] == null ? 0 : ((result[0]['total_picked']==null ? 0 : result[0]['total_picked'].round()/result[0]['total_required'].round()) * 100).round(),
       totalNotUpload: result[0]['total_not_uploaded'] ?? 0,
       totalUpload: result[0]['total_uploaded'] ?? 0,
       totalPromoSku: result[0]['total_picked'] == null ? 0 : result[0]['total_picked'].round(),
@@ -5739,6 +5811,52 @@ class DatabaseHelper {
     });
   }
 
+  ///Universe Data List
+
+  static Future<List<SysStoreModel>> getUniverseStoreData(String searchItem) async {
+    final db = await initDataBase();
+
+    String searchStart = "";
+    String searchWhere = "";
+    String searchWordStart = "$searchItem%";
+
+    String searchWordMiddle = "%$searchItem%";
+
+    if(searchItem.isNotEmpty) {
+      searchStart = ' WHERE en_name LIKE ${wrapIfString(searchWordStart)} ';
+
+      searchWhere = ' WHERE en_name LIKE ${wrapIfString(searchWordMiddle)} AND en_name NOT LIKE ${wrapIfString(searchWordStart)}';
+
+    }
+
+    String query = ' SELECT * FROM sys_stores $searchStart UNION SELECT * FROM sys_stores $searchWhere ORDER BY en_name';
+
+    final List<Map<String, dynamic>> universeMap = await db.rawQuery(query);
+
+    print("-----------------------------------------------");
+    print(query);
+    print('________ Universe Data Getting ________________');
+
+    return List.generate(universeMap.length, (index) {
+      return SysStoreModel(
+        id: universeMap[index][TableName.sysId],
+        en_name: universeMap[index][TableName.enName],
+        ar_name: universeMap[index][TableName.arName],
+        gcode: universeMap[index][TableName.sysStoreGcode],
+        region_id: universeMap[index][TableName.sysStoreRegionId],
+        region_name: universeMap[index][TableName.sysStoreRegionName],
+        city_id: universeMap[index][TableName.sysStoreCityId],
+        city_name: universeMap[index][TableName.sysStoreCityName],
+        chain_id: universeMap[index][TableName.chain_id],
+        chain_name: universeMap[index][TableName.sysStoreChainName],
+        channel_id: universeMap[index][TableName.sysStoreChannelId],
+        channel_id6: universeMap[index][TableName.sysStoreChannelId6],
+        channel_id7: universeMap[index][TableName.sysStoreChannelId7],
+        type_id: universeMap[index][TableName.type_id],
+      );
+    });
+  }
+
   ///Delete Data from tabkle with workingId
   static Future<void> deleteTransTableByWorkingId(String tblName, String workingId) async {
     var db = await initDataBase();
@@ -6385,7 +6503,7 @@ class DatabaseHelper {
             TableName.enName: data.en_name,
             TableName.arName: data.ar_name,
             TableName.sysStoreGcode: data.gcode,
-            TableName.sysStoreRegionId: data.region_name,
+            TableName.sysStoreRegionId: data.region_id,
             TableName.sysStoreRegionName: data.region_name,
             TableName.sysStoreCityId: data.city_id,
             TableName.sysStoreCityName: data.city_name,

@@ -285,6 +285,24 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                           color:MyColors.darkGreyColor),
                     ),
                   ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                      PopupMenuButton<int>(
+                        itemBuilder: (context) => [
+                           // popupmenu item 2
+                          const PopupMenuItem(
+                            value: 1,
+                            // row has two child icon and text
+                            child: Text("Visit Closing issue"),
+                          ),
+                        ],
+                        elevation: 2,
+                      )
+
+                  ],
                 )
               ],
 

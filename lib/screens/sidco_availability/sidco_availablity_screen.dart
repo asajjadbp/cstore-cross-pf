@@ -313,7 +313,7 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
     setState(() {
       isLoading = true;
     });
-    await DatabaseHelper.getAvlDataList(workingId,selectedClientId.toString(),selectedBrandId.toString(),selectedCategoryId.toString(),selectedSubCategoryId.toString()).then((value) {
+    await DatabaseHelper.getSidcoAvlDataList(workingId,selectedClientId.toString(),selectedBrandId.toString(),selectedCategoryId.toString(),selectedSubCategoryId.toString()).then((value) {
       availableData = value;
 
       avlCount = availableData.where((element) => element.avl_status == 1).toList().length;
@@ -360,37 +360,38 @@ class _SidcoAvailabilityState extends State<SidcoAvailability> {
     try {
       if (requiredPickList != "0") {
         await DatabaseHelper.updateSavePickListForReplenishment(workingId,requiredPickList,skuId).then((value) {
-          print("Updated Successfully");
-        });
-        await DatabaseHelper.updateSidcoSavePickList(workingId, requiredPickList, skuId).then((value) {
           ToastMessage.succesMessage(context, "Data Saved Successfully".tr);
           Navigator.of(context).pop();
-
-          if (isNotAvl) {
-            if (isFilter) {
-              filteredList[index].avl_status = 0;
-              filteredList[index].activity_status = 1;
-              int ind = availableData.indexWhere(
-                      (element) =>
-                  element.pro_id == filteredList[index].pro_id);
-              availableData[ind].avl_status = 0;
-              availableData[ind].activity_status = 1;
-              updateAvailableItem(false, filteredList[index].pro_id,
-                  filteredList[index].avl_status);
-              isEdit = true;
-            } else {
-              availableData[index].avl_status = 0;
-              availableData[index].activity_status = 1;
-              updateAvailableItem(false, availableData[index].pro_id,
-                  availableData[index].avl_status);
-              isEdit = true;
-            }
-          }
-
-          setState(() {
-
-          });
         });
+        // await DatabaseHelper.updateSidcoSavePickList(workingId, requiredPickList, skuId).then((value) {
+        //   ToastMessage.succesMessage(context, "Data Saved Successfully".tr);
+        //   Navigator.of(context).pop();
+        //
+        //   // if (isNotAvl) {
+        //   //   if (isFilter) {
+        //   //     filteredList[index].avl_status = 0;
+        //   //     filteredList[index].activity_status = 1;
+        //   //     int ind = availableData.indexWhere(
+        //   //             (element) =>
+        //   //         element.pro_id == filteredList[index].pro_id);
+        //   //     availableData[ind].avl_status = 0;
+        //   //     availableData[ind].activity_status = 1;
+        //   //     // updateAvailableItem(false, filteredList[index].pro_id,
+        //   //     //     filteredList[index].avl_status);
+        //   //     isEdit = true;
+        //   //   } else {
+        //   //     availableData[index].avl_status = 0;
+        //   //     availableData[index].activity_status = 1;
+        //   //     // updateAvailableItem(false, availableData[index].pro_id,
+        //   //     //     availableData[index].avl_status);
+        //   //     isEdit = true;
+        //   //   }
+        //   // }
+        //
+        //   setState(() {
+        //
+        //   });
+        // });
       } else {
         ToastMessage.errorMessage(context, "Please enter a valid number".tr);
       }

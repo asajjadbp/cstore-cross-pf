@@ -5,6 +5,8 @@ import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../Model/database_model/sys_store_model.dart';
+
 class JourneyPlan extends StatelessWidget {
   final JourneyPlanDetail jp;
   String imageBaseUrl;
@@ -195,6 +197,73 @@ class JourneyPlan extends StatelessWidget {
                 ),
               ),
             ),
+    );
+
+  }
+}
+
+
+class UniverseStore extends StatelessWidget {
+  Function onStartClick;
+  bool isCheckLoading;
+  Function onLocationTap;
+  SysStoreModel storeModel;
+
+  UniverseStore({
+    super.key,
+    required this.storeModel,
+    required this.isCheckLoading,
+    required this.onStartClick,
+    required this.onLocationTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0)),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+                  child: Text(
+                    // "Carrfour - 527 store Barka",
+                    storeModel.en_name,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: (){
+                  onLocationTap();
+                },
+                child: const Align(
+                  alignment: Alignment.topRight,
+                  child: Icon(
+                    Icons.pin_drop,
+                    color: MyColors.appMainColor,
+                  ),
+                ),
+              )
+            ],
+          ),
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: MyColors.appMainColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5.0),)),
+              onPressed:isCheckLoading ? null  : () {
+                onStartClick();
+              },
+        child:isCheckLoading ? const CircularProgressIndicator() : Text("Assign Special Visit".tr,style:const TextStyle(color: MyColors.whiteColor,fontSize: 11),))
+        ],
+      ),
     );
 
   }

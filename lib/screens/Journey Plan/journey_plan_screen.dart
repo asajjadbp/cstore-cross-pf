@@ -13,7 +13,9 @@ import 'package:cstore/screens/utils/toast/toast.dart';
 import 'package:cstore/screens/widget/drop_downs.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Database/table_name.dart';
@@ -23,9 +25,11 @@ import '../grid_dashboard/grid_dashboard.dart';
 import '../important_service/genral_checks_status.dart';
 import '../utils/app_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:path/path.dart' as path;
 
 import '../utils/services/general_checks_controller_call_function.dart';
 import '../utils/services/getting_gps.dart';
+import '../utils/services/take_image_and_save_to_folder.dart';
 import '../widget/app_bar_widgets.dart';
 
 class JourneyPlanScreen extends StatefulWidget {
@@ -406,7 +410,8 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
   }
 
   Future<void> getImage(JourneyPlanDetail journeyPlanDetail) async {
-    await ImageTakingService.imageSelect().then((value) {
+
+    await ImageTakingService.imageSelect().then((value) async {
       if (value == null) {
         setState(() {
           isCheckLoading = false;
@@ -414,13 +419,43 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
         showAnimatedToastMessage("Error!".tr, "No Image Picked".tr, false);
         return;
       }
-      print("working id is ");
-      print(journeyPlanDetail.workingId);
+
+
+      XFile compressedImageFile;
+      XFile compressedWaterMarkImageFile;
+
+      final filename = '${userName}_${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+      final dir = await getTemporaryDirectory();
+      final targetPath = path.join(dir.path, filename);
+
+      int sizeInBytes = value.readAsBytesSync().lengthInBytes;
+      final kb = sizeInBytes / 1024;
+      final mb = kb / 1024;
+
+      if(mb >= 6) {
+        compressedImageFile = await testCompressAndGetFile(value, targetPath,60);
+      } else if(mb < 6 && mb > 4) {
+        compressedImageFile = await testCompressAndGetFile(value, targetPath,75);
+      } else if(mb < 4 && mb > 2) {
+        compressedImageFile = await testCompressAndGetFile(value, targetPath,90);
+      } else {
+        compressedImageFile = await testCompressAndGetFile(value, targetPath,100);
+      }
+
+      compressedWaterMarkImageFile = await addWatermark(compressedImageFile,DateTime.now().toString());
+      print(mb);
+      print(kb);
+      print(compressedWaterMarkImageFile.path);
+      print(compressedWaterMarkImageFile.name);
+      File waterMarkImageFile = File(compressedWaterMarkImageFile.path);
+
       // return;
       // _pickedImage = value;
       Navigator.of(context).pushNamed(ViewJPPhoto.routename, arguments: {
-        "image": value,
-        "visitItem": journeyPlanDetail
+        "image": waterMarkImageFile,
+        "visitItem": journeyPlanDetail,
+        "image_name":filename,
       }).then((value) {
         print("JP SCREEN LOADING");
         callJp();

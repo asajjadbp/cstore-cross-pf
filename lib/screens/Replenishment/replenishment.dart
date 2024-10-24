@@ -447,6 +447,7 @@ class _ReplenishmentScreenState extends State<ReplenishmentScreen> {
                 itemCount: filterTransData.length,
                 itemBuilder: (ctx, i) {
                   return pricecheckcard(
+                    uploadStatus: filterTransData[i].upload_status,
                     reasonDropdownList: reasonList,
                     onReasonItemSelected: (value){
                       setState(() {
@@ -497,9 +498,10 @@ class _ReplenishmentScreenState extends State<ReplenishmentScreen> {
                   promoController[i].text = transData[i].promo_price;
                   regularController[i].text = transData[i].regular_price;
 
-                  print(transData[i].regular_price);
+                  print(transData[i].upload_status);
 
                   return pricecheckcard(
+                    uploadStatus: transData[i].upload_status,
                     reasonDropdownList: reasonList,
                     onReasonItemSelected: (value){
                       setState(() {

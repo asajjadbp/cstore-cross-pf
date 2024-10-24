@@ -143,6 +143,7 @@ class _AddOSDCState extends State<AddOSDC> {
     if (selectedBrandId == -1 ||
         selectedTypeId == -1 ||
         selectedReasonId == -1 ||
+        valueControllerQty.text.isEmpty ||
         imagesList.isEmpty) {
       showAnimatedToastMessage("Error!".tr,"Please fill the form and take image".tr, false);
       return;

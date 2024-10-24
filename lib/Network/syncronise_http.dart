@@ -28,9 +28,9 @@ class SyncroniseHTTP {
     SyncroniseResponseModel syncResponseData =
         SyncroniseResponseModel.fromJson(response);
 
-    print("_____________JSON DATA_______________");
-    log(jsonEncode(response['data'][0]));
-    print("_________________________________");
+    // print("_____________JSON DATA_______________");
+    // log(jsonEncode(syncResponseData.data[0].sysStores));
+    // print("_________________________________");
 
 
     return syncResponseData;

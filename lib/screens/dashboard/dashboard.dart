@@ -17,6 +17,7 @@ import '../../Model/database_model/sys_osdc_type_model.dart';
 import '../../Model/response_model.dart/user_dashboard_model.dart';
 import '../../Network/jp_http.dart';
 import '../Language/localization_controller.dart';
+import '../universe/universe_screen.dart';
 import '../utils/appcolor.dart';
 import '../utils/services/getting_gps.dart';
 import '../utils/services/take_image_and_save_to_folder.dart';
@@ -279,28 +280,29 @@ class _DashBoardState extends State<DashBoard> {
       );
     }
 
-    Widget cardActivity(String label, String imageName) {
+    Widget cardActivity(String label, String imageName,Function onTap) {
       return Expanded(
         child: InkWell(
           onTap: () {
+            onTap();
             // setState(() {
             //   isServiceLoading = true;
             // });
             // LocationService.getLocation().then((value) => {
             //   if (value["locationIsPicked"]) {
-            Navigator.of(context).pushNamed(JourneyPlanScreen.routename).then((value) {
-            getApiUserDashboard();
-
-            // setState(() {
-            //   isServiceLoading = false;
+            // Navigator.of(context).pushNamed(JourneyPlanScreen.routename).then((value) {
+            // getApiUserDashboard();
+            //
+            // // setState(() {
+            // //   isServiceLoading = false;
+            // // });
+            // //   }), } else {
+            // //     setState(() {
+            // //   isServiceLoading = false;
+            // //   }),
+            // //     showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false)
+            // //   }
             // });
-            //   }), } else {
-            //     setState(() {
-            //   isServiceLoading = false;
-            //   }),
-            //     showAnimatedToastMessage("Error!".tr, "Please Enable Your Location".tr, false)
-            //   }
-            });
           },
           child:  Card(
             color:  MyColors.appMainColor,
@@ -490,8 +492,16 @@ class _DashBoardState extends State<DashBoard> {
                               ),
                               Row(
                                 children: [
-                                  cardActivity("Visit Pool".tr, "assets/icons/jp_icon.svg"),
-                                  cardActivity("Universe".tr, "assets/icons/universe_icon.svg")
+                                  cardActivity("Visit Pool".tr, "assets/icons/jp_icon.svg",() {
+                                    Navigator.of(context).pushNamed(JourneyPlanScreen.routename).then((value) {
+                                      getApiUserDashboard();
+                                    });
+                                  }),
+                                  cardActivity("Universe".tr, "assets/icons/universe_icon.svg",() {
+                                    Navigator.of(context).pushNamed(UniverseList.routename).then((value) {
+                                      getApiUserDashboard();
+                                    });
+                                  })
                                 ],
                               ),
                               Visibility(

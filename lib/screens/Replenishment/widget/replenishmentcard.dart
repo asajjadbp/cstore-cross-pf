@@ -18,6 +18,7 @@ class pricecheckcard extends StatelessWidget {
     required this.reasonDropdownList,
     required this.onReasonItemSelected,
     required this.reasonValue,
+    required this.uploadStatus,
     required this.onDeleteTap});
 
   final Function onDeleteTap;
@@ -26,6 +27,7 @@ class pricecheckcard extends StatelessWidget {
   final String regular;
   final int actStatus;
   final String promo;
+  final int uploadStatus;
   final Function(String regular,String promo) pricingValues;
   TextEditingController valueControllerPromo = TextEditingController();
   TextEditingController valueControllerRegular = TextEditingController();
@@ -99,13 +101,15 @@ class pricecheckcard extends StatelessWidget {
                                 color: MyColors.appMainColor),
                           ),
                         ),
-
                         if(actStatus!=0)
-                          InkWell(
-                              onTap: () {
-                                onDeleteTap();
-                              },
-                              child:const Icon(Icons.delete,color: MyColors.backbtnColor,))
+                          Visibility(
+                            visible: uploadStatus == 0,
+                            child: InkWell(
+                                onTap: () {
+                                  onDeleteTap();
+                                },
+                                child:const Icon(Icons.delete,color: MyColors.backbtnColor,)),
+                          )
                       ],
                     ),
                   ),

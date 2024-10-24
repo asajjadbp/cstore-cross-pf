@@ -53,6 +53,9 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
   void submitStartVist(String workingId, String storeImage, String lat,
       String long, String clientId) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    setState(() {
+      isLoading = true;
+    });
     await JourneyPlanHTTP()
         .startVisit(userName, workingId, storeImage, lat, long, clientId,
             commentText.text, token, baseUrl)
@@ -113,12 +116,9 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
   }
 
   void uploadImageToCloud(
-      File imageFile, String workingId, String clientId,dynamic value) async {
+      File imageFile, String workingId, String clientId,dynamic value,String imageName) async {
 
     try {
-      XFile compressedImageFile;
-      XFile compressedWaterMarkImageFile;
-
           final credentials = ServiceAccountCredentials.fromJson(
             await rootBundle.loadString(
                 'assets/google_cloud_creds/appimages-keycstoreapp-7c0f4-a6d4c3e5b590.json'),
@@ -131,42 +131,16 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
           final storage = StorageApi(httpClient);
 
           // Generate a unique filename and path
-          final filename =
-              '${userName}_${DateTime.now().millisecondsSinceEpoch}.jpg';
+          final filename = imageName;
           // const bucketName =
           //     "binzagr-bucket"; // Replace with your bucket name
           final filePath = 'visits/$filename';
-
-          //Image Compress Function call
-          final dir = await getTemporaryDirectory();
-          final targetPath = path.join(dir.path, filename);
 
           print("Bucket Name asdwa");
           print(bucketName);
           print(filePath);
 
-          int sizeInBytes = imageFile.readAsBytesSync().lengthInBytes;
-          final kb = sizeInBytes / 1024;
-          final mb = kb / 1024;
-
-          if(mb >= 6) {
-            compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,60);
-          } else if(mb < 6 && mb > 4) {
-            compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,75);
-          } else if(mb < 4 && mb > 2) {
-            compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,90);
-          } else {
-            compressedImageFile = await testCompressAndGetFile(imageFile, targetPath,100);
-          }
-
-          compressedWaterMarkImageFile = await addWatermark(compressedImageFile,DateTime.now().toString());
-         print(mb);
-          print(kb);
-          print(compressedWaterMarkImageFile.path);
-          print(compressedWaterMarkImageFile.name);
-          File waterMarkImageFile = File(compressedWaterMarkImageFile.path);
-
-          final fileContent = await waterMarkImageFile.readAsBytes();
+          final fileContent = await imageFile.readAsBytes();
           final bucketObject = Object(name: filePath);
 
           // Upload the image
@@ -182,13 +156,10 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
           // final downloadUrl =
           //     'https://storage.googleapis.com/$bucketName/$filePath';
           // print(downloadUrl);
-          submitStartVist(
-              workingId, filename, value['lat'], value['long'], clientId);
+
 
     } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
+
       // Handle any errors that occur during the upload
       print("Upload GCS Error $e");
       showAnimatedToastMessage("Error!".tr, "Uploading images error please try again!".tr, false);
@@ -344,7 +315,9 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
                               uploadImageToCloud(
                                   routeArg["image"],
                                   journeyPlanDetail.workingId.toString(),
-                                  journeyPlanDetail.clientIds.toString(), value)
+                                  journeyPlanDetail.clientIds.toString(), value,routeArg["image_name"]),
+
+                          submitStartVist(journeyPlanDetail.workingId.toString(), routeArg["image_name"], value['lat'], value['long'],  journeyPlanDetail.clientIds.toString()),
                             }
                       } else {
                         setState(() {

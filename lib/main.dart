@@ -31,6 +31,7 @@ import 'package:cstore/screens/share_of_shelf/view_share_of_shelf.dart';
 import 'package:cstore/screens/sidco_availability/sidco_availablity_screen.dart';
 import 'package:cstore/screens/splash_screen.dart';
 import 'package:cstore/screens/stock/stock_list_screen.dart';
+import 'package:cstore/screens/universe/universe_screen.dart';
 import 'package:cstore/screens/utils/app_constants.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:cstore/screens/utils/toast/toast.dart';
@@ -236,6 +237,7 @@ class _MyAppState extends State<MyApp> {
         AddMarketIssue.routeName:(context)=>const AddMarketIssue(),
         ViewMarketIssueScreen.routename:(context)=>const ViewMarketIssueScreen(),
         ReplenishmentScreen.routeName: (context)=>const ReplenishmentScreen(),
+        UniverseList.routename: (context)=>const UniverseList(),
       },
     );
   }

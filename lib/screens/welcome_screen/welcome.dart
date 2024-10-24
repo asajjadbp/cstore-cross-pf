@@ -160,6 +160,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
        DatabaseHelper.delete_table(TableName.tblSysJourneyPlan);
        DatabaseHelper.delete_table(TableName.tblSysDashboard);
        DatabaseHelper.delete_table(TableName.tblSysPromoPlaneReason);
+       DatabaseHelper.delete_table(TableName.tblSysStores);
 
 
        ///Table Insertion
@@ -188,6 +189,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
         await DatabaseHelper.insertSysKnowledgeShareArray(syncroniseData[0].knowledgeShareModel);
         await DatabaseHelper.insertMarketIssueArray(syncroniseData[0].sysMarketIssue);
         await DatabaseHelper.insertPromoPlaneReasonArray(syncroniseData[0].sysPromoPlanReason);
+        await DatabaseHelper.insertSysStoreArray(syncroniseData[0].sysStores);
 
         setState(() {
           isLoading = isJourneyPlan && isDashboardPlan && isAgencyDash && isCategory && isSubCategory
