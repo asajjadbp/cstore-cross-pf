@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cstore/Model/request_model.dart/save_db_file_request.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,6 +11,7 @@ import 'package:googleapis_auth/auth_io.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../../Database/db_helper.dart';
 import '../../Database/table_name.dart';
@@ -291,12 +293,17 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                       PopupMenuButton<int>(
+                        onSelected: (value) {
+                          print(value);
+                          if(value == 1) {
+                            uploadDbFile();
+                          }
+                        },
                         itemBuilder: (context) => [
-                           // popupmenu item 2
                           const PopupMenuItem(
                             value: 1,
                             // row has two child icon and text
-                            child: Text("Visit Closing issue"),
+                            child: Text("support request"),
                           ),
                         ],
                         elevation: 2,
@@ -3094,6 +3101,92 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
     });
 
     return true;
+  }
+
+
+
+  uploadDbFile() async {
+
+    String dbFileName = "${userName}_${DateTime.now().millisecondsSinceEpoch}.db";
+
+    SaveDbFileRequest saveDbFileRequest = SaveDbFileRequest(
+        username: userName,
+        workingId: workingId,
+        storeId: storeId,
+        workingDate: workingDate,
+        fileName: dbFileName);
+
+    print(jsonEncode(saveDbFileRequest));
+
+    setState(() {
+      isDataUploading = true;
+    });
+
+      try {
+        final credentials = ServiceAccountCredentials.fromJson(
+          await rootBundle.loadString(
+              'assets/google_cloud_creds/appimages-keycstoreapp-7c0f4-a6d4c3e5b590.json'),
+        );
+
+        const databaseName = 'cstore_pro.db';
+        var databasesPath = await getDatabasesPath();
+
+        await DatabaseHelper.closeDb('$databasesPath/$databaseName');
+
+        final httpClient = await clientViaServiceAccount(
+            credentials, [StorageApi.devstorageReadWriteScope]);
+
+        // Create a Storage client with the credentials
+        final storage = StorageApi(httpClient);
+
+        // Generate a unique filename and path
+        final filename = dbFileName;
+        final filePath = 'post_dbs/$filename';
+
+        final fileContent = await File('$databasesPath/$databaseName').readAsBytes();
+        final bucketObject = Object(name: filePath);
+
+        // Upload the image
+        final resp = await storage.objects.insert(
+          bucketObject,
+          "support-desk",
+          predefinedAcl: 'publicRead',
+          uploadMedia: Media(
+            Stream<List<int>>.fromIterable([fileContent]),
+            fileContent.length,
+          ),
+        );
+        final downloadUrl =
+            'https://storage.googleapis.com/$bucketName/$filePath';
+        print(downloadUrl);
+
+        await saveDbFile(context,dbFileName);
+
+        SqlHttpManager().saveDbFile(token, baseUrl, saveDbFileRequest).then((value) async => {
+
+          showAnimatedToastMessage("Success".tr, "Your Request has been recieved Successfully".tr, true),
+          setState(() {
+            isDataUploading = false;
+          }),
+
+        }).catchError((e)=>{
+          print(e.toString()),
+          showAnimatedToastMessage("Error!".tr,e.toString(),false),
+          setState(() {
+            isDataUploading = false;
+          }),
+        });
+
+
+      } catch (e) {
+
+        // Handle any errors that occur during the upload
+        print("Upload GCS Error $e");
+        showAnimatedToastMessage("Error!".tr, "Uploading images error please try again!".tr, false);
+        setState(() {
+          isDataUploading = false;
+        });
+      }
   }
 
   finishVisit(StateSetter menuState) async {

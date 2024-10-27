@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:cstore/screens/utils/appcolor.dart';
+import 'package:cstore/screens/utils/toast/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
@@ -6,8 +9,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../Database/db_helper.dart';
+import '../../Model/database_model/client_model.dart';
 import '../../Model/database_model/sys_store_model.dart';
+import '../../Model/request_model.dart/assign_special_vsit.dart';
+import '../../Network/sql_data_http_manager.dart';
 import '../Journey Plan/journey_plan.dart';
+import '../Journey Plan/journey_plan_screen.dart';
 import '../utils/app_constants.dart';
 import '../widget/app_bar_widgets.dart';
 import '../widget/loading.dart';
@@ -24,12 +31,15 @@ class UniverseList extends StatefulWidget {
 class _UniverseListState extends State<UniverseList> {
 
   var userName = "";
-  var token = "";
-  var baseUrl = "";
+  String token = "";
+  String baseUrl = "";
   String imageBaseUrl = "";
   String bucketName = "";
   bool isLoading = false;
+  bool isAssigning = false;
   List<SysStoreModel> universeStoresList = <SysStoreModel>[];
+  List<ClientModel> clientList = <ClientModel>[];
+  List<int> selectedClientList = <int>[];
 
   final TextEditingController searchController = TextEditingController();
   String searchText = "";
@@ -78,6 +88,8 @@ class _UniverseListState extends State<UniverseList> {
     baseUrl = prefs.getString(AppConstants.baseUrl)!;
 
     getUniverseDataFromSqlDb();
+
+    getClientsListFromDb();
   }
 
   void _onRefresh() async {
@@ -99,6 +111,19 @@ class _UniverseListState extends State<UniverseList> {
       });
     });
 
+  }
+
+  getClientsListFromDb() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    await DatabaseHelper.getAllClients().then((value) {
+      clientList = value;
+      setState(() {
+        isLoading = false;
+      });
+    });
   }
 
   @override
@@ -134,7 +159,100 @@ class _UniverseListState extends State<UniverseList> {
                       // print(
                       //     "https://storage.googleapis.com/$bucketName/visits/${jpData[i]
                       //         .startVisitPhoto}");
-                      return UniverseStore(storeModel:universeStoresList[i],isCheckLoading: false, onStartClick: (){},  onLocationTap: (){
+                      return UniverseStore(storeModel:universeStoresList[i],isCheckLoading: false, onStartClick: (){
+
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return StatefulBuilder(
+                                builder: (BuildContext context1,
+                                StateSetter menuState) {
+                              return AlertDialog(
+                                title: Text('Select Clients'.tr),
+                                content: SizedBox(
+                                  height: MediaQuery.of(context).size.height/3.8,
+                                  child: Column(
+                                    children: [
+                                      ListView.builder(
+                                          itemCount: clientList.length,
+                                          shrinkWrap: true,
+                                          itemBuilder: (context,index1) {
+                                            return InkWell(
+                                              onTap: (){
+                                                if(selectedClientList.contains(clientList[index1].client_id)) {
+
+                                                  selectedClientList.remove(clientList[index1].client_id);
+
+                                                } else {
+                                                  selectedClientList.add(clientList[index1].client_id);
+                                                }
+
+                                                print(selectedClientList);
+                                                print(selectedClientList.contains(clientList[index1].client_id));
+                                                setState(() {
+
+                                                });
+                                                menuState(() {
+
+                                                });
+
+                                              },
+                                              child: Card(
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                        margin:const EdgeInsets.all(5),
+                                                        child: Icon(selectedClientList.contains(clientList[index1].client_id) ? Icons.check_box : Icons.check_box_outline_blank,color: MyColors.appMainColor,)),
+                                                    Expanded(child: Text(clientList[index1].client_name))
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          })
+                                    ],
+                                  ),
+                                ),
+                                actions: <Widget>[
+                                  isAssigning ? const Center(
+                                    child: CircularProgressIndicator(),
+                                  ) : Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(100),
+                                            color: MyColors.buttonBackgroundColor
+                                        ),
+                                        child: TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop(); // Close the dialog
+                                          },
+                                          child:  const Icon(Icons.close,color: MyColors.backbtnColor,size: 30,),
+                                        ),
+                                      ),
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(100),
+                                          color: MyColors.buttonBackgroundColor
+                                        ),
+                                        child: TextButton(
+                                          onPressed: () {
+                                            // Perform logout operation
+                                            assignSpecialVisit(universeStoresList[i].id,menuState);
+                                          },
+                                          child: const Icon(Icons.check,color: MyColors.greenColor,size: 30,),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              );
+                            });
+                          },
+                        );
+
+                      },  onLocationTap: (){
                         launchStoreUrl(universeStoresList[i].gcode);
                       });
                     }),
@@ -145,6 +263,51 @@ class _UniverseListState extends State<UniverseList> {
       ),
     );
   }
+
+  assignSpecialVisit(int storeId,StateSetter menuState) {
+
+    if(selectedClientList.isEmpty) {
+      showAnimatedToastMessage("Error!".tr, "Please Select Any Client first".tr, false);
+      return;
+    }
+
+   String selectedClients = selectedClientList.join(',');
+
+    menuState(() {
+      isAssigning = true;
+    });
+
+    AssignSpecialVisitRequest assignSpecialVisitRequest = AssignSpecialVisitRequest(
+      username: userName,
+      clientIds: selectedClients,
+      storeId: storeId,
+    );
+
+
+    print(token);
+    print(jsonEncode(assignSpecialVisitRequest));
+
+    SqlHttpManager().assignUniverseStores(token,baseUrl,assignSpecialVisitRequest).then((value) => {
+
+      Navigator.of(context).pop(),
+
+      Navigator.of(context).popAndPushNamed(JourneyPlanScreen.routename),
+
+    showAnimatedToastMessage("Success".tr, "Visit Assigned Successfully".tr, true),
+
+      menuState(() {
+        isAssigning = false;
+      }),
+
+    }).catchError((e) =>{
+      print(e.toString()),
+      showAnimatedToastMessage("Error!".tr,e.toString(),false),
+      menuState((){
+        isAssigning = false;
+      }),
+    });
+  }
+
 
   Future<void> launchStoreUrl(String url) async {
     if (!await launchUrl(Uri.parse(url))) {

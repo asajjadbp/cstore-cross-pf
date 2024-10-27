@@ -2050,6 +2050,23 @@ class DatabaseHelper {
       );
     // }
   }
+  /// GET Clients List
+  static Future<List<ClientModel>> getAllClients() async {
+    var db = await initDataBase();
+    final List<Map<String, dynamic>> transSysAppSetting =
+    await db.rawQuery('SELECT * FROM sys_client');
+
+    print(jsonEncode(transSysAppSetting));
+    print('--------------SYS CLIENTS -----------');
+
+    return List.generate(transSysAppSetting.length, (index) {
+      return ClientModel(
+        client_id: transSysAppSetting[index][TableName.clientIds] as int,
+        client_name: transSysAppSetting[index][TableName.sys_client_name] as String,
+      );
+    });
+  }
+
 
   ///Get System Setting Details
   static Future<SysAppSettingModel> getTransSysAppSetting() async {

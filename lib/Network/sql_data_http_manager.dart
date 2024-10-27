@@ -4,9 +4,11 @@ import 'dart:convert';
 
 import 'package:cstore/Model/request_model.dart/jp_request_model.dart';
 import 'package:cstore/Model/request_model.dart/other_images_end_Api_request.dart';
+import 'package:cstore/Model/request_model.dart/save_db_file_request.dart';
 import 'package:cstore/Network/response_handler.dart';
 
 import '../Model/database_model/picklist_model.dart';
+import '../Model/request_model.dart/assign_special_vsit.dart';
 import '../Model/request_model.dart/availability_api_request_model.dart';
 import '../Model/request_model.dart/brand_share_request.dart';
 import '../Model/request_model.dart/get_tmr_pick_list_request.dart';
@@ -234,6 +236,23 @@ class SqlHttpManager {
     print(url);
     print(jsonEncode(saveOsdData));
     var response = await _handler.postWithJson(Uri.parse(url), saveOsdData.toJson(), token);
+    return response;
+  }
+
+  Future<dynamic> saveDbFile(String token, String baseUrl,SaveDbFileRequest saveDbFileRequest) async {
+    final url = baseUrl + Api.saveUserDbData;
+    print(url);
+    print(jsonEncode(saveDbFileRequest));
+    var response = await _handler.postWithJson(Uri.parse(url), saveDbFileRequest.toJson(), token);
+    return response;
+  }
+
+
+  Future<dynamic> assignUniverseStores(String token, String baseUrl,AssignSpecialVisitRequest assignSpecialVisitRequest) async {
+    final url = baseUrl + Api.assignSpecialVisit;
+    print(url);
+    print(jsonEncode(assignSpecialVisitRequest));
+    var response = await _handler.postWithJson(Uri.parse(url), assignSpecialVisitRequest.toJson(), token);
     return response;
   }
 

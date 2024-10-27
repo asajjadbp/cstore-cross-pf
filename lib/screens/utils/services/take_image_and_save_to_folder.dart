@@ -14,7 +14,7 @@ import '../toast/toast.dart';
 import 'package:image/image.dart' as img;
 
 
-Future<void> saveDbFile(BuildContext context) async {
+Future<void> saveDbFile(BuildContext context,String dbName) async {
   try {
     final PermissionStatus permissionStatus = await _getPermission();
 
@@ -22,9 +22,8 @@ Future<void> saveDbFile(BuildContext context) async {
 
       final String dirPath = (await getExternalStorageDirectory())!.path;
       final String folderPath = '$dirPath/cstore/database';
-      String timestamp = DateTime.now().millisecondsSinceEpoch.toString();
 
-      final String filePath = '$folderPath/cstore_pro_$timestamp.db';
+      final String filePath = '$folderPath/$dbName';
       final Directory folder = Directory(folderPath);
 
       const databaseName = 'cstore_pro.db';

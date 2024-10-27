@@ -15,6 +15,7 @@ class MyColors {
   static const resumeColor = Color(0xFF0C869B);
   static const specialColor = Color(0xFFA613CC);
   static const disableColor = Color(0xFFB6B6B6);
+  static const buttonBackgroundColor = Color(0xFFD2D2D2);
   static const darkGreyColor = Color(0xFF5B5B5B);
   static const greenColor = Color.fromRGBO(76, 175, 80, 1);
   static const visitTypeBg = Color(0xFF25A0FD);
