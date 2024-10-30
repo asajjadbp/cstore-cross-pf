@@ -252,63 +252,63 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
             margin:const  EdgeInsets.symmetric(horizontal: 10,vertical: 5),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                // Expanded(
+                //   child: Text(
+                //     languageController.isEnglish.value ? storeEnName : storeArName,
+                //     overflow: TextOverflow.ellipsis,
+                //     maxLines: 2,
+                //     style: const TextStyle(
+                //         fontSize: 12,
+                //         fontWeight: FontWeight.w600,
+                //         color: Colors.black),
+                //   ),
+                // ),
                 Expanded(
-                  child: Text(
-                    languageController.isEnglish.value ? storeEnName : storeArName,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
-                    style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black),
+                  child: Row(
+                    children: [
+                       Text(
+                        "${"CheckIn".tr} : ",
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                        style:const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color:MyColors.darkGreyColor),
+                      ),
+
+                      Text(
+                        checkInTime,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 15,
+                        style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color:MyColors.darkGreyColor),
+                      ),
+                    ],
                   ),
                 ),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                     Text(
-                      "${"CheckIn".tr} : ",
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                      style:const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color:MyColors.darkGreyColor),
+                    PopupMenuButton<int>(
+                      onSelected: (value) {
+                        print(value);
+                        if(value == 1) {
+                          uploadDbFile();
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        const PopupMenuItem(
+                          value: 1,
+                          // row has two child icon and text
+                          child: Text("support request"),
+                        ),
+                      ],
+                      elevation: 2,
                     ),
-
-                    Text(
-                      checkInTime,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                      style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color:MyColors.darkGreyColor),
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                      PopupMenuButton<int>(
-                        onSelected: (value) {
-                          print(value);
-                          if(value == 1) {
-                            uploadDbFile();
-                          }
-                        },
-                        itemBuilder: (context) => [
-                          const PopupMenuItem(
-                            value: 1,
-                            // row has two child icon and text
-                            child: Text("support request"),
-                          ),
-                        ],
-                        elevation: 2,
-                      )
-
                   ],
                 )
               ],
@@ -3157,7 +3157,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
           ),
         );
         final downloadUrl =
-            'https://storage.googleapis.com/$bucketName/$filePath';
+            'https://storage.googleapis.com/support-desk/$filePath';
         print(downloadUrl);
 
         await saveDbFile(context,dbFileName);

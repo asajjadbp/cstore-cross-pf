@@ -243,7 +243,7 @@ class SqlHttpManager {
     final url = baseUrl + Api.saveUserDbData;
     print(url);
     print(jsonEncode(saveDbFileRequest));
-    var response = await _handler.postWithJson(Uri.parse(url), saveDbFileRequest.toJson(), token);
+    var response = await _handler.post(Uri.parse(url), saveDbFileRequest.toJson(), token);
     return response;
   }
 
@@ -252,7 +252,7 @@ class SqlHttpManager {
     final url = baseUrl + Api.assignSpecialVisit;
     print(url);
     print(jsonEncode(assignSpecialVisitRequest));
-    var response = await _handler.postWithJson(Uri.parse(url), assignSpecialVisitRequest.toJson(), token);
+    var response = await _handler.post(Uri.parse(url), assignSpecialVisitRequest.toJson(), token);
     return response;
   }
 

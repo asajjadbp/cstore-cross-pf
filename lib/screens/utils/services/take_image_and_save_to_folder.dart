@@ -229,7 +229,7 @@ Future<PermissionStatus> _getPermission() async {
 }
 
 Future<PermissionStatus> _getStoragePermission() async {
-  final PermissionStatus permission = await Permission.camera.request();
+  final PermissionStatus permission = await Permission.storage.request();
   return permission;
 }
 

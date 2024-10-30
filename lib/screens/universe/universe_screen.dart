@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cstore/Network/jp_http.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:cstore/screens/utils/toast/toast.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../Database/db_helper.dart';
+import '../../Database/table_name.dart';
 import '../../Model/database_model/client_model.dart';
 import '../../Model/database_model/sys_store_model.dart';
 import '../../Model/request_model.dart/assign_special_vsit.dart';
@@ -280,7 +282,7 @@ class _UniverseListState extends State<UniverseList> {
     AssignSpecialVisitRequest assignSpecialVisitRequest = AssignSpecialVisitRequest(
       username: userName,
       clientIds: selectedClients,
-      storeId: storeId,
+      storeId: storeId.toString(),
     );
 
 
@@ -289,15 +291,11 @@ class _UniverseListState extends State<UniverseList> {
 
     SqlHttpManager().assignUniverseStores(token,baseUrl,assignSpecialVisitRequest).then((value) => {
 
-      Navigator.of(context).pop(),
-
-      Navigator.of(context).popAndPushNamed(JourneyPlanScreen.routename),
-
-    showAnimatedToastMessage("Success".tr, "Visit Assigned Successfully".tr, true),
-
       menuState(() {
-        isAssigning = false;
+        isAssigning = true;
       }),
+
+      callJp(menuState),
 
     }).catchError((e) =>{
       print(e.toString()),
@@ -306,6 +304,41 @@ class _UniverseListState extends State<UniverseList> {
         isAssigning = false;
       }),
     });
+  }
+
+  Future callJp(StateSetter menuState) async {
+    // try {
+    await JourneyPlanHTTP()
+        .getJourneyPlan(userName, token, baseUrl)
+        .then((value) async {
+
+      if (value.status) {
+        DatabaseHelper.delete_table(TableName.tblSysJourneyPlan);
+
+        await DatabaseHelper.insertSysJourneyPlanArray(value.data);
+
+        showAnimatedToastMessage("Success".tr, "Visit Assigned Successfully".tr, true);
+
+        Navigator.of(context).pop();
+
+      Navigator.of(context).popAndPushNamed(JourneyPlanScreen.routename);
+
+        menuState(() {
+          isAssigning = false;
+        });
+
+      }
+    }).catchError((onError) {
+      print(onError.toString());
+      showAnimatedToastMessage("Error!".tr,onError.toString().tr, false);
+
+      menuState(() {
+        isAssigning = false;
+      });
+    });
+    // } catch (error) {
+
+    // }
   }
 
 
