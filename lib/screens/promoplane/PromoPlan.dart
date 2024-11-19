@@ -7,6 +7,7 @@ import 'package:cstore/screens/utils/app_constants.dart';
 import 'package:cstore/screens/utils/services/take_image_and_save_to_folder.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -155,7 +156,7 @@ setState(() {
     // setState(() {});
   }
 
-  setTransPhoto(){
+  setTransPhoto() async {
 
     for(int i = 0; i < promoTransData.length; i++) {
       for(int j = 0; j < imageFilesList.length; j++) {
@@ -168,6 +169,17 @@ setState(() {
        }
       }
       print(promoTransData[i].imageFile);
+
+      if(promoTransData[i].imageFile != null) {
+        bool isImageCorrupt = await isImageCorrupted(XFile(promoTransData[i].imageFile!.path));
+
+        if(isImageCorrupt) {
+          promoTransData[i].imageFile = await convertAssetToFile("assets/images/no_image_found.png");
+        }
+
+      } else {
+        promoTransData[i].imageFile = await convertAssetToFile("assets/images/no_image_found.png");
+      }
     }
 
     setState(() {

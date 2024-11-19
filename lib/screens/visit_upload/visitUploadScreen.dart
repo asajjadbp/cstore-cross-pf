@@ -5,6 +5,7 @@ import 'package:cstore/Model/request_model.dart/save_db_file_request.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:googleapis/storage/v1.dart';
 import 'package:googleapis_auth/auth_io.dart';
@@ -1256,23 +1257,37 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         print("------Planoguide Image Upload -------- ");
         for(int j = 0; j < planoguideGcsImagesList.length; j++) {
 
-          final filename =  planoguideGcsImagesList[j].imageName;
-          final filePath = 'capture_photo/$filename';
-          final fileContent = await planoguideGcsImagesList[j].imageFile!.readAsBytes();
-          final bucketObject = Object(name: filePath);
 
-          final resp = await storage.objects.insert(
-            bucketObject,
-            bucketName,
-            predefinedAcl: 'publicRead',
-            uploadMedia: Media(
-              Stream<List<int>>.fromIterable([fileContent]),
-              fileContent.length,
-            ),
-          );
-          print("Image Uploaded successfully");
+          if(planoguideGcsImagesList[j].imageFile != null) {
 
-          await updatePLanoguideAfterGcs1(planoguideGcsImagesList[j].id);
+            bool isCorruptImage = await isImageCorrupted(XFile(planoguideGcsImagesList[j].imageFile!.path));
+            if(isCorruptImage) {
+              await updatePLanoguideAfterGcs1(planoguideGcsImagesList[j].id);
+            } else {
+
+              final filename =  planoguideGcsImagesList[j].imageName;
+              final filePath = 'capture_photo/$filename';
+              final fileContent = await planoguideGcsImagesList[j].imageFile!.readAsBytes();
+              final bucketObject = Object(name: filePath);
+
+              final resp = await storage.objects.insert(
+                bucketObject,
+                bucketName,
+                predefinedAcl: 'publicRead',
+                uploadMedia: Media(
+                  Stream<List<int>>.fromIterable([fileContent]),
+                  fileContent.length,
+                ),
+              );
+              print("Image Uploaded successfully");
+
+              await updatePLanoguideAfterGcs1(planoguideGcsImagesList[j].id);
+
+            }
+          } else {
+            await updatePLanoguideAfterGcs1(planoguideGcsImagesList[j].id);
+          }
+
         }
         setState(() {
           isPlanoguideFinishLoading = false;
@@ -1305,23 +1320,38 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         print("------RTV Image Upload -------- ");
         for(int j = 0; j < rtvGcsImagesList.length; j++) {
 
-          final filename =  rtvGcsImagesList[j].imageName;
-          final filePath = 'capture_photo/$filename';
-          final fileContent = await rtvGcsImagesList[j].imageFile!.readAsBytes();
-          final bucketObject = Object(name: filePath);
+          if(rtvGcsImagesList[j].imageFile != null) {
 
-          final resp = await storage.objects.insert(
-            bucketObject,
-            bucketName,
-            predefinedAcl: 'publicRead',
-            uploadMedia: Media(
-              Stream<List<int>>.fromIterable([fileContent]),
-              fileContent.length,
-            ),
-          );
-          print("Image Uploaded successfully");
+            bool isCorruptImage = await isImageCorrupted(XFile(rtvGcsImagesList[j].imageFile!.path));
 
-          await updateRtvAfterGcs1(rtvGcsImagesList[j].id);
+            if(isCorruptImage) {
+              await updateRtvAfterGcs1(rtvGcsImagesList[j].id);
+            } else {
+
+              final filename =  rtvGcsImagesList[j].imageName;
+              final filePath = 'capture_photo/$filename';
+              final fileContent = await rtvGcsImagesList[j].imageFile!.readAsBytes();
+              final bucketObject = Object(name: filePath);
+
+              final resp = await storage.objects.insert(
+                bucketObject,
+                bucketName,
+                predefinedAcl: 'publicRead',
+                uploadMedia: Media(
+                  Stream<List<int>>.fromIterable([fileContent]),
+                  fileContent.length,
+                ),
+              );
+              print("Image Uploaded successfully");
+
+              await updateRtvAfterGcs1(rtvGcsImagesList[j].id);
+
+            }
+
+          } else {
+            await updateRtvAfterGcs1(rtvGcsImagesList[j].id);
+          }
+
 
         }
         setState(() {
@@ -1352,24 +1382,40 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         print("------Promo Plan Image Upload -------- ");
         for(int j = 0; j < promoPlanGcsImagesList.length; j++) {
 
-          final filename =  promoPlanGcsImagesList[j].imageName;
-          final filePath = 'capture_photo/$filename';
-          final fileContent = await promoPlanGcsImagesList[j].imageFile!.readAsBytes();
-          final bucketObject = Object(name: filePath);
+          if(promoPlanGcsImagesList[j].imageFile != null) {
 
-          final resp = await storage.objects.insert(
-            bucketObject,
-            bucketName,
-            predefinedAcl: 'publicRead',
-            uploadMedia: Media(
-              Stream<List<int>>.fromIterable([fileContent]),
-              fileContent.length,
-            ),
-          );
-          print(resp.mediaLink);
-          print("Image Uploaded successfully");
+            bool isCorruptImage = await isImageCorrupted(XFile(promoPlanGcsImagesList[j].imageFile!.path));
 
-          await updatePromoPlanAfterGcs1(promoPlanGcsImagesList[j].id);
+            if(isCorruptImage) {
+
+              await updatePromoPlanAfterGcs1(promoPlanGcsImagesList[j].id);
+
+            } else {
+
+              final filename =  promoPlanGcsImagesList[j].imageName;
+              final filePath = 'capture_photo/$filename';
+              final fileContent = await promoPlanGcsImagesList[j].imageFile!.readAsBytes();
+              final bucketObject = Object(name: filePath);
+
+              final resp = await storage.objects.insert(
+                bucketObject,
+                bucketName,
+                predefinedAcl: 'publicRead',
+                uploadMedia: Media(
+                  Stream<List<int>>.fromIterable([fileContent]),
+                  fileContent.length,
+                ),
+              );
+              print(resp.mediaLink);
+              print("Image Uploaded successfully");
+
+              await updatePromoPlanAfterGcs1(promoPlanGcsImagesList[j].id);
+
+            }
+          } else {
+            await updatePromoPlanAfterGcs1(promoPlanGcsImagesList[j].id);
+          }
+
 
         }
         setState(() {
@@ -1400,23 +1446,35 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         print("------Before Fixing Image Upload -------- ");
         for(int j = 0; j < beforeFixingGcsImagesList.length; j++) {
 
-          final filename =  beforeFixingGcsImagesList[j].imageName;
-          final filePath = 'capture_photo/$filename';
-          final fileContent = await beforeFixingGcsImagesList[j].imageFile!.readAsBytes();
-          final bucketObject = Object(name: filePath);
+          if(beforeFixingGcsImagesList[j].imageFile != null) {
 
-          final resp = await storage.objects.insert(
-            bucketObject,
-            bucketName,
-            predefinedAcl: 'publicRead',
-            uploadMedia: Media(
-              Stream<List<int>>.fromIterable([fileContent]),
-              fileContent.length,
-            ),
-          );
-          print("Image Uploaded successfully");
+            bool isCorruptImage = await isImageCorrupted(XFile(beforeFixingGcsImagesList[j].imageFile!.path));
+            if(isCorruptImage) {
+              await updatBeforeFixingAfterGcs1(beforeFixingGcsImagesList[j].id);
+            } else {
 
-          await updatBeforeFixingAfterGcs1(beforeFixingGcsImagesList[j].id);
+              final filename =  beforeFixingGcsImagesList[j].imageName;
+              final filePath = 'capture_photo/$filename';
+              final fileContent = await beforeFixingGcsImagesList[j].imageFile!.readAsBytes();
+              final bucketObject = Object(name: filePath);
+
+              final resp = await storage.objects.insert(
+                bucketObject,
+                bucketName,
+                predefinedAcl: 'publicRead',
+                uploadMedia: Media(
+                  Stream<List<int>>.fromIterable([fileContent]),
+                  fileContent.length,
+                ),
+              );
+              print("Image Uploaded successfully");
+
+              await updatBeforeFixingAfterGcs1(beforeFixingGcsImagesList[j].id);
+
+            }
+          } else {
+            await updatBeforeFixingAfterGcs1(beforeFixingGcsImagesList[j].id);
+          }
 
         }
         setState(() {
@@ -1447,23 +1505,34 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         print("------Other Photo Image Upload -------- ");
         for(int j = 0; j < otherPhotoGcsImagesList.length; j++) {
 
-          final filename =  otherPhotoGcsImagesList[j].imageName;
-          final filePath = 'capture_photo/$filename';
-          final fileContent = await otherPhotoGcsImagesList[j].imageFile!.readAsBytes();
-          final bucketObject = Object(name: filePath);
+          if(otherPhotoGcsImagesList[j].imageFile != null) {
 
-          final resp = await storage.objects.insert(
-            bucketObject,
-            bucketName,
-            predefinedAcl: 'publicRead',
-            uploadMedia: Media(
-              Stream<List<int>>.fromIterable([fileContent]),
-              fileContent.length,
-            ),
-          );
-          print("Image Uploaded successfully");
+            bool isCorruptImage = await isImageCorrupted(XFile(otherPhotoGcsImagesList[j].imageFile!.path));
+            if(isCorruptImage) {
+              await updateOtherAfterGcs1(otherPhotoGcsImagesList[j].id);
+            } else {
+              final filename =  otherPhotoGcsImagesList[j].imageName;
+              final filePath = 'capture_photo/$filename';
+              final fileContent = await otherPhotoGcsImagesList[j].imageFile!.readAsBytes();
+              final bucketObject = Object(name: filePath);
 
-          await updateOtherAfterGcs1(otherPhotoGcsImagesList[j].id);
+              final resp = await storage.objects.insert(
+                bucketObject,
+                bucketName,
+                predefinedAcl: 'publicRead',
+                uploadMedia: Media(
+                  Stream<List<int>>.fromIterable([fileContent]),
+                  fileContent.length,
+                ),
+              );
+              print("Image Uploaded successfully");
+
+              await updateOtherAfterGcs1(otherPhotoGcsImagesList[j].id);
+
+            }
+          } else {
+            await updateOtherAfterGcs1(otherPhotoGcsImagesList[j].id);
+          }
 
         }
         setState(() {
@@ -1495,23 +1564,36 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         print("------Planogram Image Upload -------- ");
         for(int j = 0; j < planogramGcsImagesList.length; j++) {
 
-          final filename =  planogramGcsImagesList[j].imageName;
-          final filePath = 'planogram/$filename';
-          final fileContent = await planogramGcsImagesList[j].imageFile!.readAsBytes();
-          final bucketObject = Object(name: filePath);
+          if(planogramGcsImagesList[j].imageFile != null) {
 
-          final resp = await storage.objects.insert(
-            bucketObject,
-            bucketName,
-            predefinedAcl: 'publicRead',
-            uploadMedia: Media(
-              Stream<List<int>>.fromIterable([fileContent]),
-              fileContent.length,
-            ),
-          );
-          print("Image Uploaded successfully");
+            bool isCorruptImage = await isImageCorrupted(XFile(planogramGcsImagesList[j].imageFile!.path));
 
-          await updatePlanogramAfterGcs1(planogramGcsImagesList[j].id);
+            if(isCorruptImage) {
+              await updatePlanogramAfterGcs1(planogramGcsImagesList[j].id);
+            } else {
+
+              final filename =  planogramGcsImagesList[j].imageName;
+              final filePath = 'planogram/$filename';
+              final fileContent = await planogramGcsImagesList[j].imageFile!.readAsBytes();
+              final bucketObject = Object(name: filePath);
+
+              final resp = await storage.objects.insert(
+                bucketObject,
+                bucketName,
+                predefinedAcl: 'publicRead',
+                uploadMedia: Media(
+                  Stream<List<int>>.fromIterable([fileContent]),
+                  fileContent.length,
+                ),
+              );
+              print("Image Uploaded successfully");
+
+              await updatePlanogramAfterGcs1(planogramGcsImagesList[j].id);
+
+            }
+          } else {
+            await updatePlanogramAfterGcs1(planogramGcsImagesList[j].id);
+          }
 
         }
         setState(() {
@@ -1545,23 +1627,35 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         print("------Market Issue Image Upload -------- ");
         for(int j = 0; j < marketIssueGcsImagesList.length; j++) {
 
-          final filename =  marketIssueGcsImagesList[j].imageName;
-          final filePath = 'capture_photo/$filename';
-          final fileContent = await marketIssueGcsImagesList[j].imageFile!.readAsBytes();
-          final bucketObject = Object(name: filePath);
+          if(marketIssueGcsImagesList[j].imageFile != null) {
 
-          final resp = await storage.objects.insert(
-            bucketObject,
-            bucketName,
-            predefinedAcl: 'publicRead',
-            uploadMedia: Media(
-              Stream<List<int>>.fromIterable([fileContent]),
-              fileContent.length,
-            ),
-          );
-          print("Image Uploaded successfully");
+            bool isCorruptImage = await isImageCorrupted(XFile(marketIssueGcsImagesList[j].imageFile!.path));
+            if(isCorruptImage) {
+              await updateMarketIssueAfterGcs1(marketIssueGcsImagesList[j].id);
+            } else {
+              final filename =  marketIssueGcsImagesList[j].imageName;
+              final filePath = 'capture_photo/$filename';
+              final fileContent = await marketIssueGcsImagesList[j].imageFile!.readAsBytes();
+              final bucketObject = Object(name: filePath);
 
-          await updateMarketIssueAfterGcs1(marketIssueGcsImagesList[j].id);
+              final resp = await storage.objects.insert(
+                bucketObject,
+                bucketName,
+                predefinedAcl: 'publicRead',
+                uploadMedia: Media(
+                  Stream<List<int>>.fromIterable([fileContent]),
+                  fileContent.length,
+                ),
+              );
+              print("Image Uploaded successfully");
+
+              await updateMarketIssueAfterGcs1(marketIssueGcsImagesList[j].id);
+
+            }
+          } else {
+            await updateMarketIssueAfterGcs1(marketIssueGcsImagesList[j].id);
+          }
+
         }
         setState(() {
           isMarketIssueFinishLoading = false;
@@ -1594,23 +1688,35 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         print("------POS Image Upload -------- ");
         for(int j = 0; j < posGcsImagesList.length; j++) {
 
-          final filename =  posGcsImagesList[j].imageName;
-          final filePath = 'capture_photo/$filename';
-          final fileContent = await posGcsImagesList[j].imageFile!.readAsBytes();
-          final bucketObject = Object(name: filePath);
+          if(posGcsImagesList[j].imageFile != null) {
 
-          final resp = await storage.objects.insert(
-            bucketObject,
-            bucketName,
-            predefinedAcl: 'publicRead',
-            uploadMedia: Media(
-              Stream<List<int>>.fromIterable([fileContent]),
-              fileContent.length,
-            ),
-          );
-          print("Image Uploaded successfully");
+            bool isCorruptImage = await isImageCorrupted(XFile(posGcsImagesList[j].imageFile!.path));
+            if(isCorruptImage) {
+              await updatePosAfterGcs1(posGcsImagesList[j].id);
+            } else {
 
-          await updatePosAfterGcs1(posGcsImagesList[j].id);
+              final filename =  posGcsImagesList[j].imageName;
+              final filePath = 'capture_photo/$filename';
+              final fileContent = await posGcsImagesList[j].imageFile!.readAsBytes();
+              final bucketObject = Object(name: filePath);
+
+              final resp = await storage.objects.insert(
+                bucketObject,
+                bucketName,
+                predefinedAcl: 'publicRead',
+                uploadMedia: Media(
+                  Stream<List<int>>.fromIterable([fileContent]),
+                  fileContent.length,
+                ),
+              );
+              print("Image Uploaded successfully");
+
+              await updatePosAfterGcs1(posGcsImagesList[j].id);
+
+            }
+          } else {
+            await updatePosAfterGcs1(posGcsImagesList[j].id);
+          }
         }
         setState(() {
           isPosFinishLoading = false;
@@ -1643,24 +1749,36 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         print("------OSD Image Upload -------- ");
         for(int j = 0; j < osdGcsImagesList.length; j++) {
 
-          final filename =  osdGcsImagesList[j].imageName;
-          final filePath = 'osd_images/$filename';
-          final fileContent = await osdGcsImagesList[j].imageFile!.readAsBytes();
-          final bucketObject = Object(name: filePath);
+          if(osdGcsImagesList[j].imageFile != null) {
 
-          final resp = await storage.objects.insert(
-            bucketObject,
-            bucketName,
-            predefinedAcl: 'publicRead',
-            uploadMedia: Media(
-              Stream<List<int>>.fromIterable([fileContent]),
-              fileContent.length,
-            ),
-          );
-          print(resp.mediaLink);
-          print("Image Uploaded successfully");
+            bool isCorruptImage = await isImageCorrupted(XFile(osdGcsImagesList[j].imageFile!.path));
 
-          await updateOsdAfterGcs1(osdGcsImagesList[j].id);
+            if(isCorruptImage) {
+              await updateOsdAfterGcs1(osdGcsImagesList[j].id);
+            } else {
+              final filename =  osdGcsImagesList[j].imageName;
+              final filePath = 'osd_images/$filename';
+              final fileContent = await osdGcsImagesList[j].imageFile!.readAsBytes();
+              final bucketObject = Object(name: filePath);
+
+              final resp = await storage.objects.insert(
+                bucketObject,
+                bucketName,
+                predefinedAcl: 'publicRead',
+                uploadMedia: Media(
+                  Stream<List<int>>.fromIterable([fileContent]),
+                  fileContent.length,
+                ),
+              );
+              print(resp.mediaLink);
+              print("Image Uploaded successfully");
+
+              await updateOsdAfterGcs1(osdGcsImagesList[j].id);
+
+            }
+          } else {
+            await updateOsdAfterGcs1(osdGcsImagesList[j].id);
+          }
         }
         setState(() {
           isOsdFinishLoading = false;
@@ -1693,38 +1811,55 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         print("------One Plus One Image Upload -------- ");
         for(int j = 0; j < onePlusOneGcsImageList.length; j++) {
 
-          final filename =  onePlusOneGcsImageList[j].imageName;
-          final filePath = 'capture_photo/$filename';
-          final fileContent = await onePlusOneGcsImageList[j].imageFile!.readAsBytes();
-          final bucketObject = Object(name: filePath);
+          if(onePlusOneGcsImageList[j].imageFile != null && onePlusOneGcsImageList[j].docImageFile != null ) {
 
-          final resp = await storage.objects.insert(
-            bucketObject,
-            bucketName,
-            predefinedAcl: 'publicRead',
-            uploadMedia: Media(
-              Stream<List<int>>.fromIterable([fileContent]),
-              fileContent.length,
-            ),
-          );
+            bool isCorruptImage = await isImageCorrupted(XFile(onePlusOneGcsImageList[j].imageFile!.path));
 
-          final docFilename =  onePlusOneGcsImageList[j].docImageName;
-          final docFilePath = 'capture_photo/$docFilename';
-          final docFileContent = await onePlusOneGcsImageList[j].docImageFile!.readAsBytes();
-          final docBucketObject = Object(name: docFilePath);
+            bool isFileCorrupt = await isImageCorrupted(XFile(onePlusOneGcsImageList[j].docImageFile!.path));
 
-          final respDoc = await storage.objects.insert(
-            docBucketObject,
-            bucketName,
-            predefinedAcl: 'publicRead',
-            uploadMedia: Media(
-              Stream<List<int>>.fromIterable([docFileContent]),
-              docFileContent.length,
-            ),
-          );
-          print("Image Uploaded successfully");
+            if(isCorruptImage || isFileCorrupt) {
+              await updateOnePlusAfterGcs1(onePlusOneGcsImageList[j].id);
+            } else {
 
-          await updateOnePlusAfterGcs1(onePlusOneGcsImageList[j].id);
+              final filename =  onePlusOneGcsImageList[j].imageName;
+              final filePath = 'capture_photo/$filename';
+              final fileContent = await onePlusOneGcsImageList[j].imageFile!.readAsBytes();
+              final bucketObject = Object(name: filePath);
+
+              final resp = await storage.objects.insert(
+                bucketObject,
+                bucketName,
+                predefinedAcl: 'publicRead',
+                uploadMedia: Media(
+                  Stream<List<int>>.fromIterable([fileContent]),
+                  fileContent.length,
+                ),
+              );
+
+              final docFilename =  onePlusOneGcsImageList[j].docImageName;
+              final docFilePath = 'capture_photo/$docFilename';
+              final docFileContent = await onePlusOneGcsImageList[j].docImageFile!.readAsBytes();
+              final docBucketObject = Object(name: docFilePath);
+
+              final respDoc = await storage.objects.insert(
+                docBucketObject,
+                bucketName,
+                predefinedAcl: 'publicRead',
+                uploadMedia: Media(
+                  Stream<List<int>>.fromIterable([docFileContent]),
+                  docFileContent.length,
+                ),
+              );
+              print("Image Uploaded successfully");
+
+              await updateOnePlusAfterGcs1(onePlusOneGcsImageList[j].id);
+
+            }
+          } else {
+            await updateOnePlusAfterGcs1(onePlusOneGcsImageList[j].id);
+          }
+
+
         }
         setState(() {
           isOnePlusOneFinishLoading = false;

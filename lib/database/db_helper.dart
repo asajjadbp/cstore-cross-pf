@@ -2198,7 +2198,7 @@ class DatabaseHelper {
       query += ' AND ' + conditions.join(' AND ');
     }
 
-    query += ' ORDER BY A.subcat_en_name,A.brand_en_name ASC';
+    query += ' ORDER BY A.cat_en_name,A.brand_en_name ASC';
     print('AVL');
     print(query);
     final List<Map<String, dynamic>> avlMap = await db.rawQuery(query);

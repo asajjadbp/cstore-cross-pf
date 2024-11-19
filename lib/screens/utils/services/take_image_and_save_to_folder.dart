@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cstore/Database/db_helper.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
@@ -322,6 +324,27 @@ Future<bool> isImageCorrupted(XFile imageFile) async {
     print("Error reading image file: ${e.toString()}");
     return true; // Treat any exception as a sign of corruption
   }
+}
+
+///Change asset to File
+Future<File> convertAssetToFile(String assetPath) async {
+  // Load the image bytes from the asset
+  ByteData data = await rootBundle.load(assetPath);
+
+  // Convert ByteData to a list of bytes
+  Uint8List bytes = data.buffer.asUint8List();
+
+  // Get the temporary directory of the app
+  Directory tempDir = await getTemporaryDirectory();
+
+  // Define a path for the new file (you can change the file name and extension as needed)
+  String filePath = '${tempDir.path}/my_image.png';
+
+  // Create the file and write the bytes to it
+  File file = File(filePath);
+  await file.writeAsBytes(bytes);
+
+  return file;
 }
 
 ///Delete Folder From local phone

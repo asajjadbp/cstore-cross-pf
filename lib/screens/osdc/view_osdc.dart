@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -11,6 +12,7 @@ import '../../Model/database_model/show_trans_osdc_model.dart';
 import '../Gallery/gallery_screen.dart';
 import '../Language/localization_controller.dart';
 import '../utils/app_constants.dart';
+import '../utils/services/take_image_and_save_to_folder.dart';
 import '../utils/toast/toast.dart';
 import 'widgets/ViewOSDcard.dart';
 import '../widget/app_bar_widgets.dart';
@@ -78,24 +80,42 @@ class _ViewOSDCState extends State<ViewOSDC> {
 
   }
 
-  void setTransOSDC() {
+  Future<void> setTransOSDC() async {
     for (int i = 0; i < transData.length; i++) {
-      for (int j = 0;j < transImagesList.length; j++) {
-        if(transData[i].id == transImagesList[j].id) {
-
+      for (int j = 0; j < transImagesList.length; j++) {
+        if (transData[i].id == transImagesList[j].id) {
           for (int k = 0; k < _imageFiles.length; k++) {
             if (_imageFiles[k].path.endsWith(transImagesList[j].imgName)) {
-
               transData[i].imageFile.add(File(_imageFiles[k].path));
             }
           }
         }
       }
+
+      if (transData[i].imageFile.isEmpty) {
+        File assetFile = await convertAssetToFile(
+            "assets/images/no_image_found.png");
+
+        transData[i].imageFile.add(assetFile);
+      } else {
+
+      for (int k = 0; k < transData[i].imageFile.length; k++) {
+        bool isImageCorrupt = await isImageCorrupted(
+            XFile(transData[i].imageFile[k].path));
+
+        if (isImageCorrupt) {
+          transData[i].imageFile[k] =
+          await convertAssetToFile("assets/images/no_image_found.png");
+        }
+      }
+    }
+
     }
     setState(() {
       isLoading = false;
     });
   }
+
   Future<void> _loadImages() async {
     setState(() {
       isLoading = true;

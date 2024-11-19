@@ -21,6 +21,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../Database/table_name.dart';
 import '../../Model/database_model/drop_reason_model.dart';
 import '../../Network/app_exceptions.dart';
+import '../Language/localization_controller.dart';
 import '../grid_dashboard/grid_dashboard.dart';
 import '../important_service/genral_checks_status.dart';
 import '../utils/app_constants.dart';
@@ -41,6 +42,9 @@ class JourneyPlanScreen extends StatefulWidget {
 }
 
 class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
+
+  final languageController = Get.put(LocalizationController());
+
   File? _pickedImage;
   var userName = "";
   var token = "";
@@ -217,6 +221,7 @@ class _JourneyPlanScreenState extends State<JourneyPlanScreen> {
                   //     "https://storage.googleapis.com/$bucketName/visits/${jpData[i]
                   //         .startVisitPhoto}");
                   return JourneyPlan(
+                    languageController: languageController,
                     onLocationTap: () {
                       launchStoreUrl(jpData[i].gcode);
                     },

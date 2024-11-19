@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cstore/Model/database_model/trans_add_proof_of_sale_model.dart';
 import 'package:cstore/screens/proof_of_sale/show_proof_of_sale.dart';
+import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -64,10 +65,26 @@ class _ProofOfSaleState extends State<ProofOfSale> {
   bool isSKusLoading = false;
   final GlobalKey<FormFieldState> categoryKey = GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> typeKey = GlobalKey<FormFieldState>();
+
+  late SingleValueDropDownController skuDropDownController;
+
   @override
   void initState() {
+    skuDropDownController = SingleValueDropDownController();
     getUserData();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    skuDropDownController.dispose();
+    valueControllerName.dispose();
+    valueControllerEmail.dispose();
+    valueControllerPhone.dispose();
+    valueControllerAmount.dispose();
+    valueControllerQuantity.dispose();
+    super.dispose();
   }
   getUserData() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -93,7 +110,8 @@ class _ProofOfSaleState extends State<ProofOfSale> {
   }
   void getSkusData(int catId) async {
     selectedSkuId = -1;
-    typeKey.currentState!.reset();
+    // typeKey.currentState!.reset();
+    skuDropDownController.clearDropDown();
     skuDataList = [Sys_PhotoTypeModel(en_name: "", ar_name: "", id: -1)];
     setState(() {
       isSKusLoading = true;
@@ -507,14 +525,25 @@ class _ProofOfSaleState extends State<ProofOfSale> {
                             const Text(" *",style: TextStyle(color: MyColors.backbtnColor),)
                           ],
                         ),
-                        TypeDropDown(
-                          typeKey: typeKey,
-                            hintText: "Select SKU".tr,
-                            photoData: skuDataList,
-                            onChange: (value) {
-                              selectedSkuId = value.id;
-                              setState(() {});
-                            }),
+                        ProductDropDownList(
+                                skuData: skuDataList,
+                                valueDropDownController: skuDropDownController,
+                                selectedId: (int value) {
+                                  selectedSkuId = value;
+                              print(value);
+                              print("------------------");
+                              setState(() {
+
+                              });
+                        }, skuKey: typeKey),
+                        // TypeDropDown(
+                        //   typeKey: typeKey,
+                        //     hintText: "Select SKU".tr,
+                        //     photoData: skuDataList,
+                        //     onChange: (value) {
+                        //       selectedSkuId = value.id;
+                        //       setState(() {});
+                        //     }),
                       ],
                     ),
 
@@ -550,4 +579,5 @@ class _ProofOfSaleState extends State<ProofOfSale> {
       ),
     );
   }
+
 }

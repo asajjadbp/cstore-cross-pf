@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cstore/screens/Language/localization_controller.dart';
 import 'package:cstore/screens/widget/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -92,7 +93,7 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
   }
 
 
-  void setTransPhoto() {
+  Future<void> setTransPhoto() async {
     if(isFilter) {
       for (int j = 0; j < filteredData.length; j++) {
         for (int i = 0; i < _imageFiles.length; i++) {
@@ -107,6 +108,23 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
           print(filteredData[j].imageName);
           print(filteredData[j].imageFile);
           // print(_imageFiles[i].path.endsWith(trans.skuImageName));
+        }
+
+        if(filteredData[j].imageFile != null) {
+
+          bool isImageCorrupt = await isImageCorrupted(
+              XFile(filteredData[j].imageFile!.path));
+
+          if (isImageCorrupt) {
+            filteredData[j].imageFile =
+            await convertAssetToFile("assets/images/no_image_found.png");
+          }
+
+        } else {
+
+          filteredData[j].imageFile =
+          await convertAssetToFile("assets/images/no_image_found.png");
+
         }
       }
     } else {
@@ -123,6 +141,23 @@ class _Planoguides_ScreenState extends State<Planoguides_Screen> {
           print(transData[j].imageName);
           print(transData[j].imageFile);
           // print(_imageFiles[i].path.endsWith(trans.skuImageName));
+        }
+
+        if(transData[j].imageFile != null) {
+
+          bool isImageCorrupt = await isImageCorrupted(
+              XFile(transData[j].imageFile!.path));
+
+          if (isImageCorrupt) {
+            transData[j].imageFile =
+            await convertAssetToFile("assets/images/no_image_found.png");
+          }
+
+        } else {
+
+          transData[j].imageFile =
+          await convertAssetToFile("assets/images/no_image_found.png");
+
         }
       }
     }

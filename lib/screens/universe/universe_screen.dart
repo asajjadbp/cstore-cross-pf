@@ -17,6 +17,7 @@ import '../../Model/request_model.dart/assign_special_vsit.dart';
 import '../../Network/sql_data_http_manager.dart';
 import '../Journey Plan/journey_plan.dart';
 import '../Journey Plan/journey_plan_screen.dart';
+import '../Language/localization_controller.dart';
 import '../utils/app_constants.dart';
 import '../widget/app_bar_widgets.dart';
 import '../widget/loading.dart';
@@ -32,6 +33,8 @@ class UniverseList extends StatefulWidget {
 
 class _UniverseListState extends State<UniverseList> {
 
+  final languageController = Get.put(LocalizationController());
+
   var userName = "";
   String token = "";
   String baseUrl = "";
@@ -42,6 +45,7 @@ class _UniverseListState extends State<UniverseList> {
   List<SysStoreModel> universeStoresList = <SysStoreModel>[];
   List<ClientModel> clientList = <ClientModel>[];
   List<int> selectedClientList = <int>[];
+  int visitTypeId = 1;
 
   final TextEditingController searchController = TextEditingController();
   String searchText = "";
@@ -161,7 +165,9 @@ class _UniverseListState extends State<UniverseList> {
                       // print(
                       //     "https://storage.googleapis.com/$bucketName/visits/${jpData[i]
                       //         .startVisitPhoto}");
-                      return UniverseStore(storeModel:universeStoresList[i],isCheckLoading: false, onStartClick: (){
+                      return UniverseStore(
+                          languageController: languageController,
+                          storeModel:universeStoresList[i],isCheckLoading: false, onStartClick: (){
 
                         showDialog(
                           context: context,
@@ -170,47 +176,96 @@ class _UniverseListState extends State<UniverseList> {
                                 builder: (BuildContext context1,
                                 StateSetter menuState) {
                               return AlertDialog(
-                                title: Text('Select Clients'.tr),
+                                title: Text('Assign visit'.tr),
                                 content: SizedBox(
-                                  height: MediaQuery.of(context).size.height/3.8,
+                                  height: MediaQuery.of(context).size.height/2.8,
                                   child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      ListView.builder(
-                                          itemCount: clientList.length,
-                                          shrinkWrap: true,
-                                          itemBuilder: (context,index1) {
-                                            return InkWell(
-                                              onTap: (){
-                                                if(selectedClientList.contains(clientList[index1].client_id)) {
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          InkWell(
+                                            onTap: () {
+                                              visitTypeId = 1;
+                                              setState(() {
 
-                                                  selectedClientList.remove(clientList[index1].client_id);
+                                              });
+                                              menuState(() {
 
-                                                } else {
-                                                  selectedClientList.add(clientList[index1].client_id);
-                                                }
+                                              });
+                                            },
+                                            child: Row(
+                                              children: [
+                                                Icon(visitTypeId == 1 ? Icons.radio_button_checked : Icons.circle_outlined,color: MyColors.appMainColor,),
+                                               const SizedBox(width: 5,),
+                                                Text("Normal".tr),
+                                              ],
+                                            ),
+                                          ),
+                                          InkWell(
+                                            onTap: () {
+                                              visitTypeId = 2;
+                                              setState(() {
 
-                                                print(selectedClientList);
-                                                print(selectedClientList.contains(clientList[index1].client_id));
-                                                setState(() {
+                                              });
+                                              menuState(() {
 
-                                                });
-                                                menuState(() {
+                                              });
+                                            },
+                                            child: Row(
+                                              children: [
+                                                Icon(visitTypeId == 2 ? Icons.radio_button_checked :Icons.circle_outlined,color: MyColors.appMainColor,),
+                                                const SizedBox(width: 5,),
+                                                Text("checkIn".tr),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Container(
+                                          margin:const EdgeInsets.symmetric(vertical: 5),
+                                          child: Text('Select Clients'.tr)),
+                                      Expanded(
+                                        child: ListView.builder(
+                                            itemCount: clientList.length,
+                                            shrinkWrap: true,
+                                            itemBuilder: (context,index1) {
+                                              return InkWell(
+                                                onTap: (){
+                                                  if(selectedClientList.contains(clientList[index1].client_id)) {
 
-                                                });
+                                                    selectedClientList.remove(clientList[index1].client_id);
 
-                                              },
-                                              child: Card(
-                                                child: Row(
-                                                  children: [
-                                                    Container(
-                                                        margin:const EdgeInsets.all(5),
-                                                        child: Icon(selectedClientList.contains(clientList[index1].client_id) ? Icons.check_box : Icons.check_box_outline_blank,color: MyColors.appMainColor,)),
-                                                    Expanded(child: Text(clientList[index1].client_name))
-                                                  ],
+                                                  } else {
+                                                    selectedClientList.add(clientList[index1].client_id);
+                                                  }
+
+                                                  print(selectedClientList);
+                                                  print(selectedClientList.contains(clientList[index1].client_id));
+                                                  setState(() {
+
+                                                  });
+                                                  menuState(() {
+
+                                                  });
+
+                                                },
+                                                child: Card(
+                                                  child: Row(
+                                                    children: [
+                                                      Container(
+                                                          margin:const EdgeInsets.all(5),
+                                                          child: Icon(selectedClientList.contains(clientList[index1].client_id) ? Icons.check_box : Icons.check_box_outline_blank,color: MyColors.appMainColor,)),
+                                                      Expanded(child: Text(clientList[index1].client_name))
+                                                    ],
+                                                  ),
                                                 ),
-                                              ),
-                                            );
-                                          })
+                                              );
+                                            }),
+                                      )
                                     ],
                                   ),
                                 ),

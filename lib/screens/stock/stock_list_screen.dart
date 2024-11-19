@@ -125,9 +125,9 @@ class _StockListScreenState extends State<StockListScreen> {
       print(currentUserTimeStamp);
       await DatabaseHelper.insertTransStockeCheck(
         skuId,
-        int.parse(cases),
-        int.parse(outer),
-        int.parse(pieces),
+        cases.isEmpty ? 0 : int.parse(cases),
+        outer.isEmpty ? 0 : int.parse(outer),
+        pieces.isEmpty ? 0 : int.parse(pieces),
         workingId,
         currentUserTimeStamp,
         pro_client_id,)

@@ -2,6 +2,7 @@ import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:cstore/Model/database_model/sys_brand_model.dart';
 import 'package:cstore/screens/Language/localization_controller.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../Model/database_model/PlanogramReasonModel.dart';
@@ -1180,6 +1181,78 @@ class PromReasonDropDown extends StatelessWidget {
     );
   }
 }
+
+
+class ProductDropDownList extends StatefulWidget {
+  const ProductDropDownList({super.key,required this.skuData,required this.selectedId,required this.skuKey,required this.valueDropDownController});
+
+ final List<Sys_PhotoTypeModel> skuData;
+ final Function(int) selectedId;
+  final GlobalKey<FormFieldState> skuKey;
+  final SingleValueDropDownController valueDropDownController;
+
+  @override
+  State<ProductDropDownList> createState() => _ProductDropDownListState();
+}
+
+class _ProductDropDownListState extends State<ProductDropDownList> {
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.skuData.length == 1 && widget.skuData[0].id == -1 ? Container(
+      width: MediaQuery.of(context).size.width,
+      height: 50,
+      alignment: Alignment.centerLeft,
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      decoration: BoxDecoration(
+          border: Border.all(color: MyColors.blackColor),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text("Select Sku".tr,style: const TextStyle(color: Colors.grey),),
+          const Icon(Icons.arrow_drop_down,color: Colors.grey,),
+        ],
+      ),
+    ) : Container(
+      width: MediaQuery.of(context).size.width,
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      alignment: Alignment.centerLeft,
+      decoration: BoxDecoration(
+          border: Border.all(color: MyColors.blackColor),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: DropdownButtonHideUnderline(
+          child: DropDownTextField(
+            key: widget.skuKey,
+            textFieldDecoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: "Select Sku".tr,
+              contentPadding:const EdgeInsets.symmetric(vertical: 15, horizontal: 2),
+            ),
+            listPadding: ListPadding(top: 20),
+            enableSearch: true,
+            clearOption: false,
+            controller: widget.valueDropDownController,
+            dropDownList: widget.skuData.map<DropDownValueModel>((Sys_PhotoTypeModel value) {
+              return DropDownValueModel(
+                  value: value.id,
+                  name: value.en_name
+              );
+            }).toList(),
+            onChanged: (val) {
+              print("Value Selected");
+              widget.selectedId(widget.valueDropDownController.dropDownValue!.value);
+
+            },
+          )
+      ),
+    );
+  }
+}
+
 
 
 

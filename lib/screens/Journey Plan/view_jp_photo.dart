@@ -157,6 +157,8 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
           //     'https://storage.googleapis.com/$bucketName/$filePath';
           // print(downloadUrl);
 
+          submitStartVist(journeyPlanDetail.workingId.toString(), imageName, value['lat'], value['long'],  journeyPlanDetail.clientIds.toString());
+
 
     } catch (e) {
 
@@ -316,8 +318,6 @@ class _ViewJPPhotoState extends State<ViewJPPhoto> {
                                   routeArg["image"],
                                   journeyPlanDetail.workingId.toString(),
                                   journeyPlanDetail.clientIds.toString(), value,routeArg["image_name"]),
-
-                          submitStartVist(journeyPlanDetail.workingId.toString(), routeArg["image_name"], value['lat'], value['long'],  journeyPlanDetail.clientIds.toString()),
                             }
                       } else {
                         setState(() {

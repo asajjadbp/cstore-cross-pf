@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:cstore/screens/other_photo/widgets/other_photo_card.dart';
 import 'package:cstore/screens/utils/appcolor.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -17,6 +18,7 @@ import '../../Database/table_name.dart';
 import '../../Model/database_model/get_trans_photo_model.dart';
 import '../Language/localization_controller.dart';
 import '../utils/app_constants.dart';
+import '../utils/services/take_image_and_save_to_folder.dart';
 import '../utils/toast/toast.dart';
 import '../widget/app_bar_widgets.dart';
 import '../widget/loading.dart';
@@ -69,19 +71,45 @@ class _ViewOtherPhotoState extends State<ViewOtherPhoto> {
     });
   }
 
-  void setTransPhoto() {
-    for (var trans in transData) {
-      String imageName = trans.img_name;
+  // void setTransPhoto() {
+  //   for (var trans in transData) {
+  //     String imageName = trans.img_name;
+  //
+  //     for (int i = 0; i < _imageFiles.length; i++) {
+  //       if (_imageFiles[i].path.endsWith(trans.img_name)) {
+  //         trans.imageFile = _imageFiles[i];
+  //       }
+  //       print(_imageFiles[i].path.endsWith(trans.img_name));
+  //     }
+  //     print("++++++++++++++++++Other Check Status++++++++");
+  //     print(transData);
+  //   }
+  //   setState(() {
+  //     isLoading = false;
+  //   });
+  // }
 
+  Future<void> setTransPhoto() async {
+    for (var trans in transData) {
       for (int i = 0; i < _imageFiles.length; i++) {
         if (_imageFiles[i].path.endsWith(trans.img_name)) {
           trans.imageFile = _imageFiles[i];
         }
-        print(_imageFiles[i].path.endsWith(trans.img_name));
       }
-      print("++++++++++++++++++Other Check Status++++++++");
-      print(transData);
+
+      if(trans.imageFile != null) {
+        bool isImageCorrupt = await isImageCorrupted(XFile(trans.imageFile!.path));
+
+        if(isImageCorrupt) {
+          trans.imageFile = await convertAssetToFile("assets/images/no_image_found.png");
+        }
+
+      } else {
+        trans.imageFile = await convertAssetToFile("assets/images/no_image_found.png");
+      }
     }
+    print("TRANS");
+    print(transData);
     setState(() {
       isLoading = false;
     });

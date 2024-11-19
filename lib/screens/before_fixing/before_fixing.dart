@@ -8,6 +8,7 @@ import 'package:cstore/screens/before_fixing/view_before_fixing.dart';
 import 'package:cstore/screens/utils/app_constants.dart';
 import 'package:cstore/screens/widget/drop_downs.dart';
 import 'package:cstore/screens/widget/loading.dart';
+import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -53,10 +54,15 @@ class _BeforeFixingState extends State<BeforeFixing> {
   String storeEnName = '';
   String storeArName = '';
   String userName = "";
+
+  late SingleValueDropDownController categoryDropDownController;
+
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
+    categoryDropDownController = SingleValueDropDownController();
     getUserData();
+
   }
   getUserData()async {
     SharedPreferences sharedPreferences  = await SharedPreferences.getInstance();
@@ -129,6 +135,7 @@ class _BeforeFixingState extends State<BeforeFixing> {
   void getCategoryData(int clientId) async {
     categoryKey.currentState!.reset();
     selectedCategoryId = -1;
+    // categoryDropDownController.clearDropDown();
     categoryData = [CategoryModel(en_name: "",ar_name: "",id: -1, client: -1)];
     setState(() {
       isCategoryLoading = true;
@@ -258,7 +265,16 @@ class _BeforeFixingState extends State<BeforeFixing> {
                                 child: MyLoadingCircle(),
                               ),
                             )
-                                : CategoryDropDown(
+                                :
+                            // ProductDropDownList(
+                            //         categoryData: categoryData,
+                            //         valueDropDownController: categoryDropDownController,
+                            //         selectedId: (int value) {
+                            //       print(value);
+                            //       print("------------------");
+                            // }, categoryKey: categoryKey)
+
+                            CategoryDropDown(
                                 categoryKey:categoryKey,
                                 hintText: "Category".tr,
                                 categoryData: categoryData,

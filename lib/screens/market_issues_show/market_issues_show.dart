@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cstore/screens/market_issues_show/widgets/view_market_issue_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -11,6 +12,7 @@ import '../../Model/database_model/show_market_issue_model.dart';
 import '../../Model/database_model/show_proof_of_sale_model.dart';
 import '../Language/localization_controller.dart';
 import '../utils/app_constants.dart';
+import '../utils/services/take_image_and_save_to_folder.dart';
 import '../utils/toast/toast.dart';
 import '../widget/app_bar_widgets.dart';
 import '../widget/loading.dart';
@@ -53,19 +55,46 @@ class _ViewMarketIssueScreenState extends State<ViewMarketIssueScreen> {
       });
     });
   }
-  void setTransMaekeIssue() {
+  // void setTransMaekeIssue() {
+  //   for (var trans in transData) {
+  //     for (int i = 0; i < _imageFiles.length; i++) {
+  //       if (_imageFiles[i].path.endsWith(trans.image)) {
+  //         trans.imageFile = _imageFiles[i];
+  //       }
+  //       print(_imageFiles[i].path.endsWith(trans.image));
+  //     }
+  //   }
+  //   setState(() {
+  //     isLoading = false;
+  //   });
+  // }
+
+  Future<void> setTransMaekeIssue() async {
     for (var trans in transData) {
       for (int i = 0; i < _imageFiles.length; i++) {
         if (_imageFiles[i].path.endsWith(trans.image)) {
           trans.imageFile = _imageFiles[i];
         }
-        print(_imageFiles[i].path.endsWith(trans.image));
+      }
+
+      if(trans.imageFile != null) {
+        bool isImageCorrupt = await isImageCorrupted(XFile(trans.imageFile!.path));
+
+        if(isImageCorrupt) {
+          trans.imageFile = await convertAssetToFile("assets/images/no_image_found.png");
+        }
+
+      } else {
+        trans.imageFile = await convertAssetToFile("assets/images/no_image_found.png");
       }
     }
+    print("TRANS");
+    print(transData);
     setState(() {
       isLoading = false;
     });
   }
+
   Future<void> _loadImages() async {
     setState(() {
       isLoading = true;

@@ -7,6 +7,7 @@ import 'package:motion_toast/resources/arrays.dart';
 class ToastMessage {
   static void errorMessage(BuildContext context, String errMessage) {
     MotionToast.error(
+      toastDuration: const Duration(seconds: 2),
       title: Text("Error!".tr),
       position: MotionToastPosition.top,
       description: Text(errMessage),
@@ -15,6 +16,7 @@ class ToastMessage {
 
   static void succesMessage(BuildContext context, String succMessage) {
     MotionToast.success(
+      toastDuration: const Duration(seconds: 2),
       title: Text("Success".tr),
       position: MotionToastPosition.top,
       description: Text(succMessage),
@@ -40,7 +42,7 @@ showAnimatedToastMessage(String title,String message, bool isSuccess) {
     borderRadius: 10,
     margin: const EdgeInsets.all(15),
     colorText: Colors.white,
-    duration: const Duration(seconds: 4),
+    duration: const Duration(seconds: 2),
     snackStyle: SnackStyle.FLOATING,
     isDismissible: true,
     dismissDirection: DismissDirection.horizontal,
