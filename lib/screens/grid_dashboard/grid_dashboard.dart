@@ -127,7 +127,7 @@ class _GridDashBoardState extends State<GridDashBoard> {
       visitActivity = sharedPreferences.getString(AppConstants.visitActivity)!;
 
       print("USER ROLE");
-      print(userRole);
+      print(visitActivity);
 
       if(userRole != "TMR") {
         getPickerPickList();

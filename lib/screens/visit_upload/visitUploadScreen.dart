@@ -216,7 +216,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
     gcode = sharedPreferences.getString(AppConstants.gcode)!;
 
     print("USER ROLE");
-    print(token);
+    print(visitActivity);
 
     allAgencyData = await DatabaseHelper.getAgencyDashboard();
 

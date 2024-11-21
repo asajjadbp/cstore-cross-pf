@@ -2164,8 +2164,8 @@ class DatabaseHelper {
 
     // Start building the base query
     String query = ' SELECT A.*,CASE WHEN B.required_pieces IS NUll THEN 0 ELSE B.required_pieces END AS req_pick_pieces '
-        ' From ( SELECT trans_availability.*, sys_category.en_name || " " || sys_subcategory.en_name as cat_en_name, '
-        ' sys_category.ar_name || " " || sys_subcategory.ar_name as cat_ar_name, '
+        ' From ( SELECT trans_availability.*, sys_category.en_name as cat_en_name, '
+        ' sys_category.ar_name as cat_ar_name, '
         ' sys_subcategory.en_name as subcat_en_name, sys_subcategory.ar_name as subcat_ar_name, '
         ' sys_brand.en_name as brand_en_name, sys_brand.ar_name as brand_ar_name, sys_product.image, sys_product.en_name as pro_en_name, sys_product.ar_name as pro_ar_name '
         ' FROM trans_availability JOIN sys_product ON sys_product.id = trans_availability.sku_id '
@@ -4178,7 +4178,7 @@ class DatabaseHelper {
   ///Get AVL COUNT RECORDS FOR API UPLOAD
   static Future<AvailabilityCountModel> getAvailabilityCountData(String workingId) async {
     final db = await initDataBase();
-    final List<Map<String, dynamic>> result = (await db.rawQuery('SELECT count(sku_id) AS total_sku, '
+    final List<Map<String, dynamic>> result = (await db.rawQuery('SELECT count(DISTINCT sku_id) AS total_sku, '
         'sum(CASE WHEN avl_status = 1 THEN 1 ELSE 0 END) As total_avl, '
         'sum(CASE WHEN avl_status = 0 THEN 1 ELSE 0 END) As total_not_avl, '
         'sum(CASE WHEN avl_status = -1 THEN 1 ELSE 0 END) As total_not_marked, '

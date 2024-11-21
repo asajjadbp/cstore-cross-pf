@@ -219,7 +219,7 @@ class _UniverseListState extends State<UniverseList> {
                                               children: [
                                                 Icon(visitTypeId == 2 ? Icons.radio_button_checked :Icons.circle_outlined,color: MyColors.appMainColor,),
                                                 const SizedBox(width: 5,),
-                                                Text("checkIn".tr),
+                                                Text("check In".tr),
                                               ],
                                             ),
                                           ),
@@ -338,6 +338,7 @@ class _UniverseListState extends State<UniverseList> {
       username: userName,
       clientIds: selectedClients,
       storeId: storeId.toString(),
+      visitActivityType: visitTypeId.toString(),
     );
 
 
