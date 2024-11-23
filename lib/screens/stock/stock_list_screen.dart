@@ -110,10 +110,10 @@ class _StockListScreenState extends State<StockListScreen> {
         showAnimatedToastMessage("Error!".tr, "Please add stock data".tr, false);
         return;
       }
-      if (cases == "0" && outer == "0" && pieces == "0") {
-        showAnimatedToastMessage("Error!".tr, "Please add stock data".tr, false);
-        return;
-      }
+      // if (cases == "0" && outer == "0" && pieces == "0") {
+      //   showAnimatedToastMessage("Error!".tr, "Please add stock data".tr, false);
+      //   return;
+      // }
       setState(() {
         isBtnLoading = false;
       });

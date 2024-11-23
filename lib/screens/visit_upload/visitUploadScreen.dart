@@ -216,7 +216,8 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
     gcode = sharedPreferences.getString(AppConstants.gcode)!;
 
     print("USER ROLE");
-    print(visitActivity);
+    print(bucketName);
+    print(clientId);
 
     allAgencyData = await DatabaseHelper.getAgencyDashboard();
 
@@ -647,14 +648,62 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                //   showAnimatedToastMessage("Error!".tr, "You’re just 0.7 km away from the store. Please contact your supervisor for the exact location details".tr, false),
                // } else {
                //   Get.delete<GeneralChecksStatusController>(),
+
                  if (userRole == "TMR") {
-                   if ((moduleIdList.contains("3") ||
-                       moduleIdList.contains("17")) &&
-                       ((availabilityCountModel.totalSku !=
-                           availabilityCountModel.totalUploaded) ||
-                           availabilityCountModel.totalSku == 0 ||
-                           availabilityCountModel.totalUploaded.toString() ==
-                               "null")) {
+                   if(bucketName == "binzagr-bucket" && clientId == "2,0") {
+                     setState(() {
+                       isDataUploading = false;
+                     });
+                     showDialog(
+                       context: context,
+                       barrierDismissible: false,
+                       builder: (BuildContext context) {
+                         return StatefulBuilder(
+                             builder: (BuildContext context1,
+                                 StateSetter menuState) {
+                               return AlertDialog(
+                                 title: Text('Visit'.tr),
+                                 content: Text(
+                                     'Are you sure you want to finish this visit?'
+                                         .tr),
+                                 actions: <Widget>[
+                                   isDataUploading ? const Row(
+                                     mainAxisAlignment: MainAxisAlignment
+                                         .center,
+                                     crossAxisAlignment: CrossAxisAlignment
+                                         .center,
+                                     children: [
+                                       CircularProgressIndicator(
+                                         color: MyColors.appMainColor2,),
+                                     ],
+                                   ) : Row(
+                                     mainAxisAlignment: MainAxisAlignment.end,
+                                     crossAxisAlignment: CrossAxisAlignment
+                                         .end,
+                                     children: [
+                                       TextButton(
+                                         onPressed: () {
+                                           Navigator.of(context)
+                                               .pop(); // Close the dialog
+                                         },
+                                         child: Text('No'.tr),
+                                       ),
+                                       isDataUploading ? const CircularProgressIndicator() : TextButton(
+                                         onPressed: () {
+                                           // Perform logout operation
+                                           finishVisit(menuState);
+                                         },
+                                         child: Text('Yes'.tr),
+                                       ),
+                                     ],
+                                   )
+                                 ],
+                               );
+                             }
+                         );
+                       },
+                     );
+                   } else if ( (moduleIdList.contains("3") || moduleIdList.contains("17")) && ((availabilityCountModel.totalSku != availabilityCountModel.totalUploaded) || availabilityCountModel.totalSku == 0 || availabilityCountModel.totalUploaded.toString() == "null")) {
                      setState(() {
                        isDataUploading = false;
                      });
@@ -670,8 +719,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                      showAnimatedToastMessage(
                          "Error!".tr, "Please Wait for pick list response".tr,
                          false);
-                   } else
-                   if ((moduleIdList.contains("15")) && (planoguideCountModel
+                   } else if ((moduleIdList.contains("15")) && (planoguideCountModel
                        .totalUploaded.toString() == "null" ||
                        planoguideCountModel.totalUploaded == 0)) {
                      setState(() {
@@ -3401,6 +3449,9 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
             print(e.toString()),
             menuState(() {
               isDataUploading = false;
+            }),
+            setState(() {
+
             }),
             showAnimatedToastMessage("Error!".tr,e.toString(),false),
           });

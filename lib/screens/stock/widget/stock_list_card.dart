@@ -180,7 +180,7 @@ class StockListCard extends StatelessWidget {
                                   hintText: ""),
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*')),
-                                FilteringTextInputFormatter.deny(RegExp('^0+'))
+
                               ],
                             ),
                           ),
@@ -231,7 +231,7 @@ class StockListCard extends StatelessWidget {
                                   hintText: ""),
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*')),
-                                FilteringTextInputFormatter.deny(RegExp('^0+'))
+
                               ],
                             ),
                           ),
@@ -282,7 +282,7 @@ class StockListCard extends StatelessWidget {
                                   hintText: ""),
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*')),
-                                FilteringTextInputFormatter.deny(RegExp('^0+'))
+
                               ],
                             ),
                           ),
@@ -356,7 +356,7 @@ class StockListCard extends StatelessWidget {
                                     color: MyColors.appMainColor),
                               ),
                             ),
-                            if((cases + pieces + outer) > 0)
+                            if((cases + pieces + outer) >= 0 && actStatus != 0)
                             InkWell(
                                 onTap: () {
                                     onDeleteTap();
@@ -378,7 +378,9 @@ class StockListCard extends StatelessWidget {
                                     SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
                                       child: Text(
-                                        cases != 0 ? cases.toString() : "___",
+                                        // cases != 0 ?
+                                          actStatus != 0 ? cases.toString() : "____",
+                                            // : "___",
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 1,
                                         style: const TextStyle(
@@ -406,7 +408,7 @@ class StockListCard extends StatelessWidget {
                                     SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
                                       child: Text(
-                                        outer != 0 ? outer.toString() : "_ _ _",
+                                          actStatus != 0 ? outer.toString() : "____",
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 1,
                                         style: const TextStyle(
@@ -434,7 +436,7 @@ class StockListCard extends StatelessWidget {
                                     SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
                                       child: Text(
-                                        pieces != 0 ? pieces.toString() : "_ _ _",
+                                          actStatus != 0 ? pieces.toString() : "____",
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 1,
                                         style: const TextStyle(

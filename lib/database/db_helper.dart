@@ -2162,6 +2162,24 @@ class DatabaseHelper {
   static Future<List<AvailabilityShowModel>> getSidcoAvlDataList(String workingId, String clientId, String brandId,String categoryId,String subCategoryId) async {
     final db = await initDataBase();
 
+    String searchWhere = '';
+
+    if(clientId != '-1') {
+      searchWhere = '$searchWhere And sys_product.client_id = "$clientId"';
+    }
+
+    if (brandId != '-1') {
+      searchWhere = '$searchWhere And sys_product.brand_id = "$brandId"';
+    }
+
+    if (subCategoryId != '-1') {
+      searchWhere = '$searchWhere And sys_product.subcategory_id = "$subCategoryId"';
+    }
+
+    if (categoryId != '-1') {
+      searchWhere = '$searchWhere And sys_product.category_id = "$categoryId"';
+    }
+
     // Start building the base query
     String query = ' SELECT A.*,CASE WHEN B.required_pieces IS NUll THEN 0 ELSE B.required_pieces END AS req_pick_pieces '
         ' From ( SELECT trans_availability.*, sys_category.en_name as cat_en_name, '
@@ -2172,35 +2190,35 @@ class DatabaseHelper {
         ' JOIN sys_category ON sys_category.id = sys_product.category_id '
         ' JOIN sys_brand ON sys_brand.id = sys_product.brand_id '
         ' JOIN sys_subcategory ON sys_subcategory.id = sys_product.subcategory_id '
-        ' WHERE trans_availability.working_id = "$workingId") A '
+        ' WHERE trans_availability.working_id = "$workingId" $searchWhere) A '
         ' LEFT JOIN ( SELECT sku_id,required_pieces '
-        ' FROM trans_picklist WHERE working_id = "$workingId") B ON A.sku_id = B.sku_id ';
+        ' FROM trans_picklist WHERE working_id = "$workingId") B ON A.sku_id = B.sku_id ORDER BY A.cat_en_name,A.brand_en_name ASC';
 
     // List to hold conditions
-    List<String> conditions = [];
-
-    // Add conditions based on search parameters
-    if (clientId != '-1') {
-      conditions.add('trans_availability.client_id = "$clientId"');
-    }
-    if (brandId != '-1') {
-      conditions.add('sys_product.brand_id = "$brandId"');
-    }
-    if (subCategoryId != '-1') {
-      conditions.add('sys_product.subcategory_id = "$subCategoryId"');
-    }
-    if (categoryId != '-1') {
-      conditions.add('sys_product.category_id = "$categoryId"');
-    }
-
-    // Join conditions with 'AND' in the query
-    if (conditions.isNotEmpty) {
-      query += ' AND ' + conditions.join(' AND ');
-    }
-
-    query += ' ORDER BY A.cat_en_name,A.brand_en_name ASC';
+    // List<String> conditions = [];
+    //
+    // // Add conditions based on search parameters
+    // if (clientId != '-1') {
+    //   conditions.add('trans_availability.client_id = "$clientId"');
+    // }
+    // if (brandId != '-1') {
+    //   conditions.add('sys_product.brand_id = "$brandId"');
+    // }
+    // if (subCategoryId != '-1') {
+    //   conditions.add('sys_product.subcategory_id = "$subCategoryId"');
+    // }
+    // if (categoryId != '-1') {
+    //   conditions.add('sys_product.category_id = "$categoryId"');
+    // }
+    //
+    // // Join conditions with 'AND' in the query
+    // if (conditions.isNotEmpty) {
+    //   query += ' AND ' + conditions.join(' AND ');
+    // }
+    //
+    // query += ' ORDER BY A.cat_en_name,A.brand_en_name ASC';
     print('AVL');
-    print(query);
+    log(query);
     final List<Map<String, dynamic>> avlMap = await db.rawQuery(query);
     print(avlMap);
     return List.generate(avlMap.length, (index) {
@@ -3885,7 +3903,7 @@ class DatabaseHelper {
     final List<Map<String, dynamic>> brandMaps = await db.rawQuery(
         'SELECT sys_brand.id,sys_brand.en_name ,sys_brand.ar_name,sys_brand.client_id '
             'FROM sys_brand JOIN sys_client on sys_client.client_id=sys_brand.client_id '
-            'WHERE sys_client.client_id IN($clientId)');
+            'WHERE sys_client.client_id IN($clientId) ORDER BY sys_brand.en_name ASC');
 
     print(jsonEncode(brandMaps));
     print('________BRAND List ________________');

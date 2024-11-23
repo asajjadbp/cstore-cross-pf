@@ -141,6 +141,7 @@ class _AddOtherPhotoState extends State<AddOtherPhoto> {
   void saveStorePhotoData() async {
     if (selectedClientId == -1 ||
         selectedCategoryId == -1 ||
+        selectedTypeId == -1 ||
         imageFile == null) {
       showAnimatedToastMessage("Error!".tr, "Please fill the form and take image".tr, false);
       return;
