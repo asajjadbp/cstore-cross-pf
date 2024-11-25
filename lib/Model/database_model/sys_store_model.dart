@@ -16,9 +16,6 @@ class SysStoreModel {
   late int channel_id7;
   late int type_id;
 
-
-
-
   SysStoreModel.fromJson(Map<String, dynamic> json) {
     id = json[TableName.sysId]??0;
     en_name = json[TableName.enName]??"";

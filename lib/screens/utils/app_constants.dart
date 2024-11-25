@@ -52,6 +52,7 @@ class AppConstants {
   static String  promoPlan = "promoPlan";
   static String  shelfShare = "shelf_share";
   static String  availability = "availability";
+  static String  survey = "survey";
 
 
 }

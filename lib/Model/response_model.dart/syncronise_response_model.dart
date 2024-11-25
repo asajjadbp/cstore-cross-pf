@@ -23,6 +23,7 @@ import '../database_model/sys_product_placement_model.dart';
 import '../database_model/sys_rtv_reason_model.dart';
 import '../database_model/sys_store_model.dart';
 import '../database_model/sys_store_pog_model.dart';
+import '../database_model/sys_survey_question_model.dart';
 
 SyncroniseResponseModel syncroniseResponseModelFromJson(String str) =>
     SyncroniseResponseModel.fromJson(json.decode(str));
@@ -84,6 +85,8 @@ class SyncroniseDetail {
   List<sysMarketIssueModel> sysMarketIssue;
   List<Sys_OSDCReasonModel> sysPromoPlanReason;
   List<SysStoreModel> sysStores;
+  List<sysSurveyQuestionModel> surveyQuestion;
+
 
   SyncroniseDetail({
     required this.sysDropReason,
@@ -112,6 +115,7 @@ class SyncroniseDetail {
     required this.sysMarketIssue,
     required this.sysPromoPlanReason,
     required this.sysStores,
+    required this.surveyQuestion,
   });
 
   factory SyncroniseDetail.fromJson(Map<String, dynamic> json) =>
@@ -171,6 +175,8 @@ class SyncroniseDetail {
             json["sys_promo_plan_reasons"].map((x) => Sys_OSDCReasonModel.fromJson(x))),
         sysStores: List<SysStoreModel>.from(
             json["sys_stores"].map((x) => SysStoreModel.fromJson(x))),
+        surveyQuestion: List<sysSurveyQuestionModel>.from(
+            json["sys_london_dairy_survey"].map((x) => sysSurveyQuestionModel.fromJson(x))),
 
       );
 
@@ -200,6 +206,7 @@ class SyncroniseDetail {
       "sys_market_issues":  List<dynamic>.from(sysMarketIssue.map((x) => x.toJson())),
       "sys_promo_plan_reasons":  List<dynamic>.from(sysPromoPlanReason.map((x) => x.toJson())),
       "sys_stores":  List<dynamic>.from(sysStores.map((x) => x.toJson())),
+      "sys_london_dairy_survey":  List<dynamic>.from(surveyQuestion.map((x) => x.toJson())),
   };
 }
 

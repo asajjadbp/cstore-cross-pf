@@ -25,12 +25,12 @@ class SyncroniseHTTP {
       response = await _handler.post(Uri.parse(url), JourneyPlanRequestModel(username: userName).toJson(), token);
     });
 
+    print("_____________JSON DATA_______________");
+    log(jsonEncode(response['data'][0]['sys_london_dairy_survey']));
+    print("_________________________________");
+
     SyncroniseResponseModel syncResponseData =
         SyncroniseResponseModel.fromJson(response);
-
-    // print("_____________JSON DATA_______________");
-    // log(jsonEncode(syncResponseData.data[0].sysStores));
-    // print("_________________________________");
 
 
     return syncResponseData;

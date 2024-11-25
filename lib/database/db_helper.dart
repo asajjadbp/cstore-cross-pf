@@ -42,6 +42,8 @@ import '../Model/database_model/sys_product_model.dart';
 import '../Model/database_model/sys_product_placement_model.dart';
 import '../Model/database_model/sys_store_model.dart';
 import '../Model/database_model/sys_store_pog_model.dart';
+import '../Model/database_model/sys_survey_question_model.dart';
+import '../Model/database_model/sys_survey_question_option_model.dart';
 import '../Model/database_model/total_count_response_model.dart';
 import '../Model/database_model/trans_add_proof_of_sale_model.dart';
 import '../Model/database_model/trans_before_faxing.dart';
@@ -427,6 +429,90 @@ class DatabaseHelper {
           TableName.storeId +
           ')' +
           ')');
+
+      ///Survey Table
+      //London Survey
+      await db.execute('CREATE TABLE ' +
+          TableName.tblLondonDairySurveyQuestion +
+          '(' +
+          TableName.sysId +
+          ' INTEGER PRIMARY KEY UNIQUE, ' +
+          TableName.SysSurveyEnQuestion +
+          ' TEXT, ' +
+          TableName.SysSurveyArQuestion +
+          ' TEXT, ' +
+          TableName.SysSurveyAnswerType +
+          ' TEXT' +
+
+          ')');
+
+      await db.execute('CREATE TABLE ' +
+          TableName.tblLondonDairySurveyQuesOpt +
+          '(' +
+          TableName.sysId +
+          ' INTEGER PRIMARY KEY UNIQUE, ' +
+          TableName.SysSurveyOptQuestionId +
+          ' TEXT, ' +
+          TableName.enName +
+          ' TEXT,' +
+          TableName.arName +
+          ' TEXT,' +
+          TableName.SysSurveyQuestionType +
+          ' TEXT' +
+          ')');
+
+      await db.execute('CREATE TABLE ' +
+          TableName.LondonMasterLondonDairySurvey +
+          '(' +
+          TableName.sysId +
+          ' INTEGER PRIMARY KEY AUTOINCREMENT, ' +
+          TableName.workingId +
+          ' INTEGER, ' +
+          TableName.SysSurveyOptQuestionId +
+          ' INTEGER, ' +
+          TableName.transSurveyAnswer +
+          ' TEXT, ' +
+          TableName.trans_one_plus_one_image +
+          ' TEXT,' +
+          TableName.SysSurveyIsActive +
+          ' TEXT, ' +
+          TableName.gcsStatus +
+          ' INTEGER, ' +
+          TableName.uploadStatus+
+          ' INTEGER, ' +
+          TableName.SysSurveyOptUpdatedAt +
+          ' TEXT DATETIME DEFAULT CURRENT_TIMESTAM, ' +
+          'CONSTRAINT unique_key UNIQUE (' +
+          TableName.workingId + ', ' +
+          TableName.SysSurveyOptQuestionId +
+          ')' +
+          ')');
+
+
+      // await db.execute('CREATE TABLE ' +
+      //     TableName.LondonMasterLondonDairySurvey +
+      //     '(' +
+      //     TableName.sysId +
+      //     ' INTEGER PRIMARY KEY UNIQUE, ' +
+      //     TableName.workingId +
+      //     ' INTEGER, ' +
+      //     TableName.storeId +
+      //     ' INTEGER, ' +
+      //     TableName.companyId +
+      //     ' INTEGER, ' +
+      //     TableName.SysSurveyOptQuestionId +
+      //     ' INTEGER, ' +
+      //     TableName.transSurveyAnswer +
+      //     ' TEXT, ' +
+      //     TableName.trans_one_plus_one_image +
+      //     ' TEXT,' +
+      //     TableName.SysSurveyIsActive +
+      //     ' TEXT, ' +
+      //     TableName.userId +
+      //     ' TEXT, ' +
+      //     TableName.SysSurveyOptUpdatedAt +
+      //     ' TEXT DATETIME DEFAULT CURRENT_TIMESTAM' +
+      //     ')');
 
       //---------***********create trans table here*************---------
       await db.execute('CREATE TABLE ' +
@@ -6659,6 +6745,161 @@ class DatabaseHelper {
       );
     });
   }
+
+
+  ///Survey System Table insertion
+  static Future<bool> insertSysSurveyQuestionArray(List<sysSurveyQuestionModel> modelList) async
+  {
+    var db = await initDataBase();
+    for (sysSurveyQuestionModel data in modelList) {
+      Map<String, dynamic> fields = {
+        TableName.sysId: data.id,
+        TableName.SysSurveyEnQuestion: data.en_question,
+        TableName.SysSurveyArQuestion: data.ar_question,
+        TableName.SysSurveyAnswerType: data.answer_type,
+      };
+      bool isDuplicate = await hasDuplicateEntry(
+          db, TableName.tblLondonDairySurveyQuestion, fields);
+
+      if (isDuplicate) {
+        print("Error: Duplicate entry surveyQues");
+      } else {
+
+
+        print("SurveyQues array insertion");
+
+        await db.insert(
+          TableName.tblLondonDairySurveyQuestion,
+          {
+            TableName.sysId: data.id,
+            TableName.SysSurveyEnQuestion: data.en_question,
+            TableName.SysSurveyArQuestion: data.ar_question,
+            TableName.SysSurveyAnswerType: data.answer_type,
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+
+       await insertSysSurveyQuestionOptArray(data.answer_option);
+
+      }
+    }
+    return false;
+  }
+
+  static Future<bool> insertSysSurveyQuestionOptArray(List<sysSurveyQuestionOptionModel> modelList) async
+  {
+    var db = await initDataBase();
+    for (sysSurveyQuestionOptionModel data in modelList) {
+      Map<String, dynamic> fields = {
+        TableName.sysId: data.id,
+        TableName.SysSurveyOptQuestionId: data.questionId,
+        TableName.enName: data.en_name,
+        TableName.arName: data.ar_name,
+        TableName.SysSurveyQuestionType: data.answer_type
+      };
+      bool isDuplicate = await hasDuplicateEntry(
+          db, TableName.tblLondonDairySurveyQuesOpt, fields);
+
+      if (isDuplicate) {
+        print("Error: Duplicate entry surveyQues opt");
+      } else {
+
+
+        print("SurveyQues opt array insertion");
+
+        await db.insert(
+          TableName.tblLondonDairySurveyQuesOpt,
+          {
+            TableName.sysId: data.id,
+            TableName.SysSurveyOptQuestionId: data.questionId,
+            TableName.enName: data.en_name,
+            TableName.arName: data.ar_name,
+            TableName.SysSurveyQuestionType: data.answer_type
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+    }
+    return false;
+  }
+
+
+  ///Get Survey question List
+  static Future<List<sysSurveyQuestionModel>> getSurveyQuestionData() async {
+    final db = await initDataBase();
+    final List<Map<String, dynamic>> surveyQuestionMaps = await db.rawQuery(
+        'SELECT *from sys_london_dairy_survey');
+    print(jsonEncode(surveyQuestionMaps));
+    print('________ Survey List ________________');
+    return List.generate(surveyQuestionMaps.length, (index)  {
+      return sysSurveyQuestionModel(
+        id: surveyQuestionMaps[index][TableName.sysId] as int,
+        en_question: surveyQuestionMaps[index][TableName.SysSurveyEnQuestion] as String,
+        ar_question: surveyQuestionMaps[index][TableName.SysSurveyArQuestion] as String,
+        answer_type: surveyQuestionMaps[index][TableName.SysSurveyAnswerType] as String,
+        answer_option: [],
+      );
+    });
+  }
+
+  ///Getting Answer Options for survey
+ static Future<List<sysSurveyQuestionOptionModel>> getSurveyAnswersData(int questionID) async {
+    final db = await DatabaseHelper.initDataBase();
+    final List<Map<String, dynamic>> surveyAnswersMaps = await db.rawQuery(
+        'SELECT *from london_dairy_survey_question_option WHERE question_id=$questionID');
+    print(jsonEncode(surveyAnswersMaps));
+    print('________ Answer List ________________');
+    return List.generate(surveyAnswersMaps.length, (index) {
+      return sysSurveyQuestionOptionModel(
+        id: surveyAnswersMaps[index][TableName.sysId] ?? 0,
+        questionId: surveyAnswersMaps[index][TableName.SysSurveyEnQuestion] ?? 0,
+        en_name: surveyAnswersMaps[index][TableName.enName] ?? "",
+        answer_type: surveyAnswersMaps[index][TableName.SysSurveyAnswerType] ?? "",
+        ar_name: surveyAnswersMaps[index][TableName.arName] ?? "",
+      );
+    });
+  }
+
+  ///Insert Survey answers to trans survry
+  static Future<int> insertTransSurveyAnswer(String workingId,int questionId,String answerText,String imageNames) async {
+    String writeQuery = '''
+    INSERT OR REPLACE INTO trans_master_london_dairy_survey (working_id, question_id, answer, image, is_active, gcs_status, upload_status, updated_at)
+    VALUES ($workingId, $questionId, ${wrapIfString(answerText)},${wrapIfString(imageNames)},${wrapIfString("Y")}, 0, 0,CURRENT_TIMESTAMP);
+  ''';
+    var db = await initDataBase();
+    print('_______________UpdATE Survey ________________');
+    print(writeQuery);
+
+    //GeneralChecksStatusController generalStatusController = await generalControllerInitialization();
+
+    // if(generalStatusController.isVpnStatus.value) {
+    //   throw FetchDataException('Please Disable Your VPN'.tr);
+    // } else if(generalStatusController.isMockLocation.value) {
+    //   throw FetchDataException('Please Disable Your Fake Locator'.tr);
+    // } else if(!generalStatusController.isLocationStatus.value) {
+    //   throw FetchDataException('Please Enable Your Location'.tr);
+    // } else {
+    //
+    //   Get.delete<GeneralChecksStatusController>();
+
+    return await db.rawInsert(writeQuery);
+  }
+
+  ///Getting Answer for Survey
+  static Future<TransSurveyModel> getSurveyAnswersDataFromTrans(String workingId,int questionID) async {
+    final db = await DatabaseHelper.initDataBase();
+    final List<Map<String, dynamic>> surveyAnswersMaps = await db.rawQuery(
+        'SELECT * from trans_master_london_dairy_survey WHERE working_id=$workingId AND question_id=$questionID');
+    print(jsonEncode(surveyAnswersMaps));
+    print('________ Answer List ________________');
+    return TransSurveyModel(
+        id: surveyAnswersMaps[0][TableName.sysId] ?? 0,
+        questionId: surveyAnswersMaps[0][TableName.SysSurveyOptQuestionId] ?? 0,
+        answerText: surveyAnswersMaps[0][TableName.transSurveyAnswer] ?? "",
+        imageName: surveyAnswersMaps[0][TableName.trans_one_plus_one_image] ?? "",
+         );
+  }
+
 
 }
 

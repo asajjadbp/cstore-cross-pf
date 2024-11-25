@@ -119,3 +119,53 @@ class ImageListButton extends StatelessWidget {
     );
   }
 }
+
+class ImageListButtonForSurvey extends StatelessWidget {
+  const ImageListButtonForSurvey({super.key,required this.imageFile,required this.onSelectImage});
+  final List<File> imageFile;
+  final Function onSelectImage;
+
+  @override
+  Widget build(BuildContext context) {
+    print(imageFile.length);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Container(
+          width: MediaQuery.of(context).size.width/3.2,
+          height: MediaQuery.of(context).size.height/5.4,
+          child: InkWell(
+            onTap: () {
+              onSelectImage();
+            },
+            child: Card(
+              color: Colors.white,
+              elevation: 1,
+              child: Image.asset("assets/icons/camera_icon.png"),
+            ),
+          ),
+        ),
+        Expanded(
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width/3.2,
+            height: MediaQuery.of(context).size.height/5.4,
+            child: Card(
+              color: Colors.white,
+              elevation: 1,
+              child: imageFile.isNotEmpty ? ListView.builder(
+                  itemCount: imageFile.length,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context,index) {
+                    return Container(
+                      width: MediaQuery.of(context).size.width/3.5,
+                        margin: const EdgeInsets.only(left: 5),
+                        child: Image.file(File(imageFile[index].path),fit: BoxFit.fill,height: MediaQuery.of(context).size.height/4.4,));
+                  }) :
+              Image.asset("assets/icons/gallery_icon.png"),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}

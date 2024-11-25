@@ -131,8 +131,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
 
         syncroniseData = value.data;
 
-        print("Product Placement List");
-        print(syncroniseData[0].sysProductPlacement.length);
+        // print("Product Placement List");
+        // print(syncroniseData[0].sysProductPlacement.length);
 
         showAnimatedToastMessage("Success".tr, "Data synchronization started now".tr, true);
 
@@ -162,6 +162,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
        DatabaseHelper.delete_table(TableName.tblSysPromoPlaneReason);
        DatabaseHelper.delete_table(TableName.tblSysStores);
 
+       DatabaseHelper.delete_table(TableName.tblLondonDairySurveyQuestion);
+       DatabaseHelper.delete_table(TableName.tblLondonDairySurveyQuesOpt);
+
 
        ///Table Insertion
        var isDashboardPlan = await DatabaseHelper.insertSysDashboardArray(syncroniseData[0].sysDashboard);
@@ -190,9 +193,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
         await DatabaseHelper.insertMarketIssueArray(syncroniseData[0].sysMarketIssue);
         await DatabaseHelper.insertPromoPlaneReasonArray(syncroniseData[0].sysPromoPlanReason);
         await DatabaseHelper.insertSysStoreArray(syncroniseData[0].sysStores);
+          var isSurveyUnit=await DatabaseHelper.insertSysSurveyQuestionArray(syncroniseData[0].surveyQuestion);
 
         setState(() {
-          isLoading = isJourneyPlan && isDashboardPlan && isAgencyDash && isCategory && isSubCategory
+          isLoading = isSurveyUnit && isJourneyPlan && isDashboardPlan && isAgencyDash && isCategory && isSubCategory
               && isClinet && isPlanoReason && isRtvReason && isProduct && isPhotoType
               && isOSDCType && isOsdcReason && isStorePog && isProductPlacement && isBrandFace && isPromoPlan;
           isSyncronize = "1";
@@ -272,25 +276,27 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
                     ],
                   ),
                 )
-                    : isError ? Column(
+                    : isError ? SingleChildScrollView(
+                      child: Column(
                   children: [
-                    Text(errorText,style: const TextStyle(color: MyColors.backbtnColor,fontSize: 22),),
-                    const SizedBox(height: 10,),
-                    InkWell(
-                      onTap: () async {
-                        await getSyncronise();
-                      },
-                      child: Container(
-                        alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                            border: Border.all(color: MyColors.backbtnColor,width: 2)
+                      Text(errorText,style: const TextStyle(color: MyColors.backbtnColor,fontSize: 22),),
+                      const SizedBox(height: 10,),
+                      InkWell(
+                        onTap: () async {
+                          await getSyncronise();
+                        },
+                        child: Container(
+                          alignment: Alignment.center,
+                          width: MediaQuery.of(context).size.width,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: MyColors.backbtnColor,width: 2)
+                          ),
+                          child:  Text("Retry".tr,style:const TextStyle(color: MyColors.backbtnColor,fontSize: 22),),
                         ),
-                        child:  Text("Retry".tr,style:const TextStyle(color: MyColors.backbtnColor,fontSize: 22),),
-                      ),
-                    )
+                      )
                   ],
-                ) : BigElevatedButton(
+                ),
+                    ) : BigElevatedButton(
                     isBlueColor: true,
                     buttonName: "Next".tr,
                     submit: (){

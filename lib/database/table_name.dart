@@ -295,4 +295,24 @@ class TableName {
   static const String transPickedPieces = "picked_pieces";
   static const String transPickListReason = "not_picked_reason";
 
+  ///London Diary Table variables
+  static const String LondonMasterLondonDairySurvey= "trans_master_london_dairy_survey";
+  static const String tblLondonDairySurveyQuestion = "sys_london_dairy_survey";
+  static const String tblLondonDairySurveyQuesOpt = "london_dairy_survey_question_option";
+  static const String SysSurveyOptQuestionId = "question_id";
+  static const String SysSurveyOptArTitle = "ar_title";
+  static const String SysSurveyOptIsImage = "is_image";
+  static const String SysSurveyOptUpdatedAt = "updated_at";
+
+  static const String SysSurveyEnQuestion = "en_question";
+  static const String SysSurveyArQuestion = "ar_question";
+  static const String SysSurveyQuestionType = "type";
+  static const String SysSurveyAnswerType = "answer_type";
+  static const String SysSurveyAnswerOption = "answer_options";
+  static const String SysSurveyShowOther = "show_other";
+  static const String sysSurveyShowOtherOnevalue = "show_other_one_value";
+  static const String SysSurveyListOrder = "list_order";
+  static const String SysSurveyIsActive = "is_active";
+  static const String transSurveyAnswer = "answer";
+
 }

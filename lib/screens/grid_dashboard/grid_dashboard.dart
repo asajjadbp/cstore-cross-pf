@@ -35,6 +35,7 @@ import '../rtv_1+1/add_new_rtv_1+1.dart';
 import '../rtv_screen/rtv_list_screen.dart';
 import '../share_of_shelf/add_share_of_shelf.dart';
 import '../stock/stock_list_screen.dart';
+import '../survey/survey_screen.dart';
 import '../utils/toast/toast.dart';
 import '../widget/elevated_buttons.dart';
 import 'widgets/card_widget.dart';
@@ -354,7 +355,7 @@ class _GridDashBoardState extends State<GridDashBoard> {
                                             print(agencyData[i].en_name);
                                             if (agencyData[i].id == 1) {
                                               Navigator.of(context).pushNamed(
-                                                  BeforeFixing.routeName);
+                                                  SurveyScreen.routeName);
                                             } else if (agencyData[i].id == 5) {
                                               Navigator.of(context).pushNamed(
                                                   PlanogramScreen.routeName);
