@@ -6888,8 +6888,13 @@ class DatabaseHelper {
   ///Getting Answer for Survey
   static Future<TransSurveyModel> getSurveyAnswersDataFromTrans(String workingId,int questionID) async {
     final db = await DatabaseHelper.initDataBase();
-    final List<Map<String, dynamic>> surveyAnswersMaps = await db.rawQuery(
-        'SELECT * from trans_master_london_dairy_survey WHERE working_id=$workingId AND question_id=$questionID');
+    String query = 'SELECT * from trans_master_london_dairy_survey WHERE working_id=$workingId AND question_id=$questionID';
+
+
+    final List<Map<String, dynamic>> surveyAnswersMaps = await db.rawQuery(query);
+
+    print("---------------Query---------------");
+    print(query);
     print(jsonEncode(surveyAnswersMaps));
     print('________ Answer List ________________');
     return TransSurveyModel(

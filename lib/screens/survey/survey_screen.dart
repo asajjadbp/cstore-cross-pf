@@ -148,9 +148,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
   void _nextSurvey() async {
       if (currentIndex < surveyDataList.length - 1) {
 
-        print("+=+++++++++++++++++");
-        print(answersRadio[currentIndex]);
-        print("+++++++++++++++++++++");
+
 
         String answerText = "";
         String imagesName = "";
@@ -189,7 +187,6 @@ class _SurveyScreenState extends State<SurveyScreen> {
 
         await insertSurveyAnswer(surveyDataList[currentIndex].id,answerText,imagesName);
 
-        currentIndex++;
       setState(() {
 
       });
@@ -227,29 +224,63 @@ class _SurveyScreenState extends State<SurveyScreen> {
     });
   }
 
+  Future<bool> fileExists(String filePath) async {
+    try {
+      final file = File(filePath);
+      return await file.exists();
+    } catch (e) {
+      print('Error checking file existence: $e');
+      return false;
+    }
+  }
+
 
   insertSurveyAnswer(int questionId,String answerText,String imageNames) async {
     await DatabaseHelper
         .insertTransSurveyAnswer(
         workingId,questionId ,answerText,imageNames)
         .then((value) async {
+
           for(int i=0; i<imagesList.length; i++) {
-            await takePicture(context, imagesList[i], imagesNameList[i], workingId, AppConstants.survey).then((value) => {
 
-              if (currentIndex == surveyDataList.length)
-              ToastMessage.succesMessage(context, "Data Saved Successfully".tr),
+            print(imagesList[i].path);
 
-            }).catchError((e) => {
-            ToastMessage.errorMessage(context, e.toString()),
-            setState(() {
-                isButtonLoading = false;
-               }),
-            });
+            final String dirPath = (await getExternalStorageDirectory())!.path;
+            final String folderPath = '$dirPath/cstore/$workingId/${AppConstants.survey}';
+
+            final String filePath = '$folderPath/${imagesNameList[i]}';
+
+            print(filePath);
+
+            bool isFileExist = await fileExists(filePath);
+
+            if(isFileExist) {
+              print("FIleExist");
+            } else {
+              print("File does not exist");
+
+              await takePicture(context, imagesList[i], imagesNameList[i], workingId, AppConstants.survey).then((value) => {
+
+                if (currentIndex == surveyDataList.length)
+                  ToastMessage.succesMessage(context, "Data Saved Successfully".tr),
+
+              }).catchError((e) => {
+                ToastMessage.errorMessage(context, e.toString()),
+                setState(() {
+                  isButtonLoading = false;
+                }),
+              });
+            }
           }
 
       imagesNameList.clear();
       imagesList.clear();
       valueControllerComment.clear();
+
+          currentIndex++;
+
+          getTransSurveyData();
+
       setState(() {
       isButtonLoading = false;
       });
@@ -262,6 +293,10 @@ class _SurveyScreenState extends State<SurveyScreen> {
   }
 
   Future<void> getTransSurveyData() async {
+    imagesNameList.clear();
+    imagesList.clear();
+    valueControllerComment.clear();
+
     setState(() {
       isButtonLoading = true;
     });
@@ -276,6 +311,11 @@ class _SurveyScreenState extends State<SurveyScreen> {
         valueControllerComment.text = "";
       }
 
+      imagesNameList = transSurveyModel.imageName.split(",");
+      setState(() {
+
+      });
+
       await _loadImages().then((value) {
         setTransPhoto();
       });
@@ -288,32 +328,36 @@ class _SurveyScreenState extends State<SurveyScreen> {
   }
 
   Future<void> setTransPhoto() async {
-    imagesNameList = transSurveyModel.imageName.split(",");
-    print("Image Name List");
-    print(imagesNameList);
-    print("------------------");
+    List<File> imagesTaken = [];
     for (int i = 0; i<imagesNameList.length; i++) {
+
       for (int j = 0; j < allImagesList.length; j++) {
+
         if (allImagesList[j].path.endsWith(imagesNameList[i])) {
-          imagesList.add(allImagesList[i]);
+          imagesTaken.add(allImagesList[j]);
         }
       }
 
-      for(int i =0; i< imagesList.length; i++) {
-        if(imagesList[i] != null) {
-          bool isImageCorrupt = await isImageCorrupted(XFile(imagesList[i].path));
-
-          if(isImageCorrupt) {
-            imagesList[i] = await convertAssetToFile("assets/images/no_image_found.png");
-          }
-
-        } else {
-          imagesList[i] = await convertAssetToFile("assets/images/no_image_found.png");
-        }
-      }
+      // for(int i =0; i< imagesList.length; i++) {
+      //   if(imagesList[i] != null) {
+      //     bool isImageCorrupt = await isImageCorrupted(XFile(imagesList[i].path));
+      //
+      //     if(isImageCorrupt) {
+      //       imagesList[i] = await convertAssetToFile("assets/images/no_image_found.png");
+      //     }
+      //
+      //   } else {
+      //     imagesList[i] = await convertAssetToFile("assets/images/no_image_found.png");
+      //   }
+      // }
     }
-    print("TRANS");
+    imagesList = imagesTaken;
+    print("Image Name List");
+    print(transSurveyModel.imageName);
+    print(imagesNameList);
     print(imagesList);
+    print("------------------");
+
     setState(() {
       isButtonLoading = false;
     });

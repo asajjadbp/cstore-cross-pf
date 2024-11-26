@@ -355,7 +355,7 @@ class _GridDashBoardState extends State<GridDashBoard> {
                                             print(agencyData[i].en_name);
                                             if (agencyData[i].id == 1) {
                                               Navigator.of(context).pushNamed(
-                                                  SurveyScreen.routeName);
+                                                  BeforeFixing.routeName);
                                             } else if (agencyData[i].id == 5) {
                                               Navigator.of(context).pushNamed(
                                                   PlanogramScreen.routeName);
@@ -454,6 +454,9 @@ class _GridDashBoardState extends State<GridDashBoard> {
                                             } else if (agencyData[i].id == 18) {
                                               Navigator.of(context).pushNamed(
                                                   AddMarketIssue.routeName);
+                                            } else if(agencyData[i].id == 22) {
+                                              Navigator.of(context).pushNamed(
+                                                  SurveyScreen.routeName);
                                             } else if (agencyData[i].id == 17) {
                                               print(workingId);
                                               print(clientId);
