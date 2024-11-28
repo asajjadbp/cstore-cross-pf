@@ -410,3 +410,32 @@ class OsdAndMarketIssueCountModel {
     );
   }
 }
+
+class SurveyCountModel {
+  int totalNotUpload;
+  int totalUpload;
+  int totalImages;
+  int totalQuestions;
+
+  SurveyCountModel({required this.totalImages,required this.totalNotUpload ,required this.totalQuestions,required this.totalUpload});
+
+  // Method to convert an instance of AvailableCountModel to a map
+  Map<String, dynamic> toJson() {
+    return {
+      'total_questions': totalQuestions,
+      'total_not_uploaded': totalNotUpload,
+      'total_uploaded' : totalUpload,
+      'total_images' : totalImages,
+    };
+  }
+
+  // Factory method to create an instance of AvailableCountModel from a map
+  factory SurveyCountModel.fromJson(Map<String, dynamic> json) {
+    return SurveyCountModel(
+      totalQuestions: json['total_questions'],
+      totalNotUpload: json['total_not_uploaded'],
+      totalUpload: json['total_uploaded'],
+      totalImages: json['total_images'],
+    );
+  }
+}

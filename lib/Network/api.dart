@@ -86,4 +86,6 @@ class Api {
 
   static const assignSpecialVisit = "${apiVersion}assignSpecialVisit";
 
+  static const postSurveyData = "${apiVersion}saveLondonDairy";
+
 }

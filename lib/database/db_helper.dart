@@ -80,6 +80,7 @@ import '../Model/request_model.dart/save_promo_plan_request_model.dart';
 import '../Model/request_model.dart/save_replenishment_request.dart';
 import '../Model/request_model.dart/save_stock_request_model.dart';
 import '../Model/request_model.dart/sos_end_api_request_model.dart';
+import '../Model/request_model.dart/survey_end_api_request.dart';
 import '../Model/response_model.dart/adherence_response_model.dart';
 import '../Model/response_model.dart/jp_response_model.dart';
 import '../Model/response_model.dart/repelish_response_model.dart';
@@ -6903,6 +6904,96 @@ class DatabaseHelper {
         answerText: surveyAnswersMaps[0][TableName.transSurveyAnswer] ?? "",
         imageName: surveyAnswersMaps[0][TableName.trans_one_plus_one_image] ?? "",
          );
+  }
+
+
+  ///Before Fixing count for API
+  static Future<SurveyCountModel> getSurveyCountData(String workingId) async {
+    final db = await initDataBase();
+
+    String surveyCountQuery = 'SELECT '
+        'SUM(CASE WHEN image IS NULL OR image = "" THEN 0 ELSE LENGTH(image) - LENGTH(REPLACE(image, ",", "")) + 1 END ) AS total_images, '
+        'COUNT(DISTINCT question_id) as total_questions, '
+        'sum(CASE WHEN upload_status = 0 THEN 1 ELSE 0 END) As total_not_uploaded, '
+        'sum(CASE WHEN upload_status = 1 THEN 1 ELSE 0 END) As total_uploaded '
+        'FROM trans_master_london_dairy_survey WHERE working_id=$workingId';
+
+    final List<Map<String, dynamic>> result = (await db.rawQuery(surveyCountQuery));
+
+    print(surveyCountQuery);
+    print(jsonEncode(result));
+    print('____________Survey Count_______________');
+    return  SurveyCountModel(
+      totalQuestions: result[0]['total_questions'] ?? 0,
+      totalNotUpload: result[0]['total_not_uploaded'] ?? 0,
+      totalUpload: result[0]['total_uploaded'] ?? 0,
+      totalImages: result[0]['total_images'] ?? 0,
+    );
+  }
+
+  ///get planoguide Images For GCS upload
+  static Future<List<TransPlanoGuideGcsImagesListModel>> getSurveyGcsImagesList(String workingId) async {
+    final db = await initDataBase();
+    String rawQuery = 'SELECT question_id, image '
+        ' FROM trans_master_london_dairy_survey WHERE working_id=$workingId AND gcs_status=0 AND image!= ""';
+
+    final List<Map<String, dynamic>> surveyMap = await db.rawQuery(rawQuery);
+
+    print('Survey QUERY');
+    print(rawQuery);
+    print(surveyMap);
+
+    return List.generate(surveyMap.length, (index) {
+      return TransPlanoGuideGcsImagesListModel(
+          id: surveyMap[index]['question_id'],
+          imageName: surveyMap[index]['image'],
+          imageFile: null
+      );
+    });
+  }
+
+  static Future<int> updateSurveyAfterGcsAfterFinish(int id,String workingId) async {
+
+    String writeQuery = 'UPDATE trans_master_london_dairy_survey SET gcs_status=1 WHERE working_id=$workingId And question_id=$id';
+
+    var db = await initDataBase();
+
+    print('_______________UpdATE Survey After GCS________________');
+    print(writeQuery);
+
+    return await db.rawUpdate(writeQuery);
+
+  }
+
+  static Future<List<SaveSurveyData>> getActivityStatusSurveyDataList(String workingId) async {
+    final db = await initDataBase();
+    String rawQuery = 'SELECT * '
+        ' FROM trans_master_london_dairy_survey WHERE working_id=$workingId AND upload_status=0';
+
+    print('Trans Survey QUERY');
+    print(rawQuery);
+
+    final List<Map<String, dynamic>> surveyMap = await db.rawQuery(rawQuery);
+    print(surveyMap);
+    return List.generate(surveyMap.length, (index) {
+      return SaveSurveyData(
+        clientId: "",
+        questionId: surveyMap[index]['question_id'],
+        answer: surveyMap[index]['answer'].toString(),
+        imageNames: surveyMap[index]['image'].toString(),
+
+      );
+    });
+  }
+
+  static Future<int> updateSurveyAfterApi(String workingId,String ids) async {
+    String writeQuery = 'UPDATE trans_master_london_dairy_survey SET upload_status=1 WHERE working_id=$workingId AND question_id in ($ids)';
+
+    var db = await initDataBase();
+    print('_______________UpdATE Survey ________________');
+    print(writeQuery);
+
+    return await db.rawUpdate(writeQuery);
   }
 
 

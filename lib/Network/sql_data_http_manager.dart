@@ -27,6 +27,7 @@ import '../Model/request_model.dart/save_promo_plan_request_model.dart';
 import '../Model/request_model.dart/save_replenishment_request.dart';
 import '../Model/request_model.dart/save_stock_request_model.dart';
 import '../Model/request_model.dart/sos_end_api_request_model.dart';
+import '../Model/request_model.dart/survey_end_api_request.dart';
 import '../Model/response_model.dart/tmr_pick_list_response_model.dart';
 import 'api.dart';
 
@@ -253,6 +254,15 @@ class SqlHttpManager {
     print(url);
     print(jsonEncode(assignSpecialVisitRequest));
     var response = await _handler.post(Uri.parse(url), assignSpecialVisitRequest.toJson(), token);
+    return response;
+  }
+
+  Future<dynamic> saveSurvey(String token, String baseUrl,SaveSurvey saveSurvey) async {
+    final url = baseUrl + Api.postSurveyData;
+    print(url);
+    print(jsonEncode(saveSurvey));
+    var response = await _handler.postWithJson(Uri.parse(url), saveSurvey.toJson(), token);
+
     return response;
   }
 

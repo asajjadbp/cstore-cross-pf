@@ -32,9 +32,6 @@ class _SurveyScreenState extends State<SurveyScreen> {
   int currentIndex = 0;
   Map<int, dynamic> answersRadio = {};
   Map<int, dynamic> answersCheckBox = {};
-  TransSurveyModel transSurveyModel = TransSurveyModel(
-    id: -1,questionId: -1,answerText: '',imageName: ''
-  );
   List<File> imagesList =[];
   List<File> allImagesList =[];
   List<String> imagesNameList =[];
@@ -122,7 +119,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
     });
   }
 
-  Future<void> getImage() async {
+  Future<void> getImage(int questionId) async {
     isImageLoading = true;
     await ImageTakingService.imageSelect().then((value) {
       if (value == null) {
@@ -131,7 +128,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
       print(value.path);
       imagesList.add(value);
       final String extension = path.extension(value.path);
-      imagesNameList.add("${userName}_${DateTime.now().millisecondsSinceEpoch}$extension");
+      imagesNameList.add("${userName}_${questionId}_${DateTime.now().millisecondsSinceEpoch}$extension");
 
       print("---------------Images List -------------");
       print(imagesList);
@@ -146,9 +143,6 @@ class _SurveyScreenState extends State<SurveyScreen> {
 
 
   void _nextSurvey() async {
-      if (currentIndex < surveyDataList.length - 1) {
-
-
 
         String answerText = "";
         String imagesName = "";
@@ -165,13 +159,11 @@ class _SurveyScreenState extends State<SurveyScreen> {
             return;
           }
           answerText = valueControllerComment.text;
-        } else {
-          if(imagesNameList.isEmpty || imagesList.isEmpty) {
+        } else if(imagesNameList.isEmpty || imagesList.isEmpty) {
             ToastMessage.errorMessage(context, "Please Take images from your camera");
             return;
           }
-          answerText = "";
-        }
+
 
         setState(() {
           isButtonLoading = true;
@@ -190,7 +182,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
       setState(() {
 
       });
-      }
+
   }
 
   void _previousSurvey() {
@@ -272,16 +264,18 @@ class _SurveyScreenState extends State<SurveyScreen> {
               });
             }
           }
-
+     setState(() {
       imagesNameList.clear();
       imagesList.clear();
       valueControllerComment.clear();
+      if (currentIndex < surveyDataList.length - 1) {
+        currentIndex++;
 
-          currentIndex++;
+        getTransSurveyData();
+      } else {
+        Navigator.of(context).pop();
+      }
 
-          getTransSurveyData();
-
-      setState(() {
       isButtonLoading = false;
       });
     }).catchError((e) {
@@ -293,16 +287,20 @@ class _SurveyScreenState extends State<SurveyScreen> {
   }
 
   Future<void> getTransSurveyData() async {
-    imagesNameList.clear();
-    imagesList.clear();
-    valueControllerComment.clear();
+
+    TransSurveyModel transSurveyModel = TransSurveyModel(id: -1,questionId: -1,answerText: '',imageName: '');
 
     setState(() {
+      imagesNameList.clear();
+      imagesList.clear();
+      valueControllerComment.clear();
       isButtonLoading = true;
     });
     await DatabaseHelper.getSurveyAnswersDataFromTrans(workingId,surveyDataList[currentIndex].id).then((value) async {
-      transSurveyModel = value;
 
+      setState(() {
+        transSurveyModel = value;
+      });
       if (surveyDataList[currentIndex].answer_type == "radio") {
         answersRadio[currentIndex] = transSurveyModel.answerText;
       } else if(surveyDataList[currentIndex].answer_type == "text" || surveyDataList[currentIndex].answer_type == "number") {
@@ -311,14 +309,26 @@ class _SurveyScreenState extends State<SurveyScreen> {
         valueControllerComment.text = "";
       }
 
-      imagesNameList = transSurveyModel.imageName.split(",");
       setState(() {
+        if(transSurveyModel.imageName.isEmpty || transSurveyModel.imageName == "") {
+            imagesNameList = [];
+            imagesList = [];
+        } else {
+            imagesNameList = transSurveyModel.imageName.split(",");
+        }
 
       });
 
-      await _loadImages().then((value) {
-        setTransPhoto();
-      });
+      print("Image Name List Empty");
+      print(currentIndex);
+      print(imagesNameList);
+      print(imagesList);
+      print("-----------------------------");
+
+        await _loadImages().then((value) {
+          setTransPhoto();
+        });
+
     }).catchError((e) {
       print(e.toString());
       setState(() {
@@ -352,11 +362,6 @@ class _SurveyScreenState extends State<SurveyScreen> {
       // }
     }
     imagesList = imagesTaken;
-    print("Image Name List");
-    print(transSurveyModel.imageName);
-    print(imagesNameList);
-    print(imagesList);
-    print("------------------");
 
     setState(() {
       isButtonLoading = false;
@@ -387,10 +392,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final survey = surveyDataList[currentIndex];
-    // final question = surveyDataList[currentIndex].en_question;
-    // final options = surveyDataList[currentIndex].answer_option;
-    // final type = surveyDataList[currentIndex].answer_type;
+
     final selectedAnswerRadio = answersRadio[currentIndex];
     final selectedAnswerCheckBox = answersCheckBox[currentIndex];
 
@@ -404,7 +406,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
         Navigator.of(context).pop();
       }, true, false, false,
               (int getClient, int getCat, int getSubCat, int getBrand) {}),
-      body: isDataLoading ? Center(child: SizedBox(
+      body: isDataLoading ? const Center(child: SizedBox(
         height: 60,
         child: MyLoadingCircle(
       ),)) : Container(
@@ -424,43 +426,77 @@ class _SurveyScreenState extends State<SurveyScreen> {
                 onRadioSelect: (value) => _selectRadio(currentIndex, value),
                 number: currentIndex + 1,
                 isImageLoading: isImageLoading,
-                getImage: getImage,
+                getImage: () {
+                  getImage(surveyDataList[currentIndex].id);
+                },
                 imagesList: imagesList,
               ),
             ),
             isButtonLoading ? const Center(child: SizedBox(
               height: 60,
-              child: MyLoadingCircle(),),) : Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ElevatedButton(
-                    onPressed: currentIndex > 0 ? _previousSurvey : null,
+              child: MyLoadingCircle(),),) : currentIndex < surveyDataList.length - 1 ? Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                      onPressed: currentIndex > 0 ? _previousSurvey : null,
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: MyColors.appMainColor,
+                          textStyle: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold)),
+                      child: Container(
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.all(10),
+                        margin: const EdgeInsets.all(5),
+                        child: const Text(
+                          "Previous",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      )),
+                  ElevatedButton(
+                    onPressed:
+                        currentIndex < surveyDataList.length - 1 ? _nextSurvey : null,
                     style: ElevatedButton.styleFrom(
                         backgroundColor: MyColors.appMainColor,
                         textStyle: const TextStyle(
                             fontSize: 14,
                             color: Colors.white,
                             fontWeight: FontWeight.bold)),
-                    child: const Text(
-                      "Previous",
-                      style: TextStyle(color: Colors.white),
-                    )),
-                ElevatedButton(
-                  onPressed:
-                      currentIndex < surveyDataList.length - 1 ? _nextSurvey : null,
+                    child: Container(
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.all(10),
+                      margin: const EdgeInsets.all(5),
+                      child: const Text(
+                        "Next",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+            ),
+              ) :  Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+              child:  ElevatedButton(
+                  onPressed: _nextSurvey,
                   style: ElevatedButton.styleFrom(
                       backgroundColor: MyColors.appMainColor,
                       textStyle: const TextStyle(
                           fontSize: 14,
                           color: Colors.white,
                           fontWeight: FontWeight.bold)),
-                  child: const Text(
-                    "Next",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ],
-            ),
+                  child: Container(
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.all(10),
+                    margin: const EdgeInsets.all(5),
+                    child: const Text(
+                      "Finish S",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  )),
+            )
           ],
         ),
       ),

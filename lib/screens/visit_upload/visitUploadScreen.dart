@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cstore/Model/request_model.dart/save_db_file_request.dart';
@@ -45,6 +46,7 @@ import '../../Model/request_model.dart/save_promo_plan_request_model.dart';
 import '../../Model/request_model.dart/save_replenishment_request.dart';
 import '../../Model/request_model.dart/save_stock_request_model.dart';
 import '../../Model/request_model.dart/sos_end_api_request_model.dart';
+import '../../Model/request_model.dart/survey_end_api_request.dart';
 import '../../Network/jp_http.dart';
 import '../../Network/sql_data_http_manager.dart';
 import '../Language/localization_controller.dart';
@@ -136,6 +138,12 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
   List<TransPlanoGuideGcsImagesListModel> beforeFixingGcsImagesList=[];
   BeforeFixingCountModel beforeFixingCountModel = BeforeFixingCountModel(totalBeforeFixing: 0,totalUpload: 0,totalNotUpload: 0,totalCategories: 0);
 
+
+  List<SaveSurveyData> surveyImageList = [];
+  List<TransPlanoGuideGcsImagesListModel> surveyImagesDataList = [];
+  List<TransPlanoGuideGcsImagesListModel> surveyGcsImagesList=[];
+  SurveyCountModel surveyCountModel = SurveyCountModel(totalQuestions: 0,totalUpload: 0,totalNotUpload: 0,totalImages: 0);
+
   List<SaveOtherPhotoData> otherPhotoImageList = [];
   List<TransPlanoGuideGcsImagesListModel> otherPhotoGcsImagesList=[];
   OtherPhotoCountModel otherPhotoCountModel = OtherPhotoCountModel(totalOtherPhotos: 0,totalUpload: 0,totalNotUpload: 0,totalCategories: 0);
@@ -188,6 +196,7 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
   bool isMarketIssueFinishLoading = false;
   bool isPosFinishLoading = false;
   bool isPlanogramFinishLoading = false;
+  bool isSurveyFinishLoading = false;
 
   @override
   void initState() {
@@ -581,6 +590,20 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                             notUploadedData: posCountModel.amount.toInt(),
                             totalRtv: posCountModel.totalPosItems,),
 
+                        if(surveyCountModel.totalQuestions  > 0)
+                          VisitBeforeFixingUploadScreenCard(
+                              screenName: "Survey".tr,
+                              moduleName: "Total".tr,
+                              onUploadTap: () {
+
+                                uploadImagesToGcs(AppConstants.survey);
+
+                              },
+                              totalBeforeFixing: surveyCountModel.totalImages,
+                              uploadedData: surveyCountModel.totalQuestions,
+                              isUploadData: isSurveyFinishLoading,
+                              isUploaded: surveyCountModel.totalNotUpload == 0),
+
                       ],
                     ),
                   ),
@@ -735,6 +758,12 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
                      });
                      showAnimatedToastMessage("Error!".tr,
                          "Please Add at least one brand share".tr, false);
+                   } else if(moduleIdList.contains("22") && (surveyCountModel.totalUpload.toString() == "null" || surveyCountModel.totalUpload==0)) {
+                     setState(() {
+                       isDataUploading = false;
+                     });
+                     showAnimatedToastMessage("Error!".tr,
+                         "Please complete your survey".tr, false);
                    } else {
                      setState(() {
                        isDataUploading = false;
@@ -1031,6 +1060,12 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
 
     });
 
+    await DatabaseHelper.getSurveyCountData(workingId).then((value) {
+
+      surveyCountModel = value;
+
+    });
+
     setState(() {
 
       if(beforeFixingCountModel.totalNotUpload > 0) {
@@ -1103,6 +1138,10 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       }
 
       if(marketIssueCountModel.totalNotUpload > 0) {
+        isFinishButton = false;
+      }
+
+      if(surveyCountModel.totalNotUpload > 0) {
         isFinishButton = false;
       }
 
@@ -1267,6 +1306,40 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       }
 
     }
+
+    if(module == AppConstants.survey) {
+
+      surveyImagesDataList.clear();
+
+      for(int i = 0; i<surveyGcsImagesList.length; i++) {
+        List surveyImages = surveyGcsImagesList[i].imageName.split(",");
+
+        for(int j = 0; j < surveyImages.length; j++) {
+         surveyImagesDataList.add(TransPlanoGuideGcsImagesListModel(id: surveyGcsImagesList[i].id, imageFile: null, imageName: surveyImages[j]));
+        }
+      }
+
+      for (int j=0;j<surveyImagesDataList.length; j++) {
+        for (int i = 0; i < _imageFiles.length; i++) {
+          if(surveyImagesDataList[j].imageName.isNotEmpty)
+          {
+            if (_imageFiles[i].path.endsWith(surveyImagesDataList[j].imageName)) {
+              surveyImagesDataList[j].imageFile = _imageFiles[i];
+            }
+          }
+        }
+
+        print("-------------------------");
+        print(surveyImagesDataList[j].id);
+        print(surveyImagesDataList[j].imageName);
+        print(surveyImagesDataList[j].imageFile);
+        print("-------------------------");
+
+      }
+
+
+    }
+
 
   }
 
@@ -1916,6 +1989,77 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
         onePlusOneUploadApi();
       }
 
+      if(moduleName == AppConstants.survey) {
+
+        setState(() {
+          isSurveyFinishLoading = true;
+        });
+
+        await DatabaseHelper.getSurveyGcsImagesList(workingId).then((value) async {
+
+          surveyGcsImagesList = value.cast<TransPlanoGuideGcsImagesListModel>();
+
+          await _getImages(AppConstants.survey).then((value) {
+            setTransPhotoInList(AppConstants.survey);
+
+            setState(() {
+
+            });
+          });
+
+          setState(() {
+            isSurveyFinishLoading = false;
+          });
+
+        });
+
+        setState(() {
+          isSurveyFinishLoading = true;
+        });
+
+
+        print("------Survey Image Upload -------- ");
+        for(int j = 0; j < surveyImagesDataList.length; j++) {
+
+          if(surveyImagesDataList[j].imageFile != null) {
+
+            bool isCorruptImage = await isImageCorrupted(XFile(surveyImagesDataList[j].imageFile!.path));
+            if(isCorruptImage) {
+              await updateSurveyAfterGcs1(surveyImagesDataList[j].id);
+            } else {
+
+              final filename =  surveyImagesDataList[j].imageName;
+              final filePath = 'survey_photo/$filename';
+              final fileContent = await surveyImagesDataList[j].imageFile!.readAsBytes();
+              final bucketObject = Object(name: filePath);
+
+              final resp = await storage.objects.insert(
+                bucketObject,
+                bucketName,
+                predefinedAcl: 'publicRead',
+                uploadMedia: Media(
+                  Stream<List<int>>.fromIterable([fileContent]),
+                  fileContent.length,
+                ),
+              );
+              print("Image Uploaded successfully");
+
+              await updateSurveyAfterGcs1(surveyImagesDataList[j].id);
+
+            }
+          } else {
+            await updateSurveyAfterGcs1(surveyImagesDataList[j].id);
+          }
+
+        }
+        setState(() {
+          isSurveyFinishLoading = false;
+        });
+
+        surveyUploadApi();
+
+      }
+
       return true;
     } catch (e) {
       // Handle any errors that occur during the upload
@@ -1942,6 +2086,15 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
       showAnimatedToastMessage("Error!".tr,"Uploading images error please try again!".tr,false);
       return false;
     }
+  }
+
+  Future<bool> updateSurveyAfterGcs1(int surveyQuestionId) async {
+    print("UPLOAD SURVEY AFTER GCS");
+    await DatabaseHelper.updateSurveyAfterGcsAfterFinish(surveyQuestionId,workingId).then((value) {
+
+    });
+
+    return true;
   }
 
   Future<bool> updatePLanoguideAfterGcs1(int planoguideId) async {
@@ -2489,6 +2642,69 @@ class _VisitUploadScreenState extends State<VisitUploadScreen> {
     ids = removeLastComma(ids);
     print(ids);
     await DatabaseHelper.updatePlanoguideAfterApi(workingId,ids).then((value) {
+
+    });
+
+    return true;
+  }
+
+ surveyUploadApi() async {
+
+    await DatabaseHelper.getActivityStatusSurveyDataList(workingId).then((value) async {
+
+      surveyImageList = value.cast<SaveSurveyData>();
+
+      setState((){});
+    });
+
+    SaveSurvey saveSurvey = SaveSurvey(
+        username: userName,
+        workingId: workingId,
+        workingDate: workingDate,
+        storeId: storeId,
+        surveyList: surveyImageList);
+
+    print("************ Survey Upload in Api **********************");
+    print(jsonEncode(saveSurvey));
+
+    setState((){
+      isSurveyFinishLoading = true;
+    });
+
+    SqlHttpManager()
+        .saveSurvey(token, baseUrl,saveSurvey)
+        .then((value) async => {
+      print("************ Survey Values **********************"),
+
+      await updateTransSurveyAfterApi(),
+
+      await getAllCountData(),
+
+      setState(() {
+        isSurveyFinishLoading  = false;
+      }),
+
+      showAnimatedToastMessage("Success".tr, "Survey Data Uploaded Successfully".tr, true),
+
+      // ToastMessage.succesMessage(context, "Planoguide Data Uploaded Successfully".tr),
+    }).catchError((onError)=>{
+      showAnimatedToastMessage("Error!".tr,onError.toString(),false),
+      print(onError.toString()),
+      setState(() {
+        isSurveyFinishLoading = false;
+      }),
+    });
+
+  }
+
+  Future<bool> updateTransSurveyAfterApi() async {
+    String ids = "";
+    for(int i=0;i<surveyImageList.length;i++) {
+      ids = "${surveyImageList[i].questionId.toString()},$ids";
+    }
+    ids = removeLastComma(ids);
+    print(ids);
+    await DatabaseHelper.updateSurveyAfterApi(workingId,ids).then((value) {
 
     });
 
